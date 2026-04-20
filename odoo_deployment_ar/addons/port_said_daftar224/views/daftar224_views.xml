@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_daftar224_form" model="ir.ui.view">
+    <field name="name">port_said.daftar224.form</field>
+    <field name="model">port_said.daftar224</field>
+    <field name="arch" type="xml">
+      <form string="دفتر 224 ع.ح">
+        <header>
+          <button name="action_print_daftar224" string="طباعة دفتر 224" type="object" class="btn-secondary"/>
+        </header>
+        <sheet>
+          <div class="oe_title"><h1><field name="display_name" readonly="1"/></h1></div>
+          <group>
+            <group string="بيانات القيد">
+              <field name="entry_date"/>
+              <field name="register_type"/>
+              <field name="sequence_in_day" readonly="1"/>
+              <field name="daftar55_id"/>
+            </group>
+            <group string="المبالغ">
+              <field name="amount_gross"/>
+              <field name="amount_deductions"/>
+              <field name="amount_net"/>
+            </group>
+          </group>
+          <group string="القيود التفصيلية الإفرادية">
+            <group>
+              <field name="detail_stamp_normal"/>
+              <field name="detail_stamp_extra"/>
+            </group>
+            <group>
+              <field name="detail_stamp_proportional"/>
+              <field name="detail_commercial_tax"/>
+            </group>
+          </group>
+          <group string="توقيع الشطب">
+            <field name="crossout_signed"/>
+            <field name="crossout_signed_by" invisible="not crossout_signed"/>
+          </group>
+          <group string="الحسابات المحاسبية">
+            <field name="account_debit_id"/>
+            <field name="account_credit1_id"/>
+            <field name="account_credit2_id"/>
+          </group>
+          <field name="notes"/>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_daftar224_list" model="ir.ui.view">
+    <field name="name">port_said.daftar224.list</field>
+    <field name="model">port_said.daftar224</field>
+    <field name="arch" type="xml">
+      <tree string="دفتر 224 ع.ح"
+            decoration-success="register_type == 'taswiyat'"
+            decoration-info="register_type == 'sarfiyat'">
+        <field name="entry_date"/>
+        <field name="register_type" widget="badge"
+               decoration-info="register_type == 'sarfiyat'"
+               decoration-success="register_type == 'taswiyat'"/>
+        <field name="sequence_in_day"/>
+        <field name="form50_ref"/>
+        <field name="vendor_id"/>
+        <field name="budget_line"/>
+        <field name="amount_gross"      sum="إجمالي"/>
+        <field name="amount_deductions" sum="الخصومات"/>
+        <field name="amount_net"        sum="الصافي"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_daftar224_form" model="ir.ui.view">
+    <field name="name">port_said.daftar224.form</field>
+    <field name="model">port_said.daftar224</field>
+    <field name="arch" type="xml">
+      <form string="دفتر 224 ع.ح">
+        <sheet>
+          <div class="oe_title"><h1><field name="display_name" readonly="1"/></h1></div>
+          <group>
+            <group string="بيانات القيد">
+              <field name="entry_date"/>
+              <field name="register_type"/>
+              <field name="sequence_in_day" readonly="1"/>
+              <field name="daftar55_id"/>
+            </group>
+            <group string="المبالغ">
+              <field name="amount_gross"/>
+              <field name="amount_deductions"/>
+              <field name="amount_net"/>
+            </group>
+          </group>
+          <group string="الحسابات المحاسبية">
+            <field name="account_debit_id"/>
+            <field name="account_credit1_id"/>
+            <field name="account_credit2_id"/>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+
+  <record id="view_daftar224_form" model="ir.ui.view">
+    <field name="name">port_said.daftar224.form</field>
+    <field name="model">port_said.daftar224</field>
+    <field name="arch" type="xml">
+      <form string="دفتر 224 ع.ح">
+        <header>
+          <button name="action_print_daftar224" string="طباعة" type="object" class="btn-secondary"/>
+        </header>
+        <sheet>
+          <div class="oe_title"><h1><field name="display_name" readonly="1"/></h1></div>
+          <group>
+            <group string="بيانات القيد">
+              <field name="entry_date"/>
+              <field name="register_type"/>
+              <field name="sequence_in_day" readonly="1"/>
+              <field name="daftar55_id"/>
+            </group>
+            <group string="المبالغ">
+              <field name="amount_gross"/>
+              <field name="amount_deductions"/>
+              <field name="amount_net"/>
+            </group>
+          </group>
+          <group string="الحسابات المحاسبية">
+            <field name="account_debit_id"/>
+            <field name="account_credit1_id"/>
+            <field name="account_credit2_id"/>
+          </group>
+          <group string="القيود التفصيلية الإفرادية">
+            <field name="detail_stamp_normal"/>
+            <field name="detail_stamp_extra"/>
+            <field name="detail_stamp_proportional"/>
+            <field name="detail_commercial_tax"/>
+          </group>
+          <group string="توقيع الشطب">
+            <field name="crossout_signed"/>
+            <field name="crossout_signed_by" invisible="not crossout_signed"/>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_daftar224_pivot" model="ir.ui.view">
+    <field name="name">port_said.daftar224.pivot</field>
+    <field name="model">port_said.daftar224</field>
+    <field name="arch" type="xml">
+      <pivot string="تحليل دفتر 224">
+        <field name="entry_date" type="row" interval="day"/>
+        <field name="register_type" type="col"/>
+        <field name="amount_gross" type="measure"/>
+        <field name="amount_net"   type="measure"/>
+      </pivot>
+    </field>
+  </record>
+
+  <record id="action_daftar224" model="ir.actions.act_window">
+    <field name="name">دفتر 224 ع.ح</field>
+    <field name="res_model">port_said.daftar224</field>
+    <field name="view_mode">tree,form,pivot</field>
+  </record>
+
+  <!-- Menu managed by port_said_menu module -->
+</odoo>

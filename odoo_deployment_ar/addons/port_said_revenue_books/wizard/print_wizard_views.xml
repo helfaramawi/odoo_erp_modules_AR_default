@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_revenue_print_wizard_form" model="ir.ui.view">
+    <field name="name">port_said.revenue.print.wizard.form</field>
+    <field name="model">port_said.revenue.print.wizard</field>
+    <field name="arch" type="xml">
+      <form string="طباعة دفتر إيرادات/مصروفات">
+        <sheet>
+          <group>
+            <group>
+              <field name="book_id" options="{'no_create': True}"/>
+              <field name="fiscal_year"/>
+            </group>
+            <group>
+              <field name="period_month"/>
+              <field name="only_closed"/>
+            </group>
+          </group>
+        </sheet>
+        <footer>
+          <button name="action_print" type="object" string="طباعة" class="oe_highlight"/>
+          <button special="cancel" string="إلغاء"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_revenue_print_wizard" model="ir.actions.act_window">
+    <field name="name">طباعة دفتر</field>
+    <field name="res_model">port_said.revenue.print.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+  </record>
+
+  <menuitem id="menu_revenue_print"
+            name="طباعة دفتر"
+            parent="menu_revenue_root"
+            action="action_revenue_print_wizard"
+            sequence="30"/>
+
+</odoo>

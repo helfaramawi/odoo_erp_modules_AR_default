@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="action_rpt_advance_form62" model="ir.actions.report">
+    <field name="name">استمارة 62 ع.ح — السلفة الحكومية</field>
+    <field name="model">port_said.advance</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_advances.rpt_advance_form62</field>
+    <field name="binding_model_id" ref="model_port_said_advance"/>
+    <field name="binding_type">report</field>
+  </record>
+  <record id="action_rpt_bank_guarantee" model="ir.actions.report">
+    <field name="name">خطاب الضمان البنكي</field>
+    <field name="model">port_said.bank.guarantee</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_advances.rpt_bank_guarantee</field>
+    <field name="binding_model_id" ref="model_port_said_bank_guarantee"/>
+    <field name="binding_type">report</field>
+  </record>
+  <record id="action_rpt_advances_register" model="ir.actions.report">
+    <field name="name">سجل السلف الحكومية</field>
+    <field name="model">port_said.advance</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_advances.rpt_advances_register</field>
+    <field name="binding_model_id" ref="model_port_said_advance"/>
+    <field name="binding_type">report</field>
+  </record>
+</odoo>

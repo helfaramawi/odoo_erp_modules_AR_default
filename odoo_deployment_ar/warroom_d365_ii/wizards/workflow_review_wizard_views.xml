@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="view_x_warroom_d365_reverse_engineering_workflow_review_wizard" model="ir.ui.view">
+    <field name="name">x_warroom_d365_reverse_engineering.workflow.review.wizard</field>
+    <field name="model">x_warroom_model_1</field>
+    <field name="arch" type="xml">
+      <form string="Workflow Review">
+        <group>
+          <label string="This wizard is a scaffold for review/approval commentary capture."/>
+        </group>
+      </form>
+    </field>
+  </record>
+</odoo>

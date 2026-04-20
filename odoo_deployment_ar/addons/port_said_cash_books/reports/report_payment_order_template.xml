@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <template id="report_payment_order">
+    <t t-call="web.html_container">
+      <t t-foreach="docs" t-as="po">
+        <t t-call="web.external_layout">
+          <div class="page" dir="rtl"
+               style="font-family:'Traditional Arabic',Arial,serif;">
+
+            <div style="text-align:center; margin-bottom:15px;">
+              <h3 style="margin:0;">أمر دفع وارد</h3>
+              <div style="font-size:11px;">استمارة 78 ع.ح - محافظة بورسعيد</div>
+            </div>
+
+            <table style="width:100%; font-size:11px; border-collapse:collapse;
+                          border:1px solid #000;">
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0; width:30%;">
+                  <strong>الرقم المسلسل بالدفتر</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="po.sequence_number or '—'"/>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  <strong>رقم أمر الدفع المُصدِر</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="po.po_reference"/>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  <strong>الجهة المُصدِرة</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="po.issuing_entity_name"/>
+                  (<t t-out="dict(po._fields['issuing_entity'].selection).get(po.issuing_entity)"/>)
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  <strong>المبلغ</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000; font-weight:bold;">
+                  <t t-out="'%.2f' % po.amount"/>
+                  <span t-field="po.currency_id.symbol"/>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  <strong>تاريخ الإصدار</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="po.issue_date"/>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  <strong>تاريخ الاستلام</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="po.received_date"/>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  <strong>تاريخ التحصيل</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="po.cleared_date or '—'"/>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  <strong>آلية الدفع</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="dict(po._fields['payment_method'].selection).get(po.payment_method)"/>
+                  <t t-if="po.cheque_id">
+                    — شيك رقم
+                    <t t-out="po.cheque_id.cheque_number"/>
+                    (مسحوب على <t t-out="po.cheque_id.drawn_on_bank"/>)
+                  </t>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  <strong>بند الموازنة</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="po.budget_line or '—'"/>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  <strong>الحساب الدائن</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="po.account_id.code or '—'"/>
+                  <t t-if="po.account_id"> — <t t-out="po.account_id.name"/></t>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  <strong>الحالة</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000; font-weight:bold;">
+                  <t t-out="dict(po._fields['state'].selection).get(po.state)"/>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0; vertical-align:top;">
+                  <strong>الغرض</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="po.purpose"/>
+                </td>
+              </tr>
+              <tr t-if="po.notes">
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0; vertical-align:top;">
+                  <strong>ملاحظات</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="po.notes"/>
+                </td>
+              </tr>
+            </table>
+
+            <!-- Signatures -->
+            <table style="width:100%; margin-top:40px; font-size:10px;"
+                   class="table-borderless">
+              <tr>
+                <td style="text-align:center;">
+                  <div>قيَّده بالدفتر</div>
+                  <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                    <t t-out="po.registered_by.name or '............................'"/>
+                  </div>
+                </td>
+                <td style="text-align:center;">
+                  <div>رئيس الحسابات</div>
+                  <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                    <t t-out="po.accounts_head_id.name or '............................'"/>
+                  </div>
+                </td>
+                <td style="text-align:center;">
+                  <div>الختم الرسمي</div>
+                  <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                    ............................
+                  </div>
+                </td>
+              </tr>
+            </table>
+
+          </div>
+          <p style="page-break-after: always;"/>
+        </t>
+      </t>
+    </t>
+  </template>
+
+</odoo>

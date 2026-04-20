@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="seq_x_warroom_d365_reverse_engineering" model="ir.sequence">
+    <field name="name">Warroom D365 Reverse Engineering Sequence</field>
+    <field name="code">x_warroom_d365_reverse_engineering</field>
+    <field name="prefix">X_WARROOM_D365_REVERSE_ENGINEERING/%(year)s/</field>
+    <field name="padding">5</field>
+  </record>
+</odoo>

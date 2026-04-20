@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- تاب الفاتورة الإلكترونية ETA ضمن قائمة الحسابات -->
+  <menuitem id="menu_ps_eta_root"
+            name="🧾 الفاتورة الإلكترونية ETA"
+            parent="port_said_menu.menu_ps_20_accts"
+            sequence="90"/>
+
+  <menuitem id="menu_ps_eta_invoices"
+            name="سجلات الفواتير الإلكترونية"
+            parent="menu_ps_eta_root"
+            action="l10n_eg_eta_invoice.action_eta_invoices"
+            sequence="10"/>
+
+  <menuitem id="menu_ps_eta_invalid"
+            name="⚠ فواتير مرفوضة"
+            parent="menu_ps_eta_root"
+            action="l10n_eg_eta_invoice.action_eta_invoices_invalid"
+            sequence="20"/>
+
+  <menuitem id="menu_ps_eta_config"
+            name="⚙ إعدادات ETA"
+            parent="menu_ps_eta_root"
+            action="l10n_eg_eta_invoice.action_eta_config"
+            sequence="90"
+            groups="account.group_account_manager"/>
+
+</odoo>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_revenue_book_tree" model="ir.ui.view">
+    <field name="name">port_said.revenue.book.tree</field>
+    <field name="model">port_said.revenue.book</field>
+    <field name="arch" type="xml">
+      <tree string="دفاتر الإيرادات والمصروفات">
+        <field name="sequence" widget="handle"/>
+        <field name="form_number"/>
+        <field name="name"/>
+        <field name="direction"/>
+        <field name="grouping_level"/>
+        <field name="bab_range_from"/>
+        <field name="bab_range_to"/>
+        <field name="folio_count"/>
+        <field name="active" widget="boolean_toggle"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_revenue_book_form" model="ir.ui.view">
+    <field name="name">port_said.revenue.book.form</field>
+    <field name="model">port_said.revenue.book</field>
+    <field name="arch" type="xml">
+      <form>
+        <header>
+          <button name="action_print_book" type="object" string="طباعة الدفتر" class="oe_highlight"/>
+          <button name="action_open_folios" type="object" string="فتح الفوليوهات"/>
+        </header>
+        <sheet>
+          <div class="oe_button_box">
+            <button name="action_open_folios" type="object" class="oe_stat_button" icon="fa-book">
+              <field name="folio_count" widget="statinfo" string="فوليوهات"/>
+            </button>
+          </div>
+          <div class="oe_title">
+            <label for="name"/>
+            <h1><field name="name" placeholder="اسم الدفتر القانوني"/></h1>
+          </div>
+          <group>
+            <group string="الهوية">
+              <field name="code"/>
+              <field name="form_number"/>
+              <field name="sequence"/>
+              <field name="active"/>
+              <field name="company_id" groups="base.group_multi_company"/>
+            </group>
+            <group string="التسلسل والطباعة">
+              <field name="sequence_id"/>
+              <field name="print_template"/>
+            </group>
+          </group>
+          <group string="معايير التصنيف">
+            <group>
+              <field name="direction"/>
+              <field name="grouping_level"/>
+            </group>
+            <group>
+              <label for="bab_range_from" string="نطاق الباب"/>
+              <div>
+                من <field name="bab_range_from" class="oe_inline" style="width:40px;"/>
+                إلى <field name="bab_range_to" class="oe_inline" style="width:40px;"/>
+              </div>
+            </group>
+          </group>
+          <group string="فلاتر">
+            <field name="journal_ids" widget="many2many_tags" placeholder="كل اليوميات"/>
+            <field name="include_unposted"/>
+          </group>
+          <notebook>
+            <page string="ملاحظات">
+              <field name="notes"/>
+            </page>
+          </notebook>
+        </sheet>
+        <div class="oe_chatter">
+          <field name="message_follower_ids"/>
+          <field name="message_ids"/>
+        </div>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_revenue_book" model="ir.actions.act_window">
+    <field name="name">دفاتر الإيرادات والمصروفات</field>
+    <field name="res_model">port_said.revenue.book</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+</odoo>

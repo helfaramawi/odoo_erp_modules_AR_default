@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- معاينة استمارة 50 ع.ح -->
+    <record id="action_report_form50_preview" model="ir.actions.report">
+        <field name="name">استمارة 50 ع.ح — معاينة</field>
+        <field name="model">port_said.daftar55</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">port_said_form50_print.form50_preview_template</field>
+        <field name="report_file">port_said_form50_print.form50_preview_template</field>
+        <field name="binding_model_id" ref="port_said_daftar55.model_port_said_daftar55"/>
+        <field name="paperformat_id" ref="port_said_form50_print.paperformat_form50_official"/>
+        <field name="print_report_name">'form50_preview_%s' % (object.sequence_number or object.id)</field>
+        <field name="attachment_use" eval="False"/>
+        <field name="attachment"></field>
+        <field name="groups_id" eval="[(4, ref('port_said_form50_print.group_form50_preview'))]"/>
+    </record>
+
+    <!-- طباعة نهائية استمارة 50 ع.ح -->
+    <record id="action_report_form50_final" model="ir.actions.report">
+        <field name="name">استمارة 50 ع.ح — نهائية</field>
+        <field name="model">port_said.daftar55</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">port_said_form50_print.form50_final_template</field>
+        <field name="report_file">port_said_form50_print.form50_final_template</field>
+        <field name="binding_model_id" ref="port_said_daftar55.model_port_said_daftar55"/>
+        <field name="paperformat_id" ref="port_said_form50_print.paperformat_form50_official"/>
+        <field name="print_report_name">'50AH_%s' % (object.sequence_number or object.id)</field>
+        <field name="attachment_use" eval="False"/>
+        <field name="attachment"></field>
+        <field name="groups_id" eval="[(4, ref('account.group_account_manager'))]"/>
+    </record>
+</odoo>

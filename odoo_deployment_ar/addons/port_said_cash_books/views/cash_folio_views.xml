@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_cash_folio_tree" model="ir.ui.view">
+    <field name="name">port_said.cash.folio.tree</field>
+    <field name="model">port_said.cash.folio</field>
+    <field name="arch" type="xml">
+      <tree string="فوليوهات النقدية والبنك"
+            decoration-info="state=='draft'"
+            decoration-warning="state=='reconciled' or abs(reconciliation_variance) > 0.01"
+            decoration-success="state=='audited'"
+            decoration-muted="state=='archived'">
+        <field name="folio_number"/>
+        <field name="book_id"/>
+        <field name="fiscal_year"/>
+        <field name="period_month"/>
+        <field name="opening_balance" sum="إجمالي"/>
+        <field name="total_receipts" sum="إجمالي"/>
+        <field name="total_payments" sum="إجمالي"/>
+        <field name="closing_balance" sum="إجمالي"/>
+        <field name="reconciliation_variance"/>
+        <field name="state"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_cash_folio_form" model="ir.ui.view">
+    <field name="name">port_said.cash.folio.form</field>
+    <field name="model">port_said.cash.folio</field>
+    <field name="arch" type="xml">
+      <form>
+        <header>
+          <button name="action_recompute" type="object" string="إعادة حساب"
+                  invisible="state in ['audited','archived']"/>
+          <button name="action_reconcile" type="object"
+                  string="مطابقة مع كشف البنك" class="oe_highlight"
+                  invisible="state != 'draft'"/>
+          <button name="action_close" type="object" string="إقفال شهري"
+                  class="oe_highlight"
+                  invisible="state != 'reconciled'"/>
+          <button name="action_audit" type="object" string="اعتماد المراجعة"
+                  invisible="state != 'closed'"
+                  groups="account.group_account_manager"/>
+          <button name="action_reopen" type="object" string="إعادة فتح"
+                  invisible="state == 'draft'"
+                  groups="account.group_account_manager"
+                  confirm="إعادة فتح إجراء استثنائي يُسجَّل."/>
+          <field name="state" widget="statusbar"
+                 statusbar_visible="draft,reconciled,closed,audited,archived"/>
+        </header>
+        <sheet>
+          <div class="oe_title">
+            <label for="folio_number" string="رقم الفولية"/>
+            <h1><field name="folio_number" readonly="1"/></h1>
+          </div>
+          <group>
+            <group>
+              <field name="book_id" readonly="state != 'draft'"/>
+              <field name="fiscal_year" readonly="state != 'draft'"/>
+              <field name="period_month" readonly="state != 'draft'"/>
+              <field name="date_from" readonly="state != 'draft'"/>
+              <field name="date_to" readonly="state != 'draft'"/>
+            </group>
+            <group>
+              <field name="previous_folio_id" readonly="1"/>
+              <field name="line_count" readonly="1"/>
+              <field name="currency_id" invisible="1"/>
+            </group>
+          </group>
+          <group string="حركة الشهر" col="4">
+            <field name="opening_balance"
+                   readonly="state != 'draft'"/>
+            <field name="total_receipts" readonly="1"/>
+            <field name="total_payments" readonly="1"/>
+            <field name="closing_balance" readonly="1"/>
+          </group>
+          <group string="مطابقة البنك" col="3">
+            <field name="bank_statement_balance"
+                   readonly="state not in ['draft', 'reconciled']"/>
+            <field name="reconciliation_variance" readonly="1"
+                   decoration-danger="abs(reconciliation_variance) > 0.01"/>
+            <div colspan="1" class="alert alert-warning"
+                 invisible="abs(reconciliation_variance) &lt; 0.01 or state in ['audited','archived']">
+              فرق مطابقة غير صفري — لا يمكن الإقفال
+            </div>
+          </group>
+          <notebook>
+            <page string="سطور كشف الحساب">
+              <field name="statement_line_ids" readonly="1">
+                <tree>
+                  <field name="date"/>
+                  <field name="ref"/>
+                  <field name="payment_ref"/>
+                  <field name="partner_id"/>
+                  <field name="amount"/>
+                  <field name="is_reconciled"/>
+                </tree>
+              </field>
+            </page>
+            <page string="التواقيع والإقفال">
+              <group>
+                <group>
+                  <field name="cashier_signed_by"/>
+                  <field name="accounts_head_signed_by"/>
+                </group>
+                <group>
+                  <field name="closed_by" readonly="1"/>
+                  <field name="closed_date" readonly="1"/>
+                </group>
+              </group>
+            </page>
+            <page string="ملاحظات">
+              <field name="notes"/>
+            </page>
+          </notebook>
+        </sheet>
+        <div class="oe_chatter">
+          <field name="message_follower_ids"/>
+          <field name="activity_ids"/>
+          <field name="message_ids"/>
+        </div>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_cash_folio" model="ir.actions.act_window">
+    <field name="name">فوليوهات النقدية والبنك</field>
+    <field name="res_model">port_said.cash.folio</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+</odoo>

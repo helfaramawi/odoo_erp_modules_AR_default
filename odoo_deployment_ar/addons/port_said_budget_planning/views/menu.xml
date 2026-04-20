@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_budget_planning"
+              name="الموازنة التقديرية"
+              parent="port_said_menu.menu_ps_20_accts"
+              action="port_said_budget_planning.action_budget_plans"
+              sequence="50"/>
+</odoo>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <!-- محضر لجنة الفحص form -->
+  <record id="view_inspection_form" model="ir.ui.view">
+    <field name="name">port_said.inspection.form</field>
+    <field name="model">port_said.inspection.committee</field>
+    <field name="arch" type="xml">
+      <form string="محضر لجنة الفحص — نموذج 12 مخازن">
+        <header>
+          <button name="action_sign"   string="اعتماد المحضر" type="object" class="btn-success" invisible="state != 'draft'"/>
+          <button name="action_print_inspection" string="طباعة المحضر" type="object" class="btn-secondary" invisible="state == 'draft'"/>
+          <button name="action_finalize_and_attach_to_dossier" string="إرفاق بالاضبارة" type="object" invisible="state != 'signed'"/>
+          <button name="action_print_committee" string="طباعة المحضر" type="object" class="btn-secondary"
+                  invisible="state == 'draft'"
+                  title="الطباعة متاحة بعد التوقيع"/>
+          <field name="state" widget="statusbar" statusbar_visible="draft,signed,finalized"/>
+        </header>
+        <sheet>
+          <div class="oe_title"><h1><field name="committee_number" readonly="1"/></h1></div>
+          <group>
+            <group string="بيانات الفحص">
+              <field name="date_inspection"/>
+              <field name="purchase_order_id"/>
+              <field name="dossier_id"/>
+              <field name="specs_conformity" widget="radio"/>
+              <field name="result"/>
+            </group>
+            <group string="أعضاء اللجنة">
+              <field name="chairman_id"/>
+              <field name="member1_id"/>
+              <field name="member2_id"/>
+              <field name="storekeeper_id"/>
+              <field name="storekeeper_signed"/>
+            </group>
+          </group>
+          <group string="بيانات الاستلام">
+            <group>
+              <field name="quantity_ordered"/>
+              <field name="quantity_received"/>
+              <field name="quantity_accepted"/>
+              <field name="quantity_rejected" readonly="1"/>
+            </group>
+            <group>
+              <field name="addition_permit_no"/>
+              <field name="addition_permit_date"/>
+              <field name="stock_location_id"/>
+            </group>
+          </group>
+          <field name="items_received" placeholder="الأصناف المُستلمة وأوصافها..."/>
+          <field name="storekeeper_declaration" placeholder="إقرار أمين المخازن..."/>
+          <field name="rejection_reason" invisible="specs_conformity == 'conforming'"/>
+        </sheet>
+        <chatter/>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_inspection" model="ir.actions.act_window">
+    <field name="name">محاضر لجنة الفحص (نموذج 12)</field>
+    <field name="res_model">port_said.inspection.committee</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+  <record id="action_warehouse_addition" model="ir.actions.act_window">
+    <field name="name">أذونات الإضافة (نموذج 1)</field>
+    <field name="res_model">port_said.warehouse.addition</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+
+  <menuitem id="menu_ps_warehouse"
+            name="المستودعات والمخازن"
+            parent="port_said_menu.menu_ps_40_inventory"
+            action="port_said_scm_warehouse.action_inspection"
+            sequence="41"/>
+
+  <menuitem id="menu_ps_warehouse_addition" name="أذونات الإضافة (نموذج 1)"
+            parent="menu_ps_warehouse"
+            action="port_said_scm_warehouse.action_warehouse_addition" sequence="2"/>
+</odoo>

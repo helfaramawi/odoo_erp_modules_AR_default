@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_form69_form" model="ir.ui.view">
+    <field name="name">port_said.form69.form</field>
+    <field name="model">port_said.form69</field>
+    <field name="arch" type="xml">
+      <form string="استمارة 69 ع.ح — الحسبة اليومية">
+        <header>
+          <button name="action_sign"  string="✅ اعتماد الحسبة" type="object" class="btn-success"
+                  invisible="state != 'done'"/>
+          <button name="action_print" string="طباعة استمارة 69" type="object" class="btn-secondary"
+                  invisible="state != 'signed'"
+                  title="الطباعة متاحة بعد الاعتماد فقط"/>
+          <field name="state" widget="statusbar" statusbar_visible="draft,done,signed"/>
+        </header>
+        <sheet>
+          <div class="oe_title">
+            <h1><field name="reckoning_date" readonly="1"/></h1>
+            <div style="color:#888; font-size:13px;">
+              <field name="reckoning_date_hijri" readonly="1"/>
+            </div>
+          </div>
+          <group>
+            <group string="بيانات الفترة">
+              <field name="reckoning_date"/>
+              <field name="reckoning_date_hijri" readonly="1"/>
+              <field name="fiscal_year"/>
+              <field name="fiscal_month"/>
+            </group>
+            <group string="الأرصدة">
+              <field name="opening_balance"/>
+              <field name="sarfiyat_total"/>
+              <field name="taswiyat_total"/>
+              <field name="closing_balance" readonly="1"/>
+            </group>
+          </group>
+          <group string="التطابق مع دفتر 55 ع.ح">
+            <group>
+              <field name="daftar55_count"/>
+              <field name="daftar55_total"/>
+            </group>
+            <group>
+              <field name="match_ok" widget="boolean_toggle" readonly="1"/>
+              <field name="is_balanced" widget="boolean_toggle" readonly="1"/>
+            </group>
+          </group>
+          <div class="alert alert-danger" invisible="match_ok">
+            <strong>تحذير: إجمالي الصرفيات لا يتطابق مع دفتر 55 ع.ح — يجب المراجعة قبل الاعتماد</strong>
+          </div>
+          <group string="الاعتماد">
+            <field name="signed_by" readonly="1"/>
+            <field name="sign_date" readonly="1"/>
+          </group>
+          <field name="notes"/>
+        </sheet>
+        <chatter/>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_form69_list" model="ir.ui.view">
+    <field name="name">port_said.form69.list</field>
+    <field name="model">port_said.form69</field>
+    <field name="arch" type="xml">
+      <tree string="استمارة 69 - الحسبة اليومية" decoration-success="match_ok and is_balanced" decoration-danger="not match_ok">
+        <field name="is_balanced" column_invisible="1"/>
+        <field name="match_ok" column_invisible="1"/>
+        <field name="reckoning_date"/>
+        <field name="opening_balance"/>
+        <field name="sarfiyat_total"/>
+        <field name="taswiyat_total"/>
+        <field name="closing_balance"/>
+        <field name="daftar55_count"/>
+        <field name="match_ok" widget="boolean_toggle" string="تطابق 55"/>
+        <field name="state" widget="badge" decoration-success="state=='signed'" decoration-warning="state=='done'"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_form69_form" model="ir.ui.view">
+    <field name="name">port_said.form69.form</field>
+    <field name="model">port_said.form69</field>
+    <field name="arch" type="xml">
+      <form string="استمارة 69 ع.ح — الحسبة اليومية">
+        <header>
+          <button name="action_sign"  string="اعتماد الحسبة" type="object" class="btn-success"
+                  invisible="state != 'done'"/>
+          <button name="action_print" string="طباعة"          type="object" class="btn-secondary"
+                  invisible="state != 'signed'"/>
+          <field name="state" widget="statusbar" statusbar_visible="draft,done,signed"/>
+        </header>
+        <sheet>
+          <div class="oe_title">
+            <h1>
+              <field name="reckoning_date"/>
+              <span style="font-size:14px; color:#888; margin-right:12px;">
+                (<field name="reckoning_date_hijri" readonly="1"/>)
+              </span>
+            </h1>
+          </div>
+          <group>
+            <group string="بيانات الحسبة">
+              <field name="fiscal_year"/>
+              <field name="fiscal_month"/>
+              <field name="opening_balance"/>
+              <field name="sarfiyat_total"/>
+              <field name="taswiyat_total"/>
+              <field name="closing_balance" readonly="1"/>
+            </group>
+            <group string="مطابقة دفتر 55 ع.ح">
+              <field name="daftar55_count"/>
+              <field name="daftar55_total"/>
+              <field name="match_ok" widget="boolean_toggle" readonly="1"/>
+            </group>
+          </group>
+          <group string="الاعتماد">
+            <field name="signed_by" readonly="1"/>
+            <field name="sign_date" readonly="1"/>
+          </group>
+          <div class="alert alert-danger" invisible="match_ok">
+            <strong>تحذير: الإجماليات لا تتطابق مع دفتر 55 ع.ح — يرجى المراجعة قبل الاعتماد</strong>
+          </div>
+          <field name="notes"/>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_form69" model="ir.actions.act_window">
+    <field name="name">استمارة 69 - الحسبة اليومية</field>
+    <field name="res_model">port_said.form69</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+    <!-- Menu managed by port_said_menu -->
+
+  <menuitem id="menu_ps_form69"
+            name="استمارة 69 — الحسبة اليومية"
+            parent="port_said_menu.menu_ps_20_accts"
+            action="port_said_form69.action_form69"
+            sequence="20"/>
+</odoo>

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ══ كشف الزيادة والعجز — Surplus/Deficit Report ════════════════════ -->
+    <record id="action_report_surplus_deficit" model="ir.actions.report">
+        <field name="name">كشف الزيادة والعجز</field>
+        <field name="model">stock.stocktaking.session</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">stock_stocktaking_eg.report_surplus_deficit_template</field>
+        <field name="print_report_name">'كشف الزيادة والعجز - ' + (object.name or '')</field>
+        <field name="binding_model_id" ref="model_stock_stocktaking_session"/>
+        <field name="binding_type">report</field>
+</record>
+
+    <template id="report_surplus_deficit_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page" style="direction:rtl;font-family:'Cairo',Arial,sans-serif;font-size:11pt;">
+                        <div style="text-align:center;border-bottom:2px solid #000;padding-bottom:10px;margin-bottom:14px;">
+                            <h2 style="margin:0;">الديوان العام لمحافظة بورسعيد — إدارة المخازن</h2>
+                            <h3 style="margin:4px 0;">كشف الزيادة والعجز</h3>
+                            <div style="display:flex;justify-content:space-between;margin-top:6px;">
+                                <span>محضر الجرد رقم: <t t-esc="doc.name"/></span>
+                                <span>التاريخ: <t t-esc="doc.stocktaking_date"/></span>
+                                <span>المستودع: <t t-esc="doc.warehouse_id.name"/></span>
+                            </div>
+                        </div>
+
+                        <!-- Surplus Section -->
+                        <h3 style="color:green;margin-bottom:8px;">أولاً: الأصناف ذات الزيادة (زيادة في الجرد)</h3>
+                        <table style="width:100%;border-collapse:collapse;font-size:10pt;margin-bottom:16px;">
+                            <thead>
+                                <tr style="background:#c8e6c9;">
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;">م</th>
+                                    <th style="border:1px solid #000;padding:6px;">اسم الصنف</th>
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;">بالسجلات</th>
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;">الفعلي</th>
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;">الزيادة</th>
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;">القيمة</th>
+                                    <th style="border:1px solid #000;padding:6px;">ملاحظات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="surplus_lines" t-value="doc.line_ids.filtered(lambda l: l.difference_type == 'surplus')"/>
+                                <t t-if="surplus_lines">
+                                    <t t-foreach="surplus_lines" t-as="line">
+                                        <tr>
+                                            <td style="border:1px solid #000;padding:5px;text-align:center;"><t t-esc="line_index + 1"/></td>
+                                            <td style="border:1px solid #000;padding:5px;"><t t-esc="line.product_id.name"/></td>
+                                            <td style="border:1px solid #000;padding:5px;text-align:center;"><t t-esc="'%.2f' % line.system_qty"/></td>
+                                            <td style="border:1px solid #000;padding:5px;text-align:center;"><t t-esc="'%.2f' % line.physical_qty"/></td>
+                                            <td style="border:1px solid #000;padding:5px;text-align:center;font-weight:bold;color:green;"><t t-esc="'%.2f' % line.difference_qty"/></td>
+                                            <td style="border:1px solid #000;padding:5px;text-align:center;color:green;"><t t-esc="'%.2f' % line.difference_value"/></td>
+                                            <td style="border:1px solid #000;padding:5px;font-size:9pt;"><t t-esc="line.notes or ''"/></td>
+                                        </tr>
+                                    </t>
+                                    <tr style="background:#e8f5e9;font-weight:bold;">
+                                        <td colspan="5" style="border:1px solid #000;padding:5px;text-align:center;">إجمالي الزيادة</td>
+                                        <td style="border:1px solid #000;padding:5px;text-align:center;color:green;"><t t-esc="'%.2f' % doc.total_surplus_value"/></td>
+                                        <td style="border:1px solid #000;"></td>
+                                    </tr>
+                                </t>
+                                <t t-else="">
+                                    <tr><td colspan="7" style="border:1px solid #000;padding:8px;text-align:center;color:#777;">لا توجد أصناف بزيادة</td></tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <!-- Deficit Section -->
+                        <h3 style="color:red;margin-bottom:8px;">ثانياً: الأصناف ذات العجز (نقص في الجرد)</h3>
+                        <table style="width:100%;border-collapse:collapse;font-size:10pt;margin-bottom:16px;">
+                            <thead>
+                                <tr style="background:#ffcdd2;">
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;">م</th>
+                                    <th style="border:1px solid #000;padding:6px;">اسم الصنف</th>
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;">بالسجلات</th>
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;">الفعلي</th>
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;">العجز</th>
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;">القيمة</th>
+                                    <th style="border:1px solid #000;padding:6px;">ملاحظات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="deficit_lines" t-value="doc.line_ids.filtered(lambda l: l.difference_type == 'deficit')"/>
+                                <t t-if="deficit_lines">
+                                    <t t-foreach="deficit_lines" t-as="line">
+                                        <tr>
+                                            <td style="border:1px solid #000;padding:5px;text-align:center;"><t t-esc="line_index + 1"/></td>
+                                            <td style="border:1px solid #000;padding:5px;"><t t-esc="line.product_id.name"/></td>
+                                            <td style="border:1px solid #000;padding:5px;text-align:center;"><t t-esc="'%.2f' % line.system_qty"/></td>
+                                            <td style="border:1px solid #000;padding:5px;text-align:center;"><t t-esc="'%.2f' % line.physical_qty"/></td>
+                                            <td style="border:1px solid #000;padding:5px;text-align:center;font-weight:bold;color:red;"><t t-esc="'%.2f' % abs(line.difference_qty)"/></td>
+                                            <td style="border:1px solid #000;padding:5px;text-align:center;color:red;"><t t-esc="'%.2f' % abs(line.difference_value)"/></td>
+                                            <td style="border:1px solid #000;padding:5px;font-size:9pt;"><t t-esc="line.notes or ''"/></td>
+                                        </tr>
+                                    </t>
+                                    <tr style="background:#ffebee;font-weight:bold;">
+                                        <td colspan="5" style="border:1px solid #000;padding:5px;text-align:center;">إجمالي العجز</td>
+                                        <td style="border:1px solid #000;padding:5px;text-align:center;color:red;"><t t-esc="'%.2f' % doc.total_deficit_value"/></td>
+                                        <td style="border:1px solid #000;"></td>
+                                    </tr>
+                                </t>
+                                <t t-else="">
+                                    <tr><td colspan="7" style="border:1px solid #000;padding:8px;text-align:center;color:#777;">لا توجد أصناف بعجز</td></tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <!-- Net summary -->
+                        <table style="width:60%;margin-right:auto;border-collapse:collapse;font-size:11pt;">
+                            <tr style="background:#e0e0e0;font-weight:bold;">
+                                <td style="border:1px solid #000;padding:7px;">إجمالي قيمة الزيادة</td>
+                                <td style="border:1px solid #000;padding:7px;text-align:center;color:green;"><t t-esc="'%.2f' % doc.total_surplus_value"/> جنيه</td>
+                            </tr>
+                            <tr style="background:#e0e0e0;font-weight:bold;">
+                                <td style="border:1px solid #000;padding:7px;">إجمالي قيمة العجز</td>
+                                <td style="border:1px solid #000;padding:7px;text-align:center;color:red;"><t t-esc="'%.2f' % doc.total_deficit_value"/> جنيه</td>
+                            </tr>
+                            <tr style="background:#bdbdbd;font-weight:bold;">
+                                <td style="border:1px solid #000;padding:7px;">صافي الفرق</td>
+                                <td style="border:1px solid #000;padding:7px;text-align:center;">
+                                    <t t-esc="'%.2f' % (doc.total_surplus_value - doc.total_deficit_value)"/> جنيه
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div style="margin-top:20px;text-align:left;">
+                            <p>رئيس لجنة الجرد: <t t-esc="doc.committee_chairman_id.name if doc.committee_chairman_id else '........................'"/></p>
+                            <p style="margin-top:15px;">التوقيع: .........................  #160;#160; #160;#160; #160;#160; التاريخ: <t t-esc="doc.stocktaking_date"/></p>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

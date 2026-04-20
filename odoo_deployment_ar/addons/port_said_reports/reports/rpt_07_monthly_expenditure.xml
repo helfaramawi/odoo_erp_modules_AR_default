@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="rpt_monthly_expenditure">
+  <t t-call="web.html_container">
+    <t t-foreach="docs" t-as="doc">
+      <t t-call="web.external_layout">
+        <div class="page" style="direction:rtl;font-family:'Noto Kufi Arabic',Cairo,Arial,sans-serif;font-size:11px;">
+          <!-- ══ الهيدر الرسمي ══ -->
+          <t t-call="port_said_reports.gov_page_style"/>
+          <t t-set="dept_line" t-value="'إدارة الحسابات'"/>
+          <t t-call="port_said_reports.gov_header"/>
+          <h2 style="text-align:center;font-size:13pt;text-decoration:underline;margin:10px 0 14px;">
+            كشف المصروفات الشهرية
+          </h2>
+          <div style="font-size:9pt;color:#444;margin-bottom:10px;text-align:center;">
+            الفترة من <t t-esc="doc.date_from"/> إلى <t t-esc="doc.date_to"/>
+            <t t-if="doc.fiscal_year"> — السنة المالية <t t-esc="doc.fiscal_year"/></t>
+          </div>
+
+          <t t-set="recs" t-value="doc._get_daftar55_records()"/>
+          <t t-set="months_ar" t-value="{'01':'يناير','02':'فبراير','03':'مارس','04':'أبريل','05':'مايو','06':'يونيو','07':'يوليو','08':'أغسطس','09':'سبتمبر','10':'أكتوبر','11':'نوفمبر','12':'ديسمبر'}"/>
+
+          <!-- تجميع حسب الشهر -->
+          <table style="width:100%;border-collapse:collapse;font-size:10px;margin-bottom:14px;">
+            <thead>
+              <tr style="background:#1F497D;color:white;">
+                <th style="padding:6px;border:1px solid #ddd;">الشهر</th>
+                <th style="padding:6px;border:1px solid #ddd;text-align:center;">عدد المعاملات</th>
+                <th style="padding:6px;border:1px solid #ddd;text-align:left;">إجمالي الأصل</th>
+                <th style="padding:6px;border:1px solid #ddd;text-align:left;">إجمالي الاستقطاعات</th>
+                <th style="padding:6px;border:1px solid #ddd;text-align:left;">صافي المدفوعات</th>
+                <th style="padding:6px;border:1px solid #ddd;text-align:center;">% من الإجمالي</th>
+              </tr>
+            </thead>
+            <tbody>
+              <t t-set="total_all" t-value="sum(r.amount_gross or 0 for r in recs)"/>
+              <t t-foreach="['01','02','03','04','05','06','07','08','09','10','11','12']" t-as="m">
+                <t t-set="m_recs" t-value="recs.filtered(lambda r: r.date_received and str(r.date_received)[5:7] == m)"/>
+                <t t-if="len(m_recs) > 0">
+                  <t t-set="m_gross" t-value="sum(r.amount_gross or 0 for r in m_recs)"/>
+                  <t t-set="m_ded" t-value="sum(r.total_deductions or 0 for r in m_recs)"/>
+                  <t t-set="m_net" t-value="sum(r.amount_net or 0 for r in m_recs)"/>
+                  <t t-set="m_pct" t-value="round(m_gross / total_all * 100, 1) if total_all else 0"/>
+                  <tr t-attf-style="background:{{ '#EBF2FB' if m_index % 2 == 0 else 'white' }};">
+                    <td style="padding:5px;border:1px solid #ddd;font-weight:bold;color:#1F497D;"><t t-esc="months_ar.get(m, m)"/></td>
+                    <td style="padding:5px;border:1px solid #ddd;text-align:center;"><t t-esc="len(m_recs)"/></td>
+                    <td style="padding:5px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(m_gross)"/></td>
+                    <td style="padding:5px;border:1px solid #ddd;text-align:left;color:#C55A11;"><t t-esc="'{:,.2f}'.format(m_ded)"/></td>
+                    <td style="padding:5px;border:1px solid #ddd;text-align:left;font-weight:bold;color:#375623;"><t t-esc="'{:,.2f}'.format(m_net)"/></td>
+                    <td style="padding:5px;border:1px solid #ddd;text-align:center;">
+                      <div style="display:inline-block;background:#1F497D;height:8px;border-radius:2px;vertical-align:middle;"
+                           t-attf-style="width:{{ m_pct }}px;max-width:80px;"/>
+                      <span style="margin-right:4px;font-size:9px;"> <t t-esc="m_pct"/>%</span>
+                    </td>
+                  </tr>
+                </t>
+              </t>
+            </tbody>
+            <tfoot>
+              <tr style="background:#1F497D;color:white;font-weight:bold;">
+                <td style="padding:6px;border:1px solid #ddd;">الإجمالي السنوي</td>
+                <td style="padding:6px;border:1px solid #ddd;text-align:center;"><t t-esc="len(recs)"/></td>
+                <td style="padding:6px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(sum(r.amount_gross or 0 for r in recs))"/></td>
+                <td style="padding:6px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(sum(r.total_deductions or 0 for r in recs))"/></td>
+                <td style="padding:6px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(sum(r.amount_net or 0 for r in recs))"/></td>
+                <td style="padding:6px;border:1px solid #ddd;text-align:center;">100%</td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <!-- تجميع حسب المصلحة -->
+          <div style="background:#1F497D;color:white;padding:6px 10px;font-weight:bold;border-radius:4px 4px 0 0;">توزيع المصروفات حسب المصلحة</div>
+          <t t-set="depts" t-value="list(set(r.department_name for r in recs if r.department_name))"/>
+          <table style="width:100%;border-collapse:collapse;font-size:10px;margin-bottom:14px;">
+            <thead>
+              <tr style="background:#2E75B6;color:white;">
+                <th style="padding:5px;border:1px solid #ddd;">المصلحة / الإدارة</th>
+                <th style="padding:5px;border:1px solid #ddd;text-align:center;">عدد المعاملات</th>
+                <th style="padding:5px;border:1px solid #ddd;text-align:left;">إجمالي الأصل</th>
+                <th style="padding:5px;border:1px solid #ddd;text-align:left;">صافي المدفوعات</th>
+              </tr>
+            </thead>
+            <tbody>
+              <t t-foreach="sorted(depts)" t-as="dept">
+                <t t-set="d_recs" t-value="recs.filtered(lambda r: r.department_name == dept)"/>
+                <tr t-attf-style="background:{{ '#f5f5f5' if dept_index % 2 == 0 else 'white' }};">
+                  <td style="padding:5px;border:1px solid #ddd;font-weight:bold;"><t t-esc="dept"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;text-align:center;"><t t-esc="len(d_recs)"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(sum(r.amount_gross or 0 for r in d_recs))"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;text-align:left;font-weight:bold;color:#375623;"><t t-esc="'{:,.2f}'.format(sum(r.amount_net or 0 for r in d_recs))"/></td>
+                </tr>
+              </t>
+            </tbody>
+          </table>
+
+          <div style="margin-top:30px;">
+            <table style="width:100%;border-collapse:collapse;">
+              <tr>
+                <td style="width:33%;text-align:center;padding:14px;border:1px solid #ccc;"><div style="font-weight:bold;color:#1F497D;">رئيس الحسابات</div><div style="margin-top:25px;border-top:1px solid #999;padding-top:4px;font-size:9px;color:#666;">الاسم والتوقيع</div></td>
+                <td style="width:33%;text-align:center;padding:14px;border:1px solid #ccc;"><div style="font-weight:bold;color:#1F497D;">مدير الشؤون المالية</div><div style="margin-top:25px;border-top:1px solid #999;padding-top:4px;font-size:9px;color:#666;">الاسم والتوقيع</div></td>
+                <td style="width:33%;text-align:center;padding:14px;border:1px solid #ccc;"><div style="font-weight:bold;color:#1F497D;">رئيس الديوان العام</div><div style="margin-top:25px;border-top:1px solid #999;padding-top:4px;font-size:9px;color:#666;">الاسم والختم الرسمي</div></td>
+              </tr>
+            </table>
+          </div>
+          
+          <!-- ══ الفوتر الرسمي ══ -->
+          <t t-set="report_name_ar" t-value="'كشف المصروفات الشهرية'"/>
+          <t t-call="port_said_reports.gov_footer"/>
+          <div style="display:none">نظام أوبو إيآر بي — الديوان العام لمحافظة بورسعيد — طُبع: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/></div>
+        </div>
+      </t>
+    </t>
+  </t>
+</template>
+</odoo>

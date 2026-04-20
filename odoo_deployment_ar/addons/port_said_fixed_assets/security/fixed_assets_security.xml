@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- مجموعة الأصول الثابتة — تستخدم مجموعات account الأصلية -->
+    <!-- لا حاجة لمجموعات مستقلة — الصلاحيات مبنية على account.group_account_* -->
+
+    <!-- قاعدة: لا يمكن حذف أصل نشط -->
+    <record id="rule_no_delete_active_asset" model="ir.rule">
+        <field name="name">الأصول الثابتة — منع حذف الأصول النشطة</field>
+        <field name="model_id" ref="model_port_said_fixed_asset"/>
+        <field name="domain_force">[('state', '!=', 'active')]</field>
+        <field name="groups" eval="[(4, ref('account.group_account_manager'))]"/>
+        <field name="perm_unlink" eval="True"/>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+    </record>
+</odoo>

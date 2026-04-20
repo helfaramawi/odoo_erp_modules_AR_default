@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_credit_bureau_config_form" model="ir.ui.view">
+    <field name="name">credit.bureau.config.form</field>
+    <field name="model">credit.bureau.config</field>
+    <field name="arch" type="xml">
+      <form string="Credit Bureau Config / تكوين مكتب الائتمان">
+        <sheet>
+          <group>
+            <group><field name="name"/><field name="api_url"/><field name="api_key" password="True"/>
+              <field name="timeout"/></group>
+            <group string="Score Thresholds / حدود الدرجات">
+              <field name="green_threshold"/><field name="amber_threshold"/>
+            </group>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <record id="action_credit_bureau_config" model="ir.actions.act_window">
+    <field name="name">Credit Bureau Config / تكوين مكتب الائتمان</field>
+    <field name="res_model">credit.bureau.config</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+</odoo>

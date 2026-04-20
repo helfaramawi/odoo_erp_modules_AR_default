@@ -1,0 +1,1329 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         البت الفني والمالي — مطابق لشاشة D365
+         FDD p.5-6 + FRD ملحق د
+    ══════════════════════════════════════════════════════════════════════════ -->
+    <record id="view_adjudication_form" model="ir.ui.view">
+        <field name="name">procurement.adjudication.form</field>
+        <field name="model">procurement.adjudication</field>
+        <field name="arch" type="xml">
+            <form string="ملف البت الفني والمالي">
+                <header>
+                    <!-- أزرار سير العمل — مطابق D365 -->
+                    <button name="action_open_technical"
+                            string="📂 فتح المظاريف الفنية"
+                            type="object" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_open_financial"
+                            string="💰 فتح المظاريف المالية"
+                            type="object" class="btn-primary"
+                            invisible="state != 'technical_open'"/>
+                    <button name="action_adjudicate"
+                            string="⚖ مقارنة العروض والترسية"
+                            type="object" class="btn-primary"
+                            invisible="state != 'financial_open'"/>
+                    <button name="action_award"
+                            string="🏆 إخطار الترسية"
+                            type="object" class="btn-success"
+                            groups="procurement_adjudication.group_adjudication_director"
+                            invisible="state != 'adjudicated'"/>
+                    <button name="action_create_po"
+                            string="📋 إنشاء أمر التوريد"
+                            type="object" class="btn-primary"
+                            groups="procurement_adjudication.group_adjudication_director"
+                            invisible="state != 'awarded'"/>
+                    <button name="action_cancel"
+                            string="إلغاء"
+                            type="object"
+                            invisible="state in ['po_created','cancelled']"/>
+                    <!-- أزرار الطباعة — النماذج الحكومية -->
+                    <button name="action_print_tender_ad"
+                            string="🖨 إعلان المناقصة"
+                            type="object" class="btn-secondary"
+                            invisible="state == 'draft'"/>
+                    <button name="action_print_vendors_list"
+                            string="📋 كشف الموردين"
+                            type="object" class="btn-secondary"
+                            invisible="state == 'draft'"/>
+                    <button name="action_print_technical_minutes"
+                            string="📋 محضر البت الفني"
+                            type="object" class="btn-secondary"
+                            invisible="state not in ['technical_open','financial_open','adjudicated','awarded','po_created']"/>
+                    <button name="action_print_financial_minutes"
+                            string="📋 محضر البت المالي ومقارنة العروض"
+                            type="object" class="btn-secondary"
+                            invisible="state not in ['financial_open','adjudicated','awarded','po_created']"/>
+                    <button name="action_print_award_notification"
+                            string="📬 إخطار الترسية"
+                            type="object" class="btn-secondary"
+                            invisible="state not in ['awarded','po_created']"/>
+                    <button name="action_print_commitment_form"
+                            string="📋 نموذج إرتباط"
+                            type="object" class="btn-secondary"
+                            invisible="state not in ['awarded','po_created']"/>
+                    <button name="action_print_social_insurance"
+                            string="📋 مستند التأمينات"
+                            type="object" class="btn-secondary"
+                            invisible="state not in ['awarded','po_created']"/>
+                    <button name="action_print_labor_office"
+                            string="📋 مستند وزارة العمل"
+                            type="object" class="btn-secondary"
+                            invisible="state not in ['awarded','po_created']"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,technical_open,financial_open,adjudicated,awarded,po_created"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button type="object" name="action_view_suppliers"
+                                class="oe_stat_button" icon="fa-users">
+                            <field name="supplier_count" widget="statinfo" string="مورد"/>
+                        </button>
+                        <button type="object" name="action_view_po"
+                                class="oe_stat_button" icon="fa-shopping-cart"
+                                invisible="not purchase_order_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_value">أمر</span>
+                                <span class="o_stat_text">التوريد</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <label for="name" string="رقم ملف المناقصة"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+
+                    <!-- القسم الأول: بيانات المناقصة — مطابق D365 -->
+                    <group string="بيانات المناقصة">
+                        <group>
+                            <field name="rfq_id"
+                                   string="طلب عروض الأسعار"
+                                   options="{'no_create': True}"/>
+                            <field name="tender_type"
+                                   string="نوع المناقصة"
+                                   required="1"/>
+                            <field name="date"
+                                   string="تاريخ فتح الملف"
+                                   required="1"/>
+                            <field name="estimated_value"
+                                   string="القيمة التقديرية للصفقة"/>
+                        </group>
+                        <group>
+                            <field name="technical_committee_id"
+                                   string="لجنة البت الفني"
+                                   options="{'no_create': True}"/>
+                            <field name="financial_committee_id"
+                                   string="لجنة البت المالي"
+                                   options="{'no_create': True}"/>
+                            <field name="opening_committee_id"
+                                   string="لجنة فض المظاريف"
+                                   options="{'no_create': True}"/>
+                        </group>
+                    </group>
+
+                    <!-- بيانات جلسة البت الفني -->
+                    <group string="جلسة البت الفني"
+                           invisible="state == 'draft'">
+                        <group>
+                            <field name="technical_open_date"
+                                   string="تاريخ فتح المظاريف الفنية"/>
+                            <field name="technical_session_venue"
+                                   string="مكان الجلسة"/>
+                        </group>
+                    </group>
+
+                    <!-- بيانات جلسة البت المالي -->
+                    <group string="جلسة البت المالي"
+                           invisible="state not in ['financial_open','adjudicated','awarded','po_created']">
+                        <group>
+                            <field name="financial_open_date"
+                                   string="تاريخ فتح المظاريف المالية"/>
+                            <field name="financial_session_venue"
+                                   string="مكان الجلسة المالية"/>
+                        </group>
+                    </group>
+
+                    <!-- نتيجة الترسية -->
+                    <group string="نتيجة الترسية"
+                           invisible="state not in ['adjudicated','awarded','po_created']">
+                        <group>
+                            <field name="awarded_supplier_id"
+                                   string="المورد الفائز بالترسية"
+                                   readonly="1"/>
+                            <field name="awarded_amount"
+                                   string="مبلغ الترسية"
+                                   readonly="1"/>
+                            <field name="award_notification_date"
+                                   string="تاريخ إخطار الترسية"
+                                   readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="purchase_order_id"
+                                   string="أمر الشراء الناتج"
+                                   readonly="1"
+                                   invisible="state != 'po_created'"/>
+                        </group>
+                    </group>
+
+                    <!-- جدول الموردين والتقييم — محور الشاشة -->
+                    <notebook>
+                        <page string="الموردون والتقييم الفني والمالي" name="suppliers">
+                            <field name="supplier_line_ids" mode="tree">
+                                <tree editable="bottom"
+                                      decoration-success="technical_result == 'pass'"
+                                      decoration-danger="technical_result == 'fail'"
+                                      decoration-info="financial_result == 'accepted'">
+                                    <field name="partner_id"
+                                           string="المورد / الشركة"
+                                           required="1"
+                                           options="{'no_create': True}"/>
+                                    <!-- البت الفني -->
+                                    <field name="compliance_form"
+                                           widget="boolean_toggle"
+                                           string="نموذج استيفاء الشروط"/>
+                                    <field name="technical_result"
+                                           widget="badge"
+                                           string="نتيجة البت الفني"
+                                           decoration-success="technical_result == 'pass'"
+                                           decoration-warning="technical_result == 'conditional'"
+                                           decoration-danger="technical_result == 'fail'"/>
+                                    <field name="technical_notes"
+                                           string="ملاحظات فنية"
+                                           optional="hide"/>
+                                    <!-- البت المالي -->
+                                    <field name="financial_bid"
+                                           string="العرض المالي (جنيه)"
+                                           decoration-danger="financial_bid == 0"/>
+                                    <field name="bid_vs_estimate"
+                                           string="% من التقديري"
+                                           readonly="1"
+                                           optional="show"/>
+                                    <field name="financial_result"
+                                           widget="badge"
+                                           string="نتيجة البت المالي"
+                                           decoration-success="financial_result == 'accepted'"
+                                           decoration-danger="financial_result == 'rejected'"/>
+                                    <field name="financial_notes"
+                                           string="ملاحظات مالية"
+                                           optional="hide"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="ملاحظات البت الفني"
+                              invisible="state == 'draft'">
+                            <field name="technical_notes"
+                                   placeholder="نتيجة البت الفني العام..."/>
+                        </page>
+                        <page string="ملاحظات البت المالي"
+                              invisible="state not in ['financial_open','adjudicated','awarded','po_created']">
+                            <field name="financial_notes"
+                                   placeholder="نتيجة البت المالي العام..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- List View -->
+    <record id="view_adjudication_list" model="ir.ui.view">
+        <field name="name">procurement.adjudication.list</field>
+        <field name="model">procurement.adjudication</field>
+        <field name="arch" type="xml">
+            <tree string="ملفات البت"
+                  decoration-success="state == 'po_created'"
+                  decoration-info="state == 'awarded'"
+                  decoration-warning="state == 'adjudicated'">
+                <field name="name"               string="رقم الملف"/>
+                <field name="tender_type"         string="نوع المناقصة"/>
+                <field name="date"                string="تاريخ فتح الملف"/>
+                <field name="estimated_value"     string="القيمة التقديرية"/>
+                <field name="supplier_count"      string="عدد الموردين"/>
+                <field name="awarded_supplier_id" string="المورد الفائز" optional="show"/>
+                <field name="awarded_amount"      string="مبلغ الترسية" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-info="state in ['technical_open','financial_open']"
+                       decoration-warning="state == 'adjudicated'"
+                       decoration-success="state in ['awarded','po_created']"
+                       string="الحالة"/>
+                <button name="action_print_technical_minutes"
+                        string="محضر فني"
+                        type="object"
+                        icon="fa-print"
+                        invisible="state == 'draft'"
+                        title="محضر البت الفني"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Search -->
+    <record id="view_adjudication_search" model="ir.ui.view">
+        <field name="name">procurement.adjudication.search</field>
+        <field name="model">procurement.adjudication</field>
+        <field name="arch" type="xml">
+            <search string="بحث في ملفات البت">
+                <field name="name"               string="رقم الملف"/>
+                <field name="awarded_supplier_id" string="المورد الفائز"/>
+                <separator/>
+                <filter name="draft"          string="مسودة"
+                        domain="[('state','=','draft')]"/>
+                <filter name="technical_open" string="مظاريف فنية مفتوحة"
+                        domain="[('state','=','technical_open')]"/>
+                <filter name="financial_open" string="مظاريف مالية مفتوحة"
+                        domain="[('state','=','financial_open')]"/>
+                <filter name="awarded"        string="تمت الترسية"
+                        domain="[('state','in',['awarded','po_created'])]"/>
+                <separator/>
+                <group expand="0" string="تجميع حسب">
+                    <filter name="g_type"  string="نوع المناقصة"
+                            context="{'group_by':'tender_type'}"/>
+                    <filter name="g_state" string="الحالة"
+                            context="{'group_by':'state'}"/>
+                    <filter name="g_date"  string="تاريخ الملف"
+                            context="{'group_by':'date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_adjudication" model="ir.actions.act_window">
+        <field name="name">ملفات البت الفني والمالي</field>
+        <field name="res_model">procurement.adjudication</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">لا توجد ملفات بت</p>
+            <p>اضغط على <strong>جديد</strong> لفتح ملف بت جديد</p>
+        </field>
+    </record>
+
+    <!-- Menus -->
+
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         النماذج الحكومية — 5 نماذج
+         1. إعلان المناقصة المحلية        POGV_GFM_P01_F_12
+         2. كشف أسماء الموردين           POGV_GFM_P01_F_15
+         3. محضر البت الفني              POGV_GFM_P01_F_17  (موجود — محسّن)
+         4. محضر البت المالي ومقارنة العروض POGV_GFM_P01_F_16
+         5. إخطار الترسية
+    ══════════════════════════════════════════════════════════════════════════ -->
+
+    <!-- ══ 1. إعلان المناقصة المحلية — POGV_GFM_P01_F_12 ════════════════ -->
+    <record id="action_report_tender_ad" model="ir.actions.report">
+        <field name="name">صورة إعلان المناقصة المحلية</field>
+        <field name="model">procurement.adjudication</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">procurement_adjudication.report_tender_ad_template</field>
+        <field name="print_report_name">'إعلان المناقصة - ' + (object.name or '')</field>
+        <field name="binding_model_id" ref="model_procurement_adjudication"/>
+<field name="paperformat_id" ref="procurement_adjudication.paperformat_gov_a4"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_tender_ad_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                
+                    <t t-call="web.external_layout">
+                
+                    <div class="page" style="direction:rtl;font-family:'Arial',sans-serif;font-size:11pt;">
+<style>
+    /* Hide ALL Odoo company header/footer elements */
+    .o_company_logo { display:none!important; }
+    .o_address_name { display:none!important; }
+    .o_report_layout_header { display:none!important; }
+    header.o_report_layout_header { display:none!important; }
+    .odoo-header { display:none!important; }
+    .header-content { display:none!important; }
+    footer { display:none!important; }
+    .footer { display:none!important; }
+    .o_footer { display:none!important; }
+    /* Force page to start at top */
+    .page { margin-top:0!important; padding-top:0!important; }
+</style>
+
+
+                        <!-- رأس رسمي — مطابق POGV_GFM_P01_F_12 -->
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:8px;border-bottom:2px solid #000;padding-bottom:6px;">
+                            <tr>
+                                <td style="width:78px;text-align:center;vertical-align:top;">
+                                    <div style="border:1px solid #000;padding:3px 5px;font-size:9pt;text-align:center;">POGV_GFM</div>
+                                </td>
+                                <td style="text-align:center;vertical-align:middle;">
+                                    <div style="font-size:13pt;font-weight:bold;">جمهورية مصر العربية</div>
+                                    <div style="font-size:12pt;font-weight:bold;">محافظة بورسعيد</div>
+                                    <div style="font-size:11pt;">الإدارة العامة للشؤون المالية والإدارية</div>
+                                    <div style="font-size:11pt;font-weight:bold;">إدارة التعاقدات</div>
+                                </td>
+                                <td style="width:78px;text-align:center;vertical-align:middle;">
+                                    <img src="data:image/png;base64,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"
+                                         style="width:70px;height:70px;object-fit:contain;"
+                                         alt="محافظة بورسعيد"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div style="border-top:2px solid #000;border-bottom:2px solid #000;
+                                    padding:6px 0;text-align:center;margin-bottom:14px;">
+                            <span style="font-size:13pt;font-weight:bold;">
+                                صورة الإعلان الخاص بالمناقصة المحلية
+                            </span>
+                        </div>
+
+                        <!-- الموضوع -->
+                        <p style="margin-bottom:6px;">
+                            السيد / مدير عام الإدارة العامة لنظم المعلومات والتحول الرقمي
+                        </p>
+                        <p style="margin-bottom:12px;font-weight:bold;">تحيه طيبه وبعد ،،</p>
+
+                        <p style="line-height:1.8;margin-bottom:12px;text-align:justify;">
+                            نتشـرف بـأن نرفـق لسـيادتكم طـي كتابنـا هـذا صـورة الإعـلان الخـاص
+                            بالمناقصه المحليه جلسه &#160;&#160;&#160;&#160; /
+                            <t t-esc="doc.date.year if doc.date else '2024'"/> عن عمليه
+                            <strong> <t t-esc="doc.rfq_id.name if doc.rfq_id else doc.name"/> </strong>
+                            برجـاء التكـرم والتنبيـه بإتخـاذ الـلازم نشـره علـى البوابـه
+                            الإلكترونيه لمحافظة بورسعيد بما يفيد النشر.
+                        </p>
+
+                        <p style="text-align:center;font-weight:bold;margin-bottom:14px;">
+                            وتفضلوا بقبول فائق الإحترام
+                        </p>
+
+                        <!-- بيانات المناقصة -->
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:14px;font-size:10pt;">
+                            <tr>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;width:25%;">رقم ملف المناقصة</td>
+                                <td style="border:1px solid #000;padding:5px 8px;font-weight:bold;"><t t-esc="doc.name"/></td>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;width:20%;">التاريخ</td>
+                                <td style="border:1px solid #000;padding:5px 8px;"><t t-esc="doc.date"/></td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;">نوع المناقصة</td>
+                                <td style="border:1px solid #000;padding:5px 8px;" colspan="3">
+                                    <t t-if="doc.tender_type == 'public'">مناقصة عامة</t>
+                                    <t t-elif="doc.tender_type == 'local'">مناقصة محلية</t>
+                                    <t t-elif="doc.tender_type == 'limited'">مناقصة محدودة</t>
+                                    <t t-else="">ممارسة</t>
+                                </td>
+                            </tr>
+                            <tr t-if="doc.estimated_value">
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;">القيمة التقديرية</td>
+                                <td style="border:1px solid #000;padding:5px 8px;" colspan="3">
+                                    <t t-esc="'{:,.2f}'.format(doc.estimated_value)"/> جنيه مصري
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- توقيعات -->
+                        <table style="width:100%;font-size:10pt;margin-top:14px;">
+                            <tr>
+                                <td style="text-align:center;width:33%;">
+                                    <p style="font-weight:bold;">الموظف المختص</p>
+                                    <p style="color:#555;margin-top:20px;">التوقيع: .........................</p>
+                                </td>
+                                <td style="text-align:center;width:33%;">
+                                    <p style="font-weight:bold;">مدير إدارة التعاقدات</p>
+                                    <p style="color:#555;margin-top:20px;">التوقيع: .........................</p>
+                                </td>
+                                <td style="text-align:center;width:33%;">
+                                    <p style="font-weight:bold;">مدير الإدارة المالية</p>
+                                    <p style="color:#555;margin-top:20px;">التوقيع: .........................</p>
+                                </td>
+                            </tr>
+                        </table>
+                        <div style="margin-top:20px;text-align:center;">
+                            <p style="font-weight:bold;font-size:12pt;">مـديـر عـام</p>
+                            <p style="font-weight:bold;">الشؤون المالية والإدارية</p>
+                            <p style="font-weight:bold;">د/ نادية عبد السلام</p>
+                            <p style="color:#555;margin-top:24px;">التوقيع: .........................</p>
+                        </div>
+
+                        <div style="margin-top:10px;font-size:8pt;color:#777;
+                                    border-top:1px solid #ccc;padding-top:5px;
+                                    display:flex;justify-content:space-between;">
+                            <span>نموذج خطاب تحول رقمي — POGV_GFM_P01_F_12</span>
+                            <span>رقم الإصدار: 01 — تاريخ الإصدار: 2022/12/28</span>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- ══ 2. كشف أسماء الموردين — POGV_GFM_P01_F_15 ════════════════════ -->
+    <record id="action_report_vendors_list" model="ir.actions.report">
+        <field name="name">كشف أسماء الموردين في المناقصة</field>
+        <field name="model">procurement.adjudication</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">procurement_adjudication.report_vendors_list_template</field>
+        <field name="print_report_name">'كشف الموردين - ' + (object.name or '')</field>
+        <field name="binding_model_id" ref="model_procurement_adjudication"/>
+<field name="paperformat_id" ref="procurement_adjudication.paperformat_gov_a4"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_vendors_list_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                
+                    <t t-call="web.external_layout">
+                
+                    <div class="page" style="direction:rtl;font-family:'Arial',sans-serif;font-size:11pt;">
+<style>
+    .o_company_logo, .o_company_name, .o_address_name { display: none !important; }
+    .o_report_layout_header, header.o_report_layout_header { display: none !important; }
+    footer, .o_footer { display: none !important; }
+    .header { display: none !important; }
+    #mainTable thead td { display: none !important; }
+    table.o_report_layout thead { display: none !important; }
+    .o_report_no_header_footer header, .o_report_no_header_footer footer { display: none !important; }
+</style>
+
+
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:8px;border-bottom:2px solid #000;padding-bottom:6px;">
+                            <tr>
+                                <td style="width:78px;text-align:center;vertical-align:top;">
+                                    <div style="border:1px solid #000;padding:3px 5px;font-size:9pt;text-align:center;">POGV_GFM</div>
+                                </td>
+                                <td style="text-align:center;vertical-align:middle;">
+                                    <div style="font-size:13pt;font-weight:bold;">جمهورية مصر العربية</div>
+                                    <div style="font-size:12pt;font-weight:bold;">محافظة بورسعيد</div>
+                                    <div style="font-size:11pt;">الإدارة العامة للشؤون المالية والإدارية</div>
+                                    <div style="font-size:11pt;font-weight:bold;">إدارة التعاقدات</div>
+                                </td>
+                                <td style="width:78px;text-align:center;vertical-align:middle;">
+                                    <img src="data:image/png;base64,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"
+                                         style="width:70px;height:70px;object-fit:contain;"
+                                         alt="محافظة بورسعيد"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div style="border-top:2px solid #000;border-bottom:2px solid #000;
+                                    padding:6px 0;text-align:center;margin-bottom:14px;">
+                            <div style="font-size:13pt;font-weight:bold;">
+                                كشف أسماء الموردين المرسل لهم المناقصة المحدودة
+                            </div>
+                            <div style="font-size:11pt;margin-top:4px;">
+                                عن عملية توريد &#160;&#160;&#160; جلسة &#160;&#160;&#160;/&#160;&#160;&#160;/
+                                <t t-esc="doc.date.year if doc.date else '2024'"/>
+                            </div>
+                        </div>
+
+                        <!-- جدول الموردين -->
+                        <table style="width:100%;border-collapse:collapse;font-size:10pt;margin-bottom:16px;">
+                            <thead>
+                                <tr style="background:#d9d9d9;">
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;width:8%;">م</th>
+                                    <th style="border:1px solid #000;padding:7px;width:50%;">أسم المورد</th>
+                                    <th style="border:1px solid #000;padding:7px;width:30%;">العنوان</th>
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;width:12%;">رقم الصادر</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc.supplier_line_ids" t-as="line">
+                                    <tr>
+                                        <td style="border:1px solid #000;padding:6px;text-align:center;"><t t-esc="line_index + 1"/></td>
+                                        <td style="border:1px solid #000;padding:6px;font-weight:bold;"><t t-esc="line.partner_id.name"/></td>
+                                        <td style="border:1px solid #000;padding:6px;font-size:9pt;">
+                                            <t t-esc="line.partner_id.street or ''"/>
+                                            <t t-if="line.partner_id.city">, <t t-esc="line.partner_id.city"/></t>
+                                        </td>
+                                        <td style="border:1px solid #000;padding:6px;"></td>
+                                    </tr>
+                                </t>
+                                <!-- صفوف فارغة إضافية -->
+                                <t t-foreach="range(max(0, 13 - len(doc.supplier_line_ids)))" t-as="i">
+                                    <tr style="height:26px;">
+                                        <td style="border:1px solid #000;padding:5px;text-align:center;color:#aaa;">
+                                            <t t-esc="len(doc.supplier_line_ids) + i + 1"/>
+                                        </td>
+                                        <td style="border:1px solid #000;"></td>
+                                        <td style="border:1px solid #000;"></td>
+                                        <td style="border:1px solid #000;"></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <div style="margin-top:16px;text-align:center;">
+                            <p style="font-weight:bold;font-size:12pt;">مدير عام</p>
+                            <p style="font-weight:bold;">الشؤون المالية والإدارية</p>
+                            <p style="font-weight:bold;">د/ نادية عبد السلام</p>
+                            <p style="color:#555;margin-top:24px;">التوقيع: .........................</p>
+                        </div>
+
+                        <div style="margin-top:10px;font-size:8pt;color:#777;
+                                    border-top:1px solid #ccc;padding-top:5px;
+                                    display:flex;justify-content:space-between;">
+                            <span>نموذج كشف موردين — POGV_GFM_P01_F_15</span>
+                            <span>رقم الإصدار: 01 — تاريخ الإصدار: 2022/12/28</span>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- ══ 3. محضر البت الفني — محسّن ════════════════════════════════════ -->
+    <record id="action_report_technical_minutes" model="ir.actions.report">
+        <field name="name">محضر البت الفني</field>
+        <field name="model">procurement.adjudication</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">procurement_adjudication.report_technical_minutes_template</field>
+        <field name="print_report_name">'محضر البت الفني - ' + (object.name or '')</field>
+        <field name="binding_model_id" ref="model_procurement_adjudication"/>
+<field name="paperformat_id" ref="procurement_adjudication.paperformat_gov_a4"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_technical_minutes_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                
+                    <t t-call="web.external_layout">
+                
+                    <div class="page" style="direction:rtl;font-family:'Arial',sans-serif;font-size:11pt;">
+<style>
+    .o_company_logo, .o_company_name, .o_address_name { display: none !important; }
+    .o_report_layout_header, header.o_report_layout_header { display: none !important; }
+    footer, .o_footer { display: none !important; }
+    .header { display: none !important; }
+    #mainTable thead td { display: none !important; }
+    table.o_report_layout thead { display: none !important; }
+    .o_report_no_header_footer header, .o_report_no_header_footer footer { display: none !important; }
+</style>
+
+
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:8px;border-bottom:2px solid #000;padding-bottom:6px;">
+                            <tr>
+                                <td style="width:78px;text-align:center;vertical-align:top;">
+                                    <div style="border:1px solid #000;padding:3px 5px;font-size:9pt;text-align:center;">POGV_GFM</div>
+                                </td>
+                                <td style="text-align:center;vertical-align:middle;">
+                                    <div style="font-size:13pt;font-weight:bold;">جمهورية مصر العربية</div>
+                                    <div style="font-size:12pt;font-weight:bold;">محافظة بورسعيد</div>
+                                    <div style="font-size:11pt;">الإدارة العامة للشؤون المالية والإدارية</div>
+                                    <div style="font-size:11pt;font-weight:bold;">إدارة التعاقدات</div>
+                                </td>
+                                <td style="width:78px;text-align:center;vertical-align:middle;">
+                                    <img src="data:image/png;base64,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"
+                                         style="width:70px;height:70px;object-fit:contain;"
+                                         alt="محافظة بورسعيد"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div style="border-top:2px solid #000;border-bottom:2px solid #000;
+                                    padding:6px 0;text-align:center;margin-bottom:14px;">
+                            <span style="font-size:13pt;font-weight:bold;">محضر اجتماع لجنة البت الفني الأول</span>
+                        </div>
+
+                        <p>في المناقصة المحلية عملية <strong><t t-esc="doc.rfq_id.name if doc.rfq_id else doc.name"/></strong></p>
+
+                        <p style="margin-bottom:10px;line-height:1.8;">
+                            أنه في يوم &#160;&#160;&#160;/&#160;&#160;&#160;/
+                            <t t-esc="doc.technical_open_date.year if doc.technical_open_date else (doc.date.year if doc.date else '2024')"/>
+                            إجتمعت اللجنة المشكله بقرار (&#160;&#160;&#160;) لسنة
+                            <t t-esc="doc.date.year if doc.date else '2024'"/>
+                            من السادة:–
+                        </p>
+
+                        <!-- أعضاء اللجنة الفنية -->
+                        <t t-if="doc.technical_committee_id and doc.technical_committee_id.member_ids">
+                            <table style="width:100%;margin-bottom:12px;font-size:11pt;">
+                                <t t-foreach="doc.technical_committee_id.member_ids.sorted(key=lambda m: m.sequence)" t-as="member">
+                                    <tr>
+                                        <td style="padding:3px 0;width:5%;"><t t-esc="member_index + 1"/>. السيد /</td>
+                                        <td style="padding:3px 8px;width:40%;font-weight:bold;"><t t-esc="member.employee_id.name"/></td>
+                                        <td style="padding:3px 0;width:25%;font-size:9pt;color:#555;"><t t-esc="member.job_title or ''"/></td>
+                                        <td style="padding:3px 8px;font-weight:bold;">
+                                            <t t-if="member.role == 'chairman'">رئيساً</t>
+                                            <t t-elif="member.role == 'secretary'">أمين سر</t>
+                                            <t t-else="">عضواً</t>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </table>
+                        </t>
+
+                        <p style="margin-bottom:10px;line-height:1.8;text-align:justify;">
+                            وذلـك للبـت فـي العـروض الـواردة عـن طريـق النشـر علـى البوابـه الإلكترونيـه
+                            للتعاقـدات الحكوميـه كمـا أطلعـت اللجنـه علـى ملـف العمليـه وعلـى مـذكرة الطـرح
+                            وقـد أطلعـت علـى بوابـة التعاقـدات الحكوميـه وكانـت المظاريـف الفنيـه
+                            وعددها (<t t-esc="len(doc.supplier_line_ids)"/>) وبياناتهم كالتالي:–
+                        </p>
+
+                        <!-- جدول تقييم الموردين -->
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:12px;font-size:10pt;">
+                            <thead>
+                                <tr style="background:#d9d9d9;">
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;width:6%;">م</th>
+                                    <th style="border:1px solid #000;padding:6px;width:32%;">اسم الشركة / المورد</th>
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;width:15%;">نموذج استيفاء الشروط</th>
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;width:22%;">نتيجة البت الفني</th>
+                                    <th style="border:1px solid #000;padding:6px;width:25%;">ملاحظات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc.supplier_line_ids" t-as="line">
+                                    <tr>
+                                        <td style="border:1px solid #000;padding:5px;text-align:center;"><t t-esc="line_index + 1"/></td>
+                                        <td style="border:1px solid #000;padding:5px;font-weight:bold;"><t t-esc="line.partner_id.name"/></td>
+                                        <td style="border:1px solid #000;padding:5px;text-align:center;">
+                                            <t t-if="line.compliance_form">مقدم &#10003;</t>
+                                            <t t-else="">غير مقدم &#10007;</t>
+                                        </td>
+                                        <td style="border:1px solid #000;padding:5px;text-align:center;font-weight:bold;">
+                                            <t t-if="line.technical_result == 'pass'"><span style="color:green;">مطابق للشروط &#10003;</span></t>
+                                            <t t-elif="line.technical_result == 'fail'"><span style="color:red;">غير مطابق &#10007;</span></t>
+                                            <t t-elif="line.technical_result == 'conditional'"><span style="color:orange;">مطابق مع تحفظ</span></t>
+                                            <t t-else="">قيد التقييم</t>
+                                        </td>
+                                        <td style="border:1px solid #000;padding:5px;font-size:9pt;"><t t-esc="line.technical_notes or ''"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <div t-if="doc.technical_notes"
+                             style="border:1px solid #000;padding:8px;margin-bottom:12px;">
+                            <strong>نتيجة البت الفني العام: </strong><t t-esc="doc.technical_notes"/>
+                        </div>
+
+                        <div style="border:1px solid #000;padding:10px;margin-bottom:14px;">
+                            <p style="font-weight:bold;margin:0 0 6px;text-decoration:underline;">ترى اللجنة:</p>
+                            <p style="margin:0;line-height:1.8;">
+                                تشكيل لجنة فنية منبثقة من بين الأعضاء الفنيين وذلك لتقييم العطاءات المتقدمة
+                                من الناحية الفنية وإعداد تقرير فني بنتيجة أعمالها لإمكان السير في باقي
+                                إجراءات البت لهذه العملية.
+                            </p>
+                        </div>
+
+                        <!-- توقيعات اللجنة -->
+                        <p style="font-weight:bold;margin-bottom:8px;">أعضاء اللجنة:</p>
+                        <t t-if="doc.technical_committee_id">
+                            <table style="width:100%;margin-bottom:14px;">
+                                <t t-foreach="doc.technical_committee_id.member_ids.sorted(key=lambda m: m.sequence)" t-as="member">
+                                    <tr>
+                                        <td style="padding:4px 0;width:5%;"><t t-esc="member_index + 1"/>.</td>
+                                        <td style="padding:4px 8px;width:40%;">السيد / <t t-esc="member.employee_id.name"/></td>
+                                        <td style="padding:4px;color:#777;">التوقيع: .......................................</td>
+                                    </tr>
+                                </t>
+                            </table>
+                        </t>
+
+                        <div style="margin-top:14px;text-align:center;">
+                            <p style="font-weight:bold;">يعتمد</p>
+                            <p style="font-weight:bold;font-size:12pt;">رئيس اللجنة</p>
+                            <p>
+                                <t t-esc="doc.technical_committee_id.chairman_id.name if doc.technical_committee_id and doc.technical_committee_id.chairman_id else '........................'"/>
+                            </p>
+                            <p style="color:#555;margin-top:20px;">التوقيع: .........................</p>
+                        </div>
+
+                        <div style="margin-top:10px;font-size:8pt;color:#777;
+                                    border-top:1px solid #ccc;padding-top:5px;
+                                    display:flex;justify-content:space-between;">
+                            <span>نموذج محضر اجتماع لجنة بت فني — POGV_GFM_P01_F_17</span>
+                            <span>رقم الإصدار: 01 — تاريخ الإصدار: 2022/12/28</span>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- ══ 4. محضر البت المالي ومقارنة العروض — POGV_GFM_P01_F_16 ═══════ -->
+    <record id="action_report_financial_minutes" model="ir.actions.report">
+        <field name="name">محضر البت المالي ومقارنة العروض</field>
+        <field name="model">procurement.adjudication</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">procurement_adjudication.report_financial_minutes_template</field>
+        <field name="print_report_name">'محضر البت المالي - ' + (object.name or '')</field>
+        <field name="binding_model_id" ref="model_procurement_adjudication"/>
+<field name="paperformat_id" ref="procurement_adjudication.paperformat_gov_a4"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_financial_minutes_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                
+                    <t t-call="web.external_layout">
+                
+                    <div class="page" style="direction:rtl;font-family:'Arial',sans-serif;font-size:11pt;">
+<style>
+    .o_company_logo, .o_company_name, .o_address_name { display: none !important; }
+    .o_report_layout_header, header.o_report_layout_header { display: none !important; }
+    footer, .o_footer { display: none !important; }
+    .header { display: none !important; }
+    #mainTable thead td { display: none !important; }
+    table.o_report_layout thead { display: none !important; }
+    .o_report_no_header_footer header, .o_report_no_header_footer footer { display: none !important; }
+</style>
+
+
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:8px;border-bottom:2px solid #000;padding-bottom:6px;">
+                            <tr>
+                                <td style="width:78px;text-align:center;vertical-align:top;">
+                                    <div style="border:1px solid #000;padding:3px 5px;font-size:9pt;text-align:center;">POGV_GFM</div>
+                                </td>
+                                <td style="text-align:center;vertical-align:middle;">
+                                    <div style="font-size:13pt;font-weight:bold;">جمهورية مصر العربية</div>
+                                    <div style="font-size:12pt;font-weight:bold;">محافظة بورسعيد</div>
+                                    <div style="font-size:11pt;">الإدارة العامة للشؤون المالية والإدارية</div>
+                                    <div style="font-size:11pt;font-weight:bold;">إدارة التعاقدات</div>
+                                </td>
+                                <td style="width:78px;text-align:center;vertical-align:middle;">
+                                    <img src="data:image/png;base64,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"
+                                         style="width:70px;height:70px;object-fit:contain;"
+                                         alt="محافظة بورسعيد"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div style="border-top:2px solid #000;border-bottom:2px solid #000;
+                                    padding:6px 0;text-align:center;margin-bottom:14px;">
+                            <span style="font-size:13pt;font-weight:bold;">
+                                محضر اجتماع لجنة العروض والبت بوسيلة الاتفاق المباشر
+                            </span>
+                        </div>
+
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:12px;font-size:10pt;">
+                            <tr>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;width:22%;">رقم المناقصة</td>
+                                <td style="border:1px solid #000;padding:5px 8px;"><t t-esc="doc.name"/></td>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;width:22%;">القيمة التقديرية</td>
+                                <td style="border:1px solid #000;padding:5px 8px;font-weight:bold;">
+                                    <t t-esc="'{:,.2f}'.format(doc.estimated_value or 0)"/> جنيه
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;">تاريخ فتح المالية</td>
+                                <td style="border:1px solid #000;padding:5px 8px;" colspan="3">
+                                    <t t-esc="doc.financial_open_date or '—'"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- نتائج مقارنة العروض المالية -->
+                        <p style="font-weight:bold;margin-bottom:8px;text-decoration:underline;">مقارنة العروض المالية للموردين المجتازين للبت الفني:</p>
+                        <table style="width:100%;border-collapse:collapse;font-size:10pt;margin-bottom:14px;">
+                            <thead>
+                                <tr style="background:#d9d9d9;">
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;width:6%;">م</th>
+                                    <th style="border:1px solid #000;padding:6px;width:30%;">المورد / الشركة</th>
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;width:18%;">العرض المالي (جنيه)</th>
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;width:14%;">% من التقديري</th>
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;width:12%;">البت الفني</th>
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;width:20%;">نتيجة البت المالي</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc.supplier_line_ids" t-as="line">
+                                    <tr t-att-style="'background:#e8f5e9;font-weight:bold;' if line.financial_result == 'accepted' else ''">
+                                        <td style="border:1px solid #000;padding:5px;text-align:center;"><t t-esc="line_index + 1"/></td>
+                                        <td style="border:1px solid #000;padding:5px;"><t t-esc="line.partner_id.name"/></td>
+                                        <td style="border:1px solid #000;padding:5px;text-align:center;">
+                                            <t t-esc="'{:,.2f}'.format(line.financial_bid)"/>
+                                        </td>
+                                        <td style="border:1px solid #000;padding:5px;text-align:center;">
+                                            <t t-esc="'{:.1f}'.format(line.bid_vs_estimate)"/>%
+                                        </td>
+                                        <td style="border:1px solid #000;padding:5px;text-align:center;font-size:9pt;">
+                                            <t t-if="line.technical_result == 'pass'"><span style="color:green;">مطابق</span></t>
+                                            <t t-elif="line.technical_result == 'conditional'"><span style="color:orange;">مع تحفظ</span></t>
+                                            <t t-else=""><span style="color:red;">مرفوض</span></t>
+                                        </td>
+                                        <td style="border:1px solid #000;padding:5px;text-align:center;font-weight:bold;">
+                                            <t t-if="line.financial_result == 'accepted'"><span style="color:green;">فائز بالترسية &#10003;</span></t>
+                                            <t t-elif="line.financial_result == 'rejected'"><span style="color:red;">مرفوض</span></t>
+                                            <t t-else="">—</t>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <!-- رأي اللجنة -->
+                        <div style="border:2px solid #000;padding:10px;margin-bottom:14px;background:#fafafa;">
+                            <p style="font-weight:bold;margin:0 0 8px;text-decoration:underline;">رأي اللجنة:–</p>
+                            <t t-if="doc.awarded_supplier_id">
+                                <p style="line-height:1.8;margin:0;">
+                                    توصي اللجنة بعد المراجعة الحسابية بإرساء عملية
+                                    <strong><t t-esc="doc.rfq_id.name if doc.rfq_id else doc.name"/></strong>
+                                    على العطاء رقم &#160;&#160;&#160; / باسم شركة /
+                                    <strong><t t-esc="doc.awarded_supplier_id.name"/></strong>
+                                    بمبلغ إجمالي (<strong><t t-esc="'{:,.2f}'.format(doc.awarded_amount)"/> جنيه</strong>
+                                    شامل القيمة المضافة) ويقل عن القيمة التقديرية بمبلغ
+                                    (<t t-esc="'{:,.2f}'.format(max(0, (doc.estimated_value or 0) - doc.awarded_amount))"/> جنيه) فقط.
+                                </p>
+                            </t>
+                            <t t-else="">
+                                <p style="line-height:1.8;margin:0;">
+                                    توصي اللجنة بعد المراجعة الحسابية بإرساء العملية على أقل عرض مطابق
+                                    للشروط والمواصفات.
+                                </p>
+                            </t>
+                            <p style="margin:8px 0 0;font-weight:bold;">
+                                واللجنة ترفع توصيتها للسلطة المختصة للنظر والاعتماد.
+                            </p>
+                        </div>
+
+                        <!-- أعضاء اللجنة -->
+                        <p style="font-weight:bold;margin-bottom:6px;">اللجنة:</p>
+                        <t t-if="doc.financial_committee_id">
+                            <table style="width:100%;margin-bottom:14px;">
+                                <t t-foreach="doc.financial_committee_id.member_ids.sorted(key=lambda m: m.sequence)" t-as="member">
+                                    <tr>
+                                        <td style="padding:4px 0;width:5%;"><t t-esc="member_index + 1"/>.</td>
+                                        <td style="padding:4px 8px;width:40%;">السيد / <t t-esc="member.employee_id.name"/></td>
+                                        <td style="padding:4px;color:#777;">التوقيع: .......................................</td>
+                                    </tr>
+                                </t>
+                            </table>
+                        </t>
+
+                        <div style="margin-top:14px;text-align:center;">
+                            <p style="font-weight:bold;">يعتمد ،،،</p>
+                            <p style="font-weight:bold;font-size:12pt;">رئيس اللجنة</p>
+                            <p>
+                                <t t-esc="doc.financial_committee_id.chairman_id.name if doc.financial_committee_id and doc.financial_committee_id.chairman_id else '........................'"/>
+                            </p>
+                            <p style="color:#555;margin-top:20px;">التوقيع: .........................</p>
+                        </div>
+
+                        <div style="margin-top:10px;font-size:8pt;color:#777;
+                                    border-top:1px solid #ccc;padding-top:5px;
+                                    display:flex;justify-content:space-between;">
+                            <span>نموذج محضر بت طرح مباشر — POGV_GFM_P01_F_16</span>
+                            <span>رقم الإصدار: 01 — تاريخ الإصدار: 2022/12/28</span>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- ══ 5. إخطار الترسية ════════════════════════════════════════════════ -->
+    <record id="action_report_award_notification" model="ir.actions.report">
+        <field name="name">إخطار الترسية</field>
+        <field name="model">procurement.adjudication</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">procurement_adjudication.report_award_notification_template</field>
+        <field name="print_report_name">'إخطار الترسية - ' + (object.name or '')</field>
+        <field name="binding_model_id" ref="model_procurement_adjudication"/>
+<field name="paperformat_id" ref="procurement_adjudication.paperformat_gov_a4"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_award_notification_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                
+                    <t t-call="web.external_layout">
+                
+                    <div class="page" style="direction:rtl;font-family:'Arial',sans-serif;font-size:12pt;">
+<style>
+    .o_company_logo, .o_company_name, .o_address_name { display: none !important; }
+    .o_report_layout_header, header.o_report_layout_header { display: none !important; }
+    footer, .o_footer { display: none !important; }
+    .header { display: none !important; }
+    #mainTable thead td { display: none !important; }
+    table.o_report_layout thead { display: none !important; }
+    .o_report_no_header_footer header, .o_report_no_header_footer footer { display: none !important; }
+</style>
+
+
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:8px;border-bottom:2px solid #000;padding-bottom:6px;">
+                            <tr>
+                                <td style="width:78px;text-align:center;vertical-align:top;">
+                                    &#160;
+                                </td>
+                                <td style="text-align:center;vertical-align:middle;">
+                                    <div style="font-size:13pt;font-weight:bold;">جمهورية مصر العربية</div>
+                                    <div style="font-size:12pt;font-weight:bold;">محافظة بورسعيد</div>
+                                    <div style="font-size:11pt;">الإدارة العامة للشؤون المالية والإدارية</div>
+                                    <div style="font-size:11pt;font-weight:bold;">إدارة التعاقدات</div>
+                                </td>
+                                <td style="width:78px;text-align:center;vertical-align:middle;">
+                                    <img src="data:image/png;base64,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"
+                                         style="width:70px;height:70px;object-fit:contain;"
+                                         alt="محافظة بورسعيد"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div style="border-top:2px solid #000;border-bottom:2px solid #000;
+                                    padding:8px 0;text-align:center;margin-bottom:20px;">
+                            <span style="font-size:15pt;font-weight:bold;">إخطـار الترسيـة</span>
+                        </div>
+
+                        <p style="line-height:2;margin-bottom:16px;">
+                            يُشعر السيد / <strong>
+                                <t t-esc="doc.awarded_supplier_id.name if doc.awarded_supplier_id else '........................'"/>
+                            </strong>
+                        </p>
+
+                        <p style="line-height:1.8;margin-bottom:14px;text-align:justify;">
+                            بأنه قد رُسيت عليه مناقصة رقم
+                            (<strong><t t-esc="doc.name"/></strong>)
+                            بتاريخ <t t-esc="doc.award_notification_date or doc.date"/>
+                            بمبلغ إجمالي قدره
+                            <strong><t t-esc="'{:,.2f}'.format(doc.awarded_amount or 0)"/> جنيه مصري</strong>
+                            (فقط
+                            <t t-esc="'{:,.0f}'.format(doc.awarded_amount or 0)"/>
+                            جنيه لا غير) شامل القيمة المضافة.
+                        </p>
+
+                        <div style="border:1px solid #000;padding:10px;margin-bottom:14px;background:#fff8e1;">
+                            <p style="margin:0;font-weight:bold;line-height:1.8;">
+                                يرجى التفضل بالحضور لتوقيع العقد وتقديم التأمين النهائي خلال
+                                <strong>ثلاثة أيام عمل</strong> من تاريخ هذا الإخطار،
+                                وإلا اعتُبر ذلك تنازلاً عن الترسية وفقداناً للتأمين الابتدائي.
+                            </p>
+                        </div>
+
+                        <div style="margin-top:30px;text-align:left;">
+                            <p style="font-weight:bold;font-size:12pt;">مدير إدارة التعاقدات</p>
+                            <p style="color:#555;margin-top:24px;">التوقيع: .........................&#160;&#160;&#160; الختم الرسمي</p>
+                            <p style="color:#555;">التاريخ: <t t-esc="doc.award_notification_date or '.........................'"/></p>
+                        </div>
+
+                        <div style="margin-top:10px;font-size:9pt;color:#777;
+                                    border-top:1px solid #ccc;padding-top:5px;text-align:center;">
+                            الديوان العام لمحافظة بورسعيد — إدارة التعاقدات —
+                            إخطار ترسية رقم <t t-esc="doc.name"/>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+
+    <!-- ══ نموذج إرتباط — POGV_GFM_P01_F_13 ════════════════════════════ -->
+    <record id="action_report_commitment_form" model="ir.actions.report">
+        <field name="name">نموذج إرتباط</field>
+        <field name="model">procurement.adjudication</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">procurement_adjudication.report_commitment_form_template</field>
+        <field name="print_report_name">'نموذج إرتباط - ' + (object.name or '')</field>
+        <field name="binding_model_id" ref="model_procurement_adjudication"/>
+<field name="paperformat_id" ref="procurement_adjudication.paperformat_gov_a4"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_commitment_form_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                
+                    <t t-call="web.external_layout">
+                
+                    <div class="page" style="direction:rtl;font-family:'Arial',sans-serif;font-size:12pt;">
+<style>
+    .o_company_logo, .o_company_name, .o_address_name { display: none !important; }
+    .o_report_layout_header, header.o_report_layout_header { display: none !important; }
+    footer, .o_footer { display: none !important; }
+    .header { display: none !important; }
+    #mainTable thead td { display: none !important; }
+    table.o_report_layout thead { display: none !important; }
+    .o_report_no_header_footer header, .o_report_no_header_footer footer { display: none !important; }
+</style>
+
+
+                        <table style="width:100%;margin-bottom:10px;border-bottom:2px solid #000;padding-bottom:6px;">
+                            <tr>
+                                <td style="width:80px;text-align:center;">
+                                    
+                                </td>
+                                <td style="text-align:center;">
+                                    <div style="font-size:12pt;font-weight:bold;">ديوان عام المحافظة</div>
+                                    <div>الإدارة العامة للشؤون المالية والإدارية</div>
+                                    <div style="font-weight:bold;">التعاقدات</div>
+                                </td>
+                                <td style="width:90px;text-align:center;font-size:9pt;">
+                                    <div style="border:1px solid #000;padding:3px 5px;">
+                                        POGV_GFM<br/><strong>P01_F_13</strong>
+                                    </div>
+                                </td>                                <td style="width:80px;text-align:center;">
+                                    <img src="data:image/png;base64,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" style="width:68px;height:68px;object-fit:contain;" alt="محافظة بورسعيد"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div style="text-align:center;margin:10px 0 20px;font-size:16pt;font-weight:bold;text-decoration:underline;">
+                            نموذج إرتباط
+                        </div>
+
+                        <p style="margin-bottom:10px;line-height:2;">
+                            العملية:- <strong><t t-esc="doc.rfq_id.name if doc.rfq_id else doc.name"/></strong>
+                        </p>
+                        <p style="margin-bottom:10px;line-height:2;">
+                            المبلغ المطلوب:-
+                            <strong><t t-esc="'{:,.2f}'.format(doc.awarded_amount or doc.estimated_value or 0)"/> جنيه مصري</strong>
+                        </p>
+                        <p style="margin-bottom:16px;line-height:2;">
+                            تحرير في &#160;&#160;&#160; /&#160;&#160;&#160; / <t t-esc="doc.date.year if doc.date else '2024'"/>
+                        </p>
+                        <p style="margin-bottom:4px;">الموظف المختص</p>
+                        <p style="margin-bottom:20px;font-weight:bold;">مدير إدارة التعاقدات</p>
+                        <p style="font-weight:bold;">" أماني كامل "</p>
+
+                        <div style="border-top:1.5px solid #000;margin:20px 0;"></div>
+
+                        <p style="margin-bottom:8px;line-height:2;">
+                            الإرتباط بمبلغ:- <strong><t t-esc="'{:,.2f}'.format(doc.awarded_amount or doc.estimated_value or 0)"/> جنيه</strong>
+                        </p>
+                        <p style="margin-bottom:8px;line-height:2;">
+                            خصماً من حـ/
+                            <t t-esc="doc.rfq_id.name if doc.rfq_id else '—'"/>
+                        </p>
+                        <p style="margin-bottom:8px;line-height:2;">
+                            السنه الماليه:- <t t-esc="doc.date.year if doc.date else '2024'"/>
+                        </p>
+                        <p style="margin-bottom:8px;line-height:2;">
+                            مدة الإرتباط بالمبلغ:- &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+                        </p>
+                        <p style="line-height:2;">
+                            تحرير في <t t-esc="doc.date"/>
+                        </p>
+
+                        <div style="margin-top:10px;font-size:8pt;color:#777;
+                                    border-top:1px solid #ccc;padding-top:5px;
+                                    display:flex;justify-content:space-between;">
+                            <span>نموذج إرتباط — POGV_GFM_P01_F_13</span>
+                            <span>رقم الإصدار: 01 — تاريخ الإصدار: 2022/12/28</span>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- ══ مستند صرف مكتب المقاولات للتأمينات الاجتماعية ══════════════ -->
+    <record id="action_report_social_insurance" model="ir.actions.report">
+        <field name="name">مستند صرف التأمينات الاجتماعية</field>
+        <field name="model">procurement.adjudication</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">procurement_adjudication.report_social_insurance_template</field>
+        <field name="print_report_name">'مستند التأمينات - ' + (object.name or '')</field>
+        <field name="binding_model_id" ref="model_procurement_adjudication"/>
+<field name="paperformat_id" ref="procurement_adjudication.paperformat_gov_a4"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_social_insurance_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                
+                    <t t-call="web.external_layout">
+                
+                    <div class="page" style="direction:rtl;font-family:'Arial',sans-serif;font-size:11pt;">
+<style>
+    .o_company_logo, .o_company_name, .o_address_name { display: none !important; }
+    .o_report_layout_header, header.o_report_layout_header { display: none !important; }
+    footer, .o_footer { display: none !important; }
+    .header { display: none !important; }
+    #mainTable thead td { display: none !important; }
+    table.o_report_layout thead { display: none !important; }
+    .o_report_no_header_footer header, .o_report_no_header_footer footer { display: none !important; }
+</style>
+
+
+                        <table style="width:100%;margin-bottom:8px;border-bottom:2px solid #000;padding-bottom:6px;">
+                            <tr>
+
+                                <td style="text-align:center;">
+                                    <div style="font-size:12pt;font-weight:bold;">محافظة بورسعيد</div>
+                                    <div>الإدارة العامة للشؤون المالية والإدارية</div>
+                                    <div style="font-weight:bold;">التعاقدات</div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <p style="margin-bottom:14px;font-size:12pt;font-weight:bold;text-align:center;">
+                            السيد / مدير مكتب المقاولات للتأمينات الاجتماعية - بورسعيد
+                        </p>
+                        <p style="margin-bottom:12px;font-weight:bold;">تحيه طيبه وبعد،،،</p>
+
+                        <p style="margin-bottom:10px;line-height:1.8;text-align:justify;">
+                            يرجى الاحاطة أنه وردت الينا مستندات صرف الدفعة رقم (&#160;&#160;) / جاري (&#160;&#160;) لعملية:
+                        </p>
+                        <p style="margin-bottom:8px;line-height:1.8;">
+                            لعملية / <strong><t t-esc="doc.rfq_id.name if doc.rfq_id else doc.name"/></strong>
+                        </p>
+                        <p style="margin-bottom:8px;line-height:1.8;">
+                            مقاولة / <t t-esc="doc.awarded_supplier_id.name if doc.awarded_supplier_id else '—'"/>
+                        </p>
+                        <p style="margin-bottom:8px;line-height:1.8;">
+                            واجماليها / <strong><t t-esc="'{:,.2f}'.format(doc.awarded_amount or 0)"/> جنيه</strong>
+                        </p>
+                        <p style="margin-bottom:8px;line-height:1.8;">علماً بأن ما سبق صرفه /</p>
+                        <p style="margin-bottom:8px;line-height:1.8;">وقيمة الدفعة /</p>
+                        <p style="margin-bottom:14px;line-height:1.8;">
+                            عن الفترة من &#160;&#160;&#160;&#160; / حتى &#160;&#160;&#160;&#160; /
+                            <t t-esc="doc.date.year if doc.date else '2024'"/>
+                        </p>
+
+                        <p style="margin-bottom:14px;text-align:justify;">
+                            برجاء موافاتنا بما يفيد السداد حتى يتسنى لنا تحديد مستحقاته لدينا
+                        </p>
+                        <p style="margin-bottom:20px;text-align:center;font-weight:bold;">
+                            وتفضلوا بقبول وافر الاحترام
+                        </p>
+
+                        <table style="width:100%;font-size:10pt;">
+                            <tr>
+                                <td style="text-align:center;width:33%;">
+                                    <p style="font-weight:bold;">مـراجع</p>
+                                    <p style="color:#555;font-size:9pt;margin-top:4px;">عضو التعاقدات</p>
+                                    <p style="color:#555;margin-top:16px;">التوقيع: .............</p>
+                                </td>
+                                <td style="text-align:center;width:33%;">
+                                    <p style="font-weight:bold;">مدير المراجعة</p>
+                                    <p style="color:#555;font-size:9pt;margin-top:4px;">مدير التعاقدات</p>
+                                    <p style="color:#555;margin-top:16px;">التوقيع: .............</p>
+                                </td>
+                                <td style="text-align:center;width:33%;">
+                                    <p style="font-weight:bold;">مراقب الحسابات</p>
+                                    <p style="color:#555;font-size:9pt;margin-top:4px;">مدير الإدارة المالية</p>
+                                    <p style="color:#555;margin-top:16px;">التوقيع: .............</p>
+                                </td>                                <td style="width:80px;text-align:center;">
+                                    <img src="data:image/png;base64,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" style="width:68px;height:68px;object-fit:contain;" alt="محافظة بورسعيد"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div style="margin-top:10px;font-size:8pt;color:#777;
+                                    border-top:1px solid #ccc;padding-top:5px;text-align:center;">
+                            الديوان العام لمحافظة بورسعيد — مستند صرف التأمينات الاجتماعية
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- ══ مستند صرف وزارة العمل فرع بورسعيد ════════════════════════════ -->
+    <record id="action_report_labor_office" model="ir.actions.report">
+        <field name="name">مستند صرف وزارة العمل</field>
+        <field name="model">procurement.adjudication</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">procurement_adjudication.report_labor_office_template</field>
+        <field name="print_report_name">'مستند وزارة العمل - ' + (object.name or '')</field>
+        <field name="binding_model_id" ref="model_procurement_adjudication"/>
+<field name="paperformat_id" ref="procurement_adjudication.paperformat_gov_a4"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_labor_office_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                
+                    <t t-call="web.external_layout">
+                
+                    <div class="page" style="direction:rtl;font-family:'Arial',sans-serif;font-size:11pt;">
+<style>
+    .o_company_logo, .o_company_name, .o_address_name { display: none !important; }
+    .o_report_layout_header, header.o_report_layout_header { display: none !important; }
+    footer, .o_footer { display: none !important; }
+    .header { display: none !important; }
+    #mainTable thead td { display: none !important; }
+    table.o_report_layout thead { display: none !important; }
+    .o_report_no_header_footer header, .o_report_no_header_footer footer { display: none !important; }
+</style>
+
+
+                        <table style="width:100%;margin-bottom:8px;border-bottom:2px solid #000;padding-bottom:6px;">
+                            <tr>
+
+                                <td style="text-align:center;">
+                                    <div style="font-size:12pt;font-weight:bold;">محافظة بورسعيد</div>
+                                    <div>الإدارة العامة للشؤون المالية والإدارية</div>
+                                    <div style="font-weight:bold;">التعاقدات</div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <p style="margin-bottom:14px;font-size:12pt;font-weight:bold;text-align:center;">
+                            السيد / وزارة العمل فرع بورسعيد<br/>
+                            <span style="font-size:11pt;">(وحدة السلامة المنتظمة)</span>
+                        </p>
+                        <p style="margin-bottom:12px;font-weight:bold;">تحيه طيبه وبعد،،،</p>
+
+                        <p style="margin-bottom:10px;line-height:1.8;text-align:justify;">
+                            يرجى الاحاطة أنه وردت الينا مستندات صرف الدفعة رقم (&#160;&#160;) / جاري (&#160;&#160;):
+                        </p>
+                        <p style="margin-bottom:8px;line-height:1.8;">
+                            لعملية / <strong><t t-esc="doc.rfq_id.name if doc.rfq_id else doc.name"/></strong>
+                        </p>
+                        <p style="margin-bottom:8px;line-height:1.8;">
+                            مقاولة / <t t-esc="doc.awarded_supplier_id.name if doc.awarded_supplier_id else '—'"/>
+                        </p>
+                        <p style="margin-bottom:8px;line-height:1.8;">
+                            واجماليها / <strong><t t-esc="'{:,.2f}'.format(doc.awarded_amount or 0)"/> جنيه</strong>
+                        </p>
+                        <p style="margin-bottom:8px;line-height:1.8;">علماً بأن ما سبق صرفه /</p>
+                        <p style="margin-bottom:8px;line-height:1.8;">وقيمة الدفعة /</p>
+                        <p style="margin-bottom:14px;line-height:1.8;">
+                            عن الفترة من &#160;&#160;&#160;&#160; / حتى &#160;&#160;&#160;&#160; /
+                            <t t-esc="doc.date.year if doc.date else '2024'"/>
+                        </p>
+
+                        <p style="margin-bottom:14px;text-align:justify;">
+                            برجاء موافاتنا بما يفيد السداد حتى يتسنى لنا تحديد مستحقاته لدينا
+                        </p>
+                        <p style="margin-bottom:20px;text-align:center;font-weight:bold;">
+                            وتفضلوا بقبول وافر الاحترام
+                        </p>
+
+                        <table style="width:100%;font-size:10pt;">
+                            <tr>
+                                <td style="text-align:center;width:33%;">
+                                    <p style="font-weight:bold;">مـراجع</p>
+                                    <p style="color:#555;font-size:9pt;margin-top:4px;">عضو التعاقدات</p>
+                                    <p style="color:#555;margin-top:16px;">التوقيع: .............</p>
+                                </td>
+                                <td style="text-align:center;width:33%;">
+                                    <p style="font-weight:bold;">مدير المراجعة</p>
+                                    <p style="color:#555;font-size:9pt;margin-top:4px;">مدير التعاقدات</p>
+                                    <p style="color:#555;margin-top:16px;">التوقيع: .............</p>
+                                </td>
+                                <td style="text-align:center;width:33%;">
+                                    <p style="font-weight:bold;">مراقب الحسابات</p>
+                                    <p style="color:#555;font-size:9pt;margin-top:4px;">مدير الإدارة المالية</p>
+                                    <p style="color:#555;margin-top:16px;">التوقيع: .............</p>
+                                </td>                                <td style="width:80px;text-align:center;">
+                                    <img src="data:image/png;base64,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" style="width:68px;height:68px;object-fit:contain;" alt="محافظة بورسعيد"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div style="margin-top:10px;font-size:8pt;color:#777;
+                                    border-top:1px solid #ccc;padding-top:5px;text-align:center;">
+                            الديوان العام لمحافظة بورسعيد — مستند صرف وزارة العمل فرع بورسعيد
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+
+  <menuitem id="menu_ps_adjudication"
+            name="البت الفني والمالي"
+            parent="port_said_menu.menu_ps_30_purchase"
+            action="procurement_adjudication.action_adjudication"
+            sequence="32"/>
+</odoo>

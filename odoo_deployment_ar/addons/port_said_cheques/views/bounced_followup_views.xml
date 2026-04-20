@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_bounced_followup_tree" model="ir.ui.view">
+    <field name="name">port_said.cheque.bounced_followup.tree</field>
+    <field name="model">port_said.cheque.bounced_followup</field>
+    <field name="arch" type="xml">
+      <tree string="ملفات الشيكات المرتدة"
+            decoration-danger="state=='open'"
+            decoration-warning="state in ['negotiating','legal_action']"
+            decoration-success="state=='recovered'"
+            decoration-muted="state=='written_off'">
+        <field name="cheque_number"/>
+        <field name="drawer_partner_id"/>
+        <field name="drawn_on_bank"/>
+        <field name="bounce_date"/>
+        <field name="total_claim" sum="إجمالي المطالبات"/>
+        <field name="amount_recovered" sum="إجمالي المُسترَد"/>
+        <field name="state"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_bounced_followup_form" model="ir.ui.view">
+    <field name="name">port_said.cheque.bounced_followup.form</field>
+    <field name="model">port_said.cheque.bounced_followup</field>
+    <field name="arch" type="xml">
+      <form>
+        <header>
+          <button name="action_start_negotiation" type="object"
+                  string="بدء التفاوض"
+                  invisible="state != 'open'" class="oe_highlight"/>
+          <button name="action_refer_to_legal" type="object"
+                  string="إحالة قانونية"
+                  invisible="state not in ['open','negotiating']"/>
+          <button name="action_mark_recovered" type="object"
+                  string="تأكيد الاسترداد"
+                  invisible="state in ['recovered','written_off']"
+                  class="oe_highlight"/>
+          <button name="action_write_off" type="object" string="شطب"
+                  invisible="state == 'written_off'"
+                  groups="account.group_account_manager"
+                  confirm="الشطب إجراء نهائي لا رجعة فيه."/>
+          <field name="state" widget="statusbar"
+                 statusbar_visible="open,negotiating,legal_action,recovered"/>
+        </header>
+        <sheet>
+          <div class="oe_title">
+            <h1><field name="display_name" readonly="1"/></h1>
+          </div>
+          <group>
+            <group string="الشيك">
+              <field name="cheque_id"/>
+              <field name="cheque_number" readonly="1"/>
+              <field name="drawer_partner_id" readonly="1"/>
+              <field name="drawn_on_bank" readonly="1"/>
+            </group>
+            <group string="الارتداد">
+              <field name="bounce_date"/>
+              <field name="bounce_reason"/>
+              <field name="original_amount"/>
+              <field name="returned_charges"/>
+              <field name="total_claim" readonly="1"/>
+              <field name="currency_id" invisible="1"/>
+            </group>
+          </group>
+          <group string="إجراءات الاسترداد" col="2">
+            <group>
+              <field name="first_notice_date"/>
+              <field name="second_notice_date"/>
+              <field name="legal_referral_date" readonly="1"/>
+            </group>
+            <group>
+              <field name="case_number"/>
+              <field name="court_name"/>
+            </group>
+          </group>
+          <group string="الاسترداد" col="2"
+                 invisible="state not in ['negotiating','legal_action','recovered']">
+            <group>
+              <field name="amount_recovered"/>
+              <field name="recovery_date" readonly="1"/>
+              <field name="recovery_method"/>
+            </group>
+          </group>
+          <group string="الشطب" col="2" invisible="state != 'written_off'">
+            <group>
+              <field name="write_off_date" readonly="1"/>
+              <field name="write_off_approved_by" readonly="1"/>
+            </group>
+            <group>
+              <field name="write_off_reason"/>
+            </group>
+          </group>
+          <notebook>
+            <page string="ملاحظات">
+              <field name="notes"/>
+            </page>
+          </notebook>
+        </sheet>
+        <div class="oe_chatter">
+          <field name="message_follower_ids"/>
+          <field name="activity_ids"/>
+          <field name="message_ids"/>
+        </div>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_bounced_followup" model="ir.actions.act_window">
+    <field name="name">الشيكات المرتدة</field>
+    <field name="res_model">port_said.cheque.bounced_followup</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+</odoo>

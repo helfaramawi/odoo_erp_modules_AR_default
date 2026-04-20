@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_war_finance_control_user,war.finance.control user,model_war_finance_control,d365_war_base.group_war_room_user,1,0,0,0
+access_war_finance_control_manager,war.finance.control manager,model_war_finance_control,d365_war_base.group_war_room_manager,1,1,1,1

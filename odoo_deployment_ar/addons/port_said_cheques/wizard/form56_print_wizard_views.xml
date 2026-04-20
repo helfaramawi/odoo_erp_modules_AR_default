@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_form56_print_wizard_form" model="ir.ui.view">
+    <field name="name">port_said.cheque.form56.print.wizard.form</field>
+    <field name="model">port_said.cheque.form56.print.wizard</field>
+    <field name="arch" type="xml">
+      <form string="طباعة دفتر 56">
+        <sheet>
+          <group>
+            <group>
+              <field name="register_type"/>
+              <field name="fiscal_year"/>
+              <field name="cheque_book_id"
+                     invisible="register_type != 'cheques'"/>
+            </group>
+            <group>
+              <field name="period_from"/>
+              <field name="period_to"/>
+              <field name="only_issued"/>
+            </group>
+          </group>
+        </sheet>
+        <footer>
+          <button name="action_print" type="object" string="طباعة" class="oe_highlight"/>
+          <button special="cancel" string="إلغاء"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_form56_print_wizard" model="ir.actions.act_window">
+    <field name="name">طباعة دفتر 56</field>
+    <field name="res_model">port_said.cheque.form56.print.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+  </record>
+
+  <menuitem id="menu_form56_print"
+            name="طباعة دفتر 56"
+            parent="menu_cheques_root"
+            action="action_form56_print_wizard"
+            sequence="40"/>
+
+</odoo>

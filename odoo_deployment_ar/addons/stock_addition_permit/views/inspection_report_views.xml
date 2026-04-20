@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         محضر الفحص — مطابق لشاشة D365 (User Guide Inventory p.3-5)
+         الحقول الإلزامية: دفعة المرجع، مجموعة الاختبار، الكمية، نتيجة الفحص
+    ══════════════════════════════════════════════════════════════════════════ -->
+    <record id="view_inspection_report_form" model="ir.ui.view">
+        <field name="name">stock.inspection.report.form</field>
+        <field name="model">stock.inspection.report</field>
+        <field name="arch" type="xml">
+            <form string="محضر الفحص">
+                <header>
+                    <button name="action_validate"
+                            string="✓ تحقق من الصحة"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_print_inspection"
+                            string="🖨 طباعة محضر الفحص"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,done,rejected"/>
+                </header>
+                <sheet>
+                    <!-- Smart buttons -->
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_addition_permit"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-plus-square"
+                                invisible="not addition_permit_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_value">إذن</span>
+                                <span class="o_stat_text">الإضافة</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <label for="name" string="رقم محضر الفحص"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+
+                    <!-- القسم الأول: بيانات أمر الاستلام — مطابق D365 -->
+                    <group string="أمر التوريد / الاستلام">
+                        <group>
+                            <field name="picking_id"
+                                   string="أمر الاستلام"
+                                   required="1"
+                                   options="{'no_create': True}"
+                                   domain="[('picking_type_code','=','incoming')]"/>
+                            <field name="purchase_order_id"
+                                   string="أمر الشراء / التوريد"
+                                   readonly="1"/>
+                            <field name="partner_id"
+                                   string="المورد"
+                                   readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="inspection_date"
+                                   string="تاريخ الفحص"
+                                   required="1"/>
+                            <field name="inspector_id"
+                                   string="المفتش / المسؤول عن الفحص"
+                                   options="{'no_create': True}"/>
+                        </group>
+                    </group>
+
+                    <!-- القسم الثاني: بيانات الفحص — الحقول الإلزامية من D365 -->
+                    <group string="بيانات محضر الفحص">
+                        <group>
+                            <!-- 1. دفعة المرجع: إلزامي — يُسحب تلقائياً من رقم أمر الشراء -->
+                            <field name="reference_batch"
+                                   string="① دفعة المرجع (رقم أمر الشراء)"
+                                   required="1"
+                                   decoration-danger="not reference_batch"/>
+                            <!-- 2. مجموعة الاختبار: إلزامي -->
+                            <field name="test_group"
+                                   string="② مجموعة الاختبار"
+                                   required="1"
+                                   decoration-danger="not test_group"/>
+                        </group>
+                        <group>
+                            <!-- 3. الكمية المفحوصة: إلزامي -->
+                            <field name="inspection_qty"
+                                   string="③ الكمية المفحوصة"
+                                   required="1"/>
+                            <!-- الكمية المعتمدة للإضافة -->
+                            <field name="approved_qty"
+                                   string="الكمية المعتمدة للإضافة"/>
+                        </group>
+                    </group>
+
+                    <!-- القسم الثالث: نتيجة الفحص -->
+                    <group string="نتيجة الفحص">
+                        <field name="result"
+                               widget="radio"
+                               options="{'horizontal': true}"
+                               required="1"/>
+                        <field name="rejection_reason"
+                               string="سبب الرفض / الملاحظات"
+                               invisible="result == 'pass'"
+                               placeholder="اذكر سبب الرفض أو التحفظ..."/>
+                    </group>
+
+                    <!-- القسم الرابع: إذن الإضافة المرتبط -->
+                    <group string="إذن الإضافة المرتبط"
+                           invisible="not addition_permit_id">
+                        <field name="addition_permit_id" readonly="1"/>
+                    </group>
+
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- List View محضر الفحص -->
+    <record id="view_inspection_report_list" model="ir.ui.view">
+        <field name="name">stock.inspection.report.list</field>
+        <field name="model">stock.inspection.report</field>
+        <field name="arch" type="xml">
+            <tree string="محاضر الفحص"
+                  decoration-success="state == 'done'"
+                  decoration-danger="state == 'rejected'"
+                  decoration-muted="state == 'draft'">
+                <field name="name"             string="رقم المحضر"/>
+                <field name="inspection_date"  string="تاريخ الفحص"/>
+                <field name="picking_id"       string="أمر الاستلام"/>
+                <field name="purchase_order_id" string="أمر الشراء"/>
+                <field name="partner_id"       string="المورد"/>
+                <field name="reference_batch"  string="دفعة المرجع"/>
+                <field name="test_group"       string="مجموعة الاختبار"/>
+                <field name="inspection_qty"   string="الكمية المفحوصة"/>
+                <field name="approved_qty"     string="الكمية المعتمدة"/>
+                <field name="inspector_id"     string="المفتش" optional="show"/>
+                <field name="result" widget="badge"
+                       decoration-success="result == 'pass'"
+                       decoration-warning="result == 'partial'"
+                       decoration-danger="result == 'fail'"
+                       string="نتيجة الفحص"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'done'"
+                       decoration-danger="state == 'rejected'"
+                       string="الحالة"/>
+                <button name="action_validate"
+                        string="تحقق"
+                        type="object"
+                        icon="fa-check"
+                        invisible="state != 'draft'"
+                        title="تحقق من صحة محضر الفحص"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Search محضر الفحص -->
+    <record id="view_inspection_report_search" model="ir.ui.view">
+        <field name="name">stock.inspection.report.search</field>
+        <field name="model">stock.inspection.report</field>
+        <field name="arch" type="xml">
+            <search string="بحث في محاضر الفحص">
+                <field name="name"            string="رقم المحضر"/>
+                <field name="partner_id"      string="المورد"/>
+                <field name="reference_batch" string="دفعة المرجع"/>
+                <field name="picking_id"      string="أمر الاستلام"/>
+                <separator/>
+                <filter name="draft"    string="مسودة"     domain="[('state','=','draft')]"/>
+                <filter name="done"     string="تم التحقق" domain="[('state','=','done')]"/>
+                <filter name="rejected" string="مرفوض"     domain="[('state','=','rejected')]"/>
+                <separator/>
+                <group expand="0" string="تجميع حسب">
+                    <filter name="g_partner"  string="المورد"    context="{'group_by':'partner_id'}"/>
+                    <filter name="g_date"     string="تاريخ الفحص" context="{'group_by':'inspection_date'}"/>
+                    <filter name="g_result"   string="نتيجة الفحص" context="{'group_by':'result'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_inspection_report" model="ir.actions.act_window">
+        <field name="name">محاضر الفحص</field>
+        <field name="res_model">stock.inspection.report</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">لا توجد محاضر فحص</p>
+            <p>محضر الفحص يُنشأ عند استلام البضاعة قبل إصدار إذن الإضافة</p>
+        </field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         إذن الإضافة — مطابق لشاشة D365 (User Guide Inventory p.7-8)
+         الحقول: الاسم(نوع الدفتر)، رقم المورد، رقم أمر الشراء، المخزن، الموقع، السطور
+    ══════════════════════════════════════════════════════════════════════════ -->
+    <record id="view_addition_permit_form" model="ir.ui.view">
+        <field name="name">stock.addition.permit.form</field>
+        <field name="model">stock.addition.permit</field>
+        <field name="arch" type="xml">
+            <form string="إذن إضافة">
+                <header>
+                    <button name="action_post"
+                            string="✓ ترحيل إذن الإضافة"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"
+                            confirm="هل تريد ترحيل إذن الإضافة؟ لا يمكن التراجع."/>
+                    <button name="action_cancel"
+                            string="إلغاء"
+                            type="object"
+                            invisible="state != 'draft'"/>
+                    <button name="action_print_form1"
+                            string="🖨 طباعة إذن الإضافة"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state == 'cancel'"/>
+                    <button name="action_print_istimara50"
+                            string="📋 طباعة استمارة 50"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="state != 'posted'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,posted"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_inspection"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-clipboard"
+                                invisible="not inspection_report_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_value">محضر</span>
+                                <span class="o_stat_text">الفحص</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <label for="name" string="رقم إذن الإضافة"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+
+                    <!-- القسم الأول: رأس إذن الإضافة — مطابق D365 تماماً -->
+                    <group string="تفاصيل رأس دفتر اليومية">
+                        <group>
+                            <!-- الاسم = نوع الدفتر (إذن إضافة) — من قائمة خيار في D365 -->
+                            <field name="permit_date"
+                                   string="تاريخ دفتر اليومية"
+                                   required="1"/>
+                            <field name="inspection_report_id"
+                                   string="رقم المرجع (محضر الفحص)"
+                                   options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <!-- رقم المورد — يُسحب من شاشة أخرى -->
+                            <field name="partner_id"
+                                   string="رقم المورد / اسم المورد"
+                                   required="1"
+                                   options="{'no_create': True}"/>
+                            <!-- رقم أمر الشراء — يُسحب من شاشة أخرى -->
+                            <field name="purchase_order_id"
+                                   string="رقم أمر الشراء / التوريد"
+                                   options="{'no_create': True}"/>
+                            <field name="picking_id"
+                                   string="إيصال الاستلام"
+                                   options="{'no_create': True}"/>
+                        </group>
+                    </group>
+
+                    <group string="بيانات الموقع والمخزن">
+                        <group>
+                            <!-- المخزن — يُسحب من شاشة أخرى -->
+                            <field name="warehouse_id"
+                                   string="المخزن"
+                                   required="1"
+                                   options="{'no_create': True}"/>
+                            <!-- الموقع — يُسحب من شاشة أخرى -->
+                            <field name="location_id"
+                                   string="الموقع"
+                                   required="1"
+                                   options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="site_id"
+                                   string="الفرع / الموقع الإضافي"/>
+                            <field name="storekeeper_id"
+                                   string="أمين المخزن"
+                                   options="{'no_create': True}"/>
+                        </group>
+                    </group>
+
+                    <!-- سطور إذن الإضافة — مطابق D365 -->
+                    <group string="سطور إذن الإضافة">
+                        <group>
+                            <field name="product_id"
+                                   string="اسم الصنف"
+                                   required="1"
+                                   options="{'no_create': True}"/>
+                            <field name="qty"
+                                   string="الكمية"
+                                   required="1"/>
+                            <field name="uom_id"
+                                   string="الوحدة"
+                                   readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="notes"
+                                   string="الملاحظات"
+                                   placeholder="أي ملاحظات على الإضافة..."/>
+                        </group>
+                    </group>
+
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- List View إذن الإضافة -->
+    <record id="view_addition_permit_list" model="ir.ui.view">
+        <field name="name">stock.addition.permit.list</field>
+        <field name="model">stock.addition.permit</field>
+        <field name="arch" type="xml">
+            <tree string="أذونات الإضافة"
+                  decoration-success="state == 'posted'"
+                  decoration-muted="state == 'cancel'">
+                <field name="name"              string="رقم الإذن"/>
+                <field name="permit_date"       string="التاريخ"/>
+                <field name="partner_id"        string="المورد"/>
+                <field name="purchase_order_id" string="أمر الشراء"/>
+                <field name="product_id"        string="الصنف"/>
+                <field name="qty"               string="الكمية"/>
+                <field name="uom_id"            string="الوحدة"/>
+                <field name="warehouse_id"      string="المخزن"/>
+                <field name="location_id"       string="الموقع" optional="show"/>
+                <field name="storekeeper_id"    string="أمين المخزن" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'posted'"
+                       decoration-muted="state == 'cancel'"
+                       string="الحالة"/>
+                <button name="action_print_form1"
+                        string="طباعة"
+                        type="object"
+                        icon="fa-print"
+                        invisible="state == 'cancel'"
+                        title="طباعة إذن الإضافة"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Search إذن الإضافة -->
+    <record id="view_addition_permit_search" model="ir.ui.view">
+        <field name="name">stock.addition.permit.search</field>
+        <field name="model">stock.addition.permit</field>
+        <field name="arch" type="xml">
+            <search string="بحث في أذونات الإضافة">
+                <field name="name"              string="رقم الإذن"/>
+                <field name="partner_id"        string="المورد"/>
+                <field name="purchase_order_id" string="أمر الشراء"/>
+                <field name="product_id"        string="الصنف"/>
+                <field name="warehouse_id"      string="المخزن"/>
+                <separator/>
+                <filter name="draft"  string="مسودة"  domain="[('state','=','draft')]"/>
+                <filter name="posted" string="مرحّل"  domain="[('state','=','posted')]"/>
+                <separator/>
+                <group expand="0" string="تجميع حسب">
+                    <filter name="g_partner"   string="المورد"    context="{'group_by':'partner_id'}"/>
+                    <filter name="g_warehouse" string="المخزن"    context="{'group_by':'warehouse_id'}"/>
+                    <filter name="g_date"      string="التاريخ"   context="{'group_by':'permit_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_addition_permit" model="ir.actions.act_window">
+        <field name="name">أذونات الإضافة</field>
+        <field name="res_model">stock.addition.permit</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">لا توجد أذونات إضافة</p>
+            <p>إذن الإضافة يُنشأ تلقائياً بعد اعتماد محضر الفحص</p>
+        </field>
+    </record>
+
+    <!-- Menus -->
+    <!-- Root managed by port_said_menu -->
+
+
+
+  <menuitem id="menu_ps_addition"
+            name="أذونات الإضافة"
+            parent="port_said_menu.menu_ps_40_inventory"
+            action="stock_addition_permit.action_addition_permit"
+            sequence="42"/>
+</odoo>

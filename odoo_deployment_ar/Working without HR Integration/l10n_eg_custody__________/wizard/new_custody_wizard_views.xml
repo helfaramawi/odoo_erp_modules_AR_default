@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ══ Wizard Form View ═════════════════════════════════════════════════ -->
+    <record id="view_new_custody_wizard_form" model="ir.ui.view">
+        <field name="name">new.custody.wizard.form</field>
+        <field name="model">new.custody.wizard</field>
+        <field name="arch" type="xml">
+            <form string="تسجيل عهدة جديدة">
+
+                <!-- Progress indicator -->
+                <div style="background:#1F4E79;color:white;padding:10px 16px;
+                            border-radius:6px;margin-bottom:12px;text-align:center;
+                            font-size:13px;font-weight:bold;">
+                    📋 تسجيل عهدة جديدة — استمارة 193 (ع.ح)
+                </div>
+
+                <notebook>
+
+                    <!-- ── الخطوة 1: بيانات الموظف ──────────────────────── -->
+                    <page string="① بيانات الموظف" name="employee">
+                        <group string="الموظف المستلم للعهدة">
+                            <group>
+                                <field name="employee_id"
+                                       options="{'no_create': True}"
+                                       placeholder="اختر الموظف..."/>
+                                <field name="national_id"
+                                       placeholder="14 رقم — إلزامي GAFI"
+                                       decoration-danger="not national_id"/>
+                            </group>
+                            <group>
+                                <field name="employee_department_id" readonly="1"/>
+                                <field name="employee_job_id"         readonly="1"/>
+                            </group>
+                        </group>
+                        <div style="background:#FFF3CD;border:1px solid #FFB800;
+                                    border-radius:4px;padding:8px 12px;margin-top:8px;">
+                            <strong>⚠ تنبيه GAFI:</strong>
+                            الرقم القومي إلزامي ولا يمكن طباعة استمارة 193 بدونه.
+                            سيتم ملؤه تلقائياً من بيانات الموظف إذا كان مُسجلاً.
+                        </div>
+                    </page>
+
+                    <!-- ── الخطوة 2: بيانات الصنف ────────────────────────── -->
+                    <page string="② بيانات الصنف" name="item">
+                        <group string="الصنف المستديم المُصرف">
+                            <group>
+                                <field name="product_id"
+                                       options="{'no_create': True}"
+                                       placeholder="اختر الصنف المستديم..."/>
+                                <field name="serial_number"
+                                       placeholder="الرقم التسلسلي / الكودي (اختياري)"/>
+                                <field name="custody_type" widget="radio"
+                                       options="{'horizontal': true}"/>
+                            </group>
+                            <group>
+                                <field name="qty"/>
+                                <field name="estimated_value"
+                                       placeholder="القيمة بالجنيه المصري"/>
+                            </group>
+                        </group>
+                    </page>
+
+                    <!-- ── الخطوة 3: المخزن والمسؤولون ─────────────────────── -->
+                    <page string="③ المخزن والمسؤولون" name="warehouse">
+                        <group string="بيانات المخزن">
+                            <group>
+                                <field name="warehouse_id"
+                                       options="{'no_create': True}"/>
+                                <field name="location_id"
+                                       options="{'no_create': True}"/>
+                            </group>
+                        </group>
+                        <group string="المسؤولون (توقيعات استمارة 193)">
+                            <group>
+                                <field name="storekeeper_id"
+                                       options="{'no_create': True}"/>
+                            </group>
+                            <group>
+                                <field name="dept_manager_id"
+                                       options="{'no_create': True}"/>
+                            </group>
+                        </group>
+                    </page>
+
+                    <!-- ── الخطوة 4: بيانات الاستمارة ──────────────────────── -->
+                    <page string="④ بيانات الاستمارة" name="form_data">
+                        <group string="بيانات استمارة 193">
+                            <group>
+                                <field name="form_193_ref"
+                                       placeholder="رقم الاستمارة الحكومية..."/>
+                                <field name="issue_date"/>
+                                <field name="issue_permit_ref"
+                                       placeholder="رقم إذن الصرف (اختياري)"/>
+                            </group>
+                            <group>
+                                <field name="expected_return_date"/>
+                            </group>
+                        </group>
+                        <group string="ملاحظات">
+                            <field name="notes" nolabel="1"
+                                   placeholder="أي ملاحظات إضافية على هذه العهدة..."/>
+                        </group>
+                    </page>
+
+                </notebook>
+
+                <footer>
+                    <button name="action_create_custody"
+                            string="✅ تسجيل العهدة وفتح الاستمارة"
+                            type="object"
+                            class="btn-primary"/>
+                    <button string="إلغاء" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

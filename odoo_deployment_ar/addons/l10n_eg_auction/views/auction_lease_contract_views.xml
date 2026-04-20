@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_auction_lease_contract_form" model="ir.ui.view">
+        <field name="name">auction.lease.contract.form</field>
+        <field name="model">auction.lease.contract</field>
+        <field name="arch" type="xml">
+            <form string="عقد إيجار - حق انتفاع">
+                <header>
+                    <button name="action_generate_schedule" string="إنشاء جدول الدفعات" type="object" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_activate"          string="تفعيل العقد"         type="object" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_expire"            string="إنهاء العقد"         type="object" invisible="state != 'active'"/>
+                    <button name="action_print_contract"    string="طباعة العقد"         type="object" class="btn-secondary"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active,expired"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
+                    <group string="أطراف العقد">
+                        <group>
+                            <field name="auction_request_id" readonly="1"/>
+                            <field name="partner_id"/>
+                            <field name="asset_description"/>
+                        </group>
+                        <group>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="duration_years" readonly="1"/>
+                            <field name="grace_period_months"/>
+                            <field name="effective_start_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="الشروط المالية">
+                        <group>
+                            <field name="contract_value"/>
+                            <field name="annual_increase_pct"/>
+                            <field name="payment_frequency"/>
+                            <field name="initial_deposit"/>
+                        </group>
+                        <group>
+                            <field name="insurance_pct"/>
+                            <field name="insurance_amount" readonly="1"/>
+                            <field name="total_expected"   readonly="1"/>
+                            <field name="total_collected"  readonly="1"/>
+                            <field name="total_outstanding" readonly="1"
+                                decoration-danger="total_outstanding &gt; 0"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="جدول الدفعات" name="schedule">
+                            <field name="payment_schedule_ids">
+                                <tree editable="bottom" decoration-danger="state=='overdue'" decoration-success="state=='paid'">
+                                    <field name="installment_number"/>
+                                    <field name="year_number"/>
+                                    <field name="due_date"/>
+                                    <field name="amount"/>
+                                    <field name="amount_paid"/>
+                                    <field name="amount_outstanding" readonly="1"/>
+                                    <field name="receipt_ref"/>
+                                    <field name="payment_date"/>
+                                    <field name="state" widget="badge"
+                                        decoration-success="state=='paid'"
+                                        decoration-danger="state=='overdue'"
+                                        decoration-warning="state=='partial'"/>
+                                    <button name="action_mark_paid" string="تحصيل" type="object" invisible="state == 'paid'" class="btn-sm btn-success"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="ملاحظات"><field name="notes"/></page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_auction_lease_contract_list" model="ir.ui.view">
+        <field name="name">auction.lease.contract.list</field>
+        <field name="model">auction.lease.contract</field>
+        <field name="arch" type="xml">
+            <tree string="عقود الإيجار" decoration-danger="total_outstanding &gt; 0 and state == 'active'">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="asset_description"/>
+                <field name="contract_value"/>
+                <field name="annual_increase_pct"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="total_collected"/>
+                <field name="total_outstanding"/>
+                <field name="state" widget="badge" decoration-success="state=='active'" decoration-muted="state in ['expired','cancelled']"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_auction_lease_contract" model="ir.actions.act_window">
+        <field name="name">عقود الإيجار</field>
+        <field name="res_model">auction.lease.contract</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- عقود الإيجار menu managed by port_said_menu -->
+</odoo>

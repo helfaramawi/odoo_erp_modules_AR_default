@@ -1,0 +1,25 @@
+/* Budget register print styling */
+.page[dir="rtl"] {
+    font-family: 'Traditional Arabic', 'Arial', serif;
+    line-height: 1.35;
+}
+.page[dir="rtl"] table {
+    direction: rtl;
+    border-collapse: collapse;
+}
+/* Vertical column headers for cross-tab */
+.page[dir="rtl"] th[style*="writing-mode"] {
+    height: 90px;
+    vertical-align: bottom;
+}
+/* Numeric cells are LTR even inside RTL pages */
+.page[dir="rtl"] td[style*="text-align:left"] {
+    direction: ltr;
+    unicode-bidi: embed;
+    font-variant-numeric: tabular-nums;
+}
+@media print {
+    .page { page-break-inside: avoid; }
+    table { page-break-inside: avoid; }
+    thead { display: table-header-group; }
+}

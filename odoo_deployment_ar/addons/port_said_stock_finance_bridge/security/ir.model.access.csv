@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_account_rule_user,stock.finance.account.rule user,model_stock_finance_account_rule,account.group_account_user,1,0,0,0
+access_account_rule_mgr,stock.finance.account.rule manager,model_stock_finance_account_rule,account.group_account_manager,1,1,1,1
+access_dimension_rule_user,stock.finance.dimension.rule user,model_stock_finance_dimension_rule,account.group_account_user,1,0,0,0
+access_dimension_rule_mgr,stock.finance.dimension.rule manager,model_stock_finance_dimension_rule,account.group_account_manager,1,1,1,1
+access_journal_entry_user,stock.finance.journal.entry user,model_stock_finance_journal_entry,account.group_account_user,1,1,1,0
+access_journal_entry_mgr,stock.finance.journal.entry manager,model_stock_finance_journal_entry,account.group_account_manager,1,1,1,1

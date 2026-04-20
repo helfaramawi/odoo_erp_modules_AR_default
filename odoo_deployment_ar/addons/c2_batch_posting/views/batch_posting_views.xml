@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_batch_posting_config_form" model="ir.ui.view">
+        <field name="name">batch.posting.config.form</field>
+        <field name="model">batch.posting.config</field>
+        <field name="arch" type="xml">
+            <form string="Batch Posting Config / تكوين الترحيل الدفعي">
+                <header>
+                    <button name="action_run_now" string="Run Now / تشغيل الآن"
+                            type="object" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Configuration / التكوين">
+                            <field name="name"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Last Run / آخر تشغيل">
+                            <field name="last_run" readonly="1"/>
+                            <field name="last_run_count" readonly="1"/>
+                            <field name="last_run_errors" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Journals / الدفاتر">
+                        <field name="journal_ids" widget="many2many_tags" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_batch_posting_config_list" model="ir.ui.view">
+        <field name="name">batch.posting.config.list</field>
+        <field name="model">batch.posting.config</field>
+        <field name="arch" type="xml">
+            <tree string="Batch Posting Configs">
+                <field name="name"/>
+                <field name="company_id"/>
+                <field name="last_run"/>
+                <field name="last_run_count"/>
+                <field name="last_run_errors" decoration-danger="last_run_errors > 0"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_batch_posting_config" model="ir.actions.act_window">
+        <field name="name">Batch Posting / الترحيل الدفعي</field>
+        <field name="res_model">batch.posting.config</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_batch_posting"
+        name="Batch Posting / الترحيل الدفعي"
+        parent="account.menu_finance_configuration"
+        action="action_batch_posting_config"
+        sequence="99"/>
+</odoo>

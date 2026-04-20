@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_violation_type_user,violation type user,model_port_said_penalty_violation_type,group_penalty_user,1,0,0,0
+access_violation_type_manager,violation type manager,model_port_said_penalty_violation_type,group_penalty_manager,1,1,1,1
+access_type_option_user,type option user,model_port_said_penalty_type_option,group_penalty_user,1,0,0,0
+access_type_option_manager,type option manager,model_port_said_penalty_type_option,group_penalty_manager,1,1,1,1
+access_penalty_user,penalty user,model_port_said_penalty,group_penalty_user,1,1,1,0
+access_penalty_manager,penalty manager,model_port_said_penalty,group_penalty_manager,1,1,1,1
+access_appeal_user,appeal user,model_port_said_penalty_appeal,group_penalty_user,1,1,1,0
+access_appeal_manager,appeal manager,model_port_said_penalty_appeal,group_penalty_manager,1,1,1,1
+access_bulk_wizard,bulk wizard,model_port_said_penalty_bulk_wizard,group_penalty_user,1,1,1,1
+access_print_wizard,print wizard,model_port_said_penalty_print_wizard,group_penalty_user,1,1,1,1

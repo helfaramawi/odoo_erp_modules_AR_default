@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <menuitem id="menu_ps_fixed_assets_root"
+            name="الاصول الثابتة"
+            parent="port_said_menu.menu_ps_40_inventory"
+            sequence="50"/>
+
+  <menuitem id="menu_ps_fa_list"
+            name="سجل الاصول الثابتة"
+            parent="menu_ps_fixed_assets_root"
+            action="port_said_fixed_assets.action_fixed_assets"
+            sequence="10"/>
+
+  <menuitem id="menu_ps_fa_all"
+            name="جميع الاصول"
+            parent="menu_ps_fixed_assets_root"
+            action="port_said_fixed_assets.action_fixed_assets_all"
+            sequence="20"/>
+
+  <menuitem id="menu_ps_fa_disposal"
+            name="قرارات التصرف"
+            parent="menu_ps_fixed_assets_root"
+            action="port_said_fixed_assets.action_asset_disposals"
+            sequence="30"/>
+
+  <menuitem id="menu_ps_fa_categories"
+            name="فئات الاصول"
+            parent="menu_ps_fixed_assets_root"
+            action="port_said_fixed_assets.action_asset_categories"
+            sequence="90"
+            groups="account.group_account_manager"/>
+
+</odoo>

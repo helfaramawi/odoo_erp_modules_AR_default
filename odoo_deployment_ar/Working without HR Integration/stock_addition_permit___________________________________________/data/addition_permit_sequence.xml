@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_inspection_report" model="ir.sequence">
+        <field name="name">تسلسل رقم محضر الفحص</field>
+        <field name="code">stock.inspection.report</field>
+        <field name="prefix">FCH/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="use_date_range">True</field>
+    </record>
+    <record id="seq_addition_permit" model="ir.sequence">
+        <field name="name">تسلسل رقم إذن الإضافة</field>
+        <field name="code">stock.addition.permit</field>
+        <field name="prefix">IZN-IDA/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="use_date_range">True</field>
+    </record>
+</odoo>

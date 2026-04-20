@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="group_cheques_user" model="res.groups">
+    <field name="name">دفتر الشيكات — مستخدم</field>
+    <field name="category_id" ref="base.module_category_accounting_accounting"/>
+    <field name="implied_ids" eval="[(4, ref('port_said_cash_books.group_cash_user'))]"/>
+  </record>
+
+  <record id="group_cheques_manager" model="res.groups">
+    <field name="name">دفتر الشيكات — مدير</field>
+    <field name="category_id" ref="base.module_category_accounting_accounting"/>
+    <field name="implied_ids" eval="[(4, ref('group_cheques_user')), (4, ref('port_said_cash_books.group_cash_manager'))]"/>
+  </record>
+</odoo>

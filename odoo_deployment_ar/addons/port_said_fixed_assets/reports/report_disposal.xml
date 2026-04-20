@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<!-- رابط فارغ — جدول الإهلاك موجود في report_asset_card.xml -->
+<!-- ══════════════════════════════════════════════════════════════
+     قرار التصرف في الأصل الثابت
+══════════════════════════════════════════════════════════════ -->
+<template id="rpt_asset_disposal">
+  <t t-call="web.html_container">
+    <t t-foreach="docs" t-as="doc">
+      <t t-call="web.external_layout">
+        <div class="page" style="direction:rtl;font-family:'Cairo','Amiri', 'Noto Naskh Arabic', Arial, sans-serif;font-size:11pt;">
+<style>
+  .o_company_logo,.o_address_name,.o_report_layout_header,
+  header.o_report_layout_header,.odoo-header,.header-content,
+  footer,.footer,.o_footer{display:none!important;}
+  .page{margin-top:0!important;padding-top:0!important;}
+</style>
+          <table style="width:100%;border-collapse:collapse;margin-bottom:8px;border-bottom:2px solid #000;padding-bottom:6px;">
+            <tr>
+              <td style="width:78px;text-align:center;vertical-align:top;">&#160;</td>
+              <td style="text-align:center;vertical-align:middle;">
+                <div style="font-size:13pt;font-weight:bold;">جمهورية مصر العربية</div>
+                <div style="font-size:12pt;font-weight:bold;">محافظة بورسعيد</div>
+                <div style="font-size:11pt;">الإدارة العامة للشؤون المالية والإدارية</div>
+                <div style="font-size:11pt;font-weight:bold;">إدارة الأصول الثابتة والمخازن</div>
+              </td>
+              <td style="width:78px;text-align:center;vertical-align:middle;">
+                <img t-att-src="'data:image/png;base64,' + (env.company.logo.decode('utf-8') if env.company.logo else '')"
+                     style="width:70px;height:70px;object-fit:contain;" alt="شعار المحافظة"/>
+              </td>
+            </tr>
+          </table>
+
+          <h2 style="text-align:center;font-size:14pt;text-decoration:underline;margin:10px 0;">
+            قرار التصرف في الأصل الثابت
+          </h2>
+          <p style="text-align:center;color:#666;font-size:10pt;margin-bottom:14px;">
+            رقم القرار: <strong><t t-esc="doc.name"/></strong> — تاريخ: <t t-esc="doc.disposal_date"/>
+          </p>
+
+          <!-- بيانات التصرف -->
+          <table style="width:100%;border-collapse:collapse;margin-bottom:14px;font-size:11pt;">
+            <tr style="background:#1F3864;color:white;">
+              <th colspan="4" style="padding:6px;border:1px solid #ddd;text-align:center;">بيانات الأصل المتصرف فيه</th>
+            </tr>
+            <tr>
+              <td style="padding:5px;border:1px solid #ddd;font-weight:bold;background:#EBF5FB;width:25%;">رقم الأصل</td>
+              <td style="padding:5px;border:1px solid #ddd;font-weight:bold;color:#1F3864;"><t t-esc="doc.asset_id.asset_number if doc.asset_id else '—'"/></td>
+              <td style="padding:5px;border:1px solid #ddd;font-weight:bold;background:#EBF5FB;width:25%;">الفئة</td>
+              <td style="padding:5px;border:1px solid #ddd;"><t t-esc="doc.asset_id.category_id.name if doc.asset_id and doc.asset_id.category_id else '—'"/></td>
+            </tr>
+            <tr>
+              <td style="padding:5px;border:1px solid #ddd;font-weight:bold;background:#EBF5FB;">اسم الأصل</td>
+              <td colspan="3" style="padding:5px;border:1px solid #ddd;"><t t-esc="doc.asset_id.name if doc.asset_id else '—'"/></td>
+            </tr>
+            <tr>
+              <td style="padding:5px;border:1px solid #ddd;font-weight:bold;background:#EBF5FB;">نوع التصرف</td>
+              <td style="padding:5px;border:1px solid #ddd;font-weight:bold;color:#C00000;">
+                <t t-esc="{'sale':'بيع — مزاد حكومي','scrap':'شطب / خردة','transfer':'تحويل لجهة حكومية','loss':'فقدان / تلف'}.get(doc.disposal_type, doc.disposal_type)"/>
+              </td>
+              <td style="padding:5px;border:1px solid #ddd;font-weight:bold;background:#EBF5FB;">تاريخ التصرف</td>
+              <td style="padding:5px;border:1px solid #ddd;"><t t-esc="doc.disposal_date"/></td>
+            </tr>
+            <t t-if="doc.auction_id">
+            <tr>
+              <td style="padding:5px;border:1px solid #ddd;font-weight:bold;background:#EBF5FB;">رقم المزاد</td>
+              <td colspan="3" style="padding:5px;border:1px solid #ddd;"><t t-esc="doc.auction_id.name"/></td>
+            </tr>
+            </t>
+          </table>
+
+          <!-- القيم المالية -->
+          <div style="background:#1F3864;color:white;padding:5px 10px;font-weight:bold;border-radius:4px 4px 0 0;">
+            الأثر المالي لقرار التصرف
+          </div>
+          <table style="width:100%;border-collapse:collapse;margin-bottom:14px;">
+            <tr>
+              <td style="padding:10px;border:1px solid #ddd;text-align:center;background:#EBF5FB;">
+                <div style="font-size:13pt;font-weight:bold;color:#1F3864;"><t t-esc="'%s' % '{:,.2f}'.format(doc.asset_id.purchase_value if doc.asset_id else 0)"/> ج.م</div>
+                <div style="font-size:9pt;color:#666;">تكلفة الاقتناء الأصلية</div>
+              </td>
+              <td style="padding:10px;border:1px solid #ddd;text-align:center;background:#FFF3E0;">
+                <div style="font-size:13pt;font-weight:bold;color:#C55A11;"><t t-esc="'%s' % '{:,.2f}'.format(doc.book_value_at_disposal)"/> ج.م</div>
+                <div style="font-size:9pt;color:#666;">القيمة الدفترية وقت التصرف</div>
+              </td>
+              <td style="padding:10px;border:1px solid #ddd;text-align:center;background:#f0fff0;">
+                <div style="font-size:13pt;font-weight:bold;color:#375623;"><t t-esc="'%s' % '{:,.2f}'.format(doc.sale_value)"/> ج.م</div>
+                <div style="font-size:9pt;color:#666;">حصيلة البيع الفعلية</div>
+              </td>
+              <td t-attf-style="padding:10px;border:1px solid #ddd;text-align:center;background:{{ '#ffe0e0' if doc.gain_loss &lt; 0 else '#e0ffe0' }};">
+                <div t-attf-style="font-size:13pt;font-weight:bold;color:{{ '#C00000' if doc.gain_loss &lt; 0 else '#375623' }};"><t t-esc="'%s' % '{:,.2f}'.format(doc.gain_loss)"/> ج.م</div>
+                <div style="font-size:9pt;color:#666;"><t t-if="doc.gain_loss &gt;= 0">أرباح التصرف</t><t t-else="">خسائر التصرف</t></div>
+              </td>
+            </tr>
+          </table>
+
+          <!-- ملاحظات -->
+          <t t-if="doc.notes">
+          <div style="background:#FFF9C4;border:1px solid #FFD700;border-radius:4px;padding:10px;margin-bottom:14px;">
+            <strong>ملاحظات قرار اللجنة:</strong><br/>
+            <t t-esc="doc.notes"/>
+          </div>
+          </t>
+
+          <!-- القيد المحاسبي -->
+          <t t-if="doc.move_id">
+          <div style="background:#E8F5E9;border:1px solid #4CAF50;border-radius:4px;padding:8px;margin-bottom:14px;font-size:10pt;">
+            <strong>✔ تم الترحيل المحاسبي:</strong> قيد رقم <t t-esc="doc.move_id.name"/> — تاريخ <t t-esc="doc.move_id.date"/>
+          </div>
+          </t>
+
+          <!-- توقيعات -->
+          <table style="width:100%;border-collapse:collapse;margin-top:16px;">
+            <tr>
+              <td style="width:33%;text-align:center;padding:14px;border:1px solid #ccc;">
+                <div style="font-weight:bold;color:#1F3864;">رئيس لجنة الجرد والتصرف</div>
+                <div style="margin-top:30px;border-top:1px solid #999;padding-top:4px;font-size:9pt;color:#666;">الاسم والتوقيع</div>
+              </td>
+              <td style="width:33%;text-align:center;padding:14px;border:1px solid #ccc;">
+                <div style="font-weight:bold;color:#1F3864;">مدير الشؤون المالية</div>
+                <div style="margin-top:30px;border-top:1px solid #999;padding-top:4px;font-size:9pt;color:#666;">الاسم والتوقيع</div>
+              </td>
+              <td style="width:33%;text-align:center;padding:14px;border:1px solid #ccc;">
+                <div style="font-weight:bold;color:#1F3864;">رئيس الديوان العام</div>
+                <div style="margin-top:30px;border-top:1px solid #999;padding-top:4px;font-size:9pt;color:#666;">الاسم والختم الرسمي</div>
+              </td>
+            </tr>
+          </table>
+
+          <div style="margin-top:8px;font-size:8pt;color:#555;text-align:center;border-top:1px solid #ccc;padding-top:4px;">
+            نظام أوبو إيآر بي — Paradise Integrated Solutions
+            طُبع بتاريخ: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%Y %H:%M')"/>
+            — محافظة بورسعيد
+          </div>
+        </div>
+      </t>
+    </t>
+  </t>
+</template>
+
+</odoo>

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_cheque_tree" model="ir.ui.view">
+    <field name="name">port_said.cheque.tree</field>
+    <field name="model">port_said.cheque</field>
+    <field name="arch" type="xml">
+      <tree string="الشيكات"
+            decoration-info="state in ['issued','endorsed']"
+            decoration-success="state=='cleared'"
+            decoration-danger="state=='returned'"
+            decoration-muted="state=='cancelled'">
+        <field name="cheque_number"/>
+        <field name="direction"/>
+        <field name="partner_id"/>
+        <field name="drawn_on_bank"/>
+        <field name="amount" sum="إجمالي"/>
+        <field name="issue_date"/>
+        <field name="clearing_date" optional="show"/>
+        <field name="state"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_cheque_form" model="ir.ui.view">
+    <field name="name">port_said.cheque.form</field>
+    <field name="model">port_said.cheque</field>
+    <field name="arch" type="xml">
+      <form>
+        <header>
+          <button name="action_issue" type="object" string="تسجيل الإصدار"
+                  invisible="state != 'draft'" class="oe_highlight"/>
+          <button name="action_endorse" type="object" string="تظهير للتحصيل"
+                  invisible="state != 'issued' or direction != 'incoming'"/>
+          <button name="action_deposit" type="object" string="إيداع"
+                  invisible="state not in ['issued','endorsed'] or direction != 'incoming'"
+                  class="oe_highlight"/>
+          <button name="action_clear" type="object" string="مقاصة/تحصيل"
+                  invisible="state not in ['issued','deposited']"
+                  class="oe_highlight"/>
+          <button name="action_return" type="object" string="إرتداد"
+                  invisible="state in ['draft','cleared','returned','cancelled']"/>
+          <button name="action_cancel" type="object" string="إلغاء"
+                  invisible="state in ['cleared','cancelled']"/>
+          <field name="state" widget="statusbar"
+                 statusbar_visible="draft,issued,deposited,cleared"/>
+        </header>
+        <sheet>
+          <div class="oe_title">
+            <label for="cheque_number" string="رقم الشيك"/>
+            <h1><field name="cheque_number"/></h1>
+          </div>
+          <group>
+            <group string="الأساسيات">
+              <field name="direction"/>
+              <field name="partner_id"/>
+              <field name="amount"/>
+              <field name="currency_id" invisible="1"/>
+            </group>
+            <group string="البنك">
+              <field name="drawn_on_bank"/>
+              <field name="drawer_account"/>
+            </group>
+          </group>
+          <group string="التواريخ" col="4">
+            <field name="issue_date"/>
+            <field name="received_date"/>
+            <field name="deposit_date" readonly="1"/>
+            <field name="clearing_date" readonly="1"/>
+            <field name="return_date" readonly="1"/>
+          </group>
+          <notebook>
+            <page string="الربط المحاسبي">
+              <group>
+                <field name="move_id" readonly="1"/>
+                <field name="payment_id" readonly="1"/>
+                <field name="statement_line_id" readonly="1"/>
+                <field name="daftar55_id"/>
+                <field name="payment_order_id"/>
+              </group>
+            </page>
+            <page string="إرتداد" invisible="state != 'returned'">
+              <field name="return_reason"/>
+            </page>
+            <page string="ملاحظات">
+              <field name="notes"/>
+            </page>
+          </notebook>
+        </sheet>
+        <div class="oe_chatter">
+          <field name="message_follower_ids"/>
+          <field name="activity_ids"/>
+          <field name="message_ids"/>
+        </div>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_cheque_search" model="ir.ui.view">
+    <field name="name">port_said.cheque.search</field>
+    <field name="model">port_said.cheque</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="cheque_number"/>
+        <field name="partner_id"/>
+        <field name="drawn_on_bank"/>
+        <separator/>
+        <filter string="واردة" name="f_in" domain="[('direction','=','incoming')]"/>
+        <filter string="صادرة" name="f_out" domain="[('direction','=','outgoing')]"/>
+        <separator/>
+        <filter string="نشطة (غير محصَّلة)" name="f_active"
+                domain="[('state', 'in', ['issued','endorsed','deposited'])]"/>
+        <filter string="محصَّلة" name="f_cleared" domain="[('state','=','cleared')]"/>
+        <filter string="مرتدة" name="f_returned" domain="[('state','=','returned')]"/>
+        <group expand="1" string="تجميع حسب">
+          <filter string="الحالة" name="g_state" context="{'group_by':'state'}"/>
+          <filter string="الاتجاه" name="g_dir" context="{'group_by':'direction'}"/>
+          <filter string="البنك" name="g_bank" context="{'group_by':'drawn_on_bank'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <record id="action_cheque" model="ir.actions.act_window">
+    <field name="name">الشيكات</field>
+    <field name="res_model">port_said.cheque</field>
+    <field name="view_mode">tree,form</field>
+    <field name="search_view_id" ref="view_cheque_search"/>
+  </record>
+
+</odoo>

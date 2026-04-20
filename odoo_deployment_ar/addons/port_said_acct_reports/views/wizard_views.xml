@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<record id="view_acct_report_wizard_form" model="ir.ui.view">
+  <field name="name">port_said.acct.report.wizard.form</field>
+  <field name="model">port_said.acct.report.wizard</field>
+  <field name="arch" type="xml">
+    <form string="التقارير المحاسبية الحكومية">
+      <sheet>
+        <group string="نوع التقرير">
+          <field name="report_type" widget="radio"/>
+        </group>
+        <group string="الفترة">
+          <group>
+            <field name="date_from"/>
+            <field name="date_to"/>
+          </group>
+          <group>
+            <field name="fiscal_year"/>
+            <field name="company_id"/>
+          </group>
+        </group>
+        <group string="فلاتر ميزان المراجعة"
+               invisible="report_type != 'trial_balance'">
+          <field name="hide_zero_balance"/>
+          <field name="account_ids" widget="many2many_tags"/>
+        </group>
+        <group string="فلاتر كشف الحساب"
+               invisible="report_type != 'partner_ledger'">
+          <field name="partner_type"/>
+          <field name="partner_ids" widget="many2many_tags"/>
+        </group>
+        <footer>
+          <button name="action_print" string="إصدار التقرير PDF"
+                  type="object" class="btn-primary"/>
+          <button string="إغلاق" class="btn-secondary" special="cancel"/>
+        </footer>
+      </sheet>
+    </form>
+  </field>
+</record>
+
+<record id="action_acct_report_wizard" model="ir.actions.act_window">
+  <field name="name">التقارير المحاسبية الحكومية</field>
+  <field name="res_model">port_said.acct.report.wizard</field>
+  <field name="view_mode">form</field>
+  <field name="target">new</field>
+</record>
+
+</odoo>

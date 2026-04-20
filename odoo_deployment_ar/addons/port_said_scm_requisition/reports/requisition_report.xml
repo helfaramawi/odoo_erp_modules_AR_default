@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="action_report_requisition" model="ir.actions.report">
+    <field name="name">طلب الاحتياج</field>
+    <field name="model">port_said.requisition</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_scm_requisition.report_requisition_template</field>
+    <field name="report_file">port_said_scm_requisition.report_requisition_template</field>
+    <field name="binding_model_id" ref="model_port_said_requisition"/>
+    <field name="binding_type">report</field>
+  </record>
+</odoo>

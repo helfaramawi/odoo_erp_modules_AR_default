@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_financial_dimension_manager,financial.dimension.manager,model_financial_dimension,account.group_account_manager,1,1,1,1
+access_financial_dimension_user,financial.dimension.user,model_financial_dimension,,1,0,0,0

@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <template id="report_bounced_followup">
+    <t t-call="web.html_container">
+      <t t-foreach="docs" t-as="f">
+        <t t-call="web.external_layout">
+          <div class="page" dir="rtl"
+               style="font-family:'Traditional Arabic',Arial,serif;">
+
+            <div style="text-align:center; margin-bottom:15px;">
+              <h3 style="margin:0; color:#a00;">⚠ ملف شيك مرتد</h3>
+              <div style="font-size:11px;">
+                محافظة بورسعيد — متابعة قانونية ومحاسبية
+              </div>
+            </div>
+
+            <h4 style="margin-top:10px; margin-bottom:6px;">بيانات الشيك</h4>
+            <table style="width:100%; font-size:11px; border-collapse:collapse;
+                          border:1px solid #000;">
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0; width:30%;">
+                  <strong>رقم الشيك</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000; font-family:monospace;
+                           font-weight:bold;">
+                  <t t-out="f.cheque_number"/>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  <strong>مُصدر الشيك</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="f.drawer_partner_id.name"/>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  <strong>البنك المسحوب عليه</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="f.drawn_on_bank"/>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  <strong>تاريخ الارتداد</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000; color:#a00;
+                           font-weight:bold;">
+                  <t t-out="f.bounce_date"/>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;
+                           vertical-align:top;">
+                  <strong>سبب الارتداد</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="f.bounce_reason"/>
+                </td>
+              </tr>
+            </table>
+
+            <h4 style="margin-top:15px; margin-bottom:6px;">المبالغ</h4>
+            <table style="width:100%; font-size:11px; border-collapse:collapse;
+                          border:1px solid #000;">
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  المبلغ الأصلي
+                </td>
+                <td style="padding:5px; border:1px solid #000; text-align:left;">
+                  <t t-out="'%.2f' % f.original_amount"/>
+                </td>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  رسوم الإرجاع
+                </td>
+                <td style="padding:5px; border:1px solid #000; text-align:left; color:#a00;">
+                  <t t-out="'%.2f' % (f.returned_charges or 0)"/>
+                </td>
+              </tr>
+              <tr style="background:#fff4e5;">
+                <td colspan="2" style="padding:5px; border:1.5px solid #000;
+                                        text-align:center; font-weight:bold;">
+                  إجمالي المطالبة
+                </td>
+                <td colspan="2" style="padding:5px; border:1.5px solid #000;
+                                        text-align:left; font-weight:bold;">
+                  <t t-out="'%.2f' % f.total_claim"/>
+                </td>
+              </tr>
+              <tr t-if="f.amount_recovered">
+                <td style="padding:5px; border:1px solid #000; background:#e5f5e5;">
+                  المبلغ المُسترَد
+                </td>
+                <td style="padding:5px; border:1px solid #000; text-align:left;
+                           color:#060; font-weight:bold;">
+                  <t t-out="'%.2f' % f.amount_recovered"/>
+                </td>
+                <td style="padding:5px; border:1px solid #000; background:#e5f5e5;">
+                  طريقة الاسترداد
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="dict(f._fields['recovery_method'].selection).get(f.recovery_method) or '—'"/>
+                </td>
+              </tr>
+            </table>
+
+            <h4 style="margin-top:15px; margin-bottom:6px;">الإجراءات والتواريخ</h4>
+            <table style="width:100%; font-size:11px; border-collapse:collapse;
+                          border:1px solid #000;">
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0; width:35%;">
+                  تاريخ الإنذار الأول
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="f.first_notice_date or '—'"/>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  تاريخ الإنذار الثاني
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="f.second_notice_date or '—'"/>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  تاريخ الإحالة القانونية
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="f.legal_referral_date or '—'"/>
+                </td>
+              </tr>
+              <tr t-if="f.case_number">
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  رقم القضية
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="f.case_number"/>
+                  <t t-if="f.court_name"> — <t t-out="f.court_name"/></t>
+                </td>
+              </tr>
+              <tr t-if="f.recovery_date">
+                <td style="padding:5px; border:1px solid #000; background:#e5f5e5;">
+                  تاريخ الاسترداد
+                </td>
+                <td style="padding:5px; border:1px solid #000; color:#060;">
+                  <t t-out="f.recovery_date"/>
+                </td>
+              </tr>
+            </table>
+
+            <t t-if="f.state == 'written_off'">
+              <h4 style="margin-top:15px; margin-bottom:6px; color:#a00;">
+                ⚠ حالة الشطب
+              </h4>
+              <table style="width:100%; font-size:11px; border-collapse:collapse;
+                            border:1.5px solid #a00;">
+                <tr>
+                  <td style="padding:5px; border:1px solid #a00; background:#ffe5e5; width:30%;">
+                    تاريخ الشطب
+                  </td>
+                  <td style="padding:5px; border:1px solid #a00;">
+                    <t t-out="f.write_off_date"/>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:5px; border:1px solid #a00; background:#ffe5e5;">
+                    اعتمد الشطب
+                  </td>
+                  <td style="padding:5px; border:1px solid #a00;">
+                    <t t-out="f.write_off_approved_by.name"/>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:5px; border:1px solid #a00; background:#ffe5e5;
+                             vertical-align:top;">
+                    سبب الشطب
+                  </td>
+                  <td style="padding:5px; border:1px solid #a00;">
+                    <t t-out="f.write_off_reason"/>
+                  </td>
+                </tr>
+              </table>
+            </t>
+
+            <div style="margin-top:15px; padding:8px; border:1px dashed #888; font-size:10px;">
+              <strong>الحالة الحالية:</strong>
+              <span t-att-style="
+                'color:#a00;font-weight:bold;' if f.state == 'open' else
+                'color:#a60;' if f.state in ['negotiating','legal_action'] else
+                'color:#060;font-weight:bold;' if f.state == 'recovered' else
+                'color:#666;'">
+                <t t-out="dict(f._fields['state'].selection).get(f.state)"/>
+              </span>
+            </div>
+
+            <!-- Signatures -->
+            <table style="width:100%; margin-top:40px; font-size:10px;"
+                   class="table-borderless">
+              <tr>
+                <td style="text-align:center;">
+                  <div>المسؤول عن الملف</div>
+                  <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                    ............................
+                  </div>
+                </td>
+                <td style="text-align:center;">
+                  <div>رئيس الحسابات</div>
+                  <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                    ............................
+                  </div>
+                </td>
+                <td style="text-align:center;">
+                  <div>الإدارة القانونية</div>
+                  <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                    ............................
+                  </div>
+                </td>
+              </tr>
+            </table>
+
+          </div>
+          <p style="page-break-after: always;"/>
+        </t>
+      </t>
+    </t>
+  </template>
+
+</odoo>

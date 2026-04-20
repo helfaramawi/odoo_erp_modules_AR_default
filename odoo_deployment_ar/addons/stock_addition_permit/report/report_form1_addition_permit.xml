@@ -1,0 +1,758 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══ إذن الإضافة — نموذج 1 مخازن حكومية ═════════════════════════════ -->
+    <record id="action_report_form1_addition_permit" model="ir.actions.report">
+        <field name="name">إذن إضافة — نموذج 1 مخازن حكومية</field>
+        <field name="model">stock.addition.permit</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">stock_addition_permit.report_form1_template</field>
+        <field name="print_report_name">'إذن إضافة ' + (object.name or '')</field>
+        <field name="binding_model_id" ref="model_stock_addition_permit"/>
+<field name="paperformat_id" ref="stock_addition_permit.paperformat_gov_a4"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_form1_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                
+                    <t t-call="web.external_layout">
+                
+                    <div class="page" style="direction:rtl;font-family:'Arial',sans-serif;font-size:11pt;">
+<style>
+    /* Hide ALL Odoo company header/footer elements */
+    .o_company_logo { display:none!important; }
+    .o_address_name { display:none!important; }
+    .o_report_layout_header { display:none!important; }
+    header.o_report_layout_header { display:none!important; }
+    .odoo-header { display:none!important; }
+    .header-content { display:none!important; }
+    footer { display:none!important; }
+    .footer { display:none!important; }
+    .o_footer { display:none!important; }
+    /* Force page to start at top */
+    .page { margin-top:0!important; padding-top:0!important; }
+</style>
+
+
+                        <!-- ═══ رأس الصفحة الحكومي ═══ -->
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:8px;border-bottom:2px solid #000;padding-bottom:6px;">
+                            <tr>
+                                <td style="width:78px;text-align:center;vertical-align:top;">
+                                    &#160;
+                                </td>
+                                <td style="text-align:center;vertical-align:middle;">
+                                    <div style="font-size:13pt;font-weight:bold;">جمهورية مصر العربية</div>
+                                    <div style="font-size:12pt;font-weight:bold;">محافظة بورسعيد</div>
+                                    <div style="font-size:11pt;">الإدارة العامة للشؤون المالية والإدارية</div>
+                                    <div style="font-size:11pt;font-weight:bold;">إدارة المخازن</div>
+                                </td>
+                                <td style="width:78px;text-align:center;vertical-align:middle;">
+                                    <img src="data:image/png;base64,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"
+                                         style="width:70px;height:70px;object-fit:contain;"
+                                         alt="محافظة بورسعيد"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div style="text-align:center;border-top:3px double #000;border-bottom:3px double #000;
+                                    padding:6px 0;margin-bottom:12px;">
+                            <span style="font-size:15pt;font-weight:bold;">إذن إضافة</span>
+                            <span style="font-size:12pt;margin-right:20px;">نموذج رقم ( 1 ) مخازن حكومية</span>
+                        </div>
+
+                        <!-- ═══ بيانات الإذن ═══ -->
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:10px;font-size:10pt;">
+                            <tr>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;
+                                           font-weight:bold;width:18%;">رقم الإذن</td>
+                                <td style="border:1px solid #000;padding:5px 8px;width:15%;
+                                           font-weight:bold;font-size:12pt;">
+                                    <t t-esc="doc.name"/>
+                                </td>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;
+                                           font-weight:bold;width:15%;">التاريخ</td>
+                                <td style="border:1px solid #000;padding:5px 8px;width:15%;">
+                                    <t t-esc="doc.permit_date"/>
+                                </td>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;
+                                           font-weight:bold;width:15%;">رقم المرجع</td>
+                                <td style="border:1px solid #000;padding:5px 8px;width:22%;">
+                                    <t t-esc="doc.inspection_report_id.name if doc.inspection_report_id else '—'"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;">اسم المورد</td>
+                                <td style="border:1px solid #000;padding:5px 8px;" colspan="3">
+                                    <t t-esc="doc.partner_id.name"/>
+                                </td>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;">رقم أمر الشراء</td>
+                                <td style="border:1px solid #000;padding:5px 8px;">
+                                    <t t-esc="doc.purchase_order_id.name if doc.purchase_order_id else '—'"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;">المخزن</td>
+                                <td style="border:1px solid #000;padding:5px 8px;" colspan="3">
+                                    <t t-esc="doc.warehouse_id.name"/>
+                                </td>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;">الموقع</td>
+                                <td style="border:1px solid #000;padding:5px 8px;">
+                                    <t t-esc="doc.location_id.complete_name if doc.location_id else doc.site_id or '—'"/>
+                                </td>
+                            </tr>
+                            <t t-if="doc.inspection_report_id">
+                                <tr>
+                                    <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;">دفعة المرجع</td>
+                                    <td style="border:1px solid #000;padding:5px 8px;" colspan="2">
+                                        <t t-esc="doc.inspection_report_id.reference_batch"/>
+                                    </td>
+                                    <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;">مجموعة الاختبار</td>
+                                    <td style="border:1px solid #000;padding:5px 8px;" colspan="2">
+                                        <t t-esc="doc.inspection_report_id.test_group"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </table>
+
+                        <!-- ═══ جدول الأصناف ═══ -->
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:14px;font-size:10pt;">
+                            <thead>
+                                <tr style="background:#d9d9d9;">
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;width:5%;">م</th>
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;width:8%;">كود الصنف</th>
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;width:28%;">اسم الصنف / البيان</th>
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;width:10%;">الوحدة</th>
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;width:12%;">الكمية المستلمة</th>
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;width:12%;">الكمية المضافة</th>
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;width:12%;">سعر الوحدة</th>
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;width:13%;">الإجمالي</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="border:1px solid #000;padding:6px;text-align:center;">1</td>
+                                    <td style="border:1px solid #000;padding:6px;text-align:center;font-size:9pt;">
+                                        <t t-esc="doc.product_id.default_code or '—'"/>
+                                    </td>
+                                    <td style="border:1px solid #000;padding:6px;">
+                                        <t t-esc="doc.product_id.name"/>
+                                    </td>
+                                    <td style="border:1px solid #000;padding:6px;text-align:center;">
+                                        <t t-esc="doc.uom_id.name if doc.uom_id else ''"/>
+                                    </td>
+                                    <td style="border:1px solid #000;padding:6px;text-align:center;">
+                                        <t t-esc="doc.qty"/>
+                                    </td>
+                                    <td style="border:1px solid #000;padding:6px;text-align:center;font-weight:bold;">
+                                        <t t-esc="doc.qty"/>
+                                    </td>
+                                    <td style="border:1px solid #000;padding:6px;text-align:center;">
+                                        <t t-esc="doc.product_id.standard_price if doc.product_id else 0"/>
+                                    </td>
+                                    <td style="border:1px solid #000;padding:6px;text-align:center;font-weight:bold;">
+                                        <t t-esc="'{:,.2f}'.format(doc.qty * (doc.product_id.standard_price or 0))"/>
+                                    </td>
+                                </tr>
+                                <!-- صفوف فارغة لاستيفاء النموذج يدوياً -->
+                                <t t-foreach="range(4)" t-as="i">
+                                    <tr style="height:28px;">
+                                        <td style="border:1px solid #000;padding:5px;text-align:center;color:#aaa;"><t t-esc="i+2"/></td>
+                                        <td style="border:1px solid #000;"></td>
+                                        <td style="border:1px solid #000;"></td>
+                                        <td style="border:1px solid #000;"></td>
+                                        <td style="border:1px solid #000;"></td>
+                                        <td style="border:1px solid #000;"></td>
+                                        <td style="border:1px solid #000;"></td>
+                                        <td style="border:1px solid #000;"></td>
+                                    </tr>
+                                </t>
+                                <!-- صف الإجمالي -->
+                                <tr style="background:#f0f0f0;font-weight:bold;">
+                                    <td style="border:1px solid #000;padding:6px;text-align:center;" colspan="5">الإجمالي</td>
+                                    <td style="border:1px solid #000;padding:6px;text-align:center;">
+                                        <t t-esc="doc.qty"/>
+                                    </td>
+                                    <td style="border:1px solid #000;"></td>
+                                    <td style="border:1px solid #000;padding:6px;text-align:center;">
+                                        <t t-esc="'{:,.2f}'.format(doc.qty * (doc.product_id.standard_price or 0))"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- ملاحظات -->
+                        <div t-if="doc.notes"
+                             style="border:1px solid #000;padding:8px;margin-bottom:14px;font-size:10pt;">
+                            <strong>ملاحظات: </strong><t t-esc="doc.notes"/>
+                        </div>
+
+                        <!-- ═══ كتلة التوقيعات ═══ -->
+                        <table style="width:100%;border-collapse:collapse;margin-top:16px;font-size:10pt;">
+                            <tr>
+                                <td style="border:1px solid #000;padding:14px;text-align:center;width:25%;vertical-align:top;">
+                                    <p style="font-weight:bold;margin:0 0 4px 0;">المفتش / المسؤول عن الفحص</p>
+                                    <p style="font-size:10pt;margin:0 0 2px 0;">
+                                        <t t-esc="doc.inspection_report_id.inspector_id.name if doc.inspection_report_id and doc.inspection_report_id.inspector_id else '........................'"/>
+                                    </p>
+                                    <p style="margin-top:24px;color:#555;">التوقيع: .........................</p>
+                                    <p style="color:#555;">التاريخ: <t t-esc="doc.inspection_report_id.inspection_date if doc.inspection_report_id else '...........'"/></p>
+                                </td>
+                                <td style="border:1px solid #000;padding:14px;text-align:center;width:25%;vertical-align:top;">
+                                    <p style="font-weight:bold;margin:0 0 4px 0;">أمين المخزن</p>
+                                    <p style="font-size:10pt;margin:0 0 2px 0;">
+                                        <t t-esc="doc.storekeeper_id.name if doc.storekeeper_id else '........................'"/>
+                                    </p>
+                                    <p style="margin-top:24px;color:#555;">التوقيع: .........................</p>
+                                    <p style="color:#555;">التاريخ: <t t-esc="doc.permit_date"/></p>
+                                </td>
+                                <td style="border:1px solid #000;padding:14px;text-align:center;width:25%;vertical-align:top;">
+                                    <p style="font-weight:bold;margin:0 0 4px 0;">المستلم</p>
+                                    <p style="margin-top:24px;color:#555;">الاسم: .........................</p>
+                                    <p style="color:#555;">التوقيع: .........................</p>
+                                    <p style="color:#555;">التاريخ: .........................</p>
+                                </td>
+                                <td style="border:1px solid #000;padding:14px;text-align:center;width:25%;vertical-align:top;">
+                                    <p style="font-weight:bold;margin:0 0 4px 0;">مدير إدارة المخازن</p>
+                                    <p style="margin-top:24px;color:#555;">التوقيع: .........................</p>
+                                    <p style="color:#555;">التاريخ: .........................</p>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- تذييل -->
+                        <div style="margin-top:10px;font-size:8pt;color:#777;
+                                    text-align:center;border-top:1px solid #ccc;padding-top:5px;
+                                    display:flex;justify-content:space-between;">
+                            <span>نموذج 1 مخازن حكومية</span>
+                            <span>الديوان العام لمحافظة بورسعيد — إدارة المخازن</span>
+                            <span><t t-esc="doc.name"/> — <t t-esc="doc.permit_date"/></span>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- ══ استمارة 50 — اعتماد الصرف (النموذج الحكومي الأصلي) ════════════ -->
+    <record id="action_report_istimara50" model="ir.actions.report">
+        <field name="name">استمارة 50 — اعتماد الصرف</field>
+        <field name="model">stock.addition.permit</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">stock_addition_permit.report_istimara50_template</field>
+        <field name="print_report_name">'استمارة 50 - ' + (object.name or '')</field>
+        <field name="binding_model_id" ref="model_stock_addition_permit"/>
+        <field name="paperformat_id" ref="stock_addition_permit.paperformat_gov_a4"/>
+        <field name="binding_type">report</field>
+        <field name="attachment_use">False</field>
+    </record>
+
+
+    <template id="report_istimara50_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                
+                    <t t-call="web.external_layout">
+                
+                    <div class="page" style="direction:rtl;font-family:Arial,sans-serif;font-size:10pt;padding:12px;">
+<style>
+    .o_company_logo, .o_company_name, .o_address_name { display: none !important; }
+    .o_report_layout_header, header.o_report_layout_header { display: none !important; }
+    footer, .o_footer { display: none !important; }
+    .header { display: none !important; }
+    #mainTable thead td { display: none !important; }
+    table.o_report_layout thead { display: none !important; }
+    .o_report_no_header_footer header, .o_report_no_header_footer footer { display: none !important; }
+</style>
+
+
+                        <!-- ═══ رأس الاستمارة — مطابق الأصل ═══ -->
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:5px;">
+                            <tr>
+
+                                <td style="text-align:center;vertical-align:middle;">
+                                    <div style="font-size:13pt;font-weight:bold;">جمهورية مصر العربية</div>
+                                    <div style="font-size:11pt;font-weight:bold;">محافظة بورسعيد</div>
+                                    <div style="font-size:10pt;">الإدارة العامة للشؤون المالية والإدارية</div>
+                                    <div style="font-size:10pt;font-weight:bold;">إدارة المخازن</div>
+                                </td>
+                                <td style="width:90px;vertical-align:top;text-align:center;">
+                                    <div style="border:1px solid #000;padding:4px 6px;font-size:9pt;line-height:1.5;">
+                                        استمارة رقم<br/>
+                                        <strong>٥٠ ( ع . ح )</strong><br/>
+                                        <span style="font-size:8pt;">اعتماد الصرف</span>
+                                    </div>
+                                </td>                                <td style="width:70px;text-align:center;vertical-align:middle;">
+                                    <img src="data:image/png;base64,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" style="width:68px;height:68px;object-fit:contain;" alt="محافظة بورسعيد"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div style="border-top:2px solid #000;border-bottom:2px solid #000;
+                                    text-align:center;padding:5px 0;margin-bottom:8px;">
+                            <span style="font-size:13pt;font-weight:bold;">استمارة لاعتماد الصرف</span>
+                        </div>
+
+                        <!-- ═══ بيانات القرارين + رقم المستند ═══ -->
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:5px;font-size:10pt;">
+                            <tr>
+                                <td style="border:1px solid #000;padding:4px 6px;background:#f0f0f0;font-weight:bold;width:22%;">بيانات القرارين</td>
+                                <td style="border:1px solid #000;padding:4px 6px;" colspan="3">
+                                    رقم: &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+                                    تاريخ: &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+                                    مسلسلة: &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #000;padding:4px 6px;background:#f0f0f0;font-weight:bold;">رقم الإذن</td>
+                                <td style="border:1px solid #000;padding:4px 6px;width:18%;font-weight:bold;">
+                                    <t t-esc="doc.name"/>
+                                </td>
+                                <td style="border:1px solid #000;padding:4px 6px;background:#f0f0f0;font-weight:bold;width:18%;">الختم ذو التاريخ</td>
+                                <td style="border:1px solid #000;padding:4px 6px;width:20%;">
+                                    <t t-esc="doc.permit_date"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #000;padding:4px 6px;background:#f0f0f0;font-weight:bold;">المبلغ المتنح إلى</td>
+                                <td style="border:1px solid #000;padding:4px 6px;" colspan="3">
+                                    <t t-esc="doc.partner_id.name"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #000;padding:4px 6px;background:#f0f0f0;font-weight:bold;">فرش / جنيه</td>
+                                <td style="border:1px solid #000;padding:4px 6px;font-weight:bold;">
+                                    <t t-esc="'{:,.2f}'.format(doc.qty * (doc.product_id.standard_price or 0))"/>
+                                </td>
+                                <td style="border:1px solid #000;padding:4px 6px;background:#f0f0f0;font-weight:bold;">رقم أمر الشراء</td>
+                                <td style="border:1px solid #000;padding:4px 6px;">
+                                    <t t-esc="doc.purchase_order_id.name if doc.purchase_order_id else '—'"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- ═══ وصف الصرف ═══ -->
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:5px;font-size:10pt;">
+                            <tr>
+                                <td style="border:1px solid #000;padding:4px 6px;background:#f0f0f0;font-weight:bold;width:22%;vertical-align:top;">الطلبات طبه، أو :</td>
+                                <td style="border:1px solid #000;padding:6px;" colspan="3">
+                                    <p style="margin:0;">
+                                        صرف قيمة <strong><t t-esc="doc.product_id.name"/></strong>
+                                        — الكمية: <strong><t t-esc="doc.qty"/>
+                                        <t t-esc="doc.uom_id.name if doc.uom_id else ''"/></strong>
+                                    </p>
+                                    <p style="margin:4px 0 0 0;font-size:9pt;">
+                                        بموجب إذن الإضافة رقم: <strong><t t-esc="doc.name"/></strong>
+                                        <t t-if="doc.inspection_report_id">
+                                            — محضر الفحص: <t t-esc="doc.inspection_report_id.name"/>
+                                        </t>
+                                        <t t-if="doc.purchase_order_id">
+                                            — أمر الشراء: <t t-esc="doc.purchase_order_id.name"/>
+                                        </t>
+                                    </p>
+                                    <p style="margin:4px 0 0 0;font-size:9pt;color:#444;">
+                                        المخزن: <t t-esc="doc.warehouse_id.name"/>
+                                        <t t-if="doc.location_id">
+                                            — الموقع: <t t-esc="doc.location_id.complete_name"/>
+                                        </t>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- ═══ كتب المراجعة + رئيس القسم + رئيس المصلحة ═══ -->
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:5px;font-size:10pt;">
+                            <tr>
+                                <td style="border:1px solid #000;padding:6px;width:34%;vertical-align:top;">
+                                    <div style="font-weight:bold;border-bottom:1px solid #ccc;margin-bottom:4px;padding-bottom:2px;">كتب المراجعة</div>
+                                    <p style="margin:0;font-size:9pt;">
+                                        <t t-esc="doc.storekeeper_id.name if doc.storekeeper_id else '........................'"/>
+                                    </p>
+                                    <p style="margin:4px 0;font-size:9pt;color:#555;">التوقيع: .........................</p>
+                                    <p style="margin:0;font-size:9pt;color:#555;">التاريخ: <t t-esc="doc.permit_date"/></p>
+                                </td>
+                                <td style="border:1px solid #000;padding:6px;width:33%;text-align:center;vertical-align:top;">
+                                    <div style="font-weight:bold;border-bottom:1px solid #ccc;margin-bottom:4px;padding-bottom:2px;">رئيس القسم</div>
+                                    <img src="data:image/png;base64,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" style="width:68px;height:68px;object-fit:contain;" alt="محافظة بورسعيد"/>
+                                    <p style="margin:0;font-size:9pt;color:#555;">التوقيع: .........................</p>
+                                </td>
+                                <td style="border:1px solid #000;padding:6px;width:33%;text-align:center;vertical-align:top;">
+                                    <div style="font-weight:bold;border-bottom:1px solid #ccc;margin-bottom:4px;padding-bottom:2px;">رئيس المصلحة</div>
+                                    <img src="data:image/png;base64,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" style="width:68px;height:68px;object-fit:contain;" alt="محافظة بورسعيد"/>
+                                    <p style="margin:0;font-size:9pt;color:#555;">التوقيع: .........................</p>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- ═══ (ب) كاتب الربط ═══ -->
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:5px;font-size:9.5pt;">
+                            <tr>
+                                <td colspan="4" style="border:1px solid #000;padding:3px 6px;
+                                                       background:#e0e0e0;font-weight:bold;text-align:center;">
+                                    ( ب ) كاتب الربط
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #000;padding:4px 6px;background:#f5f5f5;font-weight:bold;width:22%;">الختم ذو التاريخ</td>
+                                <td style="border:1px solid #000;padding:4px 6px;width:28%;"><t t-esc="doc.permit_date"/></td>
+                                <td style="border:1px solid #000;padding:4px 6px;background:#f5f5f5;font-weight:bold;width:22%;">قُيِّد في السجل</td>
+                                <td style="border:1px solid #000;padding:4px 6px;">
+                                    برقم: &#160;&#160;&#160;&#160; سنة: &#160;&#160;&#160;&#160;
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" style="border:1px solid #000;padding:4px 6px;font-size:9pt;">
+                                    (١) إقرار كاتب المخزن والتنازلات: &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+                                    الإمضاء: &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" style="border:1px solid #000;padding:4px 6px;font-size:9pt;">
+                                    (٢) إقرار: بأن القيمة مرتبطة بها على أساس الاسناد الخاص يسمح ولم يسبق الصرف —
+                                    جاري &#160;&#160;&#160;&#160;&#160;&#160;
+                                    الإمضاء: &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" style="border:1px solid #000;padding:4px 6px;font-size:9pt;">
+                                    ( أ ) بأن المبالغ مثبتة بحساب — الإيرادات:&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+                                    بتاريخ: <t t-esc="doc.permit_date"/>
+                                    &#160;&#160; لجنة الفحص: &#160;&#160;&#160;&#160;&#160;&#160;
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" style="border:1px solid #000;padding:4px 6px;font-size:9pt;">
+                                    ( ب ) قيد في سجل رقم ٥٥ ع.ح برقم: &#160;&#160;&#160;&#160;&#160;&#160;
+                                    روجع في: &#160;&#160;&#160;&#160;&#160;&#160;
+                                    سنة: &#160;&#160;&#160;&#160;
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" style="border:1px solid #000;padding:4px 6px;font-size:9pt;">
+                                    توقيع الكاتب المنرط بالسجل: &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+                                    بتاريخ: <t t-esc="doc.permit_date"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- ═══ بيانات الاستقطاعات ═══ -->
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:5px;font-size:9.5pt;">
+                            <tr>
+                                <td colspan="8" style="border:1px solid #000;padding:3px 6px;
+                                                       background:#e0e0e0;font-weight:bold;text-align:center;">
+                                    بيانات الاستقطاعات
+                                </td>
+                            </tr>
+                            <tr>
+                                <th style="border:1px solid #000;padding:4px;text-align:center;background:#f0f0f0;width:8%;">عدد المرفقات</th>
+                                <th style="border:1px solid #000;padding:4px;text-align:center;background:#f0f0f0;width:14%;">الاستحقاق الإداري وبرقم القسم</th>
+                                <th style="border:1px solid #000;padding:4px;text-align:center;background:#f0f0f0;width:10%;">التاريخ</th>
+                                <th style="border:1px solid #000;padding:4px;text-align:center;background:#f0f0f0;width:8%;">فرش جنيه</th>
+                                <th style="border:1px solid #000;padding:4px;text-align:center;background:#f0f0f0;width:10%;">نوع الحسم</th>
+                                <th style="border:1px solid #000;padding:4px;text-align:center;background:#f0f0f0;width:10%;">الإجمالي ج</th>
+                                <th style="border:1px solid #000;padding:4px;text-align:center;background:#f0f0f0;width:10%;">المبلغ الكلي</th>
+                                <th style="border:1px solid #000;padding:4px;text-align:center;background:#f0f0f0;width:30%;">بيانات الأصل</th>
+                            </tr>
+                            <tr style="height:20px;">
+                                <td style="border:1px solid #000;"></td>
+                                <td style="border:1px solid #000;"></td>
+                                <td style="border:1px solid #000;font-size:9pt;padding:2px 4px;"><t t-esc="doc.permit_date"/></td>
+                                <td style="border:1px solid #000;"></td>
+                                <td style="border:1px solid #000;"></td>
+                                <td style="border:1px solid #000;text-align:center;font-weight:bold;">
+                                    <t t-esc="'{:,.2f}'.format(doc.qty * (doc.product_id.standard_price or 0))"/>
+                                </td>
+                                <td style="border:1px solid #000;text-align:center;font-weight:bold;">
+                                    <t t-esc="'{:,.2f}'.format(doc.qty * (doc.product_id.standard_price or 0))"/>
+                                </td>
+                                <td style="border:1px solid #000;"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" style="border:1px solid #000;padding:4px 6px;font-size:9pt;">
+                                    <div>عادي: &#160;&#160;&#160;&#160; احتياطي: &#160;&#160;&#160;&#160; دمغة توفير: &#160;&#160;&#160;&#160;</div>
+                                    <div>رسم الدمغة: &#160;&#160;&#160;&#160; فرش جنيه: &#160;&#160;&#160;&#160;</div>
+                                    <div style="font-weight:bold;margin-top:4px;">سافي القيمة المطلوب صرفها:</div>
+                                </td>
+                                <td colspan="3" style="border:1px solid #000;text-align:center;vertical-align:middle;
+                                                       font-size:13pt;font-weight:bold;">
+                                    <t t-esc="'{:,.2f}'.format(doc.qty * (doc.product_id.standard_price or 0))"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- ═══ علامة ═══ -->
+                        <div style="border:1px solid #000;padding:5px 8px;margin-bottom:5px;font-size:9pt;">
+                            <span style="font-weight:bold;">علامة: </span>
+                            في &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; سنة ٢٠ &#160;&#160;&#160;
+                            (١) إقرار كاتب المخزن والتنازلات: &#160;&#160;&#160;&#160;&#160;&#160; الإمضاء: &#160;&#160;&#160;&#160;&#160;&#160;
+                            <br/>
+                            (٢) إقرار: بأن القيمة مرتبطة بها على أساس الاسناد الخاص يسمح ولم يسبق الصرف —
+                            جاري &#160;&#160;&#160;&#160; الإمضاء: &#160;&#160;&#160;&#160;&#160;&#160;
+                        </div>
+
+                        <!-- ═══ (أ) وكيل الحسابات / مدير أو رئيس الحسابات ═══ -->
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:5px;font-size:9.5pt;">
+                            <tr>
+                                <td colspan="4" style="border:1px solid #000;padding:3px 6px;
+                                                       background:#e0e0e0;font-weight:bold;text-align:center;">
+                                    ( أ ) وكيل الحسابات — مدير أو رئيس الحسابات
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #000;padding:4px 6px;background:#f5f5f5;font-weight:bold;width:20%;">إمضاء (حسب)</td>
+                                <td style="border:1px solid #000;padding:4px 6px;" colspan="2">
+                                    (١) رقم المسند ١ — رقم الإيد في الدفتر رقم ٧٢٤ (ع.ج) &#160;&#160;&#160; إمضاء الكاتب المنرود: &#160;&#160;&#160;&#160;
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #000;padding:4px 6px;background:#f5f5f5;font-weight:bold;">الشيكات / الدفعات</td>
+                                <td style="border:1px solid #000;padding:4px 6px;" colspan="2">
+                                    (٢) قيد في دفاتر المبانات المختصة &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #000;padding:4px 6px;background:#f5f5f5;font-weight:bold;">(٣) قيد في السجل</td>
+                                <td style="border:1px solid #000;padding:4px 6px;" colspan="2">
+                                    برقم: &#160;&#160;&#160;&#160;&#160; إمضاء الكاتب المرط: &#160;&#160;&#160;&#160;&#160;&#160;&#160;
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #000;padding:4px 6px;background:#f5f5f5;font-weight:bold;">(٤) قيد في سجل الشيكات</td>
+                                <td style="border:1px solid #000;padding:4px 6px;" colspan="2">
+                                    إمضاء الكاتب المرط: &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #000;padding:4px 6px;background:#f5f5f5;font-weight:bold;">(٥) أُدرج في كشف الدفعات</td>
+                                <td style="border:1px solid #000;padding:4px 6px;" colspan="2">
+                                    إمضاء / طالب أو كاتب التحضير: &#160;&#160;&#160;&#160;&#160;&#160;
+                                    في &#160;&#160;&#160;&#160; سنة ٢٠ &#160;&#160;&#160;
+                                </td>
+                            <td rowspan="5" style="border:1px solid #000;text-align:center;width:80px;vertical-align:middle;">
+                                    <img src="data:image/png;base64,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" style="width:68px;height:68px;object-fit:contain;" alt="محافظة بورسعيد"/>
+                                    <div style="font-size:8pt;color:#555;margin-top:4px;">الختم ذو التاريخ</div>
+                                    <div style="font-size:9pt;color:#555;"><t t-esc="doc.permit_date"/></div>
+                                </td>
+                                </tr>
+                        </table>
+
+                        <!-- ═══ توقيعات السلطة العليا ═══ -->
+                        <table style="width:100%;border-collapse:collapse;font-size:10pt;margin-bottom:5px;">
+                            <tr>
+                                <td style="border:1px solid #000;padding:10px;text-align:center;width:33%;vertical-align:top;">
+                                    <div style="font-weight:bold;border-bottom:1px solid #ccc;padding-bottom:3px;margin-bottom:4px;">الموظف المختص</div>
+                                    <div style="font-size:9pt;">الاسم: &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</div>
+                                    <div style="margin-top:18px;font-size:9pt;color:#555;">التوقيع: .........................</div>
+                                </td>
+                                <td style="border:1px solid #000;padding:10px;text-align:center;width:33%;vertical-align:top;">
+                                    <div style="font-weight:bold;border-bottom:1px solid #ccc;padding-bottom:3px;margin-bottom:4px;">مدير إدارة التعاقدات</div>
+                                    <div style="font-size:9pt;">الاسم: &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</div>
+                                    <div style="margin-top:18px;font-size:9pt;color:#555;">التوقيع: .........................</div>
+                                </td>
+                                <td style="border:1px solid #000;padding:10px;text-align:center;width:34%;vertical-align:top;">
+                                    <div style="font-weight:bold;border-bottom:1px solid #ccc;padding-bottom:3px;margin-bottom:4px;">مدير الإدارة المالية</div>
+                                    <div style="font-size:9pt;">الاسم: &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</div>
+                                    <div style="margin-top:18px;font-size:9pt;color:#555;">التوقيع: .........................</div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- مدير عام -->
+                        <table style="width:100%;border-collapse:collapse;font-size:10pt;margin-bottom:8px;">
+                            <tr>
+                                <td style="border:1px solid #000;padding:8px;text-align:center;">
+                                    <div style="font-weight:bold;font-size:12pt;">مـديـر عـام</div>
+                                    <div style="font-weight:bold;font-size:11pt;">الشؤون المالية والإدارية</div>
+                                    <div style="margin-top:3px;font-size:10pt;">د/ نادية عبد السلام</div>
+                                    <img src="data:image/png;base64,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" style="width:68px;height:68px;object-fit:contain;" alt="محافظة بورسعيد"/>
+                                    <div style="font-size:9pt;color:#555;">
+                                        التوقيع: &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+                                        التاريخ: &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- ═══ تذييل ═══ -->
+                        <div style="font-size:8pt;color:#666;border-top:1px solid #ccc;padding-top:4px;
+                                    display:flex;justify-content:space-between;">
+                            <span>استمارة رقم 50 ( ع . ح ) — اعتماد الصرف</span>
+                            <span>الديوان العام لمحافظة بورسعيد — إدارة المخازن</span>
+                            <span><t t-esc="doc.name"/> — <t t-esc="doc.permit_date"/></span>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_inspection" model="ir.actions.report">
+        <field name="name">محضر الفحص</field>
+        <field name="model">stock.inspection.report</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">stock_addition_permit.report_inspection_template</field>
+        <field name="print_report_name">'محضر الفحص - ' + (object.name or '')</field>
+        <field name="binding_model_id" ref="model_stock_inspection_report"/>
+<field name="paperformat_id" ref="stock_addition_permit.paperformat_gov_a4"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_inspection_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                
+                    <t t-call="web.external_layout">
+                
+                    <div class="page" style="direction:rtl;font-family:'Arial',sans-serif;font-size:11pt;">
+<style>
+    .o_company_logo, .o_company_name, .o_address_name { display: none !important; }
+    .o_report_layout_header, header.o_report_layout_header { display: none !important; }
+    footer, .o_footer { display: none !important; }
+    .header { display: none !important; }
+    #mainTable thead td { display: none !important; }
+    table.o_report_layout thead { display: none !important; }
+    .o_report_no_header_footer header, .o_report_no_header_footer footer { display: none !important; }
+</style>
+
+
+                        <!-- رأس المحضر -->
+                        <div style="text-align:center;border-bottom:3px double #000;padding-bottom:8px;margin-bottom:12px;">
+                            <div style="font-size:14pt;font-weight:bold;">جمهورية مصر العربية</div>
+                            <div style="font-size:12pt;font-weight:bold;">محافظة بورسعيد — إدارة المخازن</div>
+                            <div style="font-size:13pt;font-weight:bold;margin-top:6px;text-decoration:underline;">
+                                محضر الفحص والاستلام المبدئي
+                            </div>
+                        </div>
+
+                        <!-- بيانات المحضر -->
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:12px;font-size:10pt;">
+                            <tr>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;width:18%;">رقم المحضر</td>
+                                <td style="border:1px solid #000;padding:5px 8px;width:15%;font-weight:bold;"><t t-esc="doc.name"/></td>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;width:15%;">تاريخ الفحص</td>
+                                <td style="border:1px solid #000;padding:5px 8px;width:15%;"><t t-esc="doc.inspection_date"/></td>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;width:15%;">أمر الاستلام</td>
+                                <td style="border:1px solid #000;padding:5px 8px;width:22%;"><t t-esc="doc.picking_id.name if doc.picking_id else '—'"/></td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;">المورد</td>
+                                <td style="border:1px solid #000;padding:5px 8px;" colspan="3"><t t-esc="doc.partner_id.name if doc.partner_id else '—'"/></td>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;">أمر الشراء</td>
+                                <td style="border:1px solid #000;padding:5px 8px;"><t t-esc="doc.purchase_order_id.name if doc.purchase_order_id else '—'"/></td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;">① دفعة المرجع</td>
+                                <td style="border:1px solid #000;padding:5px 8px;" colspan="2"><t t-esc="doc.reference_batch"/></td>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;">② مجموعة الاختبار</td>
+                                <td style="border:1px solid #000;padding:5px 8px;" colspan="2"><t t-esc="doc.test_group"/></td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;">المفتش</td>
+                                <td style="border:1px solid #000;padding:5px 8px;" colspan="5"><t t-esc="doc.inspector_id.name if doc.inspector_id else '—'"/></td>
+                            </tr>
+                        </table>
+
+                        <!-- جدول الأصناف المفحوصة -->
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:12px;font-size:10pt;">
+                            <thead>
+                                <tr style="background:#d9d9d9;">
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;width:5%;">م</th>
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;width:30%;">الصنف</th>
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;width:15%;">③ الكمية المفحوصة</th>
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;width:15%;">الكمية المعتمدة</th>
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;width:20%;">نتيجة الفحص</th>
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;width:15%;">ملاحظات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="border:1px solid #000;padding:6px;text-align:center;">1</td>
+                                    <td style="border:1px solid #000;padding:6px;">
+                                        <t t-esc="doc.picking_id.move_ids[0].product_id.name if doc.picking_id and doc.picking_id.move_ids else '—'"/>
+                                    </td>
+                                    <td style="border:1px solid #000;padding:6px;text-align:center;font-weight:bold;">
+                                        <t t-esc="doc.inspection_qty"/>
+                                    </td>
+                                    <td style="border:1px solid #000;padding:6px;text-align:center;">
+                                        <t t-esc="doc.approved_qty or doc.inspection_qty"/>
+                                    </td>
+                                    <td style="border:1px solid #000;padding:6px;text-align:center;">
+                                        <t t-if="doc.result == 'pass'"><span style="color:green;font-weight:bold;">مطابق للمواصفات ✓</span></t>
+                                        <t t-elif="doc.result == 'partial'"><span style="color:orange;font-weight:bold;">مطابق جزئياً</span></t>
+                                        <t t-else=""><span style="color:red;font-weight:bold;">غير مطابق ✗</span></t>
+                                    </td>
+                                    <td style="border:1px solid #000;padding:6px;">
+                                        <t t-esc="doc.rejection_reason or ''"/>
+                                    </td>
+                                </tr>
+                                <t t-foreach="range(3)" t-as="i">
+                                    <tr style="height:26px;">
+                                        <td style="border:1px solid #000;text-align:center;color:#aaa;"><t t-esc="i+2"/></td>
+                                        <td style="border:1px solid #000;"></td>
+                                        <td style="border:1px solid #000;"></td>
+                                        <td style="border:1px solid #000;"></td>
+                                        <td style="border:1px solid #000;"></td>
+                                        <td style="border:1px solid #000;"></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <!-- نتيجة الفحص وتوصية اللجنة -->
+                        <div style="border:1px solid #000;padding:8px;margin-bottom:14px;">
+                            <strong>نتيجة الفحص وتوصية لجنة الاستلام:</strong>
+                            <div style="margin-top:6px;min-height:40px;">
+                                <t t-if="doc.result == 'pass'">
+                                    يُوصي المفتش المختص بقبول الأصناف والموافقة على إصدار إذن الإضافة.
+                                </t>
+                                <t t-elif="doc.result == 'partial'">
+                                    يُوصي المفتش بقبول جزء من الأصناف (الكمية المعتمدة: <t t-esc="doc.approved_qty"/>).
+                                    ملاحظات: <t t-esc="doc.rejection_reason or ''"/>
+                                </t>
+                                <t t-else="">
+                                    يُوصي المفتش برفض الأصناف. سبب الرفض: <t t-esc="doc.rejection_reason or '—'"/>
+                                </t>
+                            </div>
+                        </div>
+
+                        <!-- توقيعات -->
+                        <table style="width:100%;border-collapse:collapse;font-size:10pt;">
+                            <tr>
+                                <td style="border:1px solid #000;padding:14px;text-align:center;width:33%;vertical-align:top;">
+                                    <p style="font-weight:bold;margin:0;">المفتش / المسؤول عن الفحص</p>
+                                    <p style="font-size:10pt;margin:4px 0;">
+                                        <t t-esc="doc.inspector_id.name if doc.inspector_id else '........................'"/>
+                                    </p>
+                                    <p style="margin-top:24px;color:#555;">التوقيع: .........................</p>
+                                    <p style="color:#555;">التاريخ: <t t-esc="doc.inspection_date"/></p>
+                                </td>
+                                <td style="border:1px solid #000;padding:14px;text-align:center;width:33%;vertical-align:top;">
+                                    <p style="font-weight:bold;margin:0;">أمين المخزن</p>
+                                    <p style="margin-top:24px;color:#555;">التوقيع: .........................</p>
+                                    <p style="color:#555;">التاريخ: .........................</p>
+                                </td>
+                                <td style="border:1px solid #000;padding:14px;text-align:center;width:33%;vertical-align:top;">
+                                    <p style="font-weight:bold;margin:0;">مدير إدارة المخازن</p>
+                                    <p style="margin-top:24px;color:#555;">التوقيع: .........................</p>
+                                    <p style="color:#555;">التاريخ: .........................</p>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- تذييل -->
+                        <div style="margin-top:8px;font-size:8pt;color:#777;text-align:center;
+                                    border-top:1px solid #ccc;padding-top:4px;">
+                            محضر الفحص — الديوان العام لمحافظة بورسعيد — إدارة المخازن —
+                            <t t-esc="doc.name"/> — <t t-esc="doc.inspection_date"/>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

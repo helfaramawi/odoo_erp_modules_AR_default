@@ -1,0 +1,3 @@
+# C2 MODULE — ALL FILES WRITTEN BELOW AS SEPARATE SECTIONS
+# Each section is a file path followed by its content.
+# This is a build manifest — the actual files are created by the build script.

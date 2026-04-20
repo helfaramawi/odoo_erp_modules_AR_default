@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <template id="report_cash_register">
+    <t t-call="web.html_container">
+      <t t-foreach="docs" t-as="folio">
+        <t t-call="web.external_layout">
+          <div class="page" dir="rtl"
+               style="font-family:'Traditional Arabic',Arial,serif;">
+
+            <div style="text-align:center; margin-bottom:6px;">
+              <h3 style="margin:0;"><t t-out="folio.book_id.name"/></h3>
+              <div style="font-size:11px;">
+                استمارة رقم <t t-out="folio.book_id.form_number"/>
+                — محافظة بورسعيد
+              </div>
+            </div>
+
+            <!-- Identity -->
+            <table style="width:100%; font-size:10px; margin-bottom:4px;"
+                   class="table-borderless">
+              <tr>
+                <td><strong>السنة المالية:</strong> <t t-out="folio.fiscal_year"/></td>
+                <td><strong>الشهر:</strong>
+                  <t t-out="dict(folio._fields['period_month'].selection).get(folio.period_month)"/>
+                </td>
+                <td><strong>رقم الفولية:</strong> <t t-out="folio.folio_number"/></td>
+                <td><strong>الحالة:</strong>
+                  <t t-out="dict(folio._fields['state'].selection).get(folio.state)"/>
+                </td>
+              </tr>
+            </table>
+
+            <!-- Balance summary -->
+            <table style="width:100%; font-size:10px; margin-bottom:6px; border:1px solid #000;">
+              <tr style="background:#f0f0f0;">
+                <td style="padding:3px; border:1px solid #000; width:25%;"><strong>الرصيد الافتتاحي</strong></td>
+                <td style="padding:3px; border:1px solid #000; width:25%;"><strong>إجمالي المقبوضات</strong></td>
+                <td style="padding:3px; border:1px solid #000; width:25%;"><strong>إجمالي المدفوعات</strong></td>
+                <td style="padding:3px; border:1px solid #000; width:25%;"><strong>الرصيد الختامي</strong></td>
+              </tr>
+              <tr>
+                <td style="padding:3px; border:1px solid #000; text-align:left;">
+                  <t t-out="'%.2f' % folio.opening_balance"/>
+                </td>
+                <td style="padding:3px; border:1px solid #000; text-align:left;">
+                  <t t-out="'%.2f' % folio.total_receipts"/>
+                </td>
+                <td style="padding:3px; border:1px solid #000; text-align:left;">
+                  <t t-out="'%.2f' % folio.total_payments"/>
+                </td>
+                <td style="padding:3px; border:1px solid #000; text-align:left; font-weight:bold;">
+                  <t t-out="'%.2f' % folio.closing_balance"/>
+                </td>
+              </tr>
+              <tr t-if="folio.bank_statement_balance">
+                <td colspan="3" style="padding:3px; border:1px solid #000; text-align:center; background:#fffae0;">
+                  <strong>رصيد كشف البنك الرسمي:</strong>
+                  <t t-out="'%.2f' % folio.bank_statement_balance"/>
+                </td>
+                <td style="padding:3px; border:1px solid #000; text-align:left; background:#fffae0;">
+                  <strong>فرق المطابقة:</strong>
+                  <t t-out="'%.2f' % folio.reconciliation_variance"/>
+                </td>
+              </tr>
+            </table>
+
+            <!-- Transaction lines with running balance -->
+            <table style="width:100%; font-size:9px; border-collapse:collapse;">
+              <thead>
+                <tr style="background:#dddddd;">
+                  <th style="padding:3px; border:1px solid #000;">التاريخ</th>
+                  <th style="padding:3px; border:1px solid #000;">المرجع</th>
+                  <th style="padding:3px; border:1px solid #000;">رقم الشيك/الحوالة</th>
+                  <th style="padding:3px; border:1px solid #000;">البيان</th>
+                  <th style="padding:3px; border:1px solid #000;">الشريك</th>
+                  <th style="padding:3px; border:1px solid #000;">قبض</th>
+                  <th style="padding:3px; border:1px solid #000;">صرف</th>
+                  <th style="padding:3px; border:1px solid #000;">الرصيد</th>
+                  <th style="padding:3px; border:1px solid #000;">مطابَق</th>
+                </tr>
+              </thead>
+              <tbody>
+                <t t-set="running" t-value="folio.opening_balance"/>
+                <t t-if="not folio.statement_line_ids">
+                  <tr>
+                    <td colspan="9" style="padding:20px; text-align:center; color:#999;
+                                          border:1px solid #000;">
+                      لا توجد حركات في هذه الفترة.
+                    </td>
+                  </tr>
+                </t>
+                <t t-foreach="folio.statement_line_ids" t-as="line">
+                  <t t-set="amt" t-value="line.amount"/>
+                  <t t-set="running" t-value="running + amt"/>
+                  <tr>
+                    <td style="padding:2px; border:1px solid #000;"><t t-out="line.date"/></td>
+                    <td style="padding:2px; border:1px solid #000;"><t t-out="line.ref or ''"/></td>
+                    <td style="padding:2px; border:1px solid #000;"><t t-out="line.payment_ref or ''"/></td>
+                    <td style="padding:2px; border:1px solid #000; font-size:8.5px;">
+                      <t t-out="(line.narration or line.payment_ref or '')[:50]"/>
+                    </td>
+                    <td style="padding:2px; border:1px solid #000; font-size:8.5px;">
+                      <t t-out="line.partner_id.name or ''"/>
+                    </td>
+                    <td style="padding:2px; border:1px solid #000; text-align:left;">
+                      <t t-if="amt &gt; 0"><t t-out="'%.2f' % amt"/></t>
+                    </td>
+                    <td style="padding:2px; border:1px solid #000; text-align:left;">
+                      <t t-if="amt &lt; 0"><t t-out="'%.2f' % (-amt)"/></t>
+                    </td>
+                    <td style="padding:2px; border:1px solid #000; text-align:left;
+                               font-weight:bold;">
+                      <t t-out="'%.2f' % running"/>
+                    </td>
+                    <td style="padding:2px; border:1px solid #000; text-align:center;">
+                      <t t-if="line.is_reconciled">✓</t>
+                    </td>
+                  </tr>
+                </t>
+                <!-- Totals row -->
+                <tr style="background:#f5f5f5; font-weight:bold;">
+                  <td colspan="5" style="padding:3px; border:1.5px solid #000; text-align:center;">
+                    إجمالي الشهر
+                  </td>
+                  <td style="padding:3px; border:1.5px solid #000; text-align:left;">
+                    <t t-out="'%.2f' % folio.total_receipts"/>
+                  </td>
+                  <td style="padding:3px; border:1.5px solid #000; text-align:left;">
+                    <t t-out="'%.2f' % folio.total_payments"/>
+                  </td>
+                  <td style="padding:3px; border:1.5px solid #000; text-align:left;
+                             background:#ffe9c6;">
+                    <t t-out="'%.2f' % folio.closing_balance"/>
+                  </td>
+                  <td style="padding:3px; border:1.5px solid #000;"></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Signatures -->
+            <table style="width:100%; margin-top:30px; font-size:10px;"
+                   class="table-borderless">
+              <tr>
+                <td style="text-align:center;">
+                  <div>أمين الخزينة</div>
+                  <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                    <t t-out="folio.cashier_signed_by or '............................'"/>
+                  </div>
+                </td>
+                <td style="text-align:center;">
+                  <div>رئيس الحسابات</div>
+                  <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                    <t t-out="folio.accounts_head_signed_by or '............................'"/>
+                  </div>
+                </td>
+                <td style="text-align:center;">
+                  <div>المراجع المالي</div>
+                  <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                    ............................
+                  </div>
+                </td>
+              </tr>
+            </table>
+
+            <div style="text-align:center; font-size:9px; margin-top:12px; color:#666;">
+              نُقِل بعده — يحوَّل الرصيد الختامي
+              <t t-out="'%.2f' % folio.closing_balance"/>
+              إلى الفولية اللاحقة
+            </div>
+
+          </div>
+          <p style="page-break-after: always;"/>
+        </t>
+      </t>
+    </t>
+  </template>
+
+</odoo>

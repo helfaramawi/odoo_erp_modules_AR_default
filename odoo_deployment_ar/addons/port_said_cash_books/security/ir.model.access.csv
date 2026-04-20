@@ -1,0 +1,12 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_cash_book_user,cash book user,model_port_said_cash_book,group_cash_user,1,0,0,0
+access_cash_book_manager,cash book manager,model_port_said_cash_book,group_cash_manager,1,1,1,1
+access_cash_folio_user,cash folio user,model_port_said_cash_folio,group_cash_user,1,1,1,0
+access_cash_folio_manager,cash folio manager,model_port_said_cash_folio,group_cash_manager,1,1,1,1
+access_cheque_user,cheque user,model_port_said_cheque,group_cash_user,1,1,1,0
+access_cheque_manager,cheque manager,model_port_said_cheque,group_cash_manager,1,1,1,1
+access_payment_order_user,payment order user,model_port_said_payment_order,group_cash_user,1,1,1,0
+access_payment_order_manager,payment order manager,model_port_said_payment_order,group_cash_manager,1,1,1,1
+access_surety_user,surety user,model_port_said_surety,group_cash_user,1,1,1,0
+access_surety_manager,surety manager,model_port_said_surety,group_cash_manager,1,1,1,1
+access_cash_print_wizard,cash print wizard,model_port_said_cash_print_wizard,group_cash_user,1,1,1,1

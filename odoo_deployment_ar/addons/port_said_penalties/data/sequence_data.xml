@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="seq_penalty_employee" model="ir.sequence">
+    <field name="name">دفتر 39 - جزاءات موظفين</field>
+    <field name="code">port_said.penalty.employee</field>
+    <field name="prefix">39-EMP/%(year)s/</field>
+    <field name="padding">4</field>
+    <field name="use_date_range">True</field>
+    <field name="company_id" eval="False"/>
+  </record>
+
+  <record id="seq_penalty_vendor" model="ir.sequence">
+    <field name="name">دفتر 39 - جزاءات موردين</field>
+    <field name="code">port_said.penalty.vendor</field>
+    <field name="prefix">39-VEN/%(year)s/</field>
+    <field name="padding">4</field>
+    <field name="use_date_range">True</field>
+    <field name="company_id" eval="False"/>
+  </record>
+
+</odoo>

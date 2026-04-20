@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_custody" model="ir.module.category">
+        <field name="name">إدارة العهد</field>
+        <field name="sequence">80</field>
+    </record>
+    <record id="group_custody_user" model="res.groups">
+        <field name="name">أمين المخزن</field>
+        <field name="category_id" ref="module_category_custody"/>
+        <field name="comment">يمكنه إنشاء وتعديل العهد</field>
+    </record>
+    <record id="group_custody_manager" model="res.groups">
+        <field name="name">مدير العهد</field>
+        <field name="category_id" ref="module_category_custody"/>
+        <field name="implied_ids" eval="[(4, ref('group_custody_user'))]"/>
+        <field name="comment">صلاحيات كاملة على العهد بما فيها الحذف</field>
+    </record>
+</odoo>

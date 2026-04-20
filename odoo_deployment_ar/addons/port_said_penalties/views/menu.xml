@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <menuitem id="menu_penalty_root"
+            name="دفتر الجزاءات"
+            sequence="60"/>
+
+  <menuitem id="menu_penalty"
+            name="الجزاءات"
+            parent="menu_penalty_root"
+            action="action_penalty"
+            sequence="10"/>
+
+  <menuitem id="menu_appeal"
+            name="التظلمات"
+            parent="menu_penalty_root"
+            action="action_appeal"
+            sequence="20"/>
+
+  <menuitem id="menu_violation_type"
+            name="أنواع المخالفات"
+            parent="menu_penalty_root"
+            action="action_violation_type"
+            sequence="30"
+            groups="group_penalty_manager"/>
+
+  <menuitem id="menu_type_option"
+            name="أنواع الجزاءات"
+            parent="menu_penalty_root"
+            action="action_type_option"
+            sequence="40"
+            groups="group_penalty_manager"/>
+
+</odoo>

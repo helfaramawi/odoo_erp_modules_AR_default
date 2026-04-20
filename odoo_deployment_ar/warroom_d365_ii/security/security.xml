@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="group_x_warroom_d365_reverse_engineering_user" model="res.groups">
+    <field name="name">Warroom D365 Reverse Engineering User</field>
+  </record>
+  <record id="group_x_warroom_d365_reverse_engineering_manager" model="res.groups">
+    <field name="name">Warroom D365 Reverse Engineering Manager</field>
+    <field name="implied_ids" eval="[(4, ref('group_x_warroom_d365_reverse_engineering_user'))]"/>
+  </record>
+</odoo>

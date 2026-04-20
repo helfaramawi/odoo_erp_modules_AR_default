@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_financial_dimension_list" model="ir.ui.view">
+    <field name="name">financial.dimension.list</field>
+    <field name="model">financial.dimension</field>
+    <field name="arch" type="xml">
+      <tree string="Financial Dimensions / الأبعاد المالية" editable="bottom">
+        <field name="dimension_type"/>
+        <field name="code"/>
+        <field name="name"/>
+        <field name="active"/>
+      </tree>
+    </field>
+  </record>
+  <record id="action_financial_dimensions" model="ir.actions.act_window">
+    <field name="name">Financial Dimensions / الأبعاد المالية</field>
+    <field name="res_model">financial.dimension</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+  <menuitem id="menu_financial_dimensions"
+    name="Financial Dimensions / الأبعاد المالية"
+    parent="account.menu_finance_configuration"
+    action="action_financial_dimensions" sequence="50"/>
+</odoo>

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_penalty_tree" model="ir.ui.view">
+    <field name="name">port_said.penalty.tree</field>
+    <field name="model">port_said.penalty</field>
+    <field name="arch" type="xml">
+      <tree string="دفتر الجزاءات"
+            decoration-info="state == 'draft'"
+            decoration-warning="state in ['recorded','appealed']"
+            decoration-success="state in ['executed','upheld']"
+            decoration-danger="state == 'overturned'"
+            decoration-muted="state in ['cancelled','closed']">
+        <field name="sequence_number"/>
+        <field name="incident_date"/>
+        <field name="subject_type"/>
+        <field name="subject_display_name"/>
+        <field name="violation_type_id"/>
+        <field name="penalty_type_option_id"/>
+        <field name="amount" sum="إجمالي"/>
+        <field name="has_active_appeal" optional="show"/>
+        <field name="state"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_penalty_form" model="ir.ui.view">
+    <field name="name">port_said.penalty.form</field>
+    <field name="model">port_said.penalty</field>
+    <field name="arch" type="xml">
+      <form>
+        <header>
+          <button name="action_record" type="object" string="تسجيل بالدفتر"
+                  invisible="state != 'draft'" class="oe_highlight"/>
+          <button name="action_approve" type="object" string="اعتماد"
+                  invisible="state != 'recorded'" class="oe_highlight"/>
+          <button name="action_execute" type="object" string="تنفيذ"
+                  invisible="state != 'approved'" class="oe_highlight"
+                  groups="group_penalty_manager"/>
+          <button name="action_appeal" type="object" string="فتح تظلم"
+                  invisible="state not in ['approved','executed'] or has_active_appeal"/>
+          <button name="action_close" type="object" string="إغلاق الملف"
+                  invisible="state not in ['executed','upheld','overturned']"
+                  groups="group_penalty_manager"/>
+          <button name="action_cancel" type="object" string="إلغاء"
+                  invisible="state in ['executed','closed','cancelled']"/>
+          <field name="state" widget="statusbar"
+                 statusbar_visible="draft,recorded,approved,executed,closed"/>
+        </header>
+        <sheet>
+          <div class="oe_title">
+            <label for="sequence_number" string="رقم بالدفتر"/>
+            <h1><field name="sequence_number" readonly="1"/></h1>
+          </div>
+          <group>
+            <group string="الجهة المعاقَبة">
+              <field name="subject_type" readonly="state != 'draft'"/>
+              <field name="employee_id"
+                     invisible="subject_type != 'employee'"
+                     required="subject_type == 'employee'"
+                     readonly="state != 'draft'"/>
+              <field name="employee_department_id" readonly="1"
+                     invisible="subject_type != 'employee'"/>
+              <field name="employee_job_title" readonly="1"
+                     invisible="subject_type != 'employee'"/>
+              <field name="vendor_id"
+                     invisible="subject_type != 'vendor'"
+                     required="subject_type == 'vendor'"
+                     readonly="state != 'draft'"/>
+            </group>
+            <group string="المخالفة">
+              <field name="violation_type_id" readonly="state != 'draft'"/>
+              <field name="incident_date" readonly="state != 'draft'"/>
+              <field name="fiscal_year" readonly="1"/>
+            </group>
+          </group>
+          <group>
+            <field name="incident_description" readonly="state != 'draft'"
+                   placeholder="وصف تفصيلي للواقعة كما هي في محضر الإثبات..."/>
+          </group>
+          <group string="الجزاء المُقترَح">
+            <group>
+              <field name="penalty_type_option_id"
+                     readonly="state not in ['draft','recorded']"/>
+              <field name="amount" readonly="state not in ['draft','recorded']"/>
+              <field name="fine_percentage" readonly="state not in ['draft','recorded']"/>
+              <field name="currency_id" invisible="1"/>
+            </group>
+            <group>
+              <field name="penalty_description"
+                     readonly="state not in ['draft','recorded']"/>
+            </group>
+          </group>
+          <group string="الإيقاف (للموظفين فقط)"
+                 invisible="subject_type != 'employee' or not penalty_type_option_id">
+            <group>
+              <field name="suspension_days"/>
+              <field name="suspension_from"/>
+              <field name="suspension_to"/>
+            </group>
+          </group>
+          <group string="السياق التعاقدي" invisible="subject_type != 'vendor'">
+            <field name="purchase_order_id"/>
+            <field name="contract_value"/>
+          </group>
+          <notebook>
+            <page string="التحقيق والاعتمادات">
+              <group>
+                <group string="التحقيق">
+                  <field name="investigation_reference"/>
+                  <field name="investigation_date"/>
+                </group>
+                <group string="الاعتمادات">
+                  <field name="decision_number"/>
+                  <field name="decision_date"/>
+                  <field name="decided_by" readonly="1"/>
+                  <field name="approved_by" readonly="1"/>
+                  <field name="approval_date" readonly="1"/>
+                </group>
+              </group>
+            </page>
+            <page string="التنفيذ المحاسبي">
+              <group>
+                <group>
+                  <field name="execution_method"/>
+                  <field name="execution_date" readonly="1"/>
+                </group>
+                <group>
+                  <field name="payroll_slip_ref"
+                         invisible="execution_method != 'payroll_deduction'"/>
+                  <field name="move_id" readonly="1"/>
+                  <field name="daftar55_id"/>
+                </group>
+              </group>
+            </page>
+            <page string="التظلمات" invisible="not appeal_ids">
+              <field name="appeal_ids" readonly="1">
+                <tree>
+                  <field name="submission_date"/>
+                  <field name="appeal_venue"/>
+                  <field name="case_number"/>
+                  <field name="state"/>
+                  <field name="decision_date"/>
+                  <field name="reduced_amount"/>
+                </tree>
+              </field>
+            </page>
+            <page string="الإلغاء" invisible="state != 'cancelled'">
+              <field name="cancellation_reason"/>
+            </page>
+            <page string="ملاحظات">
+              <field name="notes"/>
+            </page>
+          </notebook>
+        </sheet>
+        <div class="oe_chatter">
+          <field name="message_follower_ids"/>
+          <field name="activity_ids"/>
+          <field name="message_ids"/>
+        </div>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_penalty_search" model="ir.ui.view">
+    <field name="name">port_said.penalty.search</field>
+    <field name="model">port_said.penalty</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="sequence_number"/>
+        <field name="subject_display_name"/>
+        <field name="employee_id"/>
+        <field name="vendor_id"/>
+        <field name="violation_type_id"/>
+        <field name="decision_number"/>
+        <separator/>
+        <filter string="موظفين" name="f_emp" domain="[('subject_type','=','employee')]"/>
+        <filter string="موردين" name="f_ven" domain="[('subject_type','=','vendor')]"/>
+        <separator/>
+        <filter string="مسودة" name="f_draft" domain="[('state','=','draft')]"/>
+        <filter string="مُسجَّل" name="f_recorded" domain="[('state','=','recorded')]"/>
+        <filter string="مُعتمَد" name="f_approved" domain="[('state','=','approved')]"/>
+        <filter string="مُنفَّذ" name="f_executed" domain="[('state','=','executed')]"/>
+        <filter string="مُتظلَّم عليه" name="f_appealed" domain="[('state','=','appealed')]"/>
+        <separator/>
+        <filter string="مع تظلم نشط" name="f_has_appeal" domain="[('has_active_appeal','=',True)]"/>
+        <group expand="1" string="تجميع حسب">
+          <filter string="نوع الجهة" name="g_subject" context="{'group_by':'subject_type'}"/>
+          <filter string="نوع المخالفة" name="g_vio" context="{'group_by':'violation_type_id'}"/>
+          <filter string="الحالة" name="g_state" context="{'group_by':'state'}"/>
+          <filter string="السنة المالية" name="g_fy" context="{'group_by':'fiscal_year'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <record id="action_penalty" model="ir.actions.act_window">
+    <field name="name">الجزاءات</field>
+    <field name="res_model">port_said.penalty</field>
+    <field name="view_mode">tree,form</field>
+    <field name="search_view_id" ref="view_penalty_search"/>
+  </record>
+
+</odoo>

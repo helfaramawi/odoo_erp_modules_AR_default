@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="seq_dossier" model="ir.sequence">
+    <field name="name">الاضابير - رقم متسلسل</field>
+    <field name="code">port_said.dossier</field>
+    <field name="prefix">ADPR/</field>
+    <field name="padding">4</field>
+    <field name="use_date_range">True</field>
+  </record>
+</odoo>

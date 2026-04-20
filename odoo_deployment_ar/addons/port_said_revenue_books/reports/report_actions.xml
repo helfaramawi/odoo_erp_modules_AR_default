@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="action_report_form10" model="ir.actions.report">
+    <field name="name">نموذج 10 — الإيرادات والمصروفات</field>
+    <field name="model">port_said.revenue.folio</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_revenue_books.report_form10</field>
+    <field name="report_file">port_said_revenue_books.report_form10</field>
+    <field name="paperformat_id" ref="paperformat_form10_wide"/>
+    <field name="binding_model_id" ref="model_port_said_revenue_folio"/>
+    <field name="binding_type">report</field>
+  </record>
+
+  <record id="action_report_form81" model="ir.actions.report">
+    <field name="name">استمارة 81 — الموارد/الاستخدامات</field>
+    <field name="model">port_said.revenue.folio</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_revenue_books.report_form81</field>
+    <field name="report_file">port_said_revenue_books.report_form81</field>
+    <field name="paperformat_id" ref="paperformat_form81_vertical"/>
+  </record>
+
+</odoo>

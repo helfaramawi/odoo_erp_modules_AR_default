@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="action_form50_printed" model="ir.actions.act_window">
+    <field name="name">استمارات 50 — مطبوعة نهائياً</field>
+    <field name="res_model">port_said.daftar55</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('is_final_printed','=',True)]</field>
+  </record>
+
+  <record id="action_form50_pending_print" model="ir.actions.act_window">
+    <field name="name">استمارات 50 — جاهزة للطباعة</field>
+    <field name="res_model">port_said.daftar55</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('state','in',['cleared','posted']),('is_final_printed','=',False)]</field>
+  </record>
+
+  <!-- قائمة مستقلة تحت قائمة الحسابات الأصلية في Odoo -->
+  <menuitem id="menu_form50_print_root"
+            name="استمارة 50 ع.ح"
+            parent="account.menu_finance"
+            sequence="99"
+            groups="port_said_form50_print.group_form50_preview"/>
+
+  <menuitem id="menu_form50_printed"
+            name="مطبوعة نهائياً"
+            parent="port_said_form50_print.menu_form50_print_root"
+            action="port_said_form50_print.action_form50_printed"
+            sequence="10"/>
+
+  <menuitem id="menu_form50_pending"
+            name="جاهزة للطباعة"
+            parent="port_said_form50_print.menu_form50_print_root"
+            action="port_said_form50_print.action_form50_pending_print"
+            sequence="20"/>
+</odoo>

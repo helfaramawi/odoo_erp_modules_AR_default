@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="seq_requisition" model="ir.sequence">
+    <field name="name">طلب الاحتياج</field>
+    <field name="code">port_said.requisition</field>
+    <field name="prefix">IHTIYAJ/%(year)s/</field>
+    <field name="padding">4</field>
+    <field name="use_date_range">True</field>
+  </record>
+</odoo>

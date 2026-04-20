@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+  <!--
+    الدفاتر الافتراضية التي تقرأ من account.bank.statement.line:
+    - دفتر النقدية (ربط بيومية النقدية)
+    - دفتر البنك المركزي المصري (ربط بيومية CBE)
+    - دفتر الوحدة الحسابية المركزية (ربط بيومية CAU)
+
+    أوامر الدفع الواردة والكفالات لا تحتاج book records لأنها نماذج مستقلة
+    بدورة حياة خاصة بها (port_said.payment_order, port_said.surety).
+
+    ملاحظة: هذه السجلات تحتاج ربط يدوي باليوميات بعد التثبيت.
+  -->
+
+  <record id="book_cash" model="port_said.cash.book">
+    <field name="name">دفتر حساب النقدية</field>
+    <field name="code">CB_CASH</field>
+    <field name="form_number">78 ع.ح</field>
+    <field name="sequence">10</field>
+    <field name="book_type">cash</field>
+    <field name="show_running_balance" eval="True"/>
+    <field name="include_unreconciled" eval="True"/>
+    <field name="notes">دفتر النقدية اليومية — يقرأ من كل يوميات نوع cash.
+ملاحظة: يجب ربط اليوميات يدوياً بعد التثبيت من خلال واجهة تعريف الدفتر.</field>
+  </record>
+
+  <record id="book_cbe" model="port_said.cash.book">
+    <field name="name">دفتر حساب جاري البنك المركزي المصري</field>
+    <field name="code">CB_CBE</field>
+    <field name="form_number">78 ع.ح</field>
+    <field name="sequence">20</field>
+    <field name="book_type">cbe</field>
+    <field name="show_running_balance" eval="True"/>
+    <field name="include_unreconciled" eval="True"/>
+    <field name="notes">دفتر الحساب الجاري مع البنك المركزي المصري.
+يجب ربط يومية البنك الخاصة بحساب CBE بعد التثبيت.</field>
+  </record>
+
+  <record id="book_cau" model="port_said.cash.book">
+    <field name="name">دفتر حساب الوحدة الحسابية المركزية</field>
+    <field name="code">CB_CAU</field>
+    <field name="form_number">78 ع.ح</field>
+    <field name="sequence">30</field>
+    <field name="book_type">cau</field>
+    <field name="show_running_balance" eval="True"/>
+    <field name="include_unreconciled" eval="True"/>
+    <field name="notes">دفتر الحساب الجاري مع الوحدة الحسابية المركزية (CAU).
+يُستخدم للمعاملات المالية بين المحافظة وبين وزارة المالية / الجهاز المركزي للمحاسبات.</field>
+  </record>
+
+</odoo>

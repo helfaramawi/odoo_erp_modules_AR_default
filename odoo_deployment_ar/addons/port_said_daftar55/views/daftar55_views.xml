@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_daftar55_form" model="ir.ui.view">
+    <field name="name">port_said.daftar55.form</field>
+    <field name="model">port_said.daftar55</field>
+    <field name="arch" type="xml">
+      <form string="دفتر 55 ع.ح">
+        <header>
+          <button name="action_receive"         string="استلام"           type="object" class="btn-primary"  invisible="state != 'draft'"/>
+          <button name="action_send_for_review" string="إرسال للمراجعة"   type="object" class="btn-primary"  invisible="state != 'received'"/>
+          <button name="action_clear"           string="تسميح البند"      type="object" class="btn-success"  invisible="state != 'reviewed'"/>
+          <button name="action_post"            string="ترحيل"             type="object" class="btn-success"  invisible="state != 'cleared'"/>
+          <button name="action_archive_dossier" string="حفظ بالاضابير"    type="object"                      invisible="state != 'posted'"/>
+          <button name="action_print_daftar55"  string="طباعة"             type="object" class="btn-secondary"/>
+          <field name="state" widget="statusbar" statusbar_visible="draft,received,reviewed,cleared,posted,archived"/>
+        </header>
+        <sheet>
+          <div class="oe_title">
+            <h1><field name="sequence_number" readonly="1" placeholder="يُعيَّن تلقائياً"/></h1>
+          </div>
+
+          <group string="قسم أ — بيانات المصلحة">
+            <group>
+              <field name="department_name"/>
+              <field name="division_name"/>
+              <field name="form50_ref"/>
+              <field name="register_z_ref"/>
+              <field name="writer_assigned"/>
+              <field name="attachment_count_declared"/>
+            </group>
+            <group>
+              <field name="date_received"/>
+              <field name="date_returned"/>
+              <field name="fiscal_year" readonly="1"/>
+            </group>
+          </group>
+
+          <group string="بيانات صاحب الحق">
+            <group>
+              <field name="vendor_id"/>
+              <field name="national_id"/>
+              <field name="payment_method"/>
+            </group>
+            <group string="بيانات البنك">
+              <field name="bank_name"/>
+              <field name="bank_branch"/>
+              <field name="bank_account_no"/>
+              <field name="iban"/>
+            </group>
+          </group>
+
+          <group string="الموازنة">
+            <group>
+              <field name="budget_line"/>
+              <field name="budget_bab"/>
+              <field name="budget_fasle"/>
+            </group>
+            <group>
+              <field name="commitment_ref" readonly="1"/>
+            </group>
+          </group>
+
+          <group string="المبالغ والاستقطاعات">
+            <group string="الاستقطاعات الأربعة">
+              <field name="amount_gross"/>
+              <field name="deductions_stamp_normal"/>
+              <field name="deductions_stamp_extra"/>
+              <field name="deductions_stamp_proportional"/>
+              <field name="deductions_commercial_tax"/>
+              <field name="total_deductions"/>
+            </group>
+            <group string="الصافي والتفقيط">
+              <field name="amount_net" class="oe_subtotal_footer_separator"/>
+              <field name="amount_words" readonly="1"/>
+            </group>
+          </group>
+
+          <group string="قسم ج — المراجعة والتوقيعات">
+            <group>
+              <field name="reviewer_id"/>
+              <field name="reviewer_stamp_date"/>
+              <field name="auditor_id"/>
+            </group>
+            <group>
+              <field name="accounts_head_id"/>
+              <field name="section_head_id"/>
+            </group>
+          </group>
+
+          <group string="قسم د — دفتر 224">
+            <group>
+              <field name="daftar224_sequence" readonly="1"/>
+              <field name="crossout_signed"/>
+              <field name="crossout_signed_by" invisible="not crossout_signed"/>
+            </group>
+            <group>
+              <field name="payment_order_ref"/>
+              <field name="dossier_ref" readonly="1"/>
+            </group>
+          </group>
+
+          <field name="notes" placeholder="ملاحظات..."/>
+        </sheet>
+        <chatter/>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_daftar55_list" model="ir.ui.view">
+    <field name="name">port_said.daftar55.list</field>
+    <field name="model">port_said.daftar55</field>
+    <field name="arch" type="xml">
+      <tree string="دفتر 55 ع.ح"
+            decoration-success="state in ('archived','posted')"
+            decoration-warning="state == 'cleared'"
+            decoration-muted="state == 'draft'">
+        <field name="state" column_invisible="1"/>
+        <field name="sequence_number"/>
+        <field name="fiscal_year"/>
+        <field name="date_received"/>
+        <field name="form50_ref"/>
+        <field name="department_name"/>
+        <field name="vendor_id"/>
+        <field name="budget_line"/>
+        <field name="amount_gross" sum="إجمالي"/>
+        <field name="total_deductions" sum="الاستقطاعات"/>
+        <field name="amount_net" sum="الصافي"/>
+        <field name="state" widget="badge"
+               decoration-success="state in ('archived','posted')"
+               decoration-warning="state == 'cleared'"
+               decoration-info="state == 'reviewed'"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_daftar55_search" model="ir.ui.view">
+    <field name="name">port_said.daftar55.search</field>
+    <field name="model">port_said.daftar55</field>
+    <field name="arch" type="xml">
+      <search string="بحث في دفتر 55">
+        <field name="sequence_number" string="رقم مسلسل"/>
+        <field name="form50_ref"      string="رقم استمارة 50"/>
+        <field name="vendor_id"       string="المورد"/>
+        <field name="budget_line"     string="البند"/>
+        <filter name="this_year"      string="السنة الحالية" domain="[('fiscal_year','=','2026')]"/>
+        <filter name="state_posted"   string="مرحّلة"        domain="[('state','=','posted')]"/>
+        <filter name="state_cleared"  string="مُسمَّحة"      domain="[('state','=','cleared')]"/>
+        <group expand="0" string="تجميع حسب">
+          <filter name="group_year"   string="السنة المالية" context="{'group_by':'fiscal_year'}"/>
+          <filter name="group_dept"   string="المصلحة"       context="{'group_by':'department_name'}"/>
+          <filter name="group_budget" string="البند"         context="{'group_by':'budget_line'}"/>
+          <filter name="group_state"  string="الحالة"        context="{'group_by':'state'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <record id="action_daftar55" model="ir.actions.act_window">
+    <field name="name">دفتر 55 ع.ح</field>
+    <field name="res_model">port_said.daftar55</field>
+    <field name="view_mode">tree,form</field>
+    <field name="search_view_id" ref="view_daftar55_search"/>
+    <field name="context">{'search_default_this_year': 1}</field>
+  </record>
+
+  <!-- Root menus managed by port_said_menu module -->
+  <!-- دفتر 55 menu item managed by port_said_menu -->
+
+</odoo>

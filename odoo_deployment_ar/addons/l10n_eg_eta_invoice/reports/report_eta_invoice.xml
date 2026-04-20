@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<!-- ══ Report Action ══════════════════════════════════════════════════ -->
+<record id="action_rpt_eta_invoice" model="ir.actions.report">
+  <field name="name">فاتورة إلكترونية ETA</field>
+  <field name="model">eta.invoice</field>
+  <field name="report_type">qweb-pdf</field>
+  <field name="report_name">l10n_eg_eta_invoice.rpt_eta_invoice</field>
+  <field name="print_report_name">'فاتورة_ETA_' + (object.move_id.name or '')</field>
+  <field name="binding_model_id" ref="model_eta_invoice"/>
+  <field name="binding_type">report</field>
+</record>
+
+<!-- ══ ETA Invoice Template ══════════════════════════════════════════ -->
+<template id="rpt_eta_invoice">
+  <t t-call="web.html_container">
+    <t t-foreach="docs" t-as="doc">
+      <t t-call="web.external_layout">
+        <div class="page" style="direction:rtl;font-family:'Cairo','Noto Kufi Arabic',Arial,sans-serif;font-size:10.5pt;">
+<style>
+  .o_company_logo,.o_address_name,.o_report_layout_header,
+  header.o_report_layout_header,.odoo-header,.header-content,
+  footer,.footer,.o_footer{display:none!important;}
+  .page{margin-top:0!important;padding-top:0!important;}
+  table{border-collapse:collapse;width:100%;}
+  th,td{padding:5px 7px;border:1px solid #ccc;}
+  th{background:#1F3864;color:white;font-weight:bold;}
+</style>
+
+          <!-- ══ هيدر حكومي رسمي مطابق لاستمارة 193 ══ -->
+          <table style="margin-bottom:8px;border-bottom:2px solid #000;padding-bottom:6px;border:none;">
+            <tr>
+              <td style="width:78px;text-align:center;vertical-align:top;border:none;">&#160;</td>
+              <td style="text-align:center;vertical-align:middle;border:none;">
+                <div style="font-size:13pt;font-weight:bold;">جمهورية مصر العربية</div>
+                <div style="font-size:12pt;font-weight:bold;">محافظة بورسعيد</div>
+                <div style="font-size:11pt;">الإدارة العامة للشؤون المالية والإدارية</div>
+                <div style="font-size:11pt;font-weight:bold;">إدارة الحسابات والمالية</div>
+              </td>
+              <td style="width:78px;text-align:center;vertical-align:middle;border:none;">
+                <img t-att-src="'data:image/png;base64,' + (env.company.logo.decode('utf-8') if env.company.logo else '')"
+                     style="width:70px;height:70px;object-fit:contain;" alt="شعار المحافظة"/>
+              </td>
+            </tr>
+          </table>
+
+          <!-- ══ عنوان الفاتورة مع شارة ETA ══ -->
+          <table style="margin-bottom:12px;border:none;">
+            <tr>
+              <td style="width:70%;border:none;">
+                <h2 style="font-size:14pt;text-decoration:underline;margin:0;">
+                  <t t-if="doc.document_type == 'I'">فاتورة ضريبية إلكترونية</t>
+                  <t t-elif="doc.document_type == 'C'">إشعار دائن إلكتروني</t>
+                  <t t-else="">إشعار مدين إلكتروني</t>
+                </h2>
+                <div style="font-size:10pt;color:#666;margin-top:4px;">
+                  رقم الفاتورة: <strong><t t-esc="doc.move_id.name if doc.move_id else ''"/></strong>
+                  — تاريخ: <strong><t t-esc="doc.move_id.invoice_date if doc.move_id else ''"/></strong>
+                </div>
+              </td>
+              <td style="width:30%;text-align:center;border:none;">
+                <t t-if="doc.state == 'valid'">
+                  <div style="background:#E8F5E9;border:2px solid #4CAF50;border-radius:8px;padding:8px;font-size:9pt;">
+                    <div style="font-weight:bold;color:#375623;font-size:11pt;">✅ معتمدة من ETA</div>
+                    <div style="color:#666;margin-top:2px;">UUID:</div>
+                    <div style="font-size:8pt;color:#1F3864;word-break:break-all;"><t t-esc="doc.eta_uuid or '—'"/></div>
+                    <t t-if="doc.validation_date">
+                      <div style="margin-top:4px;color:#666;font-size:8pt;"><t t-esc="doc.validation_date"/></div>
+                    </t>
+                  </div>
+                </t>
+                <t t-elif="doc.state == 'submitted'">
+                  <div style="background:#FFF3E0;border:2px solid #FF9800;border-radius:8px;padding:8px;font-size:9pt;">
+                    <div style="font-weight:bold;color:#E65100;">⏳ قيد الاعتماد</div>
+                    <div style="color:#666;margin-top:2px;font-size:8pt;">Submission ID:</div>
+                    <div style="font-size:8pt;color:#333;"><t t-esc="doc.submission_ref or '—'"/></div>
+                  </div>
+                </t>
+                <t t-else="">
+                  <div style="background:#FFEBEE;border:2px solid #EF5350;border-radius:8px;padding:8px;font-size:9pt;">
+                    <div style="font-weight:bold;color:#C62828;">⚠ لم تُعتمد بعد</div>
+                  </div>
+                </t>
+              </td>
+            </tr>
+          </table>
+
+          <!-- ══ البائع والمشتري ══ -->
+          <table style="margin-bottom:12px;">
+            <tr style="background:#1F3864;color:white;">
+              <th style="width:50%;text-align:center;">بيانات المُصدِر (الجهة الحكومية)</th>
+              <th style="width:50%;text-align:center;">بيانات المستلم</th>
+            </tr>
+            <tr>
+              <td style="vertical-align:top;background:#F8F9FF;">
+                <div style="font-weight:bold;font-size:11pt;color:#1F3864;">
+                  <t t-esc="doc.move_id.company_id.name if doc.move_id else ''"/>
+                </div>
+                <div style="margin-top:4px;font-size:9pt;color:#444;">
+                  الرقم الضريبي: <strong><t t-esc="doc.move_id.company_id.vat if doc.move_id else ''"/></strong>
+                </div>
+                <div style="font-size:9pt;color:#444;">
+                  <t t-esc="doc.move_id.company_id.street if doc.move_id else ''"/>
+                  <t t-if="doc.move_id and doc.move_id.company_id.city">
+                    — <t t-esc="doc.move_id.company_id.city"/>
+                  </t>
+                </div>
+                <div style="font-size:9pt;color:#444;">
+                  <t t-esc="doc.move_id.company_id.phone if doc.move_id else ''"/>
+                </div>
+              </td>
+              <td style="vertical-align:top;">
+                <div style="font-weight:bold;font-size:11pt;color:#1F3864;">
+                  <t t-esc="doc.move_id.partner_id.name if doc.move_id else ''"/>
+                </div>
+                <div style="margin-top:4px;font-size:9pt;color:#444;">
+                  الرقم الضريبي / القومي:
+                  <strong>
+                    <t t-esc="doc.move_id.partner_id.vat if doc.move_id and doc.move_id.partner_id else '—'"/>
+                  </strong>
+                </div>
+                <div style="font-size:9pt;color:#444;">
+                  <t t-esc="doc.move_id.partner_id.street if doc.move_id and doc.move_id.partner_id else ''"/>
+                </div>
+              </td>
+            </tr>
+          </table>
+
+          <!-- ══ بنود الفاتورة ══ -->
+          <table style="margin-bottom:12px;font-size:10pt;">
+            <thead>
+              <tr>
+                <th style="width:5%;text-align:center;">#</th>
+                <th style="width:35%;">وصف الصنف / الخدمة</th>
+                <th style="width:10%;text-align:center;">الكمية</th>
+                <th style="width:10%;text-align:left;">سعر الوحدة</th>
+                <th style="width:10%;text-align:left;">الخصم</th>
+                <th style="width:12%;text-align:left;">الإجمالي قبل ض.ق.م</th>
+                <th style="width:8%;text-align:center;">% ض.ق.م</th>
+                <th style="width:10%;text-align:left;">الإجمالي</th>
+              </tr>
+            </thead>
+            <tbody>
+              <t t-foreach="doc.move_id.invoice_line_ids.filtered(lambda l: not l.display_type)" t-as="line">
+                <tr t-attf-style="background:{{ '#f8f9fa' if line_index % 2 == 0 else 'white' }};">
+                  <td style="text-align:center;color:#666;font-size:9pt;"><t t-esc="line_index + 1"/></td>
+                  <td>
+                    <div style="font-weight:bold;"><t t-esc="line.product_id.name if line.product_id else line.name or ''"/></div>
+                    <t t-if="line.product_id and line.product_id.default_code">
+                      <div style="font-size:8pt;color:#888;">كود: <t t-esc="line.product_id.default_code"/></div>
+                    </t>
+                  </td>
+                  <td style="text-align:center;"><t t-esc="line.quantity"/> <t t-esc="line.product_uom_id.name if line.product_uom_id else ''"/></td>
+                  <td style="text-align:left;"><t t-esc="'%s' % '{:,.3f}'.format(line.price_unit)"/></td>
+                  <td style="text-align:left;color:#888;"><t t-esc="'%s' % '{:,.2f}'.format(line.discount or 0)"/>%</td>
+                  <td style="text-align:left;font-weight:bold;"><t t-esc="'%s' % '{:,.2f}'.format(line.price_subtotal)"/></td>
+                  <td style="text-align:center;font-size:9pt;">
+                    <t t-esc="', '.join(['%s%%' % t.amount for t in line.tax_ids]) or '—'"/>
+                  </td>
+                  <td style="text-align:left;font-weight:bold;color:#1F3864;"><t t-esc="'%s' % '{:,.2f}'.format(line.price_total)"/></td>
+                </tr>
+              </t>
+            </tbody>
+          </table>
+
+          <!-- ══ الإجماليات ══ -->
+          <table style="width:50%;margin-right:auto;margin-bottom:16px;font-size:10.5pt;">
+            <tr>
+              <td style="background:#f0f4f8;font-weight:bold;">إجمالي قبل الضريبة</td>
+              <td style="text-align:left;font-weight:bold;">
+                <t t-esc="'%s' % '{:,.2f}'.format(doc.move_id.amount_untaxed if doc.move_id else 0)"/> ج.م
+              </td>
+            </tr>
+            <tr>
+              <td style="background:#f0f4f8;font-weight:bold;color:#C55A11;">ضريبة القيمة المضافة</td>
+              <td style="text-align:left;font-weight:bold;color:#C55A11;">
+                <t t-esc="'%s' % '{:,.2f}'.format(doc.move_id.amount_tax if doc.move_id else 0)"/> ج.م
+              </td>
+            </tr>
+            <tr style="background:#1F3864;color:white;">
+              <td style="font-weight:bold;font-size:12pt;color:white;">الإجمالي الكلي</td>
+              <td style="text-align:left;font-weight:bold;font-size:13pt;color:white;">
+                <t t-esc="'%s' % '{:,.2f}'.format(doc.move_id.amount_total if doc.move_id else 0)"/> ج.م
+              </td>
+            </tr>
+          </table>
+
+          <!-- ══ بيانات ETA ══ -->
+          <t t-if="doc.eta_uuid">
+          <div style="background:#E8F5E9;border:1px solid #4CAF50;border-radius:6px;padding:10px;margin-bottom:14px;font-size:9pt;">
+            <div style="font-weight:bold;color:#375623;margin-bottom:6px;">🔒 بيانات الاعتماد الإلكتروني — ETA</div>
+            <table style="font-size:9pt;border:none;">
+              <tr>
+                <td style="font-weight:bold;width:30%;border:none;padding:3px;">UUID:</td>
+                <td style="border:none;padding:3px;font-family:monospace;color:#1F3864;"><t t-esc="doc.eta_uuid"/></td>
+              </tr>
+              <t t-if="doc.long_id">
+              <tr>
+                <td style="font-weight:bold;border:none;padding:3px;">Long ID:</td>
+                <td style="border:none;padding:3px;font-family:monospace;"><t t-esc="doc.long_id"/></td>
+              </tr>
+              </t>
+              <tr>
+                <td style="font-weight:bold;border:none;padding:3px;">تاريخ الاعتماد:</td>
+                <td style="border:none;padding:3px;"><t t-esc="doc.validation_date or '—'"/></td>
+              </tr>
+              <t t-if="doc.eta_qr_code">
+              <tr>
+                <td style="font-weight:bold;border:none;padding:3px;">رابط التحقق:</td>
+                <td style="border:none;padding:3px;font-size:8pt;"><t t-esc="doc.eta_qr_code"/></td>
+              </tr>
+              </t>
+            </table>
+          </div>
+          </t>
+
+          <!-- ══ ملاحظة قانونية ══ -->
+          <div style="background:#FFF9C4;border:1px solid #FFC107;border-radius:4px;padding:8px;margin-bottom:14px;font-size:8.5pt;color:#5D4037;">
+            هذه الفاتورة صادرة وفق أحكام قانون ضريبة القيمة المضافة رقم 67 لسنة 2016 ومنظومة الفاتورة الإلكترونية لهيئة الضرائب المصرية.
+            <t t-if="doc.state == 'valid'"> اعتُمدت إلكترونياً من هيئة الضرائب المصرية ولها نفس القوة القانونية للفاتورة الورقية.</t>
+          </div>
+
+          <!-- ══ توقيعات ══ -->
+          <table style="margin-top:16px;">
+            <tr>
+              <td style="width:33%;text-align:center;padding:12px;">
+                <div style="font-weight:bold;color:#1F3864;">المحاسب المختص</div>
+                <div style="margin-top:22px;border-top:1px solid #999;padding-top:4px;font-size:9pt;color:#666;">الاسم والتوقيع</div>
+              </td>
+              <td style="width:33%;text-align:center;padding:12px;">
+                <div style="font-weight:bold;color:#1F3864;">مدير الشؤون المالية</div>
+                <div style="margin-top:22px;border-top:1px solid #999;padding-top:4px;font-size:9pt;color:#666;">الاسم والتوقيع</div>
+              </td>
+              <td style="width:33%;text-align:center;padding:12px;">
+                <div style="font-weight:bold;color:#1F3864;">رئيس الديوان العام</div>
+                <div style="margin-top:22px;border-top:1px solid #999;padding-top:4px;font-size:9pt;color:#666;">الاسم والختم الرسمي</div>
+              </td>
+            </tr>
+          </table>
+
+          <!-- ══ فوتر ══ -->
+          <div style="margin-top:8px;font-size:8pt;color:#555;text-align:center;border-top:1px solid #ccc;padding-top:4px;">
+            نظام أوبو إيآر بي — Paradise Integrated Solutions
+            طُبع بتاريخ: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%Y %H:%M')"/>
+            فاتورة إلكترونية ETA — محافظة بورسعيد
+          </div>
+        </div>
+      </t>
+    </t>
+  </t>
+</template>
+
+</odoo>

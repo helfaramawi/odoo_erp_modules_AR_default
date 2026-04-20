@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ══ كشف الزيادة والعجز — Surplus/Deficit Report ════════════════════ -->
+    <record id="action_report_surplus_deficit" model="ir.actions.report">
+        <field name="name">كشف الزيادة والعجز</field>
+        <field name="model">stock.stocktaking.session</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">stock_stocktaking_eg.report_surplus_deficit_template</field>
+        <field name="print_report_name">'كشف الزيادة والعجز - ' + (object.name or '')</field>
+        <field name="binding_model_id" ref="model_stock_stocktaking_session"/>
+<field name="paperformat_id" ref="stock_stocktaking_eg.paperformat_gov_a4"/>
+        <field name="binding_type">report</field>
+</record>
+
+    <template id="report_surplus_deficit_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                
+                    <t t-call="web.external_layout">
+                
+                    <div class="page" style="direction:rtl;font-family:'Cairo',Arial,sans-serif;font-size:11pt;">
+<style>
+    /* Hide ALL Odoo company header/footer elements */
+    .o_company_logo { display:none!important; }
+    .o_address_name { display:none!important; }
+    .o_report_layout_header { display:none!important; }
+    header.o_report_layout_header { display:none!important; }
+    .odoo-header { display:none!important; }
+    .header-content { display:none!important; }
+    footer { display:none!important; }
+    .footer { display:none!important; }
+    .o_footer { display:none!important; }
+    /* Force page to start at top */
+    .page { margin-top:0!important; padding-top:0!important; }
+</style>
+
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:6px;border-bottom:2px solid #000;padding-bottom:6px;">
+                            <tr>
+                                <td style="width:78px;text-align:center;vertical-align:top;">
+                                    &#160;
+                                </td>
+                                <td style="text-align:center;vertical-align:middle;">
+                                    <div style="font-size:13pt;font-weight:bold;">جمهورية مصر العربية</div>
+                                    <div style="font-size:12pt;font-weight:bold;">محافظة بورسعيد</div>
+                                    <div style="font-size:11pt;">الإدارة العامة للشؤون المالية والإدارية</div>
+                                    <div style="font-size:11pt;font-weight:bold;">إدارة المخازن</div>
+                                </td>
+                                <td style="width:78px;text-align:center;vertical-align:middle;">
+                                    <img src="data:image/png;base64,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"
+                                         style="width:70px;height:70px;object-fit:contain;"
+                                         alt="محافظة بورسعيد"/>
+                                </td>
+                            </tr>
+                        </table>
+                        <div style="text-align:center;margin-bottom:10px;">
+                            <h3 style="margin:4px 0;">كشف الزيادة والعجز</h3>
+                            <div style="display:flex;justify-content:space-between;margin-top:6px;">
+                                <span>محضر الجرد رقم: <t t-esc="doc.name"/></span>
+                                <span>التاريخ: <t t-esc="doc.stocktaking_date"/></span>
+                                <span>المستودع: <t t-esc="doc.warehouse_id.name"/></span>
+                            </div>
+                        </div>
+
+                        <!-- Surplus Section -->
+                        <h3 style="color:green;margin-bottom:8px;">أولاً: الأصناف ذات الزيادة (زيادة في الجرد)</h3>
+                        <table style="width:100%;border-collapse:collapse;font-size:10pt;margin-bottom:16px;">
+                            <thead>
+                                <tr style="background:#c8e6c9;">
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;">م</th>
+                                    <th style="border:1px solid #000;padding:6px;">اسم الصنف</th>
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;">بالسجلات</th>
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;">الفعلي</th>
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;">الزيادة</th>
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;">القيمة</th>
+                                    <th style="border:1px solid #000;padding:6px;">ملاحظات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="surplus_lines" t-value="doc.line_ids.filtered(lambda l: l.difference_type == 'surplus')"/>
+                                <t t-if="surplus_lines">
+                                    <t t-foreach="surplus_lines" t-as="line">
+                                        <tr>
+                                            <td style="border:1px solid #000;padding:5px;text-align:center;"><t t-esc="line_index + 1"/></td>
+                                            <td style="border:1px solid #000;padding:5px;"><t t-esc="line.product_id.name"/></td>
+                                            <td style="border:1px solid #000;padding:5px;text-align:center;"><t t-esc="'%.2f' % line.system_qty"/></td>
+                                            <td style="border:1px solid #000;padding:5px;text-align:center;"><t t-esc="'%.2f' % line.physical_qty"/></td>
+                                            <td style="border:1px solid #000;padding:5px;text-align:center;font-weight:bold;color:green;"><t t-esc="'%.2f' % line.difference_qty"/></td>
+                                            <td style="border:1px solid #000;padding:5px;text-align:center;color:green;"><t t-esc="'%.2f' % line.difference_value"/></td>
+                                            <td style="border:1px solid #000;padding:5px;font-size:9pt;"><t t-esc="line.notes or ''"/></td>
+                                        </tr>
+                                    </t>
+                                    <tr style="background:#e8f5e9;font-weight:bold;">
+                                        <td colspan="5" style="border:1px solid #000;padding:5px;text-align:center;">إجمالي الزيادة</td>
+                                        <td style="border:1px solid #000;padding:5px;text-align:center;color:green;"><t t-esc="'%.2f' % doc.total_surplus_value"/></td>
+                                        <td style="border:1px solid #000;"></td>
+                                    </tr>
+                                </t>
+                                <t t-else="">
+                                    <tr><td colspan="7" style="border:1px solid #000;padding:8px;text-align:center;color:#777;">لا توجد أصناف بزيادة</td></tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <!-- Deficit Section -->
+                        <h3 style="color:red;margin-bottom:8px;">ثانياً: الأصناف ذات العجز (نقص في الجرد)</h3>
+                        <table style="width:100%;border-collapse:collapse;font-size:10pt;margin-bottom:16px;">
+                            <thead>
+                                <tr style="background:#ffcdd2;">
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;">م</th>
+                                    <th style="border:1px solid #000;padding:6px;">اسم الصنف</th>
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;">بالسجلات</th>
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;">الفعلي</th>
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;">العجز</th>
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;">القيمة</th>
+                                    <th style="border:1px solid #000;padding:6px;">ملاحظات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="deficit_lines" t-value="doc.line_ids.filtered(lambda l: l.difference_type == 'deficit')"/>
+                                <t t-if="deficit_lines">
+                                    <t t-foreach="deficit_lines" t-as="line">
+                                        <tr>
+                                            <td style="border:1px solid #000;padding:5px;text-align:center;"><t t-esc="line_index + 1"/></td>
+                                            <td style="border:1px solid #000;padding:5px;"><t t-esc="line.product_id.name"/></td>
+                                            <td style="border:1px solid #000;padding:5px;text-align:center;"><t t-esc="'%.2f' % line.system_qty"/></td>
+                                            <td style="border:1px solid #000;padding:5px;text-align:center;"><t t-esc="'%.2f' % line.physical_qty"/></td>
+                                            <td style="border:1px solid #000;padding:5px;text-align:center;font-weight:bold;color:red;"><t t-esc="'%.2f' % abs(line.difference_qty)"/></td>
+                                            <td style="border:1px solid #000;padding:5px;text-align:center;color:red;"><t t-esc="'%.2f' % abs(line.difference_value)"/></td>
+                                            <td style="border:1px solid #000;padding:5px;font-size:9pt;"><t t-esc="line.notes or ''"/></td>
+                                        </tr>
+                                    </t>
+                                    <tr style="background:#ffebee;font-weight:bold;">
+                                        <td colspan="5" style="border:1px solid #000;padding:5px;text-align:center;">إجمالي العجز</td>
+                                        <td style="border:1px solid #000;padding:5px;text-align:center;color:red;"><t t-esc="'%.2f' % doc.total_deficit_value"/></td>
+                                        <td style="border:1px solid #000;"></td>
+                                    </tr>
+                                </t>
+                                <t t-else="">
+                                    <tr><td colspan="7" style="border:1px solid #000;padding:8px;text-align:center;color:#777;">لا توجد أصناف بعجز</td></tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <!-- Net summary -->
+                        <table style="width:60%;margin-right:auto;border-collapse:collapse;font-size:11pt;">
+                            <tr style="background:#e0e0e0;font-weight:bold;">
+                                <td style="border:1px solid #000;padding:7px;">إجمالي قيمة الزيادة</td>
+                                <td style="border:1px solid #000;padding:7px;text-align:center;color:green;"><t t-esc="'%.2f' % doc.total_surplus_value"/> جنيه</td>
+                            </tr>
+                            <tr style="background:#e0e0e0;font-weight:bold;">
+                                <td style="border:1px solid #000;padding:7px;">إجمالي قيمة العجز</td>
+                                <td style="border:1px solid #000;padding:7px;text-align:center;color:red;"><t t-esc="'%.2f' % doc.total_deficit_value"/> جنيه</td>
+                            </tr>
+                            <tr style="background:#bdbdbd;font-weight:bold;">
+                                <td style="border:1px solid #000;padding:7px;">صافي الفرق</td>
+                                <td style="border:1px solid #000;padding:7px;text-align:center;">
+                                    <t t-esc="'%.2f' % (doc.total_surplus_value - doc.total_deficit_value)"/> جنيه
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div style="margin-top:20px;text-align:left;">
+                            <p>رئيس لجنة الجرد: <t t-esc="doc.committee_chairman_id.name if doc.committee_chairman_id else '........................'"/></p>
+                            <p style="margin-top:15px;">التوقيع: .........................  #160;#160; #160;#160; #160;#160; التاريخ: <t t-esc="doc.stocktaking_date"/></p>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

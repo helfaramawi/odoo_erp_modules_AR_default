@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_form1_addition_permit" model="ir.actions.report">
+        <field name="name">إذن إضافة - نموذج 1 مخازن حكومية</field>
+        <field name="model">stock.addition.permit</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">stock_addition_permit.report_form1_template</field>
+        <field name="print_report_name">'إذن إضافة - ' + (object.name or '')</field>
+        <field name="binding_model_id" ref="model_stock_addition_permit"/>
+        <field name="binding_type">report</field>
+</record>
+
+    <template id="report_form1_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page" style="direction:rtl;font-family:'Cairo',Arial,sans-serif;font-size:11pt;">
+                        <!-- Header -->
+                        <div style="text-align:center;border-bottom:2px solid #000;padding-bottom:10px;margin-bottom:16px;">
+                            <h2 style="margin:0;font-size:15pt;">جمهورية مصر العربية</h2>
+                            <h3 style="margin:4px 0;font-size:12pt;">الديوان العام لمحافظة بورسعيد</h3>
+                            <h3 style="margin:4px 0;font-size:12pt;">إدارة المخازن</h3>
+                            <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:10pt;">
+                                <span><strong>رقم الإذن:</strong> <t t-esc="doc.name"/></span>
+                                <span><strong>نموذج 1 مخازن</strong></span>
+                                <span><strong>التاريخ:</strong> <t t-esc="doc.permit_date"/></span>
+                            </div>
+                        </div>
+
+                        <h2 style="text-align:center;text-decoration:underline;margin-bottom:14px;font-size:13pt;">
+                            إذن إضافة
+                        </h2>
+
+                        <!-- Document Header Info -->
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:14px;">
+                            <tr>
+                                <td style="border:1px solid #000;padding:6px;background:#f0f0f0;font-weight:bold;width:22%;">اسم المورد</td>
+                                <td style="border:1px solid #000;padding:6px;width:28%;"><t t-esc="doc.partner_id.name"/></td>
+                                <td style="border:1px solid #000;padding:6px;background:#f0f0f0;font-weight:bold;width:22%;">رقم أمر الشراء</td>
+                                <td style="border:1px solid #000;padding:6px;width:28%;"><t t-esc="doc.purchase_order_id.name if doc.purchase_order_id else '—'"/></td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #000;padding:6px;background:#f0f0f0;font-weight:bold;">المستودع</td>
+                                <td style="border:1px solid #000;padding:6px;"><t t-esc="doc.warehouse_id.name"/></td>
+                                <td style="border:1px solid #000;padding:6px;background:#f0f0f0;font-weight:bold;">الموقع</td>
+                                <td style="border:1px solid #000;padding:6px;"><t t-esc="doc.location_id.complete_name if doc.location_id else doc.site_id or '—'"/></td>
+                            </tr>
+                            <tr t-if="doc.inspection_report_id">
+                                <td style="border:1px solid #000;padding:6px;background:#f0f0f0;font-weight:bold;">رقم محضر الفحص</td>
+                                <td style="border:1px solid #000;padding:6px;" colspan="3"><t t-esc="doc.inspection_report_id.name"/></td>
+                            </tr>
+                        </table>
+
+                        <!-- Items Table -->
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:16px;">
+                            <thead>
+                                <tr style="background:#d0d0d0;">
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;width:6%;">م</th>
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;width:32%;">اسم الصنف</th>
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;width:18%;">الكمية المستلمة</th>
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;width:14%;">وحدة القياس</th>
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;width:18%;">الكمية المضافة</th>
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;width:12%;">ملاحظات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="border:1px solid #000;padding:6px;text-align:center;">1</td>
+                                    <td style="border:1px solid #000;padding:6px;"><t t-esc="doc.product_id.name"/></td>
+                                    <td style="border:1px solid #000;padding:6px;text-align:center;"><t t-esc="doc.qty"/></td>
+                                    <td style="border:1px solid #000;padding:6px;text-align:center;"><t t-esc="doc.uom_id.name if doc.uom_id else ''"/></td>
+                                    <td style="border:1px solid #000;padding:6px;text-align:center;font-weight:bold;"><t t-esc="doc.qty"/></td>
+                                    <td style="border:1px solid #000;padding:6px;"></td>
+                                </tr>
+                                <!-- Empty rows for manual entries -->
+                                <t t-foreach="range(3)" t-as="i">
+                                    <tr style="height:30px;">
+                                        <td style="border:1px solid #000;padding:6px;text-align:center;"><t t-esc="i + 2"/></td>
+                                        <td style="border:1px solid #000;"></td>
+                                        <td style="border:1px solid #000;"></td>
+                                        <td style="border:1px solid #000;"></td>
+                                        <td style="border:1px solid #000;"></td>
+                                        <td style="border:1px solid #000;"></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <!-- Notes -->
+                        <div t-if="doc.notes" style="margin-bottom:14px;border:1px solid #000;padding:8px;">
+                            <strong>ملاحظات: </strong><t t-esc="doc.notes"/>
+                        </div>
+
+                        <!-- Signature Block -->
+                        <table style="width:100%;border-collapse:collapse;margin-top:20px;">
+                            <tr>
+                                <td style="border:1px solid #000;padding:18px;text-align:center;width:33%;">
+                                    <p style="font-weight:bold;margin:0;">أمين المخزن</p>
+                                    <p style="margin:4px 0;font-size:10pt;"><t t-esc="doc.storekeeper_id.name if doc.storekeeper_id else '........................'"/></p>
+                                    <p style="margin-top:28px;color:#555;">التوقيع: .........................</p>
+                                    <p style="color:#555;">التاريخ: <t t-esc="doc.permit_date"/></p>
+                                </td>
+                                <td style="border:1px solid #000;padding:18px;text-align:center;width:33%;">
+                                    <p style="font-weight:bold;margin:0;">المستلم</p>
+                                    <p style="margin-top:28px;color:#555;">الاسم: .........................</p>
+                                    <p style="color:#555;">التوقيع: .........................</p>
+                                    <p style="color:#555;">التاريخ: .........................</p>
+                                </td>
+                                <td style="border:1px solid #000;padding:18px;text-align:center;width:33%;">
+                                    <p style="font-weight:bold;margin:0;">مدير الإدارة</p>
+                                    <p style="margin-top:28px;color:#555;">التوقيع: .........................</p>
+                                    <p style="color:#555;">التاريخ: .........................</p>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div style="margin-top:12px;font-size:9pt;color:#777;text-align:center;border-top:1px solid #ccc;padding-top:6px;">
+                            نظام أوبو إيآر بي — الديوان العام لمحافظة بورسعيد — إذن إضافة نموذج 1 مخازن حكومية
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

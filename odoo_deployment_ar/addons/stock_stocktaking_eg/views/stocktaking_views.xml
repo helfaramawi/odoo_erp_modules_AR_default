@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         الجرد الحكومي — مطابق لشاشة D365
+         User Guide Inventory p.14-17 (المتطلب الوظيفي 4 — الجرد)
+         المسار: إدارة المخزون > جرد الأصناف > الجرد
+    ══════════════════════════════════════════════════════════════════════════ -->
+    <record id="view_stocktaking_session_form" model="ir.ui.view">
+        <field name="name">stock.stocktaking.session.form</field>
+        <field name="model">stock.stocktaking.session</field>
+        <field name="arch" type="xml">
+            <form string="محضر جرد أصناف">
+                <header>
+                    <!-- أزرار سير العمل — مطابق D365 -->
+                    <button name="action_load_stock"
+                            string="📦 تحميل المخزون الحالي"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_post"
+                            string="✓ ترحيل الجرد"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'counting'"
+                            confirm="هل تريد ترحيل محضر الجرد؟"/>
+                    <button name="action_validate"
+                            string="🔒 اعتماد الجرد"
+                            type="object"
+                            class="btn-success"
+                            groups="stock_stocktaking_eg.group_stocktaking_chairman"
+                            invisible="state != 'done'"
+                            confirm="هل تريد اعتماد الجرد نهائياً؟"/>
+                    <!-- أزرار الطباعة -->
+                    <button name="action_print_form6"
+                            string="🖨 نموذج 6 — محضر الجرد"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state == 'draft'"/>
+                    <button name="action_print_surplus_deficit"
+                            string="📋 كشف الزيادة والعجز"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="state == 'draft'"/>
+                    <button name="action_print_form4"
+                            string="📋 نموذج 4 — شطب"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="state == 'draft'"/>
+                    <button name="action_print_form5"
+                            string="📋 نموذج 5 — يومية"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="state == 'draft'"/>
+                    <button name="action_print_form8"
+                            string="📋 نموذج 8 — ارتجاع"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="state == 'draft'"/>
+                    <button name="action_print_form9"
+                            string="📋 نموذج 9 — تالف/مفقود"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="state == 'draft'"/>
+                    <button name="action_print_stock_inventory"
+                            string="📋 كشف حصر الأصناف"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,counting,done,validated"/>
+                </header>
+                <sheet>
+                    <!-- Smart buttons -->
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" icon="fa-arrow-up"
+                                invisible="total_surplus_items == 0">
+                            <div class="o_stat_info">
+                                <field name="total_surplus_items" class="o_stat_value"/>
+                                <span class="o_stat_text" style="color:green;">زيادة</span>
+                            </div>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-arrow-down"
+                                invisible="total_deficit_items == 0">
+                            <div class="o_stat_info">
+                                <field name="total_deficit_items" class="o_stat_value"/>
+                                <span class="o_stat_text" style="color:red;">عجز</span>
+                            </div>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-list-ol">
+                            <div class="o_stat_info">
+                                <field name="total_items" class="o_stat_value"/>
+                                <span class="o_stat_text">صنف</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <label for="name" string="رقم محضر الجرد"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+
+                    <!-- القسم الأول: بيانات جلسة الجرد — مطابق D365 -->
+                    <!-- المسار: إدارة المخزون > جرد > إنشاء دفتر يومية المخزون -->
+                    <group string="إنشاء دفتر يومية المخزون">
+                        <group>
+                            <!-- ① الاسم = نوع الدفتر "جرد" -->
+                            <field name="stocktaking_date"
+                                   string="تاريخ دفتر اليومية"
+                                   required="1"/>
+                            <field name="fiscal_year"
+                                   string="السنة المالية"/>
+                            <!-- ② تأكيد نوع الدفتر — جرد -->
+                            <field name="warehouse_id"
+                                   string="② المخزن"
+                                   required="1"
+                                   options="{'no_create': True}"/>
+                            <!-- ③ الموقع -->
+                            <field name="location_id"
+                                   string="③ الموقع"
+                                   domain="[('usage','=','internal')]"
+                                   options="{'no_create': True}"/>
+                        </group>
+                        <group string="لجنة الجرد">
+                            <field name="committee_chairman_id"
+                                   string="رئيس لجنة الجرد"
+                                   options="{'no_create': True}"/>
+                            <field name="committee_members"
+                                   string="أعضاء لجنة الجرد"
+                                   placeholder="أسماء الأعضاء مفصولة بفاصلة..."/>
+                            <field name="storekeeper_id"
+                                   string="أمين المخزن"
+                                   options="{'no_create': True}"/>
+                        </group>
+                    </group>
+
+                    <!-- ملخص نتائج الجرد -->
+                    <group string="ملخص نتائج الجرد"
+                           invisible="state == 'draft'">
+                        <group>
+                            <field name="total_items"          readonly="1" string="إجمالي الأصناف"/>
+                            <field name="total_surplus_items"  readonly="1" string="أصناف بها زيادة"/>
+                            <field name="total_deficit_items"  readonly="1" string="أصناف بها عجز"/>
+                        </group>
+                        <group>
+                            <field name="total_surplus_value"  readonly="1" string="إجمالي قيمة الزيادة"/>
+                            <field name="total_deficit_value"  readonly="1" string="إجمالي قيمة العجز"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <!-- أصناف الجرد — مطابق D365: رقم الصنف + الكمية الفعلية من واقع الجرد -->
+                        <page string="أصناف الجرد" name="lines">
+                            <field name="line_ids" mode="tree">
+                                <tree editable="bottom"
+                                      decoration-success="difference_type == 'surplus'"
+                                      decoration-danger="difference_type == 'deficit'"
+                                      decoration-muted="difference_type == 'none'">
+                                    <!-- ① رقم الصنف — من قائمة الأصناف -->
+                                    <field name="product_id"
+                                           string="① رقم الصنف / اسم الصنف"
+                                           required="1"
+                                           options="{'no_create': True}"/>
+                                    <field name="product_code"
+                                           string="الكود"
+                                           readonly="1"
+                                           optional="show"/>
+                                    <field name="uom_id"
+                                           string="الوحدة"
+                                           readonly="1"/>
+                                    <!-- الكمية بالسجلات = النظام -->
+                                    <field name="system_qty"
+                                           string="الكمية بالسجلات (نظام)"
+                                           readonly="1"/>
+                                    <!-- ③ الموجود من واقع الجرد — إدخال يدوي -->
+                                    <field name="physical_qty"
+                                           string="③ الموجود من واقع الجرد"
+                                           decoration-danger="physical_qty != system_qty"/>
+                                    <!-- الفرق يُحسب تلقائياً -->
+                                    <field name="difference_qty"
+                                           string="الفرق (زيادة/عجز)"
+                                           readonly="1"
+                                           decoration-success="difference_qty &gt; 0"
+                                           decoration-danger="difference_qty &lt; 0"/>
+                                    <field name="standard_cost"
+                                           string="سعر الوحدة"/>
+                                    <field name="difference_value"
+                                           string="قيمة الفرق"
+                                           readonly="1"
+                                           decoration-success="difference_value &gt; 0"
+                                           decoration-danger="difference_value &lt; 0"/>
+                                    <field name="difference_type"
+                                           widget="badge"
+                                           string="النوع"
+                                           decoration-success="difference_type == 'surplus'"
+                                           decoration-danger="difference_type == 'deficit'"
+                                           decoration-muted="difference_type == 'none'"
+                                           optional="show"/>
+                                    <field name="notes"
+                                           string="ملاحظات / سبب الفرق"
+                                           optional="show"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="ملاحظات عامة">
+                            <field name="notes"
+                                   placeholder="ملاحظات على جلسة الجرد..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- List View جلسات الجرد -->
+    <record id="view_stocktaking_session_list" model="ir.ui.view">
+        <field name="name">stock.stocktaking.session.list</field>
+        <field name="model">stock.stocktaking.session</field>
+        <field name="arch" type="xml">
+            <tree string="جلسات الجرد"
+                  decoration-success="state == 'validated'"
+                  decoration-info="state == 'counting'"
+                  decoration-warning="state == 'done'">
+                <field name="name"                 string="رقم المحضر"/>
+                <field name="stocktaking_date"     string="تاريخ الجرد"/>
+                <field name="fiscal_year"          string="السنة المالية"/>
+                <field name="warehouse_id"         string="المخزن"/>
+                <field name="committee_chairman_id" string="رئيس اللجنة" optional="show"/>
+                <field name="total_items"          string="عدد الأصناف"/>
+                <field name="total_surplus_items"  string="أصناف زيادة"/>
+                <field name="total_deficit_items"  string="أصناف عجز"/>
+                <field name="total_surplus_value"  string="قيمة الزيادة" optional="show"/>
+                <field name="total_deficit_value"  string="قيمة العجز" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-success="state in ['done','validated']"
+                       decoration-info="state == 'counting'"
+                       decoration-muted="state == 'draft'"
+                       string="الحالة"/>
+                <button name="action_print_form6"
+                        string="نموذج 6"
+                        type="object"
+                        icon="fa-print"
+                        invisible="state == 'draft'"
+                        title="طباعة محضر الجرد نموذج 6"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Search -->
+    <record id="view_stocktaking_search" model="ir.ui.view">
+        <field name="name">stock.stocktaking.session.search</field>
+        <field name="model">stock.stocktaking.session</field>
+        <field name="arch" type="xml">
+            <search string="بحث في جلسات الجرد">
+                <field name="name"              string="رقم المحضر"/>
+                <field name="warehouse_id"      string="المخزن"/>
+                <field name="fiscal_year"       string="السنة المالية"/>
+                <separator/>
+                <filter name="draft"     string="مسودة"   domain="[('state','=','draft')]"/>
+                <filter name="counting"  string="جاري الجرد" domain="[('state','=','counting')]"/>
+                <filter name="done"      string="منتهي"   domain="[('state','=','done')]"/>
+                <filter name="validated" string="معتمد"   domain="[('state','=','validated')]"/>
+                <separator/>
+                <filter name="surplus"   string="بها زيادة"
+                        domain="[('total_surplus_items','>',0)]"/>
+                <filter name="deficit"   string="بها عجز"
+                        domain="[('total_deficit_items','>',0)]"/>
+                <separator/>
+                <group expand="0" string="تجميع حسب">
+                    <filter name="g_warehouse" string="المخزن"
+                            context="{'group_by':'warehouse_id'}"/>
+                    <filter name="g_year"      string="السنة المالية"
+                            context="{'group_by':'fiscal_year'}"/>
+                    <filter name="g_state"     string="الحالة"
+                            context="{'group_by':'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_stocktaking_session" model="ir.actions.act_window">
+        <field name="name">جرد المخازن</field>
+        <field name="res_model">stock.stocktaking.session</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">لا توجد جلسات جرد</p>
+            <p>اضغط على <strong>جديد</strong> لإنشاء جلسة جرد جديدة</p>
+        </field>
+    </record>
+    <!-- Root managed by port_said_menu -->
+
+
+  <menuitem id="menu_ps_stocktaking"
+            name="الجرد الحكومي"
+            parent="port_said_menu.menu_ps_40_inventory"
+            action="stock_stocktaking_eg.action_stocktaking_session"
+            sequence="43"/>
+</odoo>

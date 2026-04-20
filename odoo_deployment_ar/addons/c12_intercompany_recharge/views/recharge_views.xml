@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_ic_recharge_rule_list" model="ir.ui.view">
+    <field name="name">ic.recharge.rule.list</field>
+    <field name="model">ic.recharge.rule</field>
+    <field name="arch" type="xml">
+      <tree string="IC Recharge Rules / قواعد إعادة التوزيع">
+        <field name="name"/><field name="source_company_id"/><field name="target_company_id"/>
+        <field name="source_account_id"/><field name="target_account_id"/><field name="active"/>
+      </tree>
+    </field>
+  </record>
+  <record id="view_ic_recharge_wizard_form" model="ir.ui.view">
+    <field name="name">ic.recharge.wizard.form</field>
+    <field name="model">ic.recharge.wizard</field>
+    <field name="arch" type="xml">
+      <form string="Create IC Recharge / إنشاء إعادة توزيع">
+        <group>
+          <field name="rule_id"/><field name="date"/><field name="amount"/>
+          <field name="currency_id" groups="base.group_multi_currency"/>
+          <field name="reference"/><field name="narration"/>
+        </group>
+        <footer>
+          <button name="action_create_recharge" string="Create Journals / إنشاء القيود"
+                  type="object" class="btn-primary"/>
+          <button string="Cancel / إلغاء" special="cancel"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+  <record id="action_ic_recharge_wizard" model="ir.actions.act_window">
+    <field name="name">IC Recharge / إعادة التوزيع بين الشركات</field>
+    <field name="res_model">ic.recharge.wizard</field>
+    <field name="view_mode">form</field><field name="target">new</field>
+  </record>
+  <record id="action_ic_recharge_rules" model="ir.actions.act_window">
+    <field name="name">IC Recharge Rules / قواعد إعادة التوزيع</field>
+    <field name="res_model">ic.recharge.rule</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+  <menuitem id="menu_ic_recharge" name="IC Recharge / إعادة التوزيع"
+    parent="account.menu_finance" action="action_ic_recharge_wizard" sequence="80"/>
+  <menuitem id="menu_ic_recharge_rules" name="IC Recharge Rules / قواعد إعادة التوزيع"
+    parent="account.menu_finance_configuration" action="action_ic_recharge_rules" sequence="80"/>
+</odoo>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <menuitem id="menu_sfb_root"
+            name="ربط المخزون بالحسابات"
+            parent="port_said_menu.menu_ps_20_accts"
+            sequence="50"/>
+
+  <menuitem id="menu_sfb_entries"
+            name="القيود المحاسبية للمخزون"
+            parent="menu_sfb_root"
+            action="port_said_stock_finance_bridge.action_journal_entries"
+            sequence="10"/>
+
+  <menuitem id="menu_sfb_account_rules"
+            name="إعداد الحسابات"
+            parent="menu_sfb_root"
+            action="port_said_stock_finance_bridge.action_account_rules"
+            sequence="20"/>
+
+  <menuitem id="menu_sfb_dimension_rules"
+            name="إعداد الأبعاد المالية"
+            parent="menu_sfb_root"
+            action="port_said_stock_finance_bridge.action_dimension_rules"
+            sequence="30"/>
+
+</odoo>

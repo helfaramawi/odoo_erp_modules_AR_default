@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_generate_folio_wizard_form" model="ir.ui.view">
+    <field name="name">port_said.insurance.generate.folio.wizard.form</field>
+    <field name="model">port_said.insurance.generate.folio.wizard</field>
+    <field name="arch" type="xml">
+      <form string="توليد فولية تأمين">
+        <sheet>
+          <group>
+            <field name="book_classification"/>
+            <field name="fiscal_year"/>
+            <field name="period_month"/>
+          </group>
+        </sheet>
+        <footer>
+          <button name="action_generate" type="object" string="توليد" class="oe_highlight"/>
+          <button special="cancel" string="إلغاء"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_generate_folio_wizard" model="ir.actions.act_window">
+    <field name="name">توليد فولية</field>
+    <field name="res_model">port_said.insurance.generate.folio.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+  </record>
+
+  <menuitem id="menu_generate_folio"
+            name="توليد فولية"
+            parent="menu_insurance_root"
+            action="action_generate_folio_wizard"
+            sequence="40"/>
+
+</odoo>

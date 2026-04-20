@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+  <!--
+    تعريف الدفاتر الافتراضية الأربعة لإيرادات/مصروفات الحكومة
+    ===========================================================
+    استناداً للفهرس الرسمي لوزارة المالية:
+    - نموذج 10 حسابات: الإيرادات والمصروفات (Cross-tab)
+    - استمارة 81 ع.ح: الموارد (الأبواب 7-9)
+    - استمارة 81 ع.ح: الاستخدامات (الأبواب 1-6)
+    - دفتر الإيرادات والتسويات
+
+    التصنيف الحكومي للأبواب (Egyptian Government Budget Classification):
+    Bab 1 = الأجور والمرتبات
+    Bab 2 = شراء السلع والخدمات
+    Bab 3 = الفوائد
+    Bab 4 = الدعم والمنح والمزايا الاجتماعية
+    Bab 5 = المصروفات الأخرى
+    Bab 6 = شراء الأصول غير المالية (الاستثمارات)
+    Bab 7 = الإيرادات الضريبية
+    Bab 8 = المنح
+    Bab 9 = الإيرادات الأخرى
+  -->
+
+  <!-- ─── 1. دفتر الإيرادات والمصروفات (Form 10) ───────────────────────── -->
+  <record id="book_form10_main" model="port_said.revenue.book">
+    <field name="name">دفتر الإيرادات والمصروفات</field>
+    <field name="code">REV_FORM10</field>
+    <field name="form_number">10 حسابات</field>
+    <field name="sequence">10</field>
+    <field name="direction">both</field>
+    <field name="grouping_level">full_code</field>
+    <field name="bab_range_from">1</field>
+    <field name="bab_range_to">9</field>
+    <field name="print_template">form10</field>
+    <field name="notes">دفتر شامل cross-tab يحوي كل بنود الموازنة (إيرادات + مصروفات).
+الطباعة بتنسيق نموذج 10 حسابات: صفوف = أيام الشهر، أعمدة = بنود الموازنة.</field>
+  </record>
+
+  <!-- ─── 2. دفتر حساب الموارد (Form 81 - Revenues) ────────────────────── -->
+  <record id="book_form81_resources" model="port_said.revenue.book">
+    <field name="name">دفتر حساب الموارد</field>
+    <field name="code">REV_FORM81_RESOURCES</field>
+    <field name="form_number">81 ع.ح</field>
+    <field name="sequence">20</field>
+    <field name="direction">revenues</field>
+    <field name="grouping_level">fasle</field>
+    <field name="bab_range_from">7</field>
+    <field name="bab_range_to">9</field>
+    <field name="print_template">form81</field>
+    <field name="notes">دفتر الإيرادات الحكومية على مستوى الفصل.
+الأبواب 7 (ضرائب) + 8 (منح) + 9 (إيرادات أخرى).</field>
+  </record>
+
+  <!-- ─── 3. دفتر حساب الاستخدامات (Form 81 - Expenses) ────────────────── -->
+  <record id="book_form81_uses" model="port_said.revenue.book">
+    <field name="name">دفتر حساب الاستخدامات</field>
+    <field name="code">REV_FORM81_USES</field>
+    <field name="form_number">81 ع.ح</field>
+    <field name="sequence">30</field>
+    <field name="direction">expenses</field>
+    <field name="grouping_level">fasle</field>
+    <field name="bab_range_from">1</field>
+    <field name="bab_range_to">6</field>
+    <field name="print_template">form81</field>
+    <field name="notes">دفتر المصروفات الحكومية على مستوى الفصل.
+الأبواب 1 (أجور) + 2 (سلع) + 3 (فوائد) + 4 (دعم) + 5 (مصروفات أخرى) + 6 (استثمارات).</field>
+  </record>
+
+  <!-- ─── 4. دفتر الإيرادات والتسويات ──────────────────────────────────── -->
+  <record id="book_revenues_settlements" model="port_said.revenue.book">
+    <field name="name">دفتر الإيرادات والتسويات</field>
+    <field name="code">REV_SETTLEMENTS</field>
+    <field name="form_number">10 حسابات</field>
+    <field name="sequence">40</field>
+    <field name="direction">settlements</field>
+    <field name="grouping_level">full_code</field>
+    <field name="bab_range_from">1</field>
+    <field name="bab_range_to">9</field>
+    <field name="print_template">form10</field>
+    <field name="notes">دفتر التسويات: الإيرادات الفعلية + التسويات الترحيلية.
+يستخدم لمطابقة الإيرادات المُحصَّلة فعلياً مع المُسجَّلة في دفاتر اليومية.</field>
+  </record>
+
+</odoo>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="action_report_form75" model="ir.actions.report">
+    <field name="name">استمارة 75 - الحسابات الشهرية</field>
+    <field name="model">port_said.form75</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_form75.report_form75_template</field>
+    <field name="report_file">port_said_form75.report_form75_template</field>
+    <field name="binding_model_id" ref="model_port_said_form75"/>
+    <field name="binding_type">report</field>
+  </record>
+</odoo>

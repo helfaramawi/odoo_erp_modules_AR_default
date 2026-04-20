@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_form78_collection_wizard_form" model="ir.ui.view">
+    <field name="name">port_said.cheque.form78.collection.wizard.form</field>
+    <field name="model">port_said.cheque.form78.collection.wizard</field>
+    <field name="arch" type="xml">
+      <form string="طباعة دفتر 78 - شيكات رسم التحصيل">
+        <sheet>
+          <group>
+            <group>
+              <field name="fiscal_year"/>
+              <field name="state_filter"/>
+            </group>
+            <group>
+              <field name="period_from"/>
+              <field name="period_to"/>
+            </group>
+          </group>
+        </sheet>
+        <footer>
+          <button name="action_print" type="object" string="طباعة" class="oe_highlight"/>
+          <button special="cancel" string="إلغاء"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_form78_collection_wizard" model="ir.actions.act_window">
+    <field name="name">طباعة دفتر 78 - شيكات رسم التحصيل</field>
+    <field name="res_model">port_said.cheque.form78.collection.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+  </record>
+
+  <menuitem id="menu_form78_collection_print"
+            name="طباعة دفتر 78 (رسم التحصيل)"
+            parent="menu_cheques_root"
+            action="action_form78_collection_wizard"
+            sequence="50"/>
+
+</odoo>

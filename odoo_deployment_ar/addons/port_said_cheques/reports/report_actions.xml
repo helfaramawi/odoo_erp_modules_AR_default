@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="action_report_form56_cheques" model="ir.actions.report">
+    <field name="name">دفتر 56 - الشيكات الصادرة</field>
+    <field name="model">port_said.cheque</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_cheques.report_form56_cheques</field>
+    <field name="report_file">port_said_cheques.report_form56_cheques</field>
+    <field name="paperformat_id" ref="paperformat_cheques_register"/>
+  </record>
+
+  <record id="action_report_form56_outgoing_po" model="ir.actions.report">
+    <field name="name">دفتر 56 - أوامر الدفع المرسلة</field>
+    <field name="model">port_said.outgoing_po</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_cheques.report_form56_outgoing_po</field>
+    <field name="report_file">port_said_cheques.report_form56_outgoing_po</field>
+    <field name="paperformat_id" ref="paperformat_cheques_register"/>
+  </record>
+
+  <record id="action_report_form78_collection" model="ir.actions.report">
+    <field name="name">دفتر 78 - شيكات رسم التحصيل</field>
+    <field name="model">port_said.cheque</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_cheques.report_form78_collection</field>
+    <field name="report_file">port_said_cheques.report_form78_collection</field>
+    <field name="paperformat_id" ref="paperformat_cheques_register"/>
+  </record>
+
+  <record id="action_report_bounced_followup" model="ir.actions.report">
+    <field name="name">ملف شيك مرتد</field>
+    <field name="model">port_said.cheque.bounced_followup</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_cheques.report_bounced_followup</field>
+    <field name="report_file">port_said_cheques.report_bounced_followup</field>
+    <field name="paperformat_id" ref="paperformat_bounced_followup"/>
+    <field name="binding_model_id" ref="model_port_said_cheque_bounced_followup"/>
+    <field name="binding_type">report</field>
+  </record>
+
+</odoo>

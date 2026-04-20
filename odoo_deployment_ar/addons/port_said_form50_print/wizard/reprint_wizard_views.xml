@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_form50_reprint_wizard" model="ir.ui.view">
+    <field name="name">form50.reprint.wizard.form</field>
+    <field name="model">form50.reprint.wizard</field>
+    <field name="arch" type="xml">
+      <form string="سبب إعادة الطباعة">
+        <div class="alert alert-warning" role="alert">
+          <strong>⚠ تحذير:</strong>
+          إعادة الطباعة تُسجَّل في سجل الأنشطة.
+          يجب إدخال سبب واضح ومبرر لإعادة الطباعة.
+        </div>
+        <group>
+          <field name="daftar55_id" readonly="1"/>
+          <field name="sequence_number" readonly="1"/>
+          <field name="final_print_count" readonly="1" string="طُبعت سابقاً"/>
+        </group>
+        <group>
+          <field name="reprint_reason"
+                 string="سبب إعادة الطباعة"
+                 widget="text"
+                 placeholder="اذكر السبب الكامل — مثال: تلف النسخة الأصلية / خطأ في البيانات تم تصحيحه..."
+                 required="1"/>
+        </group>
+        <footer>
+          <button name="action_confirm_reprint"
+                  string="✅ تأكيد إعادة الطباعة"
+                  type="object"
+                  class="btn-primary"/>
+          <button string="إلغاء" class="btn-secondary" special="cancel"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+</odoo>

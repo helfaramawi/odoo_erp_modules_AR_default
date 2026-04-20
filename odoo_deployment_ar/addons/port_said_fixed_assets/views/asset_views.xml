@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<!-- ══ Asset Category ════════════════════════════════════════════════ -->
+<record id="view_asset_category_form" model="ir.ui.view">
+  <field name="name">port_said.asset.category.form</field>
+  <field name="model">port_said.asset.category</field>
+  <field name="arch" type="xml">
+    <form string="فئة الاصل الثابت">
+      <sheet>
+        <group>
+          <group string="التعريف">
+            <field name="code"/>
+            <field name="name"/>
+            <field name="name_en"/>
+          </group>
+          <group string="الاهلاك">
+            <field name="method"/>
+            <field name="depreciation_rate"/>
+            <field name="useful_life_years"/>
+            <field name="residual_value_pct"/>
+          </group>
+        </group>
+        <group string="حسابات الاستاذ العام">
+          <group>
+            <field name="asset_account_id"/>
+            <field name="depreciation_account_id"/>
+            <field name="expense_account_id"/>
+          </group>
+          <group>
+            <field name="gain_account_id"/>
+            <field name="loss_account_id"/>
+            <field name="journal_id"/>
+          </group>
+        </group>
+        <field name="notes" placeholder="ملاحظات..."/>
+      </sheet>
+    </form>
+  </field>
+</record>
+
+<record id="view_asset_category_list" model="ir.ui.view">
+  <field name="name">port_said.asset.category.list</field>
+  <field name="model">port_said.asset.category</field>
+  <field name="arch" type="xml">
+    <tree string="فئات الاصول">
+      <field name="code"/>
+      <field name="name"/>
+      <field name="method"/>
+      <field name="depreciation_rate" string="معدل %"/>
+      <field name="useful_life_years" string="العمر سنة"/>
+      <field name="asset_count" string="الاصول"/>
+    </tree>
+  </field>
+</record>
+
+<!-- ══ Fixed Asset Form ══════════════════════════════════════════════ -->
+<record id="view_fixed_asset_form" model="ir.ui.view">
+  <field name="name">port_said.fixed.asset.form</field>
+  <field name="model">port_said.fixed.asset</field>
+  <field name="arch" type="xml">
+    <form string="اصل ثابت حكومي">
+      <header>
+        <field name="state" widget="statusbar"
+               statusbar_visible="draft,active,disposed"/>
+      </header>
+      <sheet>
+        <div class="oe_title">
+          <h1><field name="asset_number" readonly="1"/></h1>
+          <h2><field name="name" placeholder="اسم الاصل..."/></h2>
+        </div>
+
+        <group>
+          <group string="بيانات الاصل">
+            <field name="category_id"/>
+            <field name="serial_number"/>
+            <field name="asset_tag"/>
+            <field name="condition"/>
+          </group>
+          <group string="الموقع والمسؤولية">
+            <field name="department_id"/>
+            <field name="location"/>
+            <field name="custodian_employee_id"/>
+            <field name="custody_assignment_id" readonly="1"/>
+          </group>
+        </group>
+
+        <group string="القيم المالية">
+          <group>
+            <field name="purchase_value"/>
+            <field name="residual_value" readonly="1"/>
+            <field name="accumulated_depreciation" readonly="1"/>
+            <field name="book_value" readonly="1"
+                   decoration-danger="book_value &lt; 0"
+                   decoration-success="book_value &gt; 0"/>
+          </group>
+          <group>
+            <field name="purchase_date"/>
+            <field name="activation_date"/>
+            <field name="end_of_life_date" readonly="1"/>
+            <field name="disposal_date" readonly="1"
+                   invisible="not disposal_date"/>
+          </group>
+        </group>
+
+        <group string="مصدر الاقتناء">
+          <group>
+            <field name="acquisition_type"/>
+            <field name="vendor_id"/>
+            <field name="invoice_ref"/>
+          </group>
+          <group>
+            <field name="purchase_order_id"/>
+            <field name="daftar55_id"/>
+            <field name="commitment_id"/>
+          </group>
+        </group>
+
+        <notebook>
+          <page string="جدول الاهلاك" name="depreciation">
+            <field name="depreciation_line_ids" readonly="1">
+              <tree string="جدول الاهلاك"
+                    decoration-success="move_state == 'posted'"
+                    decoration-muted="move_id == False">
+                <field name="sequence" string="سنة"/>
+                <field name="depreciation_date"/>
+                <field name="fiscal_year"/>
+                <field name="amount" sum="اجمالي الاهلاك"/>
+                <field name="remaining_value" string="القيمة الدفترية"/>
+                <field name="move_id" string="قيد"/>
+                <field name="move_state" string="حالة القيد"/>
+              </tree>
+            </field>
+            <group>
+              <field name="depreciation_method" readonly="1"/>
+              <field name="depreciation_rate" readonly="1"/>
+              <field name="prorata"/>
+            </group>
+          </page>
+          <page string="ملاحظات">
+            <field name="notes" placeholder="ملاحظات اضافية..."/>
+          </page>
+        </notebook>
+      </sheet>
+      <chatter/>
+    </form>
+  </field>
+</record>
+
+<!-- ══ Fixed Asset List ══════════════════════════════════════════════ -->
+<record id="view_fixed_asset_list" model="ir.ui.view">
+  <field name="name">port_said.fixed.asset.list</field>
+  <field name="model">port_said.fixed.asset</field>
+  <field name="arch" type="xml">
+    <tree string="الاصول الثابتة"
+          decoration-muted="state == 'disposed'"
+          decoration-warning="state == 'suspended'"
+          decoration-success="state == 'active'">
+      <field name="asset_number"/>
+      <field name="name"/>
+      <field name="category_id"/>
+      <field name="department_id"/>
+      <field name="custodian_employee_id" string="امين العهدة"/>
+      <field name="purchase_value" sum="اجمالي التكلفة"/>
+      <field name="accumulated_depreciation" sum="مجمع الاهلاك" optional="show"/>
+      <field name="book_value" sum="القيمة الدفترية"/>
+      <field name="activation_date"/>
+      <field name="end_of_life_date" optional="show"/>
+      <field name="state" widget="badge"
+             decoration-success="state == 'active'"
+             decoration-warning="state == 'suspended'"
+             decoration-danger="state == 'disposed'"
+             decoration-info="state == 'draft'"/>
+      <button name="action_activate" type="object"
+              string="تفعيل" class="btn-sm btn-primary"
+              invisible="state != 'draft'"/>
+      <button name="action_post_all_pending_depreciation" type="object"
+              string="ترحيل الاهلاك" class="btn-sm btn-secondary"
+              invisible="state != 'active'"
+              groups="account.group_account_manager"/>
+    </tree>
+  </field>
+</record>
+
+<!-- ══ Fixed Asset Search ════════════════════════════════════════════ -->
+<record id="view_fixed_asset_search" model="ir.ui.view">
+  <field name="name">port_said.fixed.asset.search</field>
+  <field name="model">port_said.fixed.asset</field>
+  <field name="arch" type="xml">
+    <search>
+      <field name="asset_number"/>
+      <field name="name"/>
+      <field name="category_id"/>
+      <field name="department_id"/>
+      <field name="custodian_employee_id"/>
+      <filter name="f_active"   string="نشطة"        domain="[('state','=','active')]"/>
+      <filter name="f_draft"    string="مسودة"        domain="[('state','=','draft')]"/>
+      <filter name="f_disposed" string="مستغنى عنها" domain="[('state','=','disposed')]"/>
+      <group expand="0" string="تجميع حسب">
+        <filter name="g_cat"   string="الفئة"   context="{'group_by':'category_id'}"/>
+        <filter name="g_dept"  string="الادارة" context="{'group_by':'department_id'}"/>
+        <filter name="g_state" string="الحالة"  context="{'group_by':'state'}"/>
+      </group>
+    </search>
+  </field>
+</record>
+
+<!-- ══ Actions ═══════════════════════════════════════════════════════ -->
+<record id="action_fixed_assets" model="ir.actions.act_window">
+  <field name="name">الاصول الثابتة</field>
+  <field name="res_model">port_said.fixed.asset</field>
+  <field name="view_mode">list,form</field>
+  <field name="domain">[('state','!=','disposed')]</field>
+  <field name="context">{'search_default_f_active':1}</field>
+</record>
+
+<record id="action_fixed_assets_all" model="ir.actions.act_window">
+  <field name="name">جميع الاصول الثابتة</field>
+  <field name="res_model">port_said.fixed.asset</field>
+  <field name="view_mode">list,form</field>
+</record>
+
+<record id="action_asset_disposals" model="ir.actions.act_window">
+  <field name="name">قرارات التصرف</field>
+  <field name="res_model">port_said.asset.disposal</field>
+  <field name="view_mode">list,form</field>
+</record>
+
+<record id="action_asset_categories" model="ir.actions.act_window">
+  <field name="name">فئات الاصول</field>
+  <field name="res_model">port_said.asset.category</field>
+  <field name="view_mode">list,form</field>
+</record>
+
+</odoo>

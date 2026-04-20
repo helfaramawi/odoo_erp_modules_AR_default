@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="seq_inspection" model="ir.sequence">
+    <field name="name">محضر لجنة الفحص (نموذج 12)</field>
+    <field name="code">port_said.inspection</field>
+    <field name="prefix">LJNA/%(year)s/</field>
+    <field name="padding">4</field>
+    <field name="use_date_range">True</field>
+  </record>
+  <record id="seq_warehouse_addition" model="ir.sequence">
+    <field name="name">إذن الإضافة (نموذج 1)</field>
+    <field name="code">port_said.warehouse.addition</field>
+    <field name="prefix">IDHNA/%(year)s/</field>
+    <field name="padding">4</field>
+    <field name="use_date_range">True</field>
+  </record>
+</odoo>

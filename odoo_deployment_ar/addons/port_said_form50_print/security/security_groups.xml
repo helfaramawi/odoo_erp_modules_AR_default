@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="group_form50_preview" model="res.groups">
+    <field name="name">استمارة 50 — معاينة الطباعة</field>
+    <field name="category_id" ref="base.module_category_accounting_accounting"/>
+    <field name="comment">يسمح بطباعة معاينة (Preview) لاستمارة 50 ع.ح</field>
+  </record>
+
+  <record id="group_form50_final_print" model="res.groups">
+    <field name="name">استمارة 50 — طباعة نهائية</field>
+    <field name="category_id" ref="base.module_category_accounting_accounting"/>
+    <field name="implied_ids" eval="[(4, ref('port_said_form50_print.group_form50_preview'))]"/>
+    <field name="comment">يسمح بالطباعة النهائية — للمدير المالي فقط</field>
+  </record>
+
+  <!-- record rule: المستخدم يرى فقط سطور فواتير شركته -->
+  <record id="rule_form50_invoice_line_company" model="ir.rule">
+    <field name="name">سطور فواتير استمارة 50 — تصفية الشركة</field>
+    <field name="model_id" ref="port_said_form50_print.model_port_said_form50_invoice_line"/>
+    <field name="domain_force">[('daftar55_id.company_id', 'in', company_ids)]</field>
+    <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+  </record>
+</odoo>

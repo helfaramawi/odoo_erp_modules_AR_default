@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="action_report_penalty_register" model="ir.actions.report">
+    <field name="name">دفتر الجزاءات — نموذج 39</field>
+    <field name="model">port_said.penalty</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_penalties.report_penalty_register</field>
+    <field name="report_file">port_said_penalties.report_penalty_register</field>
+    <field name="paperformat_id" ref="paperformat_penalty_register"/>
+  </record>
+
+  <record id="action_report_penalty_decision" model="ir.actions.report">
+    <field name="name">قرار جزاء</field>
+    <field name="model">port_said.penalty</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_penalties.report_penalty_decision</field>
+    <field name="report_file">port_said_penalties.report_penalty_decision</field>
+    <field name="paperformat_id" ref="paperformat_penalty_decision"/>
+    <field name="binding_model_id" ref="model_port_said_penalty"/>
+    <field name="binding_type">report</field>
+  </record>
+
+</odoo>

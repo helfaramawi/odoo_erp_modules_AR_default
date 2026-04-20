@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <template id="report_insurance_folio">
+    <t t-call="web.html_container">
+      <t t-foreach="docs" t-as="folio">
+        <t t-call="web.external_layout">
+          <div class="page" dir="rtl"
+               style="font-family:'Traditional Arabic',Arial,serif;">
+
+            <!-- Header -->
+            <div style="text-align:center; margin-bottom:8px;">
+              <h3 style="margin:0;">
+                <t t-if="folio.book_classification == 'provisional'">دفتر حسابات التأمينات المؤقتة</t>
+                <t t-if="folio.book_classification == 'final'">دفتر حسابات التأمينات النهائية</t>
+              </h3>
+              <div style="font-size:11px;">
+                استمارة 78 ع.ح — محافظة بورسعيد
+              </div>
+              <div style="font-size:10px;">
+                فولية رقم <t t-out="folio.folio_number"/>
+                — <t t-out="dict(folio._fields['period_month'].selection).get(folio.period_month)"/>
+                <t t-out="folio.fiscal_year"/>
+                — الحالة: <t t-out="dict(folio._fields['state'].selection).get(folio.state)"/>
+              </div>
+            </div>
+
+            <!-- Carry-forward strip -->
+            <table style="width:100%; font-size:10px; margin-bottom:6px; border:1px solid #000;">
+              <tr style="background:#f0f0f0;">
+                <td style="padding:3px; border:1px solid #000; width:20%;"><strong>نقل من قبله</strong></td>
+                <td style="padding:3px; border:1px solid #000; width:20%;"><strong>إجمالي الإيداعات</strong></td>
+                <td style="padding:3px; border:1px solid #000; width:20%;"><strong>إجمالي الاستردادات</strong></td>
+                <td style="padding:3px; border:1px solid #000; width:20%;"><strong>إجمالي المصادرات</strong></td>
+                <td style="padding:3px; border:1px solid #000; width:20%;"><strong>نقل بعده</strong></td>
+              </tr>
+              <tr>
+                <td style="padding:3px; border:1px solid #000; text-align:left;">
+                  <t t-out="'%.2f' % folio.opening_balance"/>
+                </td>
+                <td style="padding:3px; border:1px solid #000; text-align:left;">
+                  <t t-out="'%.2f' % folio.total_deposits"/>
+                </td>
+                <td style="padding:3px; border:1px solid #000; text-align:left;">
+                  <t t-out="'%.2f' % folio.total_withdrawals"/>
+                </td>
+                <td style="padding:3px; border:1px solid #000; text-align:left;">
+                  <t t-out="'%.2f' % folio.total_forfeitures"/>
+                </td>
+                <td style="padding:3px; border:1px solid #000; text-align:left; font-weight:bold;">
+                  <t t-out="'%.2f' % folio.closing_balance"/>
+                </td>
+              </tr>
+            </table>
+
+            <!-- Main register - matches paper image 19/20/28 -->
+            <t t-if="not folio.movement_ids">
+              <div style="text-align:center; padding:30px; color:#999;">
+                لا توجد حركات في هذه الفترة.
+              </div>
+            </t>
+            <t t-else="">
+              <table style="width:100%; font-size:8.5px; border-collapse:collapse;
+                            border:1.5px solid #000;">
+                <thead>
+                  <tr style="background:#dddddd;">
+                    <th style="padding:3px; border:1px solid #000;">مسلسل</th>
+                    <th style="padding:3px; border:1px solid #000;">التاريخ</th>
+                    <th style="padding:3px; border:1px solid #000;">البيان</th>
+                    <th style="padding:3px; border:1px solid #000;">المورد</th>
+                    <th style="padding:3px; border:1px solid #000;">النوع</th>
+                    <!-- ثلاث خانات للإيداع: نقد / شيك / خطاب ضمان -->
+                    <th style="padding:3px; border:1px solid #000; background:#e0f5e0;">نقد</th>
+                    <th style="padding:3px; border:1px solid #000; background:#e0f5e0;">شيك</th>
+                    <th style="padding:3px; border:1px solid #000; background:#e0f5e0;">خطاب ضمان</th>
+                    <th style="padding:3px; border:1px solid #000; background:#fff4d0;">إجمالي</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <t t-set="idx" t-value="0"/>
+                  <t t-foreach="folio.movement_ids" t-as="m">
+                    <t t-set="idx" t-value="idx + 1"/>
+                    <t t-set="is_deposit" t-value="m.movement_type == 'deposit'"/>
+                    <t t-set="sign_amt" t-value="m.amount if is_deposit else -m.amount"/>
+                    <tr t-att-style="
+                      'background:#fff5f5;' if m.movement_type == 'forfeiture' else
+                      'background:#f0f8f0;' if m.movement_type == 'withdrawal' else ''">
+                      <td style="padding:2px; border:1px solid #000; text-align:center;">
+                        <t t-out="idx"/>
+                      </td>
+                      <td style="padding:2px; border:1px solid #000; text-align:center;">
+                        <t t-out="m.movement_date"/>
+                      </td>
+                      <td style="padding:2px; border:1px solid #000; font-size:8px;">
+                        <t t-out="m.description"/>
+                      </td>
+                      <td style="padding:2px; border:1px solid #000; font-size:8px;">
+                        <t t-out="m.partner_id.name"/>
+                      </td>
+                      <td style="padding:2px; border:1px solid #000; text-align:center;
+                                 font-size:8px;">
+                        <t t-out="dict(m._fields['movement_type'].selection).get(m.movement_type)"/>
+                      </td>
+                      <!-- نقد -->
+                      <td style="padding:2px; border:1px solid #000; text-align:left;">
+                        <t t-if="m.collateral_type == 'cash'">
+                          <t t-out="'%.2f' % sign_amt"/>
+                        </t>
+                      </td>
+                      <!-- شيك -->
+                      <td style="padding:2px; border:1px solid #000; text-align:left;">
+                        <t t-if="m.collateral_type == 'cheque'">
+                          <t t-out="'%.2f' % sign_amt"/>
+                        </t>
+                      </td>
+                      <!-- خطاب ضمان -->
+                      <td style="padding:2px; border:1px solid #000; text-align:left;">
+                        <t t-if="m.collateral_type == 'guarantee'">
+                          <t t-out="'%.2f' % sign_amt"/>
+                        </t>
+                      </td>
+                      <!-- إجمالي -->
+                      <td style="padding:2px; border:1px solid #000; text-align:left;
+                                 font-weight:bold;">
+                        <t t-out="'%.2f' % sign_amt"/>
+                      </td>
+                    </tr>
+                  </t>
+                  <!-- Totals row - separately for deposits / withdrawals / forfeitures -->
+                  <tr style="background:#f5f5f5; font-weight:bold;">
+                    <td colspan="5" style="padding:3px; border:1.5px solid #000; text-align:center;">
+                      إجمالي إيداعات الشهر
+                    </td>
+                    <td style="padding:3px; border:1.5px solid #000; text-align:left;">
+                      <t t-out="'%.2f' % folio.total_deposits_cash"/>
+                    </td>
+                    <td style="padding:3px; border:1.5px solid #000; text-align:left;">
+                      <t t-out="'%.2f' % folio.total_deposits_cheque"/>
+                    </td>
+                    <td style="padding:3px; border:1.5px solid #000; text-align:left;">
+                      <t t-out="'%.2f' % folio.total_deposits_guarantee"/>
+                    </td>
+                    <td style="padding:3px; border:1.5px solid #000; text-align:left;
+                               background:#ffe9c6;">
+                      <t t-out="'%.2f' % folio.total_deposits"/>
+                    </td>
+                  </tr>
+                  <tr t-if="folio.total_withdrawals" style="background:#f0f8f0;
+                                                              font-weight:bold;">
+                    <td colspan="8" style="padding:3px; border:1.5px solid #000; text-align:center;">
+                      إجمالي استردادات الشهر
+                    </td>
+                    <td style="padding:3px; border:1.5px solid #000; text-align:left;">
+                      <t t-out="'-%.2f' % folio.total_withdrawals"/>
+                    </td>
+                  </tr>
+                  <tr t-if="folio.total_forfeitures" style="background:#fff5f5;
+                                                              font-weight:bold;">
+                    <td colspan="8" style="padding:3px; border:1.5px solid #000; text-align:center;">
+                      إجمالي مصادرات الشهر
+                    </td>
+                    <td style="padding:3px; border:1.5px solid #000; text-align:left;">
+                      <t t-out="'-%.2f' % folio.total_forfeitures"/>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </t>
+
+            <!-- Signatures -->
+            <table style="width:100%; margin-top:30px; font-size:10px;"
+                   class="table-borderless">
+              <tr>
+                <td style="text-align:center;">
+                  <div>أمين الخزينة</div>
+                  <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                    <t t-out="folio.cashier_signed_by or '............................'"/>
+                  </div>
+                </td>
+                <td style="text-align:center;">
+                  <div>رئيس الحسابات</div>
+                  <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                    <t t-out="folio.accounts_head_signed_by or '............................'"/>
+                  </div>
+                </td>
+                <td style="text-align:center;">
+                  <div>المراجع المالي</div>
+                  <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                    ............................
+                  </div>
+                </td>
+              </tr>
+            </table>
+
+            <div style="text-align:center; font-size:9px; margin-top:12px; color:#666;">
+              نقل بعده — يحوَّل الرصيد
+              <t t-out="'%.2f' % folio.closing_balance"/>
+              إلى فولية
+              <t t-out="dict(folio._fields['period_month'].selection).get(folio.period_month)"/>
+              اللاحقة
+            </div>
+
+          </div>
+          <p style="page-break-after: always;"/>
+        </t>
+      </t>
+    </t>
+  </template>
+
+</odoo>

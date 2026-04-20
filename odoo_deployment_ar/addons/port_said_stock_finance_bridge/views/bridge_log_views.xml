@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<record id="view_bridge_log_list" model="ir.ui.view">
+  <field name="name">stock.finance.bridge.log.list</field>
+  <field name="model">stock.finance.bridge.log</field>
+  <field name="arch" type="xml">
+    <tree string="سجل القيود" decoration-danger="state == 'error'" decoration-success="state == 'posted'">
+      <field name="create_date" string="التاريخ"/>
+      <field name="movement_type"/>
+      <field name="movement_ref"/>
+      <field name="amount" sum="الإجمالي"/>
+      <field name="debit_account_id"/>
+      <field name="credit_account_id"/>
+      <field name="dimension_id"/>
+      <field name="move_id"/>
+      <field name="state" widget="badge"/>
+    </tree>
+  </field>
+</record>
+<record id="action_bridge_log" model="ir.actions.act_window">
+  <field name="name">سجل القيود المحاسبية</field>
+  <field name="res_model">stock.finance.bridge.log</field>
+  <field name="view_mode">list,form</field>
+</record>
+</odoo>

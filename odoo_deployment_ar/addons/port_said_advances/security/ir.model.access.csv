@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_advance_user,port_said.advance user,model_port_said_advance,account.group_account_user,1,1,1,0
+access_advance_manager,port_said.advance manager,model_port_said_advance,account.group_account_manager,1,1,1,1
+access_guarantee_user,port_said.bank.guarantee user,model_port_said_bank_guarantee,account.group_account_user,1,1,1,0
+access_guarantee_manager,port_said.bank.guarantee manager,model_port_said_bank_guarantee,account.group_account_manager,1,1,1,1

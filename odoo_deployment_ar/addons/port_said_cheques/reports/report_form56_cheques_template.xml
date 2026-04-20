@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <template id="report_form56_cheques">
+    <t t-call="web.html_container">
+      <t t-call="web.external_layout">
+        <t t-set="first" t-value="docs[:1]"/>
+        <div class="page" dir="rtl"
+             style="font-family:'Traditional Arabic',Arial,serif;">
+
+          <div style="text-align:center; margin-bottom:8px;">
+            <h3 style="margin:0;">دفتر حساب الشيكات</h3>
+            <div style="font-size:11px;">
+              استمارة رقم 56 ع.ح — محافظة بورسعيد
+            </div>
+            <div style="font-size:10px;">
+              من <t t-out="docs[0].issue_date if docs else ''"/>
+              إلى <t t-out="docs[-1].issue_date if docs else ''"/>
+              — عدد الشيكات: <t t-out="len(docs)"/>
+            </div>
+          </div>
+
+          <table style="width:100%; font-size:9px; border-collapse:collapse;
+                        border:1.5px solid #000;">
+            <thead>
+              <tr style="background:#dddddd;">
+                <th style="padding:3px; border:1px solid #000;">تسلسل<br/>دفتر 56</th>
+                <th style="padding:3px; border:1px solid #000;">رقم<br/>الشيك</th>
+                <th style="padding:3px; border:1px solid #000;">تاريخ<br/>الإصدار</th>
+                <th style="padding:3px; border:1px solid #000;">البنك<br/>المسحوب عليه</th>
+                <th style="padding:3px; border:1px solid #000;">اسم<br/>المستفيد</th>
+                <th style="padding:3px; border:1px solid #000;">المبلغ<br/>(ج.م.)</th>
+                <th style="padding:3px; border:1px solid #000;">تاريخ<br/>المقاصة</th>
+                <th style="padding:3px; border:1px solid #000;">رقم أمر<br/>الدفع 55</th>
+                <th style="padding:3px; border:1px solid #000;">الدفتر<br/>الورقي</th>
+                <th style="padding:3px; border:1px solid #000;">الحالة</th>
+              </tr>
+            </thead>
+            <tbody>
+              <t t-set="total_amount" t-value="0"/>
+              <t t-foreach="docs" t-as="c">
+                <t t-set="total_amount" t-value="total_amount + c.amount"/>
+                <tr t-att-style="
+                  'background:#ffe5e5;' if c.state == 'returned' else
+                  'background:#e5f5e5;' if c.state == 'cleared' else
+                  'background:#f5f5f5;' if c.state == 'cancelled' else ''">
+                  <td style="padding:2px; border:1px solid #000; font-family:monospace;">
+                    <t t-out="c.form56_sequence or '—'"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-family:monospace;
+                             font-weight:bold;">
+                    <t t-out="c.cheque_number"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000;">
+                    <t t-out="c.issue_date"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:8.5px;">
+                    <t t-out="c.drawn_on_bank or '—'"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:8.5px;">
+                    <t t-out="c.partner_id.name or '—'"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; text-align:left;
+                             font-weight:bold;">
+                    <t t-out="'%.2f' % c.amount"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000;">
+                    <t t-out="c.clearing_date or '—'"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:8.5px;">
+                    <t t-out="c.daftar55_id.sequence_number or c.outgoing_po_id.daftar55_sequence or '—'"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:8.5px;">
+                    <t t-out="c.cheque_book_id.book_reference or '—'"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:8.5px;">
+                    <t t-out="dict(c._fields['state'].selection).get(c.state)"/>
+                  </td>
+                </tr>
+              </t>
+              <tr style="background:#f5f5f5; font-weight:bold;">
+                <td colspan="5" style="padding:3px; border:1.5px solid #000; text-align:center;">
+                  إجمالي الشيكات الصادرة
+                </td>
+                <td style="padding:3px; border:1.5px solid #000; text-align:left;
+                           background:#ffe9c6;">
+                  <t t-out="'%.2f' % total_amount"/>
+                </td>
+                <td colspan="4" style="padding:3px; border:1.5px solid #000;"></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Breakdown by state -->
+          <div style="margin-top:15px; font-size:10px;">
+            <strong>ملخص حسب الحالة:</strong>
+            <table style="width:50%; font-size:10px; border-collapse:collapse;
+                          border:1px solid #000; margin-top:5px;">
+              <tr style="background:#f0f0f0;">
+                <th style="padding:3px; border:1px solid #000;">الحالة</th>
+                <th style="padding:3px; border:1px solid #000;">العدد</th>
+                <th style="padding:3px; border:1px solid #000;">المبلغ</th>
+              </tr>
+              <t t-set="by_state" t-value="{}"/>
+              <t t-foreach="docs" t-as="c">
+                <t t-set="st" t-value="c.state"/>
+                <t t-set="prev" t-value="by_state.get(st, (0, 0.0))"/>
+                <t t-set="by_state" t-value="{**by_state, st: (prev[0]+1, prev[1]+c.amount)}"/>
+              </t>
+              <t t-foreach="by_state.items()" t-as="item">
+                <tr>
+                  <td style="padding:2px; border:1px solid #000;">
+                    <t t-out="dict(first._fields['state'].selection).get(item[0])"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; text-align:center;">
+                    <t t-out="item[1][0]"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; text-align:left;">
+                    <t t-out="'%.2f' % item[1][1]"/>
+                  </td>
+                </tr>
+              </t>
+            </table>
+          </div>
+
+          <!-- Signatures -->
+          <table style="width:100%; margin-top:30px; font-size:10px;"
+                 class="table-borderless">
+            <tr>
+              <td style="text-align:center;">
+                <div>أمين الخزينة</div>
+                <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                  ............................
+                </div>
+              </td>
+              <td style="text-align:center;">
+                <div>رئيس الحسابات</div>
+                <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                  ............................
+                </div>
+              </td>
+              <td style="text-align:center;">
+                <div>المراجع المالي</div>
+                <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                  ............................
+                </div>
+              </td>
+            </tr>
+          </table>
+
+        </div>
+      </t>
+    </t>
+  </template>
+
+</odoo>

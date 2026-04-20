@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <template id="report_commitment_template">
+    <t t-call="web.html_container">
+      <t t-foreach="docs" t-as="rec">
+        <t t-call="web.external_layout">
+          <div class="page" style="direction:rtl; font-family:'Amiri', 'Noto Naskh Arabic', Arial, sans-serif; font-size:12px;">
+            <!-- ═══ هيدر الديوان العام — شعار المحافظة ═══ -->
+            <div style="direction:rtl; display:table; width:100%; border-bottom:3px double #1F497D; padding-bottom:10px; margin-bottom:14px;">
+              <!-- شعار المحافظة — يسار الصفحة (يمين في RTL) -->
+              <div style="display:table-cell; width:80px; vertical-align:middle; text-align:center;">
+                <img t-if="rec.company_id.logo"
+                     t-att-src="'data:image/png;base64,' + rec.company_id.logo.decode('utf-8')"
+                     style="max-height:70px; max-width:70px; object-fit:contain;"
+                     alt="شعار المحافظة"/>
+                <div t-else="" style="width:70px; height:70px; border:2px solid #1F497D; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:9px; color:#1F497D; text-align:center; line-height:1.3;">
+                  شعار<br/>المحافظة
+                </div>
+              </div>
+              <!-- النص المركزي -->
+              <div style="display:table-cell; vertical-align:middle; text-align:center; padding:0 10px;">
+                <div style="font-size:11px; color:#666; margin-bottom:2px;">جمهورية مصر العربية — محافظة بورسعيد</div>
+                <div style="font-size:17px; font-weight:bold; color:#1F497D; margin-bottom:2px;">الديوان العام لمحافظة بورسعيد</div>
+                <div style="font-size:13px; font-weight:bold; color:#333; margin-bottom:4px;">نموذج الارتباط — دفتر الارتباطات والتسميح</div>
+                <div style="font-size:9px; color:#999;">Paradise Integrated Solutions | إدارة المالية</div>
+              </div>
+              <!-- رقم السجل / التاريخ — يمين الصفحة (يسار في RTL) -->
+              <div style="display:table-cell; width:100px; vertical-align:middle; text-align:center; font-size:10px; color:#444;">
+                <div style="border:1px solid #ddd; border-radius:4px; padding:4px 6px; background:#f9f9f9;">
+                  <div style="color:#1F497D; font-weight:bold; margin-bottom:2px;">رقم المستند</div>
+                  <div><t t-esc="rec.commitment_number or ''"/></div>
+                  <div style="margin-top:4px; color:#666;">التاريخ</div>
+                  <div><t t-esc="rec.date_requested or ''"/></div>
+                </div>
+              </div>
+            </div>
+            <!-- ════════════════════════════════════════════════ -->
+
+            <table style="width:100%; border-collapse:collapse; font-size:11px; margin-bottom:12px;">
+              <tr>
+                <td style="width:25%; color:#444; padding:5px 0;">رقم الارتباط:</td>
+                <td style="border-bottom:1px solid #999; font-weight:bold; padding:5px 8px;"><t t-esc="rec.commitment_number"/></td>
+                <td style="width:25%; color:#444; padding:5px 0;">السنة المالية:</td>
+                <td style="border-bottom:1px solid #999; padding:5px 8px;"><t t-esc="rec.fiscal_year"/></td>
+              </tr>
+              <tr>
+                <td style="color:#444; padding:5px 0;">تاريخ الطلب:</td>
+                <td style="border-bottom:1px solid #999; padding:5px 8px;"><t t-esc="rec.date_requested"/></td>
+                <td style="color:#444; padding:5px 0;">الإدارة الطالبة:</td>
+                <td style="border-bottom:1px solid #999; padding:5px 8px;"><t t-esc="rec.department_id.name if rec.department_id else ''"/></td>
+              </tr>
+              <tr>
+                <td style="color:#444; padding:5px 0;">رمز البند:</td>
+                <td style="border-bottom:1px solid #999; padding:5px 8px;"><t t-esc="rec.budget_line_code"/></td>
+                <td style="color:#444; padding:5px 0;">الحالة:</td>
+                <td style="border-bottom:1px solid #999; padding:5px 8px; font-weight:bold;"><t t-esc="dict(rec._fields['state'].selection).get(rec.state)"/></td>
+              </tr>
+            </table>
+
+            <div style="border:1px solid #1F497D; padding:8px; margin-bottom:10px;">
+              <div style="background:#1F497D; color:white; padding:4px 8px; margin:-8px -8px 8px; font-weight:bold;">بيانات الموازنة</div>
+              <table style="width:100%; font-size:11px;">
+                <tr>
+                  <td style="width:33%; color:#444;">الاعتماد المالي المُقرَّر:</td>
+                  <td style="font-weight:bold;"><t t-esc="rec.budget_approved"/> جنيه</td>
+                  <td style="width:33%; color:#444;">المُنصرَف حتى الآن:</td>
+                  <td><t t-esc="rec.budget_consumed"/> جنيه</td>
+                </tr>
+                <tr style="margin-top:6px;">
+                  <td style="color:#444; padding-top:6px;">الرصيد المتاح:</td>
+                  <td style="font-weight:bold; color:#1F497D; padding-top:6px;"><t t-esc="rec.available_balance"/> جنيه</td>
+                  <td style="color:#444; padding-top:6px;">المبلغ المطلوب:</td>
+                  <td style="font-weight:bold; padding-top:6px;"><t t-esc="rec.amount_requested"/> جنيه</td>
+                </tr>
+              </table>
+            </div>
+
+            <div style="border:1px solid #ddd; padding:8px; margin-bottom:10px; font-size:11px;">
+              <div style="font-weight:bold; margin-bottom:6px; color:#444;">وصف الاحتياج:</div>
+              <t t-esc="rec.description"/>
+            </div>
+
+            <div style="border:1px solid #375623; padding:8px; margin-bottom:12px;">
+              <div style="background:#375623; color:white; padding:4px 8px; margin:-8px -8px 8px; font-weight:bold;">مسار الاعتماد</div>
+              <table style="width:100%; font-size:11px; margin-top:4px;">
+                <tr>
+                  <td style="color:#444;">اعتمد بواسطة:</td>
+                  <td><t t-esc="rec.approved_by.name if rec.approved_by else '_______________'"/></td>
+                  <td style="color:#444;">تاريخ الاعتماد:</td>
+                  <td><t t-esc="rec.approved_date or '_______________'"/></td>
+                </tr>
+                <tr style="margin-top:6px;">
+                  <td style="color:#444; padding-top:6px;">تسميح بواسطة:</td>
+                  <td style="padding-top:6px;"><t t-esc="rec.cleared_by.name if rec.cleared_by else '_______________'"/></td>
+                  <td style="color:#444; padding-top:6px;">تاريخ التسميح:</td>
+                  <td style="padding-top:6px;"><t t-esc="rec.cleared_date or '_______________'"/></td>
+                </tr>
+              </table>
+            </div>
+
+            <table style="width:100%; margin-top:20px; font-size:11px;">
+              <tr>
+                <td style="text-align:center; width:33%; padding:8px;">
+                  <div style="border-bottom:1px solid #666; margin-bottom:4px; min-height:28px;"></div>
+                  مدير الحسابات
+                </td>
+                <td style="text-align:center; width:33%; padding:8px;">
+                  <div style="border-bottom:1px solid #666; margin-bottom:4px; min-height:28px;"></div>
+                  رئيس الإدارة المالية
+                </td>
+                <td style="text-align:center; width:33%; padding:8px;">
+                  <div style="border-bottom:1px solid #666; margin-bottom:4px; min-height:28px;"></div>
+                  رئيس المصلحة
+                </td>
+              </tr>
+            </table>
+          </div>
+        </t>
+      </t>
+    </t>
+  </template>
+</odoo>

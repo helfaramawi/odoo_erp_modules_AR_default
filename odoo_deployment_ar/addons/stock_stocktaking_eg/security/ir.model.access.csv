@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_stocktaking_readonly,stocktaking readonly,model_stock_stocktaking_session,base.group_user,1,0,0,0
+access_stocktaking_user,stocktaking user,model_stock_stocktaking_session,stock_stocktaking_eg.group_stocktaking_user,1,1,1,0
+access_stocktaking_chairman,stocktaking chairman,model_stock_stocktaking_session,stock_stocktaking_eg.group_stocktaking_chairman,1,1,1,1
+access_stocktaking_line_readonly,stocktaking line readonly,model_stock_stocktaking_line,base.group_user,1,0,0,0
+access_stocktaking_line_user,stocktaking line user,model_stock_stocktaking_line,stock_stocktaking_eg.group_stocktaking_user,1,1,1,0
+access_stocktaking_line_chairman,stocktaking line chairman,model_stock_stocktaking_line,stock_stocktaking_eg.group_stocktaking_chairman,1,1,1,1

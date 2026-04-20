@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="rpt_budget_execution">
+  <t t-call="web.html_container">
+    <t t-foreach="docs" t-as="doc">
+      <t t-call="web.external_layout">
+        <div class="page" style="direction:rtl;font-family:'Noto Kufi Arabic',Cairo,Arial,sans-serif;font-size:11px;">
+          <!-- ══ الهيدر الرسمي ══ -->
+          <t t-call="port_said_reports.gov_page_style"/>
+          <t t-set="dept_line" t-value="'إدارة الحسابات'"/>
+          <t t-call="port_said_reports.gov_header"/>
+          <h2 style="text-align:center;font-size:13pt;text-decoration:underline;margin:10px 0 14px;">
+            تقرير تنفيذ الموازنة — المقارنة
+          </h2>
+          <div style="font-size:9pt;color:#444;margin-bottom:10px;text-align:center;">
+            الفترة من <t t-esc="doc.date_from"/> إلى <t t-esc="doc.date_to"/>
+            <t t-if="doc.fiscal_year"> — السنة المالية <t t-esc="doc.fiscal_year"/></t>
+          </div>
+
+          <t t-set="d55recs" t-value="doc._get_daftar55_records()"/>
+          <t t-set="comrecs" t-value="doc._get_commitment_records()"/>
+
+          <!-- ملخص رئيسي -->
+          <div style="background:#1F497D;color:white;padding:8px 12px;font-weight:bold;border-radius:4px 4px 0 0;margin-bottom:0;">
+            ملخص تنفيذ الموازنة
+          </div>
+          <table style="width:100%;border-collapse:collapse;margin-bottom:16px;">
+            <tr style="background:#EBF2FB;">
+              <td style="padding:8px;border:1px solid #BDD7EE;font-weight:bold;">إجمالي اعتمادات الموازنة المُقرَّرة</td>
+              <td style="padding:8px;border:1px solid #BDD7EE;text-align:left;font-size:14px;font-weight:bold;color:#1F497D;">
+                <t t-esc="'{:,.2f}'.format(sum(r.budget_approved or 0 for r in comrecs))"/> ج.م
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:8px;border:1px solid #BDD7EE;">إجمالي مبالغ الارتباطات المطلوبة</td>
+              <td style="padding:8px;border:1px solid #BDD7EE;text-align:left;color:#C55A11;font-weight:bold;">
+                <t t-esc="'{:,.2f}'.format(sum(r.amount_requested or 0 for r in comrecs))"/> ج.م
+              </td>
+            </tr>
+            <tr style="background:#EBF2FB;">
+              <td style="padding:8px;border:1px solid #BDD7EE;">إجمالي المصروف الفعلي (دفتر 55 — مرحّل ومحفوظ)</td>
+              <td style="padding:8px;border:1px solid #BDD7EE;text-align:left;color:#375623;font-weight:bold;">
+                <t t-set="paid_d55" t-value="d55recs.filtered(lambda r: r.state in ('posted','archived'))"/>
+                <t t-esc="'{:,.2f}'.format(sum(r.amount_gross or 0 for r in paid_d55))"/> ج.م
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:8px;border:1px solid #BDD7EE;">إجمالي الاستقطاعات المحولة للخزينة</td>
+              <td style="padding:8px;border:1px solid #BDD7EE;text-align:left;color:#8B0000;font-weight:bold;">
+                <t t-esc="'{:,.2f}'.format(sum(r.total_deductions or 0 for r in paid_d55))"/> ج.م
+              </td>
+            </tr>
+            <tr style="background:#DFF0D8;">
+              <td style="padding:8px;border:1px solid #BDD7EE;font-weight:bold;">صافي المدفوعات المحوَّلة</td>
+              <td style="padding:8px;border:1px solid #BDD7EE;text-align:left;font-size:14px;font-weight:bold;color:#375623;">
+                <t t-esc="'{:,.2f}'.format(sum(r.amount_net or 0 for r in paid_d55))"/> ج.م
+              </td>
+            </tr>
+          </table>
+
+          <!-- تحليل حسب البند -->
+          <div style="background:#1F497D;color:white;padding:6px 10px;font-weight:bold;border-radius:4px 4px 0 0;">
+            تفصيل المصروفات حسب البند الميزاني
+          </div>
+          <t t-set="budget_lines" t-value="list(set(r.budget_line for r in d55recs if r.budget_line))"/>
+          <table style="width:100%;border-collapse:collapse;font-size:10px;margin-bottom:14px;">
+            <thead>
+              <tr style="background:#2E75B6;color:white;">
+                <th style="padding:6px;border:1px solid #ddd;">بند الميزانية</th>
+                <th style="padding:6px;border:1px solid #ddd;text-align:center;">عدد المعاملات</th>
+                <th style="padding:6px;border:1px solid #ddd;text-align:left;">إجمالي الأصل</th>
+                <th style="padding:6px;border:1px solid #ddd;text-align:left;">الاستقطاعات</th>
+                <th style="padding:6px;border:1px solid #ddd;text-align:left;">الصافي</th>
+              </tr>
+            </thead>
+            <tbody>
+              <t t-foreach="sorted(budget_lines)" t-as="bl">
+                <t t-set="bl_recs" t-value="d55recs.filtered(lambda r: r.budget_line == bl)"/>
+                <tr t-attf-style="background:{{ '#f5f5f5' if bl_index % 2 == 0 else 'white' }};">
+                  <td style="padding:5px;border:1px solid #ddd;font-weight:bold;color:#1F497D;"><t t-esc="bl"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;text-align:center;"><t t-esc="len(bl_recs)"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(sum(r.amount_gross or 0 for r in bl_recs))"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;text-align:left;color:#C55A11;"><t t-esc="'{:,.2f}'.format(sum(r.total_deductions or 0 for r in bl_recs))"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;text-align:left;font-weight:bold;color:#375623;"><t t-esc="'{:,.2f}'.format(sum(r.amount_net or 0 for r in bl_recs))"/></td>
+                </tr>
+              </t>
+            </tbody>
+          </table>
+
+          <div style="margin-top:30px;">
+            <table style="width:100%;border-collapse:collapse;">
+              <tr>
+                <td style="width:33%;text-align:center;padding:14px;border:1px solid #ccc;"><div style="font-weight:bold;color:#1F497D;">رئيس الحسابات</div><div style="margin-top:25px;border-top:1px solid #999;padding-top:4px;font-size:9px;color:#666;">الاسم والتوقيع</div></td>
+                <td style="width:33%;text-align:center;padding:14px;border:1px solid #ccc;"><div style="font-weight:bold;color:#1F497D;">مدير الشؤون المالية</div><div style="margin-top:25px;border-top:1px solid #999;padding-top:4px;font-size:9px;color:#666;">الاسم والتوقيع</div></td>
+                <td style="width:33%;text-align:center;padding:14px;border:1px solid #ccc;"><div style="font-weight:bold;color:#1F497D;">رئيس الديوان العام</div><div style="margin-top:25px;border-top:1px solid #999;padding-top:4px;font-size:9px;color:#666;">الاسم والختم الرسمي</div></td>
+              </tr>
+            </table>
+          </div>
+          
+          <!-- ══ الفوتر الرسمي ══ -->
+          <t t-set="report_name_ar" t-value="'تقرير تنفيذ الموازنة — المقارنة'"/>
+          <t t-call="port_said_reports.gov_footer"/>
+          <div style="display:none">نظام أوبو إيآر بي — الديوان العام لمحافظة بورسعيد — طُبع: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/></div>
+        </div>
+      </t>
+    </t>
+  </t>
+</template>
+</odoo>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="seq_commitment" model="ir.sequence">
+    <field name="name">دفتر الارتباطات - رقم متسلسل</field>
+    <field name="code">port_said.commitment</field>
+    <field name="prefix">IRTBT/%(year)s/</field>
+    <field name="padding">4</field>
+    <field name="use_date_range">True</field>
+  </record>
+</odoo>

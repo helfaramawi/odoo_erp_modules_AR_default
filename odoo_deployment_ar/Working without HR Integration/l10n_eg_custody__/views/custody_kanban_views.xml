@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══ Root Menu ════════════════════════════════════════════════════════ -->
+    <menuitem id="menu_custody_root"
+              name="إدارة العهد"
+              sequence="85"/>
+
+    <!-- ══ Kanban View ══════════════════════════════════════════════════════ -->
+    <record id="view_custody_assignment_kanban" model="ir.ui.view">
+        <field name="name">custody.assignment.kanban</field>
+        <field name="model">custody.assignment</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" records_draggable="0">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="employee_department_id"/>
+                <field name="product_id"/>
+                <field name="qty"/>
+                <field name="issue_date"/>
+                <field name="expected_return_date"/>
+                <field name="national_id"/>
+                <field name="state"/>
+                <field name="estimated_value"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card oe_kanban_global_click">
+                            <div style="display:flex;justify-content:space-between;
+                                        align-items:center;margin-bottom:6px;">
+                                <strong style="font-size:12px;color:#1F4E79;">
+                                    <t t-esc="record.name.value"/>
+                                </strong>
+                                <span t-if="record.state.raw_value == 'active'"
+                                      style="background:#1E7145;color:white;padding:2px 8px;
+                                             border-radius:10px;font-size:10px;">نشطة</span>
+                                <span t-if="record.state.raw_value == 'transferred'"
+                                      style="background:#FFB800;color:#333;padding:2px 8px;
+                                             border-radius:10px;font-size:10px;">محولة</span>
+                                <span t-if="record.state.raw_value == 'draft'"
+                                      style="background:#888;color:white;padding:2px 8px;
+                                             border-radius:10px;font-size:10px;">مسودة</span>
+                                <span t-if="record.state.raw_value == 'returned'"
+                                      style="background:#ccc;color:#555;padding:2px 8px;
+                                             border-radius:10px;font-size:10px;">مستردة</span>
+                            </div>
+                            <div style="font-size:12px;margin-bottom:4px;">
+                                <i class="fa fa-user" style="color:#2E75B6;margin-left:4px;"/>
+                                <t t-esc="record.employee_id.value"/>
+                            </div>
+                            <div t-if="record.employee_department_id.value"
+                                 style="font-size:11px;color:#666;margin-bottom:4px;">
+                                <i class="fa fa-building-o" style="margin-left:4px;"/>
+                                <t t-esc="record.employee_department_id.value"/>
+                            </div>
+                            <div style="font-size:12px;margin-bottom:4px;">
+                                <i class="fa fa-archive" style="color:#C55A11;margin-left:4px;"/>
+                                <t t-esc="record.product_id.value"/>
+                                <span style="color:#888;font-size:11px;">
+                                    &#160;(<t t-esc="record.qty.value"/>)
+                                </span>
+                            </div>
+                            <div style="font-size:10px;color:#888;margin-top:6px;
+                                        border-top:1px solid #eee;padding-top:4px;
+                                        display:flex;justify-content:space-between;">
+                                <span>&#128197; <t t-esc="record.issue_date.value"/></span>
+                                <span t-if="record.estimated_value.raw_value > 0"
+                                      style="color:#1F4E79;font-weight:bold;">
+                                    <t t-esc="record.estimated_value.value"/> &#x62C;
+                                </span>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ══ Main Action — Kanban + List + Form ═══════════════════════════════ -->
+    <record id="action_custody_assignment_main" model="ir.actions.act_window">
+        <field name="name">جميع العهد</field>
+        <field name="res_model">custody.assignment</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="context">{'search_default_active_custody': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">لا توجد عهد مسجلة بعد</p>
+            <p>اضغط على <strong>عهدة جديدة</strong> لتسجيل عهدة لموظف</p>
+        </field>
+    </record>
+
+    <!-- ══ Wizard Action ════════════════════════════════════════════════════ -->
+    <record id="action_new_custody_wizard" model="ir.actions.act_window">
+        <field name="name">تسجيل عهدة جديدة</field>
+        <field name="res_model">new.custody.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- ══ Transfer Action ══════════════════════════════════════════════════ -->
+    <record id="action_custody_transfer_main" model="ir.actions.act_window">
+        <field name="name">تحويلات العهدة</field>
+        <field name="res_model">custody.transfer</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- ══ Department Action ════════════════════════════════════════════════ -->
+    <record id="action_custody_by_department" model="ir.actions.act_window">
+        <field name="name">العهد حسب الإدارة</field>
+        <field name="res_model">custody.assignment</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'group_by': 'employee_department_id'}</field>
+        <field name="domain">[('state', 'in', ['active', 'transferred'])]</field>
+    </record>
+
+    <!-- ══ Overdue Action ════════════════════════════════════════════════════ -->
+    <record id="action_custody_overdue" model="ir.actions.act_window">
+        <field name="name">العهد المتأخرة</field>
+        <field name="res_model">custody.assignment</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[
+            ('state', 'in', ['active', 'transferred']),
+            ('expected_return_date', '!=', False)
+        ]</field>
+    </record>
+
+    <!-- ══ GAFI Action ══════════════════════════════════════════════════════ -->
+    <record id="action_gafi_custody_audit" model="ir.actions.act_window">
+        <field name="name">تقرير GAFI - أرباب العهد</field>
+        <field name="res_model">custody.assignment</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('state', 'in', ['active', 'transferred'])]</field>
+        <field name="context">{'group_by': 'employee_id'}</field>
+    </record>
+
+    <!-- ══ Transfer Views ════════════════════════════════════════════════════ -->
+    <record id="view_custody_transfer_list" model="ir.ui.view">
+        <field name="name">custody.transfer.list</field>
+        <field name="model">custody.transfer</field>
+        <field name="arch" type="xml">
+            <tree string="تحويلات العهدة"
+                  decoration-success="state == 'done'"
+                  decoration-info="state == 'draft'">
+                <field name="name"/>
+                <field name="custody_assignment_id"/>
+                <field name="from_employee_id"/>
+                <field name="to_employee_id"/>
+                <field name="to_national_id"/>
+                <field name="transfer_date"/>
+                <field name="authorised_by_id"/>
+                <field name="state" widget="badge"
+                    decoration-success="state == 'done'"
+                    decoration-info="state == 'draft'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_custody_transfer_form" model="ir.ui.view">
+        <field name="name">custody.transfer.form</field>
+        <field name="model">custody.transfer</field>
+        <field name="arch" type="xml">
+            <form string="تحويل عهدة">
+                <header>
+                    <button name="action_confirm_transfer"
+                            string="تنفيذ التحويل"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"
+                            confirm="هل أنت متأكد من تنفيذ التحويل؟"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group string="بيانات التحويل">
+                        <group>
+                            <field name="custody_assignment_id"/>
+                            <field name="transfer_date"/>
+                            <field name="authorised_by_id"/>
+                        </group>
+                        <group>
+                            <field name="from_employee_id" readonly="1"/>
+                            <field name="to_employee_id"/>
+                            <field name="to_national_id"
+                                   decoration-danger="not to_national_id"/>
+                        </group>
+                    </group>
+                    <group string="سبب التحويل">
+                        <field name="reason" nolabel="1"/>
+                    </group>
+                    <group string="ملاحظات">
+                        <field name="notes" nolabel="1"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ══ All Menu Items ════════════════════════════════════════════════════ -->
+    <menuitem id="menu_new_custody"
+              name="➕ عهدة جديدة"
+              parent="menu_custody_root"
+              action="action_new_custody_wizard"
+              sequence="5"/>
+
+    <menuitem id="menu_all_custody"
+              name="جميع العهد"
+              parent="menu_custody_root"
+              action="action_custody_assignment_main"
+              sequence="10"/>
+
+    <menuitem id="menu_custody_transfer"
+              name="تحويل عهدة"
+              parent="menu_custody_root"
+              action="action_custody_transfer_main"
+              sequence="15"/>
+
+    <menuitem id="menu_custody_by_dept"
+              name="العهد حسب الإدارة"
+              parent="menu_custody_root"
+              action="action_custody_by_department"
+              sequence="20"/>
+
+    <menuitem id="menu_custody_overdue"
+              name="⚠ العهد المتأخرة"
+              parent="menu_custody_root"
+              action="action_custody_overdue"
+              sequence="25"/>
+
+    <menuitem id="menu_gafi_report"
+              name="تقرير GAFI - أرباب العهد"
+              parent="menu_custody_root"
+              action="action_gafi_custody_audit"
+              sequence="30"/>
+
+</odoo>

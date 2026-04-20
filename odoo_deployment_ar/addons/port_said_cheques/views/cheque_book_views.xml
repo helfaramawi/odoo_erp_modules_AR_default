@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_cheque_book_tree" model="ir.ui.view">
+    <field name="name">port_said.cheque.book.tree</field>
+    <field name="model">port_said.cheque.book</field>
+    <field name="arch" type="xml">
+      <tree string="دفاتر الشيكات الورقية"
+            decoration-info="state=='received'"
+            decoration-success="state=='in_use'"
+            decoration-muted="state in ['completed','archived']"
+            decoration-danger="state=='lost'">
+        <field name="book_reference"/>
+        <field name="bank_name"/>
+        <field name="first_cheque_number"/>
+        <field name="last_cheque_number"/>
+        <field name="total_cheques"/>
+        <field name="cheques_used"/>
+        <field name="cheques_remaining"/>
+        <field name="custodian_id" optional="show"/>
+        <field name="state"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_cheque_book_form" model="ir.ui.view">
+    <field name="name">port_said.cheque.book.form</field>
+    <field name="model">port_said.cheque.book</field>
+    <field name="arch" type="xml">
+      <form>
+        <header>
+          <button name="action_start_use" type="object" string="بدء الاستخدام"
+                  invisible="state != 'received'" class="oe_highlight"/>
+          <button name="action_complete" type="object" string="اكتمال الدفتر"
+                  invisible="state != 'in_use'" class="oe_highlight"/>
+          <button name="action_archive" type="object" string="إرسال للأرشيف"
+                  invisible="state != 'completed'"/>
+          <button name="action_report_lost" type="object" string="إبلاغ عن فقدان"
+                  invisible="state in ['archived','lost']"
+                  groups="account.group_account_manager"
+                  confirm="هذا الإجراء استثنائي ويتطلب محضر شرطة."/>
+          <field name="state" widget="statusbar"
+                 statusbar_visible="received,in_use,completed,archived"/>
+        </header>
+        <sheet>
+          <div class="oe_title">
+            <label for="book_reference"/>
+            <h1><field name="book_reference"/></h1>
+          </div>
+          <group>
+            <group string="البنك">
+              <field name="bank_name"/>
+              <field name="bank_account_id"/>
+              <field name="bank_account_no"/>
+              <field name="journal_id"/>
+            </group>
+            <group string="الأمانة">
+              <field name="custodian_id"/>
+              <field name="received_date"/>
+              <field name="start_use_date" readonly="1"/>
+              <field name="completion_date" readonly="1"/>
+              <field name="archive_date" readonly="1"/>
+            </group>
+          </group>
+          <group string="نطاق الأرقام" col="4">
+            <field name="first_cheque_number"
+                   readonly="state not in ['received']"/>
+            <field name="last_cheque_number"
+                   readonly="state not in ['received']"/>
+            <field name="total_cheques" readonly="1"/>
+            <field name="next_available_number" readonly="1"/>
+          </group>
+          <group string="الاستخدام" col="2">
+            <field name="cheques_used" readonly="1"/>
+            <field name="cheques_remaining" readonly="1"/>
+          </group>
+          <notebook>
+            <page string="الشيكات الصادرة">
+              <field name="cheque_ids" readonly="1">
+                <tree>
+                  <field name="cheque_number"/>
+                  <field name="issue_date"/>
+                  <field name="partner_id"/>
+                  <field name="amount"/>
+                  <field name="state"/>
+                </tree>
+              </field>
+            </page>
+            <page string="فقدان/سرقة" invisible="state != 'lost'">
+              <group>
+                <field name="lost_report_reference"/>
+                <field name="lost_reason"/>
+              </group>
+            </page>
+            <page string="ملاحظات">
+              <field name="notes"/>
+            </page>
+          </notebook>
+        </sheet>
+        <div class="oe_chatter">
+          <field name="message_follower_ids"/>
+          <field name="activity_ids"/>
+          <field name="message_ids"/>
+        </div>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_cheque_book" model="ir.actions.act_window">
+    <field name="name">دفاتر الشيكات الورقية</field>
+    <field name="res_model">port_said.cheque.book</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+</odoo>

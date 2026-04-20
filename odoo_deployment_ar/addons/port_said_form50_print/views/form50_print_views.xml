@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<!-- ══ تمديد شاشة دفتر 55 — إضافة أزرار الطباعة الرسمية ═══════════════ -->
+<record id="view_daftar55_form50_print_extension" model="ir.ui.view">
+  <field name="name">port_said.daftar55.form.form50print</field>
+  <field name="model">port_said.daftar55</field>
+  <field name="inherit_id" ref="port_said_daftar55.view_daftar55_form"/>
+  <field name="arch" type="xml">
+
+    <!-- أزرار الطباعة داخل الـ header الموجود -->
+    <xpath expr="//header" position="inside">
+      <button name="action_print_preview"
+              string="🖨 معاينة استمارة 50"
+              type="object"
+              class="btn-secondary"
+              groups="port_said_form50_print.group_form50_preview"
+              invisible="state == 'draft'"/>
+      <button name="action_print_final"
+              string="✅ طباعة نهائية"
+              type="object"
+              class="btn-primary"
+              groups="account.group_account_manager"
+              invisible="state not in ('cleared','posted','archived')"/>
+      <button name="action_open_reprint_wizard"
+              string="🔄 إعادة طباعة"
+              type="object"
+              class="btn-warning"
+              groups="account.group_account_manager"
+              invisible="not is_final_printed"/>
+      <button name="action_validate_for_print"
+              string="🔍 تحقق الجاهزية"
+              type="object"
+              class="btn-secondary"
+              invisible="state not in ('cleared','posted','archived')"/>
+    </xpath>
+
+    <!-- إدراج تبويبات الطباعة قبل الـ chatter (الشاشة ليس بها notebook) -->
+    <xpath expr="//sheet" position="inside">
+      <notebook>
+
+        <!-- تبويب بيانات الفواتير -->
+        <page string="بيانات الفواتير 🧾" name="invoice_lines_tab">
+          <group>
+            <group string="نوع العملية">
+              <field name="transaction_type" widget="radio"/>
+            </group>
+            <group string="إجماليات الفواتير">
+              <field name="invoices_total_pounds"   readonly="1" string="إجمالي جنيه"/>
+              <field name="invoices_total_piasters" readonly="1" string="إجمالي قرش"/>
+              <field name="invoices_match_gross"    widget="boolean_toggle" readonly="1"
+                     string="مطابق للإجمالي الأصلي"/>
+            </group>
+          </group>
+          <field name="invoice_line_ids">
+            <tree editable="bottom">
+              <field name="sequence" widget="handle"/>
+              <field name="invoice_ref"     string="رقم الفاتورة"/>
+              <field name="invoice_date"    string="التاريخ"/>
+              <field name="description"     string="البيان"/>
+              <field name="amount_pounds"   string="جنيه"/>
+              <field name="amount_piasters" string="قرش"/>
+              <field name="attachment_id"   string="ملف الفاتورة"/>
+            </tree>
+          </field>
+          <div class="alert alert-warning" role="alert"
+               invisible="invoices_match_gross or not invoice_line_ids">
+            <b>⚠ تنبيه:</b> إجمالي الفواتير لا يتطابق مع إجمالي الأصل.
+          </div>
+          <div class="alert alert-success" role="alert"
+               invisible="not invoices_match_gross">
+            ✅ إجمالي الفواتير مطابق لإجمالي الأصل.
+          </div>
+        </page>
+
+        <!-- تبويب التحكم في الطباعة -->
+        <page string="الطباعة والتحكم 🖨" name="print_control_tab">
+          <group string="جاهزية الطباعة">
+            <field name="can_final_print" widget="boolean_toggle" readonly="1"
+                   string="جاهز للطباعة النهائية"/>
+            <field name="print_readiness_notes" readonly="1" widget="text"
+                   string="تفاصيل الجاهزية"/>
+          </group>
+          <group>
+            <group string="المرفقات">
+              <field name="transaction_type" readonly="1" string="نوع العملية"/>
+              <field name="attachments_complete" widget="boolean_toggle" readonly="1"
+                     string="المرفقات مكتملة"/>
+              <field name="missing_attachments_count" readonly="1"
+                     string="مرفقات ناقصة"/>
+              <field name="required_attachments_info" readonly="1" widget="text"
+                     string="المطلوبة حسب النوع"/>
+            </group>
+            <group string="سجل الطباعة">
+              <field name="preview_print_count" readonly="1" string="مرات المعاينة"/>
+              <field name="last_preview_by"     readonly="1" string="آخر معاينة بواسطة"/>
+              <separator/>
+              <field name="final_print_count"   readonly="1" string="مرات الطباعة النهائية"/>
+              <field name="last_printed_at"     readonly="1" string="تاريخ آخر طباعة"/>
+              <field name="last_printed_by"     readonly="1" string="طُبع بواسطة"/>
+              <field name="is_final_printed"    widget="boolean_toggle" readonly="1"
+                     string="تمت الطباعة النهائية"/>
+              <field name="final_pdf_attachment_id" readonly="1" string="ملف PDF المحفوظ"/>
+            </group>
+          </group>
+          <group string="إعادة الطباعة" invisible="not is_final_printed">
+            <field name="reprint_reason" widget="text"
+                   string="سبب إعادة الطباعة"/>
+          </group>
+          <group string="معلومات النموذج">
+            <field name="official_template_version" readonly="1"
+                   string="إصدار النموذج الرسمي"/>
+          </group>
+        </page>
+
+      </notebook>
+    </xpath>
+
+  </field>
+</record>
+
+<!-- ══ تمديد قائمة دفتر 55 — أعمدة الطباعة ════════════════════════════ -->
+<record id="view_daftar55_list_form50_extension" model="ir.ui.view">
+  <field name="name">port_said.daftar55.list.form50print</field>
+  <field name="model">port_said.daftar55</field>
+  <field name="inherit_id" ref="port_said_daftar55.view_daftar55_list"/>
+  <field name="arch" type="xml">
+    <xpath expr="//tree" position="inside">
+      <field name="final_print_count"  string="طُبع" optional="show"/>
+      <field name="is_final_printed"   widget="boolean_toggle" string="نهائي" optional="show"/>
+      <field name="invoices_match_gross" widget="boolean_toggle" string="فواتير ✓" optional="show"/>
+    </xpath>
+  </field>
+</record>
+
+
+</odoo>
+

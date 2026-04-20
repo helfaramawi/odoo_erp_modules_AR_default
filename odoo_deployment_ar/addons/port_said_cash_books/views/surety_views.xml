@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_surety_tree" model="ir.ui.view">
+    <field name="name">port_said.surety.tree</field>
+    <field name="model">port_said.surety</field>
+    <field name="arch" type="xml">
+      <tree string="الكفالات"
+            decoration-info="state=='draft'"
+            decoration-success="state=='active'"
+            decoration-warning="state=='suspended'"
+            decoration-danger="state=='forfeited'"
+            decoration-muted="state=='released'">
+        <field name="sequence_number"/>
+        <field name="employee_id"/>
+        <field name="surety_type"/>
+        <field name="amount" sum="إجمالي"/>
+        <field name="purpose"/>
+        <field name="effective_from"/>
+        <field name="review_date" optional="show"/>
+        <field name="state"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_surety_form" model="ir.ui.view">
+    <field name="name">port_said.surety.form</field>
+    <field name="model">port_said.surety</field>
+    <field name="arch" type="xml">
+      <form>
+        <header>
+          <button name="action_activate" type="object" string="تفعيل الكفالة"
+                  invisible="state != 'draft'" class="oe_highlight"/>
+          <button name="action_suspend" type="object" string="إيقاف"
+                  invisible="state != 'active'"/>
+          <button name="action_resume" type="object" string="استئناف"
+                  invisible="state != 'suspended'" class="oe_highlight"/>
+          <button name="action_release" type="object" string="إفراج"
+                  invisible="state not in ['active','suspended']"/>
+          <button name="action_forfeit" type="object" string="مصادرة"
+                  invisible="state not in ['active','suspended']"
+                  groups="account.group_account_manager"
+                  confirm="المصادرة إجراء نهائي لا رجعة فيه."/>
+          <field name="state" widget="statusbar"
+                 statusbar_visible="draft,active,released"/>
+        </header>
+        <sheet>
+          <div class="oe_title">
+            <label for="sequence_number" string="رقم بالدفتر"/>
+            <h1><field name="sequence_number" readonly="1"/></h1>
+          </div>
+          <group>
+            <group string="نوع الكفالة">
+              <field name="surety_type"/>
+              <field name="purpose"/>
+              <field name="purpose_detail"/>
+            </group>
+            <group string="القيم">
+              <field name="amount"/>
+              <field name="cash_deposit_amount"
+                     invisible="surety_type == 'personal'"
+                     required="surety_type in ['cash','mixed']"/>
+              <field name="cash_deposit_account_id"
+                     invisible="surety_type == 'personal'"/>
+              <field name="currency_id" invisible="1"/>
+            </group>
+          </group>
+          <group string="الموظف المكفول">
+            <group>
+              <field name="employee_id"/>
+              <field name="employee_job" readonly="1"/>
+              <field name="national_id" readonly="1"/>
+            </group>
+            <group invisible="surety_type == 'cash'"
+                   string="الكفيل">
+              <field name="guarantor_partner_id"/>
+              <field name="guarantor_national_id"/>
+            </group>
+          </group>
+          <group string="التواريخ" col="4">
+            <field name="registration_date"/>
+            <field name="effective_from"/>
+            <field name="review_date"/>
+            <field name="release_date" readonly="1"/>
+            <field name="fiscal_year" readonly="1"/>
+          </group>
+          <notebook>
+            <page string="الربط المحاسبي">
+              <field name="move_id" readonly="1"/>
+            </page>
+            <page string="إفراج / مصادرة"
+                  invisible="state not in ['released','forfeited']">
+              <field name="release_reason"/>
+            </page>
+            <page string="ملاحظات">
+              <field name="notes"/>
+            </page>
+          </notebook>
+        </sheet>
+        <div class="oe_chatter">
+          <field name="message_follower_ids"/>
+          <field name="activity_ids"/>
+          <field name="message_ids"/>
+        </div>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_surety_search" model="ir.ui.view">
+    <field name="name">port_said.surety.search</field>
+    <field name="model">port_said.surety</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="sequence_number"/>
+        <field name="employee_id"/>
+        <field name="guarantor_partner_id"/>
+        <separator/>
+        <filter string="سارية" name="f_active" domain="[('state','=','active')]"/>
+        <filter string="موقوفة" name="f_suspended" domain="[('state','=','suspended')]"/>
+        <filter string="مُفرَج عنها" name="f_released" domain="[('state','=','released')]"/>
+        <filter string="مُصادَرة" name="f_forfeited" domain="[('state','=','forfeited')]"/>
+        <separator/>
+        <filter string="شخصية" name="f_personal" domain="[('surety_type','=','personal')]"/>
+        <filter string="نقدية" name="f_cash" domain="[('surety_type','=','cash')]"/>
+        <filter string="مختلطة" name="f_mixed" domain="[('surety_type','=','mixed')]"/>
+        <group expand="1" string="تجميع حسب">
+          <filter string="الحالة" name="g_state" context="{'group_by':'state'}"/>
+          <filter string="النوع" name="g_type" context="{'group_by':'surety_type'}"/>
+          <filter string="الغرض" name="g_purpose" context="{'group_by':'purpose'}"/>
+          <filter string="السنة المالية" name="g_fy" context="{'group_by':'fiscal_year'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <record id="action_surety" model="ir.actions.act_window">
+    <field name="name">الكفالات</field>
+    <field name="res_model">port_said.surety</field>
+    <field name="view_mode">tree,form</field>
+    <field name="search_view_id" ref="view_surety_search"/>
+  </record>
+
+</odoo>

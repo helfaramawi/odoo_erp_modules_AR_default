@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ══ Adjudication Form ════════════════════════════════════════════════ -->
+    <record id="view_adjudication_form" model="ir.ui.view">
+        <field name="name">procurement.adjudication.form</field>
+        <field name="model">procurement.adjudication</field>
+        <field name="arch" type="xml">
+            <form string="ملف البت الفني والمالي">
+                <header>
+                    <button name="action_open_technical"  string="فتح المظاريف الفنية"  type="object" class="btn-primary"   invisible="state != 'draft'"/>
+                    <button name="action_open_financial"  string="فتح المظاريف المالية" type="object" class="btn-primary"   invisible="state != 'technical_open'"/>
+                    <button name="action_adjudicate"      string="مقارنة المالية والترسية" type="object" class="btn-primary" invisible="state != 'financial_open'"/>
+                    <button name="action_award"           string="إخطار الترسية"        type="object" class="btn-success"   invisible="state != 'adjudicated'"/>
+                    <button name="action_create_po"       string="إنشاء أمر التوريد"    type="object" class="btn-primary"   invisible="state != 'awarded'"/>
+                    <button name="action_cancel"          string="إلغاء"                type="object"                       invisible="state in ['po_created','cancelled']"/>
+                    <button name="action_print_technical_minutes" string="محضر البت الفني" type="object" class="btn-secondary" invisible="state == 'draft'"/>
+                    <button name="action_print_financial_minutes" string="محضر البت المالي" type="object" class="btn-secondary" invisible="state not in ['financial_open','adjudicated','awarded','po_created']"/>
+                    <button name="action_print_award_notification" string="إخطار الترسية" type="object" class="btn-secondary" invisible="state not in ['awarded','po_created']"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,technical_open,financial_open,adjudicated,awarded,po_created"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
+                    <group string="بيانات المناقصة">
+                        <group>
+                            <field name="rfq_id"/>
+                            <field name="tender_type"/>
+                            <field name="date"/>
+                            <field name="estimated_value"/>
+                        </group>
+                        <group>
+                            <field name="technical_committee_id"/>
+                            <field name="financial_committee_id"/>
+                            <field name="opening_committee_id"/>
+                        </group>
+                    </group>
+                    <group string="نتيجة الترسية" invisible="state not in ['adjudicated','awarded','po_created']">
+                        <group>
+                            <field name="awarded_supplier_id" readonly="1"/>
+                            <field name="awarded_amount" readonly="1"/>
+                            <field name="award_notification_date" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="purchase_order_id" readonly="1" invisible="state != 'po_created'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="الموردون والتقييم" name="suppliers">
+                            <field name="supplier_line_ids" mode="tree">
+                                <tree editable="bottom"
+                                    decoration-success="technical_result == 'pass'"
+                                    decoration-danger="technical_result == 'fail'"
+                                    decoration-info="financial_result == 'accepted'">
+                                    <field name="partner_id"/>
+                                    <field name="technical_result" widget="badge"
+                                        decoration-success="technical_result=='pass'"
+                                        decoration-danger="technical_result=='fail'"
+                                        decoration-warning="technical_result=='conditional'"/>
+                                    <field name="compliance_form" widget="boolean_toggle"/>
+                                    <field name="technical_notes" optional="hide"/>
+                                    <field name="financial_bid" decoration-danger="financial_bid == 0"/>
+                                    <field name="bid_vs_estimate" string="% من التقديري" readonly="1" optional="show"/>
+                                    <field name="financial_result" widget="badge"
+                                        decoration-success="financial_result=='accepted'"
+                                        decoration-danger="financial_result=='rejected'"/>
+                                    <field name="financial_notes" optional="hide"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="ملاحظات البت الفني"  invisible="state == 'draft'"><field name="technical_notes"/></page>
+                        <page string="ملاحظات البت المالي" invisible="state not in ['financial_open','adjudicated','awarded','po_created']"><field name="financial_notes"/></page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_adjudication_list" model="ir.ui.view">
+        <field name="name">procurement.adjudication.list</field>
+        <field name="model">procurement.adjudication</field>
+        <field name="arch" type="xml">
+            <tree string="ملفات البت" decoration-success="state=='po_created'" decoration-info="state=='awarded'">
+                <field name="name"/>
+                <field name="tender_type"/>
+                <field name="date"/>
+                <field name="estimated_value"/>
+                <field name="supplier_count"/>
+                <field name="awarded_supplier_id"/>
+                <field name="awarded_amount"/>
+                <field name="state" widget="badge"
+                    decoration-info="state in ['technical_open','financial_open']"
+                    decoration-warning="state=='adjudicated'"
+                    decoration-success="state in ['awarded','po_created']"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_adjudication" model="ir.actions.act_window">
+        <field name="name">ملفات البت الفني والمالي</field>
+        <field name="res_model">procurement.adjudication</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_adjudication" name="البت الفني والمالي"
+        parent="purchase.menu_purchase_root" sequence="25"
+        action="action_adjudication"/>
+
+    <!-- ══ Arabic RTL Adjudication Minutes Reports ══════════════════════════ -->
+    <record id="action_report_technical_minutes" model="ir.actions.report">
+        <field name="name">محضر البت الفني</field>
+        <field name="model">procurement.adjudication</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">procurement_adjudication.report_technical_minutes_template</field>
+        <field name="print_report_name">'محضر البت الفني - ' + (object.name or '')</field>
+        <field name="binding_model_id" ref="model_procurement_adjudication"/>
+        <field name="binding_type">report</field>
+</record>
+
+    <template id="report_technical_minutes_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page" style="direction:rtl;font-family:'Cairo',Arial,sans-serif;font-size:11pt;">
+                        <div style="text-align:center;border-bottom:2px solid #000;padding-bottom:10px;margin-bottom:14px;">
+                            <h2 style="margin:0;">جمهورية مصر العربية — الديوان العام لمحافظة بورسعيد</h2>
+                            <h3 style="margin:4px 0;">إدارة التعاقدات</h3>
+                        </div>
+                        <h2 style="text-align:center;text-decoration:underline;margin-bottom:14px;">محضر البت الفني</h2>
+
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:12px;">
+                            <tr>
+                                <td style="border:1px solid #000;padding:6px;background:#f0f0f0;font-weight:bold;width:25%;">رقم ملف المناقصة</td>
+                                <td style="border:1px solid #000;padding:6px;width:25%;"><t t-esc="doc.name"/></td>
+                                <td style="border:1px solid #000;padding:6px;background:#f0f0f0;font-weight:bold;width:25%;">نوع المناقصة</td>
+                                <td style="border:1px solid #000;padding:6px;width:25%;"><t t-esc="dict(doc._fields['tender_type'].selection).get(doc.tender_type, '')"/></td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #000;padding:6px;background:#f0f0f0;font-weight:bold;">تاريخ فتح المظاريف الفنية</td>
+                                <td style="border:1px solid #000;padding:6px;" colspan="3"><t t-esc="doc.technical_open_date or '—'"/></td>
+                            </tr>
+                            <tr t-if="doc.technical_committee_id">
+                                <td style="border:1px solid #000;padding:6px;background:#f0f0f0;font-weight:bold;">رئيس لجنة البت الفني</td>
+                                <td style="border:1px solid #000;padding:6px;" colspan="3"><t t-esc="doc.technical_committee_id.chairman_id.name if doc.technical_committee_id.chairman_id else '—'"/></td>
+                            </tr>
+                        </table>
+
+                        <h4 style="margin-bottom:8px;">نتائج التقييم الفني للموردين</h4>
+                        <table style="width:100%;border-collapse:collapse;font-size:10pt;margin-bottom:14px;">
+                            <thead>
+                                <tr style="background:#d0d0d0;">
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;">م</th>
+                                    <th style="border:1px solid #000;padding:6px;">اسم المورد</th>
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;">نموذج استيفاء الشروط</th>
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;">نتيجة البت الفني</th>
+                                    <th style="border:1px solid #000;padding:6px;">ملاحظات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc.supplier_line_ids" t-as="line">
+                                    <tr>
+                                        <td style="border:1px solid #000;padding:5px;text-align:center;"><t t-esc="line_index + 1"/></td>
+                                        <td style="border:1px solid #000;padding:5px;font-weight:bold;"><t t-esc="line.partner_id.name"/></td>
+                                        <td style="border:1px solid #000;padding:5px;text-align:center;">
+                                            <t t-if="line.compliance_form">مقدم ✓</t><t t-else="">غير مقدم ✗</t>
+                                        </td>
+                                        <td style="border:1px solid #000;padding:5px;text-align:center;font-weight:bold;">
+                                            <t t-if="line.technical_result == 'pass'"><span style="color:green;">مطابق ✓</span></t>
+                                            <t t-elif="line.technical_result == 'fail'"><span style="color:red;">غير مطابق ✗</span></t>
+                                            <t t-elif="line.technical_result == 'conditional'"><span style="color:orange;">مطابق مع تحفظ</span></t>
+                                            <t t-else="">قيد التقييم</t>
+                                        </td>
+                                        <td style="border:1px solid #000;padding:5px;"><t t-esc="line.technical_notes or ''"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <div t-if="doc.technical_notes" style="border:1px solid #000;padding:8px;margin-bottom:14px;">
+                            <strong>نتيجة البت الفني العام: </strong><t t-esc="doc.technical_notes"/>
+                        </div>
+
+                        <!-- Signatures -->
+                        <table style="width:100%;border-collapse:collapse;margin-top:20px;">
+                            <tr>
+                                <td style="border:1px solid #000;padding:15px;text-align:center;width:50%;">
+                                    <p style="font-weight:bold;">رئيس لجنة البت الفني</p>
+                                    <p><t t-esc="doc.technical_committee_id.chairman_id.name if doc.technical_committee_id and doc.technical_committee_id.chairman_id else '........................'"/></p>
+                                    <p style="margin-top:25px;color:#555;">التوقيع: .........................</p>
+                                </td>
+                                <td style="border:1px solid #000;padding:15px;text-align:center;width:50%;">
+                                    <p style="font-weight:bold;">أعضاء اللجنة</p>
+                                    <p style="margin-top:25px;color:#555;">التوقيع: .........................</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- Financial Minutes + Award Notification (compact) -->
+    <record id="action_report_financial_minutes" model="ir.actions.report">
+        <field name="name">محضر البت المالي</field>
+        <field name="model">procurement.adjudication</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">procurement_adjudication.report_financial_minutes_template</field>
+        <field name="print_report_name">'محضر البت المالي - ' + (object.name or '')</field>
+        <field name="binding_model_id" ref="model_procurement_adjudication"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_financial_minutes_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page" style="direction:rtl;font-family:'Cairo',Arial,sans-serif;font-size:11pt;">
+                        <div style="text-align:center;border-bottom:2px solid #000;padding-bottom:10px;margin-bottom:14px;">
+                            <h2 style="margin:0;">الديوان العام لمحافظة بورسعيد — إدارة التعاقدات</h2>
+                        </div>
+                        <h2 style="text-align:center;text-decoration:underline;margin-bottom:14px;">محضر البت المالي ومقارنة العروض</h2>
+
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:12px;">
+                            <tr>
+                                <td style="border:1px solid #000;padding:6px;background:#f0f0f0;font-weight:bold;width:30%;">رقم المناقصة</td>
+                                <td style="border:1px solid #000;padding:6px;"><t t-esc="doc.name"/></td>
+                                <td style="border:1px solid #000;padding:6px;background:#f0f0f0;font-weight:bold;width:25%;">القيمة التقديرية</td>
+                                <td style="border:1px solid #000;padding:6px;font-weight:bold;"><t t-esc="'%.2f' % doc.estimated_value"/> جنيه</td>
+                            </tr>
+                        </table>
+
+                        <h4>مقارنة العروض المالية</h4>
+                        <table style="width:100%;border-collapse:collapse;font-size:10pt;margin-bottom:14px;">
+                            <thead>
+                                <tr style="background:#d0d0d0;">
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;">م</th>
+                                    <th style="border:1px solid #000;padding:6px;">المورد</th>
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;">العرض المالي (جنيه)</th>
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;">% من التقديري</th>
+                                    <th style="border:1px solid #000;padding:6px;text-align:center;">النتيجة</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc.supplier_line_ids.filtered(lambda l: l.technical_result in ['pass','conditional'])" t-as="line">
+                                    <tr t-att-style="'background:#e8f5e9;' if line.financial_result == 'accepted' else ''">
+                                        <td style="border:1px solid #000;padding:5px;text-align:center;"><t t-esc="line_index + 1"/></td>
+                                        <td style="border:1px solid #000;padding:5px;font-weight:bold;"><t t-esc="line.partner_id.name"/></td>
+                                        <td style="border:1px solid #000;padding:5px;text-align:center;"><t t-esc="'%.2f' % line.financial_bid"/></td>
+                                        <td style="border:1px solid #000;padding:5px;text-align:center;"><t t-esc="'%.1f' % line.bid_vs_estimate"/>%</td>
+                                        <td style="border:1px solid #000;padding:5px;text-align:center;font-weight:bold;">
+                                            <t t-if="line.financial_result == 'accepted'"><span style="color:green;">فائز ✓</span></t>
+                                            <t t-elif="line.financial_result == 'rejected'"><span style="color:red;">مرفوض</span></t>
+                                            <t t-else="">—</t>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <div t-if="doc.awarded_supplier_id" style="border:2px solid #000;padding:10px;margin-bottom:14px;background:#f9f9f9;">
+                            <h3 style="margin:0 0 8px;text-align:center;">قرار الترسية</h3>
+                            <p style="line-height:1.8;">
+                                تقرر الترسية على <strong><t t-esc="doc.awarded_supplier_id.name"/></strong>
+                                بمبلغ <strong><t t-esc="'%.2f' % doc.awarded_amount"/> جنيه مصري</strong>
+                                وهو أقل عرض مقدم ومطابق للشروط.
+                            </p>
+                        </div>
+
+                        <table style="width:100%;border-collapse:collapse;margin-top:16px;">
+                            <tr>
+                                <td style="border:1px solid #000;padding:14px;text-align:center;width:50%;">
+                                    <p style="font-weight:bold;">رئيس لجنة البت المالي</p>
+                                    <p style="margin-top:20px;color:#555;">التوقيع: .........................</p>
+                                </td>
+                                <td style="border:1px solid #000;padding:14px;text-align:center;width:50%;">
+                                    <p style="font-weight:bold;">أعضاء اللجنة</p>
+                                    <p style="margin-top:20px;color:#555;">التوقيع: .........................</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_award_notification" model="ir.actions.report">
+        <field name="name">إخطار الترسية - مناقصة</field>
+        <field name="model">procurement.adjudication</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">procurement_adjudication.report_award_notification_template</field>
+        <field name="print_report_name">'إخطار الترسية - ' + (object.name or '')</field>
+        <field name="binding_model_id" ref="model_procurement_adjudication"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_award_notification_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page" style="direction:rtl;font-family:'Cairo',Arial,sans-serif;font-size:12pt;">
+                        <div style="text-align:center;border-bottom:2px solid #000;padding-bottom:10px;margin-bottom:16px;">
+                            <h2 style="margin:0;">الديوان العام لمحافظة بورسعيد — إدارة التعاقدات</h2>
+                        </div>
+                        <h2 style="text-align:center;text-decoration:underline;margin-bottom:16px;">إخطار الترسية</h2>
+                        <p style="line-height:2;margin-bottom:16px;">
+                            يُشعر السيد / <strong><t t-esc="doc.awarded_supplier_id.name if doc.awarded_supplier_id else '........................'"/></strong>
+                            بأنه قد رُسيت عليه مناقصة رقم (<strong><t t-esc="doc.name"/></strong>)
+                            بتاريخ <t t-esc="doc.award_notification_date or doc.date"/>
+                            بمبلغ <strong><t t-esc="'%.2f' % (doc.awarded_amount or 0)"/> جنيه مصري</strong>.
+                        </p>
+                        <p style="line-height:1.8;">
+                            يرجى التفضل بالحضور لتوقيع العقد وتقديم التأمين النهائي خلال
+                            <strong>ثلاثة أيام عمل</strong> من تاريخ هذا الإخطار وإلا اعتبر ذلك تنازلاً عن الترسية.
+                        </p>
+                        <div style="margin-top:30px;text-align:left;">
+                            <p style="font-weight:bold;">مدير إدارة التعاقدات</p>
+                            <p style="margin-top:20px;color:#555;">التوقيع: .........................  الختم الرسمي</p>
+                            <p style="color:#555;">التاريخ: <t t-esc="doc.award_notification_date or '.........................'"/></p>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

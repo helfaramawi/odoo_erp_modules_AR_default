@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_req_user,port_said.requisition user,model_port_said_requisition,purchase.group_purchase_user,1,1,1,0
+access_req_mgr,port_said.requisition manager,model_port_said_requisition,purchase.group_purchase_manager,1,1,1,1
+access_req_line_user,port_said.requisition.line user,model_port_said_requisition_line,purchase.group_purchase_user,1,1,1,0
+access_req_line_mgr,port_said.requisition.line manager,model_port_said_requisition_line,purchase.group_purchase_manager,1,1,1,1

@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_book_user,book user,model_port_said_subsidiary_book,group_subsidiary_user,1,0,0,0
+access_book_manager,book manager,model_port_said_subsidiary_book,group_subsidiary_manager,1,1,1,1
+access_classification_user,classification user,model_port_said_subsidiary_account_classification,group_subsidiary_user,1,0,0,0
+access_classification_manager,classification manager,model_port_said_subsidiary_account_classification,group_subsidiary_manager,1,1,1,1
+access_folio_user,folio user,model_port_said_subsidiary_folio,group_subsidiary_user,1,1,1,0
+access_folio_manager,folio manager,model_port_said_subsidiary_folio,group_subsidiary_manager,1,1,1,1
+access_print_wizard,print wizard,model_port_said_subsidiary_print_wizard,group_subsidiary_user,1,1,1,1
+access_migrate_wizard,migrate wizard,model_port_said_subsidiary_migrate_paper_wizard,group_subsidiary_manager,1,1,1,1

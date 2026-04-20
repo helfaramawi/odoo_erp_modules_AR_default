@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_procurement_committee_form" model="ir.ui.view">
+        <field name="name">procurement.committee.form</field>
+        <field name="model">procurement.committee</field>
+        <field name="arch" type="xml">
+            <form string="لجنة المناقصة">
+                <header>
+                    <button name="action_activate" string="تفعيل اللجنة" type="object" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_close"    string="إنهاء عمل اللجنة" type="object" invisible="state != 'active'"/>
+                    <button name="action_print_formation" string="طباعة قرار التشكيل" type="object" class="btn-secondary"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="ref" readonly="1"/></h1></div>
+                    <group string="بيانات اللجنة">
+                        <group>
+                            <field name="name"/>
+                            <field name="committee_type"/>
+                            <field name="procurement_type"/>
+                        </group>
+                        <group>
+                            <field name="formation_date"/>
+                            <field name="authority_ref"/>
+                            <field name="chairman_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="أعضاء اللجنة" name="members">
+                            <field name="member_ids" mode="tree">
+                                <tree editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="employee_id"/>
+                                    <field name="job_title" readonly="1"/>
+                                    <field name="department_id" readonly="1"/>
+                                    <field name="role"/>
+                                    <field name="notes"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="ملاحظات"><field name="notes"/></page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_procurement_committee_list" model="ir.ui.view">
+        <field name="name">procurement.committee.list</field>
+        <field name="model">procurement.committee</field>
+        <field name="arch" type="xml">
+            <tree string="اللجان" decoration-success="state=='active'" decoration-muted="state=='closed'">
+                <field name="ref"/>
+                <field name="name"/>
+                <field name="committee_type"/>
+                <field name="procurement_type"/>
+                <field name="formation_date"/>
+                <field name="chairman_id"/>
+                <field name="member_count"/>
+                <field name="state" widget="badge" decoration-success="state=='active'" decoration-muted="state=='closed'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_procurement_committee" model="ir.actions.act_window">
+        <field name="name">اللجان</field>
+        <field name="res_model">procurement.committee</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_committee_root" name="اللجان" sequence="87"
+              web_icon="procurement_committee,static/description/icon.png"/>
+    <menuitem id="menu_committee_list" name="اللجان" parent="menu_committee_root"
+              action="action_procurement_committee" sequence="10"/>
+
+    <!-- ══ قرار تشكيل اللجان — Arabic RTL QWeb Report ════════════════════ -->
+    <record id="action_report_committee_formation" model="ir.actions.report">
+        <field name="name">قرار تشكيل اللجنة</field>
+        <field name="model">procurement.committee</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">procurement_committee.report_committee_formation_template</field>
+        <field name="print_report_name">'قرار تشكيل اللجنة - ' + (object.ref or '')</field>
+        <field name="binding_model_id" ref="model_procurement_committee"/>
+        <field name="binding_type">report</field>
+</record>
+
+    <template id="report_committee_formation_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page" style="direction:rtl;font-family:'Cairo',Arial,sans-serif;font-size:12pt;">
+                        <div style="text-align:center;border-bottom:2px solid #000;padding-bottom:12px;margin-bottom:18px;">
+                            <h2 style="margin:0;font-size:16pt;">جمهورية مصر العربية</h2>
+                            <h3 style="margin:4px 0;">الديوان العام لمحافظة بورسعيد</h3>
+                            <h3 style="margin:4px 0;">إدارة التعاقدات</h3>
+                        </div>
+                        <h2 style="text-align:center;text-decoration:underline;margin-bottom:20px;">قرار تشكيل لجنة</h2>
+
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:16px;">
+                            <tr>
+                                <td style="border:1px solid #000;padding:7px;background:#f0f0f0;font-weight:bold;width:25%;">رقم القرار</td>
+                                <td style="border:1px solid #000;padding:7px;"><t t-esc="doc.ref"/></td>
+                                <td style="border:1px solid #000;padding:7px;background:#f0f0f0;font-weight:bold;width:25%;">التاريخ</td>
+                                <td style="border:1px solid #000;padding:7px;"><t t-esc="doc.formation_date"/></td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #000;padding:7px;background:#f0f0f0;font-weight:bold;">اسم اللجنة</td>
+                                <td style="border:1px solid #000;padding:7px;" colspan="3"><t t-esc="doc.name"/></td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #000;padding:7px;background:#f0f0f0;font-weight:bold;">نوع اللجنة</td>
+                                <td style="border:1px solid #000;padding:7px;">
+                                    <t t-if="doc.committee_type == 'technical'">لجنة البت الفني</t>
+                                    <t t-elif="doc.committee_type == 'financial'">لجنة البت المالي</t>
+                                    <t t-elif="doc.committee_type == 'opening'">لجنة فض المظاريف</t>
+                                    <t t-elif="doc.committee_type == 'award'">لجنة الترسية</t>
+                                    <t t-else="">لجنة مختلطة</t>
+                                </td>
+                                <td style="border:1px solid #000;padding:7px;background:#f0f0f0;font-weight:bold;">وسيلة الطرح</td>
+                                <td style="border:1px solid #000;padding:7px;"><t t-esc="dict(doc._fields['procurement_type'].selection).get(doc.procurement_type, doc.procurement_type)"/></td>
+                            </tr>
+                            <tr t-if="doc.authority_ref">
+                                <td style="border:1px solid #000;padding:7px;background:#f0f0f0;font-weight:bold;">السلطة المختصة</td>
+                                <td style="border:1px solid #000;padding:7px;" colspan="3"><t t-esc="doc.authority_ref"/></td>
+                            </tr>
+                        </table>
+
+                        <h4 style="margin-bottom:8px;">أعضاء اللجنة</h4>
+                        <table style="width:100%;border-collapse:collapse;font-size:11pt;">
+                            <thead>
+                                <tr style="background:#d0d0d0;">
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;">م</th>
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;">الاسم</th>
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;">المسمى الوظيفي</th>
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;">الإدارة</th>
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;">الدور</th>
+                                    <th style="border:1px solid #000;padding:7px;text-align:center;">التوقيع</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc.member_ids" t-as="member">
+                                    <tr>
+                                        <td style="border:1px solid #000;padding:6px;text-align:center;"><t t-esc="member_index + 1"/></td>
+                                        <td style="border:1px solid #000;padding:6px;"><t t-esc="member.employee_id.name"/></td>
+                                        <td style="border:1px solid #000;padding:6px;"><t t-esc="member.job_title or ''"/></td>
+                                        <td style="border:1px solid #000;padding:6px;"><t t-esc="member.department_id.name if member.department_id else ''"/></td>
+                                        <td style="border:1px solid #000;padding:6px;text-align:center;font-weight:bold;">
+                                            <t t-if="member.role == 'chairman'">رئيس لجنة</t>
+                                            <t t-elif="member.role == 'secretary'">أمين سر</t>
+                                            <t t-elif="member.role == 'expert'">خبير</t>
+                                            <t t-else="">عضو</t>
+                                        </td>
+                                        <td style="border:1px solid #000;padding:20px;text-align:center;color:#aaa;">........................</td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <div style="margin-top:30px;text-align:left;font-size:10pt;">
+                            <p><strong>صدر في:</strong> بورسعيد بتاريخ <t t-esc="doc.formation_date"/></p>
+                            <p style="margin-top:20px;">توقيع السلطة المختصة: .........................</p>
+                        </div>
+                        <div style="margin-top:14px;font-size:9pt;color:#777;text-align:center;border-top:1px solid #ccc;padding-top:6px;">
+                            نظام أوبو إيآر بي — الديوان العام لمحافظة بورسعيد
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

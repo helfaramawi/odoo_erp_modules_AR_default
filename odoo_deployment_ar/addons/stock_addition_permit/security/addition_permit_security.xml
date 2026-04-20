@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_warehouse_eg" model="ir.module.category">
+        <field name="name">مخازن حكومية — بورسعيد</field>
+        <field name="sequence">86</field>
+    </record>
+
+    <record id="group_storekeeper" model="res.groups">
+        <field name="name">أمين المخزن</field>
+        <field name="category_id" ref="stock_addition_permit.module_category_warehouse_eg"/>
+        <field name="comment">إنشاء إذن الإضافة ومحضر الفحص</field>
+    </record>
+
+    <record id="group_inspector" model="res.groups">
+        <field name="name">مفتش المخزن</field>
+        <field name="category_id" ref="stock_addition_permit.module_category_warehouse_eg"/>
+        <field name="implied_ids" eval="[(4, ref('group_storekeeper'))]"/>
+        <field name="comment">اعتماد محاضر الفحص والاستلام</field>
+    </record>
+
+    <record id="group_warehouse_manager" model="res.groups">
+        <field name="name">مدير المخازن</field>
+        <field name="category_id" ref="stock_addition_permit.module_category_warehouse_eg"/>
+        <field name="implied_ids" eval="[(4, ref('group_inspector'))]"/>
+        <field name="comment">صلاحيات كاملة: ترحيل أذونات الإضافة والإلغاء والحذف</field>
+    </record>
+</odoo>

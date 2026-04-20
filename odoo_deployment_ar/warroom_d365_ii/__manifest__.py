@@ -1,0 +1,23 @@
+{
+    'name': 'Warroom D365 Reverse Engineering II',
+    'version': '19.0.1.0.0',
+    'summary': 'Generated from War Room reverse engineering output (wr-1a78086bbe).',
+    'description': 'Auto-generated Odoo module from validated D365 F&O to Odoo War Room artifacts.',
+    'author': 'TODO: Set implementation partner',
+    'depends': ['account', 'base', 'hr', 'mail', 'purchase', 'stock'],
+    'data': [
+        'security/security.xml',
+        'security/ir.model.access.csv',
+        'views/menu.xml',
+        'views/generated_views.xml',
+        'views/x_warroom_model_1_views.xml',
+        'views/x_warroom_model_2_views.xml',
+        'views/x_warroom_model_3_views.xml',
+        'views/x_warroom_model_4_views.xml',
+        'data/sequences.xml',
+        'data/workflow_stages.xml',
+    ],
+    'application': True,
+    'installable': True,
+    'module_name': 'warroom_d365_ii',
+}

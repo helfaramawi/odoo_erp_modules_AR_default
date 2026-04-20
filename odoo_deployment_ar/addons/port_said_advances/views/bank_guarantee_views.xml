@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<record id="view_bank_guarantee_form" model="ir.ui.view">
+  <field name="name">port_said.bank.guarantee.form</field>
+  <field name="model">port_said.bank.guarantee</field>
+  <field name="arch" type="xml">
+    <form string="خطاب الضمان البنكي">
+      <header>
+        <field name="state" widget="statusbar" statusbar_visible="draft,active,released"/>
+      </header>
+      <sheet>
+                <field name="is_expiring_soon" invisible="1"/>
+        <field name="days_to_expiry" invisible="1"/>
+<div class="o_field_widget" style="margin-bottom:10px;">
+          <button name="action_activate" string="تفعيل" type="object" class="btn btn-success btn-sm" invisible="state != 'draft'"/>
+          <button name="action_extend" string="تمديد" type="object" class="btn btn-warning btn-sm" invisible="state not in ('active',)" groups="account.group_account_manager"/>
+          <button name="action_release" string="إفراج" type="object" class="btn btn-primary btn-sm" invisible="state not in ('active','extended')" groups="account.group_account_manager"/>
+          <button name="action_forfeit" string="مصادرة" type="object" class="btn btn-danger btn-sm" invisible="state not in ('active','extended')" groups="account.group_account_manager"/>
+        </div>
+        <div class="alert alert-warning" role="alert" invisible="not is_expiring_soon">
+          <strong>تنبيه:</strong> خطاب الضمان ينتهي خلال <field name="days_to_expiry"/> يوم — يرجى التجديد
+        </div>
+        <div class="oe_title">
+          <h1><field name="name" readonly="1"/></h1>
+        </div>
+        <group>
+          <group string="بيانات الضمان">
+            <field name="guarantee_type"/>
+            <field name="issue_date"/>
+            <field name="expiry_date" decoration-danger="is_expiring_soon"/>
+            <field name="days_to_expiry" readonly="1" string="أيام حتى الانتهاء"/>
+          </group>
+          <group string="الأطراف">
+            <field name="issuing_bank"/>
+            <field name="bank_branch"/>
+            <field name="bank_ref_no"/>
+            <field name="beneficiary"/>
+          </group>
+        </group>
+        <group string="القيمة والعقد">
+          <group>
+            <field name="amount"/>
+            <field name="guarantee_percentage"/>
+            <field name="contract_value"/>
+          </group>
+          <group>
+            <field name="vendor_id"/>
+            <field name="purchase_order_id"/>
+          </group>
+        </group>
+        <group invisible="state not in ('released','forfeited')">
+          <field name="release_date" readonly="1"/>
+          <field name="release_reason"/>
+        </group>
+        <field name="extension_history" invisible="not extension_history" readonly="1"/>
+        <field name="notes"/>
+      </sheet>
+      <chatter/>
+    </form>
+  </field>
+</record>
+
+<record id="view_bank_guarantee_list" model="ir.ui.view">
+  <field name="name">port_said.bank.guarantee.list</field>
+  <field name="model">port_said.bank.guarantee</field>
+  <field name="arch" type="xml">
+    <tree string="خطابات الضمان"
+          decoration-danger="is_expiring_soon and state == 'active'"
+          decoration-muted="state in ('released','expired','forfeited')">
+      <field name="is_expiring_soon" column_invisible="1"/>
+      <field name="name"/>
+      <field name="issue_date"/>
+      <field name="expiry_date"/>
+      <field name="days_to_expiry" string="أيام متبقية"
+             decoration-danger="days_to_expiry &lt; 30 and days_to_expiry &gt; 0"/>
+      <field name="guarantee_type"/>
+      <field name="vendor_id"/>
+      <field name="issuing_bank"/>
+      <field name="amount" sum="الإجمالي"/>
+      <field name="state" widget="badge"
+             decoration-success="state == 'active'"
+             decoration-warning="state == 'extended'"
+             decoration-danger="state == 'forfeited'"
+             decoration-info="state == 'draft'"/>
+    </tree>
+  </field>
+</record>
+
+<record id="action_bank_guarantees" model="ir.actions.act_window">
+  <field name="name">خطابات الضمان</field>
+  <field name="res_model">port_said.bank.guarantee</field>
+  <field name="view_mode">list,form</field>
+</record>
+
+<record id="action_guarantees_expiring" model="ir.actions.act_window">
+  <field name="name">خطابات تنتهي قريباً</field>
+  <field name="res_model">port_said.bank.guarantee</field>
+  <field name="view_mode">list,form</field>
+  <field name="domain">[("is_expiring_soon","=",True),("state","=","active")]</field>
+</record>
+
+</odoo>

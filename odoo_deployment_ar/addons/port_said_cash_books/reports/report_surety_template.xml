@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <template id="report_surety">
+    <t t-call="web.html_container">
+      <t t-foreach="docs" t-as="sur">
+        <t t-call="web.external_layout">
+          <div class="page" dir="rtl"
+               style="font-family:'Traditional Arabic',Arial,serif;">
+
+            <div style="text-align:center; margin-bottom:15px;">
+              <h3 style="margin:0;">كفالة</h3>
+              <div style="font-size:11px;">
+                دفتر حساب الكفالات - استمارة 78 ع.ح
+                — محافظة بورسعيد
+              </div>
+            </div>
+
+            <table style="width:100%; font-size:11px; border-collapse:collapse;
+                          border:1px solid #000;">
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0; width:30%;">
+                  <strong>الرقم المسلسل</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="sur.sequence_number or '—'"/>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  <strong>نوع الكفالة</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="dict(sur._fields['surety_type'].selection).get(sur.surety_type)"/>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  <strong>الغرض</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="dict(sur._fields['purpose'].selection).get(sur.purpose)"/>
+                  <t t-if="sur.purpose_detail"> — <t t-out="sur.purpose_detail"/></t>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  <strong>قيمة الكفالة</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000; font-weight:bold;">
+                  <t t-out="'%.2f' % sur.amount"/>
+                  <span t-field="sur.currency_id.symbol"/>
+                </td>
+              </tr>
+              <tr t-if="sur.cash_deposit_amount">
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  <strong>المُودَع نقداً</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="'%.2f' % sur.cash_deposit_amount"/>
+                  <t t-if="sur.cash_deposit_account_id">
+                    (حساب: <t t-out="sur.cash_deposit_account_id.code"/>)
+                  </t>
+                </td>
+              </tr>
+            </table>
+
+            <h4 style="margin-top:15px; margin-bottom:8px;">الموظف المكفول</h4>
+            <table style="width:100%; font-size:11px; border-collapse:collapse;
+                          border:1px solid #000;">
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0; width:30%;">
+                  <strong>الاسم</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="sur.employee_id.name"/>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  <strong>الوظيفة</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="sur.employee_job or '—'"/>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  <strong>الرقم القومي</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="sur.national_id or '—'"/>
+                </td>
+              </tr>
+            </table>
+
+            <t t-if="sur.guarantor_partner_id">
+              <h4 style="margin-top:15px; margin-bottom:8px;">الكفيل</h4>
+              <table style="width:100%; font-size:11px; border-collapse:collapse;
+                            border:1px solid #000;">
+                <tr>
+                  <td style="padding:5px; border:1px solid #000; background:#f0f0f0; width:30%;">
+                    <strong>الاسم</strong>
+                  </td>
+                  <td style="padding:5px; border:1px solid #000;">
+                    <t t-out="sur.guarantor_partner_id.name"/>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                    <strong>الرقم القومي</strong>
+                  </td>
+                  <td style="padding:5px; border:1px solid #000;">
+                    <t t-out="sur.guarantor_national_id or '—'"/>
+                  </td>
+                </tr>
+              </table>
+            </t>
+
+            <h4 style="margin-top:15px; margin-bottom:8px;">التواريخ والحالة</h4>
+            <table style="width:100%; font-size:11px; border-collapse:collapse;
+                          border:1px solid #000;">
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  تاريخ القيد
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="sur.registration_date"/>
+                </td>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  سارية من
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="sur.effective_from"/>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  تاريخ المراجعة
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="sur.review_date or '—'"/>
+                </td>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  تاريخ الإفراج
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="sur.release_date or '—'"/>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  السنة المالية
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="sur.fiscal_year or '—'"/>
+                </td>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  الحالة
+                </td>
+                <td style="padding:5px; border:1px solid #000; font-weight:bold;">
+                  <t t-out="dict(sur._fields['state'].selection).get(sur.state)"/>
+                </td>
+              </tr>
+            </table>
+
+            <t t-if="sur.release_reason">
+              <h4 style="margin-top:15px; margin-bottom:8px;">سبب الإفراج / المصادرة</h4>
+              <div style="padding:8px; border:1px solid #000; font-size:10.5px;">
+                <t t-out="sur.release_reason"/>
+              </div>
+            </t>
+
+            <!-- Signatures -->
+            <table style="width:100%; margin-top:40px; font-size:10px;"
+                   class="table-borderless">
+              <tr>
+                <td style="text-align:center;">
+                  <div>الموظف المكفول</div>
+                  <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                    ............................
+                  </div>
+                </td>
+                <td t-if="sur.guarantor_partner_id" style="text-align:center;">
+                  <div>الكفيل</div>
+                  <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                    ............................
+                  </div>
+                </td>
+                <td style="text-align:center;">
+                  <div>رئيس الحسابات</div>
+                  <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                    ............................
+                  </div>
+                </td>
+              </tr>
+            </table>
+
+          </div>
+          <p style="page-break-after: always;"/>
+        </t>
+      </t>
+    </t>
+  </template>
+
+</odoo>

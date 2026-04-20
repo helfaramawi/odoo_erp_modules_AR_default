@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!--
+    نُضيف الحقول الجديدة (form78_sequence, book_classification, القيود المحاسبية،
+    insurance_folio_id) إلى نموذج port_said.bank.guarantee الموجود في port_said_advances.
+
+    ملاحظة: XPath target يعتمد على بنية النموذج الأصلي. نستخدم nolabel groups
+    لتجنب التعارض مع XPath selectors مخصصة قد تتغير في تحديثات مستقبلية.
+  -->
+  <record id="view_bank_guarantee_form_inherit_insurance" model="ir.ui.view">
+    <field name="name">port_said.bank.guarantee.form.insurance_ext</field>
+    <field name="model">port_said.bank.guarantee</field>
+    <field name="inherit_id" ref="port_said_advances.view_bank_guarantee_form"/>
+    <field name="priority">20</field>
+    <field name="arch" type="xml">
+      <!-- أضف التسلسل والتصنيف في أعلى النموذج، بعد name -->
+      <xpath expr="//field[@name='name']" position="after">
+        <field name="form78_sequence" readonly="1"/>
+        <field name="book_classification" readonly="1"/>
+        <field name="fiscal_year" readonly="1"/>
+      </xpath>
+
+      <!-- أضف تبويب القيود المحاسبية -->
+      <xpath expr="//sheet" position="inside">
+        <notebook>
+          <page string="القيود المحاسبية والفولية">
+            <group>
+              <group string="القيود">
+                <field name="activation_move_id" readonly="1"/>
+                <field name="release_move_id" readonly="1"/>
+                <field name="forfeiture_move_id" readonly="1"/>
+              </group>
+              <group string="الفولية القانونية">
+                <field name="insurance_folio_id" readonly="1"/>
+              </group>
+            </group>
+          </page>
+        </notebook>
+      </xpath>
+    </field>
+  </record>
+
+  <!-- أضف فلاتر جديدة - نُنشئ search view جديدة بدل inherit لأن advances لا يُعرِّف واحدة -->
+  <record id="view_bank_guarantee_search_insurance" model="ir.ui.view">
+    <field name="name">port_said.bank.guarantee.search.insurance</field>
+    <field name="model">port_said.bank.guarantee</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="name"/>
+        <field name="vendor_id"/>
+        <field name="form78_sequence"/>
+        <separator/>
+        <filter string="ساري" name="f_active" domain="[('state','=','active')]"/>
+        <filter string="مُفرَج عنه" name="f_released" domain="[('state','=','released')]"/>
+        <filter string="مُصادَر" name="f_forfeited" domain="[('state','=','forfeited')]"/>
+        <separator/>
+        <filter string="تأمين مؤقت" name="f_provisional"
+                domain="[('book_classification','=','provisional')]"/>
+        <filter string="تأمين نهائي" name="f_final"
+                domain="[('book_classification','=','final')]"/>
+        <separator/>
+        <filter string="بدون قيد محاسبي" name="f_no_move"
+                domain="[('activation_move_id','=',False), ('state','=','active')]"/>
+        <filter string="ينتهي قريباً" name="f_expiring"
+                domain="[('is_expiring_soon','=',True)]"/>
+        <group expand="1" string="تجميع حسب">
+          <filter string="التصنيف" name="g_class" context="{'group_by':'book_classification'}"/>
+          <filter string="الحالة" name="g_state" context="{'group_by':'state'}"/>
+          <filter string="المورد" name="g_vendor" context="{'group_by':'vendor_id'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+</odoo>

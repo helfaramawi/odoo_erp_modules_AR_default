@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_form75_form" model="ir.ui.view">
+    <field name="name">port_said.form75.form</field>
+    <field name="model">port_said.form75</field>
+    <field name="arch" type="xml">
+      <form string="استمارة 75 ع.ح">
+        <header>
+          <button name="action_submit"         string="تقديم للاعتماد"                type="object" class="btn-primary"  invisible="state != 'draft'"/>
+          <button name="action_approve_stage1" string="✅ اعتماد مراقب الحسابات"      type="object" class="btn-success"  invisible="state != 'submitted'"/>
+          <button name="action_approve_stage2" string="✅ اعتماد مدير الحسابات"       type="object" class="btn-success"  invisible="state != 'stage1_approved'"/>
+          <button name="action_approve_stage3" string="✅ اعتماد رئيس المصلحة"        type="object" class="btn-success"  invisible="state != 'stage2_approved'"/>
+          <button name="action_reject"         string="❌ رفض"                        type="object" class="btn-danger"   invisible="state in ('draft','approved')"/>
+          <button name="action_print" string="طباعة" type="object" class="btn-secondary" invisible="state != 'approved'"/>
+          <field name="state" widget="statusbar"
+                 statusbar_visible="draft,submitted,stage1_approved,stage2_approved,approved"/>
+        </header>
+        <sheet>
+          <div class="oe_title"><h1><field name="display_name" readonly="1"/></h1></div>
+          <group>
+            <group string="الفترة المالية">
+              <field name="period_type"/><field name="fiscal_year"/><field name="fiscal_period"/>
+            </group>
+            <group string="الأرصدة">
+              <field name="opening_balance"/><field name="total_sarfiyat"/>
+              <field name="total_taswiyat"/><field name="closing_balance"/>
+            </group>
+          </group>
+          <group string="مسار الاعتماد (3 مراحل متسلسلة — إلزامي بموجب لائحة المالية)">
+            <group string="المرحلة 1: مراقب الحسابات">
+              <field name="stage1_user_id" readonly="state not in ('submitted',)"/>
+              <field name="stage1_date" readonly="1"/>
+              <field name="stage1_note"/>
+            </group>
+            <group string="المرحلة 2: مدير الحسابات">
+              <field name="stage2_user_id" readonly="state not in ('stage1_approved',)"/>
+              <field name="stage2_date" readonly="1"/>
+              <field name="stage2_note"/>
+            </group>
+            <group string="المرحلة 3: رئيس المصلحة">
+              <field name="stage3_user_id" readonly="state not in ('stage2_approved',)"/>
+              <field name="stage3_date" readonly="1"/>
+              <field name="stage3_note"/>
+            </group>
+          </group>
+          <div class="alert alert-warning" invisible="state == 'approved'">
+            لا يمكن طباعة استمارة 75 قبل اعتمادها من رئيس المصلحة (المرحلة الثالثة)
+          </div>
+          <field name="rejection_reason" invisible="state != 'rejected'" placeholder="سبب الرفض..."/>
+          <field name="form69_ids" widget="many2many_list" string="حسبة يومية مُدرجة" readonly="1">
+            <tree><field name="reckoning_date"/><field name="sarfiyat_total"/><field name="closing_balance"/></tree>
+          </field>
+        </sheet>
+        <chatter/>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_form75" model="ir.actions.act_window">
+    <field name="name">استمارة 75 - الحسابات الشهرية والختامية</field>
+    <field name="res_model">port_said.form75</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+    <!-- Menu managed by port_said_menu -->
+
+  <menuitem id="menu_ps_form75"
+            name="استمارة 75 — الإغلاق الشهري"
+            parent="port_said_menu.menu_ps_20_accts"
+            action="port_said_form75.action_form75"
+            sequence="21"/>
+</odoo>

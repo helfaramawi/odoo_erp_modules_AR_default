@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <menuitem id="menu_subsidiary_root"
+            name="الدفاتر المساعدة"
+            sequence="55"/>
+  <menuitem id="menu_folio"
+            name="الفوليوهات"
+            parent="menu_subsidiary_root"
+            action="action_folio"
+            sequence="10"/>
+  <menuitem id="menu_book"
+            name="تعريف الدفاتر"
+            parent="menu_subsidiary_root"
+            action="action_book"
+            sequence="20"
+            groups="group_subsidiary_manager"/>
+  <menuitem id="menu_classification"
+            name="تصنيفات الحسابات"
+            parent="menu_subsidiary_root"
+            action="action_classification"
+            sequence="30"
+            groups="group_subsidiary_manager"/>
+</odoo>

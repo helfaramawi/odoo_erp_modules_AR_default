@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_outgoing_po_tree" model="ir.ui.view">
+    <field name="name">port_said.outgoing_po.tree</field>
+    <field name="model">port_said.outgoing_po</field>
+    <field name="arch" type="xml">
+      <tree string="أوامر الدفع المرسلة"
+            decoration-info="state in ['draft','registered']"
+            decoration-warning="state == 'sent'"
+            decoration-success="state == 'cleared'"
+            decoration-danger="state == 'rejected'"
+            decoration-muted="state == 'cancelled'">
+        <field name="sequence_number"/>
+        <field name="po_number"/>
+        <field name="beneficiary_id"/>
+        <field name="amount" sum="إجمالي"/>
+        <field name="issue_date"/>
+        <field name="payment_method"/>
+        <field name="daftar55_sequence" optional="show"/>
+        <field name="state"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_outgoing_po_form" model="ir.ui.view">
+    <field name="name">port_said.outgoing_po.form</field>
+    <field name="model">port_said.outgoing_po</field>
+    <field name="arch" type="xml">
+      <form>
+        <header>
+          <button name="action_register" type="object" string="قيد بالدفتر"
+                  invisible="state != 'draft'" class="oe_highlight"/>
+          <button name="action_send" type="object" string="إرسال للبنك"
+                  invisible="state != 'registered'" class="oe_highlight"/>
+          <button name="action_clear" type="object" string="تأكيد التنفيذ"
+                  invisible="state != 'sent'" class="oe_highlight"/>
+          <button name="action_reject" type="object" string="تسجيل الرفض"
+                  invisible="state != 'sent'"/>
+          <button name="action_cancel" type="object" string="إلغاء"
+                  invisible="state in ['cleared','cancelled']"/>
+          <field name="state" widget="statusbar"
+                 statusbar_visible="draft,registered,sent,cleared"/>
+        </header>
+        <sheet>
+          <div class="oe_title">
+            <label for="sequence_number" string="رقم مسلسل بالدفتر"/>
+            <h1><field name="sequence_number" readonly="1"/></h1>
+          </div>
+          <group>
+            <group string="المرجع">
+              <field name="po_number"/>
+              <field name="daftar55_id"/>
+              <field name="fiscal_year" readonly="1"/>
+            </group>
+            <group string="المبلغ والتواريخ">
+              <field name="amount"/>
+              <field name="currency_id" invisible="1"/>
+              <field name="issue_date"/>
+              <field name="sent_date" readonly="1"/>
+              <field name="cleared_date" readonly="1"/>
+            </group>
+          </group>
+          <group string="المستفيد">
+            <group>
+              <field name="beneficiary_id"/>
+              <field name="beneficiary_account"/>
+            </group>
+            <group>
+              <field name="beneficiary_bank"/>
+              <field name="beneficiary_iban"/>
+            </group>
+          </group>
+          <group string="آلية الدفع">
+            <field name="payment_method"/>
+            <field name="cheque_id"
+                   invisible="payment_method != 'cheque'"
+                   required="payment_method == 'cheque'"/>
+          </group>
+          <group string="الغرض والميزانية">
+            <field name="purpose"/>
+            <field name="budget_line"/>
+          </group>
+          <notebook>
+            <page string="الرفض" invisible="state != 'rejected'">
+              <field name="rejection_reason"/>
+            </page>
+            <page string="ملاحظات">
+              <field name="notes"/>
+            </page>
+          </notebook>
+        </sheet>
+        <div class="oe_chatter">
+          <field name="message_follower_ids"/>
+          <field name="activity_ids"/>
+          <field name="message_ids"/>
+        </div>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_outgoing_po_search" model="ir.ui.view">
+    <field name="name">port_said.outgoing_po.search</field>
+    <field name="model">port_said.outgoing_po</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="sequence_number"/>
+        <field name="po_number"/>
+        <field name="beneficiary_id"/>
+        <field name="daftar55_id"/>
+        <separator/>
+        <filter string="مسودة" name="f_draft" domain="[('state','=','draft')]"/>
+        <filter string="مُقيَّد" name="f_reg" domain="[('state','=','registered')]"/>
+        <filter string="مُرسَل" name="f_sent" domain="[('state','=','sent')]"/>
+        <filter string="مُنفَّذ" name="f_cleared" domain="[('state','=','cleared')]"/>
+        <filter string="مرفوض" name="f_rejected" domain="[('state','=','rejected')]"/>
+        <group expand="1" string="تجميع حسب">
+          <filter string="الحالة" name="g_state" context="{'group_by':'state'}"/>
+          <filter string="آلية الدفع" name="g_method" context="{'group_by':'payment_method'}"/>
+          <filter string="السنة المالية" name="g_fy" context="{'group_by':'fiscal_year'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <record id="action_outgoing_po" model="ir.actions.act_window">
+    <field name="name">أوامر الدفع المرسلة</field>
+    <field name="res_model">port_said.outgoing_po</field>
+    <field name="view_mode">tree,form</field>
+    <field name="search_view_id" ref="view_outgoing_po_search"/>
+  </record>
+
+</odoo>

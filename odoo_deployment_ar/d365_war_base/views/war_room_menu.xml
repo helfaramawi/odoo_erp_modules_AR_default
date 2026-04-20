@@ -1,0 +1,4 @@
+<odoo>
+    <menuitem id="menu_war_room_root" name="War Room" sequence="10" groups="d365_war_base.group_war_room_user"/>
+    <menuitem id="menu_war_room_items" name="Items" parent="menu_war_room_root" action="action_war_room_items" sequence="20" groups="d365_war_base.group_war_room_user"/>
+</odoo>

@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_stocktaking_session_manager,stock.stocktaking.session manager,model_stock_stocktaking_session,stock.group_stock_manager,1,1,1,1
+access_stocktaking_session_user,stock.stocktaking.session user,model_stock_stocktaking_session,stock.group_stock_user,1,1,1,0
+access_stocktaking_line_manager,stock.stocktaking.line manager,model_stock_stocktaking_line,stock.group_stock_manager,1,1,1,1
+access_stocktaking_line_user,stock.stocktaking.line user,model_stock_stocktaking_line,stock.group_stock_user,1,1,1,0

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<record id="view_eta_invoice_form" model="ir.ui.view">
+  <field name="name">eta.invoice.form</field>
+  <field name="model">eta.invoice</field>
+  <field name="arch" type="xml">
+    <form string="سجل الفاتورة الالكترونية ETA">
+      <header>
+        <field name="state" widget="statusbar"
+               statusbar_visible="draft,submitted,valid"/>
+      </header>
+      <sheet>
+        <div class="o_field_widget" style="margin-bottom:12px;">
+          <button name="action_submit" string="ارسال لـ ETA"
+                  type="object" class="btn btn-primary btn-sm"
+                  invisible="state not in ('draft','invalid')"/>
+          <button name="action_get_status" string="استعلام الحالة"
+                  type="object" class="btn btn-secondary btn-sm"
+                  invisible="state not in ('submitted',)"/>
+          <button name="action_cancel_at_eta" string="الغاء في ETA"
+                  type="object" class="btn btn-danger btn-sm"
+                  invisible="state not in ('valid','submitted')"
+                  groups="account.group_account_manager"/>
+        </div>
+
+        <div class="alert alert-success" role="alert" invisible="state != 'valid'">
+          <strong>تمت الموافقة من ETA</strong>
+        </div>
+        <div class="alert alert-danger" role="alert" invisible="state != 'invalid'">
+          <strong>مرفوضة من ETA:</strong>
+          <field name="eta_error_message" readonly="1" widget="text"/>
+        </div>
+
+        <group string="بيانات الارسال">
+          <group>
+            <field name="move_id" readonly="state != 'draft'"/>
+            <field name="document_type"/>
+            <field name="document_type_version"/>
+            <field name="internal_id" readonly="1"/>
+          </group>
+          <group>
+            <field name="submission_ref" readonly="1"/>
+            <field name="eta_uuid" readonly="1"/>
+            <field name="long_id" readonly="1"/>
+            <field name="submission_date" readonly="1"/>
+            <field name="validation_date" readonly="1"/>
+          </group>
+        </group>
+
+        <field name="eta_response_raw" readonly="1" widget="text"
+               invisible="not eta_response_raw" string="استجابة ETA"/>
+      </sheet>
+      <chatter/>
+    </form>
+  </field>
+</record>
+
+<record id="view_eta_invoice_list" model="ir.ui.view">
+  <field name="name">eta.invoice.list</field>
+  <field name="model">eta.invoice</field>
+  <field name="arch" type="xml">
+    <tree string="سجلات ETA"
+          decoration-success="state == 'valid'"
+          decoration-danger="state == 'invalid'"
+          decoration-warning="state == 'submitted'">
+      <field name="submission_ref"/>
+      <field name="move_id" string="الفاتورة"/>
+      <field name="document_type" string="النوع"/>
+      <field name="eta_uuid" string="UUID" optional="hide"/>
+      <field name="submission_date"/>
+      <field name="state" widget="badge"
+             decoration-success="state == 'valid'"
+             decoration-danger="state == 'invalid'"
+             decoration-warning="state == 'submitted'"
+             decoration-info="state == 'draft'"/>
+      <button name="action_submit" type="object" string="ارسال"
+              icon="fa-send" class="btn-sm btn-primary"
+              invisible="state not in ('draft','invalid')"/>
+      <button name="action_get_status" type="object" string="استعلام"
+              icon="fa-refresh" class="btn-sm btn-secondary"
+              invisible="state != 'submitted'"/>
+    </tree>
+  </field>
+</record>
+
+<record id="action_eta_invoices" model="ir.actions.act_window">
+  <field name="name">سجلات الفواتير الالكترونية ETA</field>
+  <field name="res_model">eta.invoice</field>
+  <field name="view_mode">list,form</field>
+</record>
+
+<record id="action_eta_invoices_invalid" model="ir.actions.act_window">
+  <field name="name">فواتير مرفوضة ETA</field>
+  <field name="res_model">eta.invoice</field>
+  <field name="view_mode">list,form</field>
+  <field name="domain">[('state','=','invalid')]</field>
+</record>
+
+<record id="view_account_move_eta_inherit" model="ir.ui.view">
+  <field name="name">account.move.eta.inherit</field>
+  <field name="model">account.move</field>
+  <field name="inherit_id" ref="account.view_move_form"/>
+  <field name="arch" type="xml">
+    <div name="button_box" position="inside">
+      <button name="action_view_eta_invoices" type="object"
+              class="oe_stat_button" icon="fa-file-text-o"
+              invisible="eta_invoice_count == 0">
+        <field name="eta_invoice_count" widget="statinfo" string="ETA"/>
+      </button>
+    </div>
+  </field>
+</record>
+
+</odoo>

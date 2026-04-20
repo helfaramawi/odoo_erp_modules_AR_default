@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_violation_type_tree" model="ir.ui.view">
+    <field name="name">port_said.penalty.violation_type.tree</field>
+    <field name="model">port_said.penalty.violation_type</field>
+    <field name="arch" type="xml">
+      <tree string="أنواع المخالفات">
+        <field name="code"/>
+        <field name="name"/>
+        <field name="subject_type"/>
+        <field name="severity"/>
+        <field name="legal_reference"/>
+        <field name="max_fine_percentage"/>
+        <field name="requires_investigation" optional="show"/>
+        <field name="active" widget="boolean_toggle"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_violation_type_form" model="ir.ui.view">
+    <field name="name">port_said.penalty.violation_type.form</field>
+    <field name="model">port_said.penalty.violation_type</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <div class="oe_title">
+            <label for="name"/>
+            <h1><field name="name"/></h1>
+          </div>
+          <group>
+            <group string="التصنيف">
+              <field name="code"/>
+              <field name="subject_type"/>
+              <field name="severity"/>
+              <field name="active"/>
+            </group>
+            <group string="المرجع القانوني">
+              <field name="legal_law_number"/>
+              <field name="legal_reference"/>
+            </group>
+          </group>
+          <group string="الحدود القانونية">
+            <group>
+              <field name="max_fine_percentage"/>
+              <field name="max_fine_fixed"/>
+              <field name="currency_id" invisible="1"/>
+            </group>
+            <group>
+              <field name="max_suspension_days"/>
+            </group>
+          </group>
+          <group string="الاشتراطات">
+            <field name="requires_investigation"/>
+            <field name="requires_manager_approval"/>
+          </group>
+          <group string="الجزاءات المسموحة">
+            <field name="allowed_penalty_types" nolabel="1"
+                   domain="['|', ('subject_type','=',subject_type), ('subject_type','=','both')]"
+                   widget="many2many_tags"/>
+          </group>
+          <group string="الوصف التفصيلي">
+            <field name="description" nolabel="1"/>
+          </group>
+        </sheet>
+        <div class="oe_chatter">
+          <field name="message_follower_ids"/>
+          <field name="message_ids"/>
+        </div>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_type_option_tree" model="ir.ui.view">
+    <field name="name">port_said.penalty.type_option.tree</field>
+    <field name="model">port_said.penalty.type_option</field>
+    <field name="arch" type="xml">
+      <tree string="أنواع الجزاءات">
+        <field name="sequence" widget="handle"/>
+        <field name="code"/>
+        <field name="name"/>
+        <field name="subject_type"/>
+        <field name="has_fine"/>
+        <field name="has_suspension"/>
+        <field name="is_warning_only"/>
+        <field name="active" widget="boolean_toggle"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_type_option_form" model="ir.ui.view">
+    <field name="name">port_said.penalty.type_option.form</field>
+    <field name="model">port_said.penalty.type_option</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <group>
+            <group>
+              <field name="name"/>
+              <field name="code"/>
+              <field name="subject_type"/>
+              <field name="sequence"/>
+              <field name="active"/>
+            </group>
+            <group string="الطبيعة">
+              <field name="has_fine"/>
+              <field name="has_suspension"/>
+              <field name="is_warning_only"/>
+            </group>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_violation_type" model="ir.actions.act_window">
+    <field name="name">أنواع المخالفات</field>
+    <field name="res_model">port_said.penalty.violation_type</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+  <record id="action_type_option" model="ir.actions.act_window">
+    <field name="name">أنواع الجزاءات</field>
+    <field name="res_model">port_said.penalty.type_option</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+</odoo>

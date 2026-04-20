@@ -1,0 +1,27 @@
+{
+    'name': 'لوحة القيادة التنفيذية — بورسعيد',
+    'version': '17.0.2.0.0',
+    'category': 'Dashboard/Egypt Government',
+    'summary': 'Executive Dashboard for Port Said — Real-time KPIs with Financial & Accounting section',
+    'author': 'Paradise AI Solutions',
+    'license': 'LGPL-3',
+    'depends': [
+        'base', 'web', 'mail',
+        'procurement_committee',
+        'stock_addition_permit',
+        'stock_stocktaking_eg',
+        'procurement_adjudication',
+        'l10n_eg_custody',
+        'l10n_eg_auction',
+        'port_said_daftar55',
+        'port_said_commitment',
+    ],
+    'data': [
+        'security/ir.model.access.csv',
+        'views/dashboard_views.xml',
+        'views/dashboard_menu.xml',
+    ],
+    'installable': True,
+    'application': True,
+    'auto_install': False,
+}

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="rpt_lease_collection">
+  <t t-call="web.html_container">
+    <t t-foreach="docs" t-as="doc">
+      <t t-call="web.external_layout">
+        <div class="page" style="direction:rtl;font-family:'Noto Kufi Arabic',Cairo,Arial,sans-serif;font-size:11px;">
+          <!-- ══ الهيدر الرسمي ══ -->
+          <t t-call="port_said_reports.gov_page_style"/>
+          <t t-set="dept_line" t-value="'إدارة التعاقدات'"/>
+          <t t-call="port_said_reports.gov_header"/>
+          <h2 style="text-align:center;font-size:13pt;text-decoration:underline;margin:10px 0 14px;">
+            كشف تحصيل عقود الإيجار وحق الانتفاع
+          </h2>
+          <div style="font-size:9pt;color:#444;margin-bottom:10px;text-align:center;">
+            الفترة من <t t-esc="doc.date_from"/> إلى <t t-esc="doc.date_to"/>
+            <t t-if="doc.fiscal_year"> — السنة المالية <t t-esc="doc.fiscal_year"/></t>
+          </div>
+
+          <t t-set="recs" t-value="doc._get_lease_records()"/>
+          <t t-set="total_value" t-value="sum(r.contract_value or 0 for r in recs)"/>
+          <t t-set="total_collected" t-value="sum(r.total_collected or 0 for r in recs)"/>
+          <t t-set="total_outstanding" t-value="sum(r.total_outstanding or 0 for r in recs)"/>
+
+          <!-- ملخص -->
+          <table style="width:100%;border-collapse:collapse;margin-bottom:14px;">
+            <tr>
+              <td style="width:25%;background:#1F497D;color:white;text-align:center;padding:10px;border-radius:4px 0 0 4px;"><div style="font-size:18px;font-weight:bold;"><t t-esc="len(recs)"/></div><div style="font-size:10px;">إجمالي العقود</div></td>
+              <td style="width:25%;background:#2E75B6;color:white;text-align:center;padding:10px;"><div style="font-size:13px;font-weight:bold;"><t t-esc="'{:,.2f}'.format(total_value)"/></div><div style="font-size:10px;">إجمالي قيم العقود (ج.م)</div></td>
+              <td style="width:25%;background:#375623;color:white;text-align:center;padding:10px;"><div style="font-size:13px;font-weight:bold;"><t t-esc="'{:,.2f}'.format(total_collected)"/></div><div style="font-size:10px;">إجمالي المحصَّل (ج.م)</div></td>
+              <td style="width:25%;background:#C00000;color:white;text-align:center;padding:10px;border-radius:0 4px 4px 0;"><div style="font-size:13px;font-weight:bold;"><t t-esc="'{:,.2f}'.format(total_outstanding)"/></div><div style="font-size:10px;">إجمالي المتبقي (ج.م)</div></td>
+            </tr>
+          </table>
+
+          <!-- جدول العقود -->
+          <table style="width:100%;border-collapse:collapse;font-size:10px;">
+            <thead>
+              <tr style="background:#1F497D;color:white;">
+                <th style="padding:6px;border:1px solid #ddd;">#</th>
+                <th style="padding:6px;border:1px solid #ddd;">رقم العقد</th>
+                <th style="padding:6px;border:1px solid #ddd;">المستأجر</th>
+                <th style="padding:6px;border:1px solid #ddd;">وصف الأصل</th>
+                <th style="padding:6px;border:1px solid #ddd;">تاريخ البداية</th>
+                <th style="padding:6px;border:1px solid #ddd;">تاريخ الانتهاء</th>
+                <th style="padding:6px;border:1px solid #ddd;text-align:left;">القيمة السنوية</th>
+                <th style="padding:6px;border:1px solid #ddd;text-align:left;">المحصَّل</th>
+                <th style="padding:6px;border:1px solid #ddd;text-align:left;">المتبقي</th>
+                <th style="padding:6px;border:1px solid #ddd;text-align:center;">الحالة</th>
+              </tr>
+            </thead>
+            <tbody>
+              <t t-foreach="recs" t-as="r">
+                <tr t-attf-style="background:{{ '#fff8f5' if (r.total_outstanding or 0) > 0 and r.state == 'active' else '#f0f7ee' if r_index % 2 == 0 else 'white' }};">
+                  <td style="padding:5px;border:1px solid #ddd;text-align:center;color:#888;"><t t-esc="r_index+1"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;font-weight:bold;color:#1F497D;"><t t-esc="r.name or ''"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;"><t t-esc="r.partner_id.name if r.partner_id else ''"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;"><t t-esc="r.asset_description or ''"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;"><t t-esc="r.start_date or ''"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;"><t t-esc="r.end_date or ''"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(r.contract_value or 0)"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;text-align:left;color:#375623;font-weight:bold;"><t t-esc="'{:,.2f}'.format(r.total_collected or 0)"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;text-align:left;font-weight:bold;"
+                      t-attf-style="color:{{ '#a94442' if (r.total_outstanding or 0) > 0 else '#3c763d' }};">
+                    <t t-esc="'{:,.2f}'.format(r.total_outstanding or 0)"/>
+                  </td>
+                  <td style="padding:5px;border:1px solid #ddd;text-align:center;">
+                    <span t-attf-style="padding:2px 6px;border-radius:8px;font-size:9px;font-weight:bold;background:{{ '#dff0d8' if r.state == 'active' else '#f2dede' if r.state == 'expired' else '#fcf8e3' }};color:{{ '#3c763d' if r.state == 'active' else '#a94442' if r.state == 'expired' else '#8a6d3b' }};">
+                      <t t-esc="{'draft':'مسودة','active':'ساري','expired':'منتهي'}.get(r.state, r.state)"/>
+                    </span>
+                  </td>
+                </tr>
+              </t>
+            </tbody>
+            <tfoot>
+              <tr style="background:#1F497D;color:white;font-weight:bold;">
+                <td colspan="6" style="padding:6px;border:1px solid #ddd;text-align:center;">الإجمالي (<t t-esc="len(recs)"/> عقد)</td>
+                <td style="padding:6px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(total_value)"/></td>
+                <td style="padding:6px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(total_collected)"/></td>
+                <td style="padding:6px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(total_outstanding)"/></td>
+                <td style="padding:6px;border:1px solid #ddd;"/>
+              </tr>
+            </tfoot>
+          </table>
+
+          <div style="margin-top:30px;">
+            <table style="width:100%;border-collapse:collapse;">
+              <tr>
+                <td style="width:33%;text-align:center;padding:14px;border:1px solid #ccc;"><div style="font-weight:bold;color:#1F497D;">مسؤول التحصيل</div><div style="margin-top:25px;border-top:1px solid #999;padding-top:4px;font-size:9px;color:#666;">الاسم والتوقيع</div></td>
+                <td style="width:33%;text-align:center;padding:14px;border:1px solid #ccc;"><div style="font-weight:bold;color:#1F497D;">مدير إدارة التعاقدات</div><div style="margin-top:25px;border-top:1px solid #999;padding-top:4px;font-size:9px;color:#666;">الاسم والتوقيع</div></td>
+                <td style="width:33%;text-align:center;padding:14px;border:1px solid #ccc;"><div style="font-weight:bold;color:#1F497D;">رئيس الديوان العام</div><div style="margin-top:25px;border-top:1px solid #999;padding-top:4px;font-size:9px;color:#666;">الاسم والختم الرسمي</div></td>
+              </tr>
+            </table>
+          </div>
+          
+          <!-- ══ الفوتر الرسمي ══ -->
+          <t t-set="report_name_ar" t-value="'كشف تحصيل عقود الإيجار وحق الانتفاع'"/>
+          <t t-call="port_said_reports.gov_footer"/>
+          <div style="display:none">نظام أوبو إيآر بي — الديوان العام لمحافظة بورسعيد — طُبع: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/></div>
+        </div>
+      </t>
+    </t>
+  </t>
+</template>
+</odoo>

@@ -1,0 +1,34 @@
+/* Arabic register typography for subsidiary books */
+@font-face {
+    font-family: 'Diwani Letter';
+    src: local('Diwani Letter'), local('Traditional Arabic');
+    font-weight: normal;
+}
+
+.page[dir="rtl"] {
+    font-family: 'Diwani Letter', 'Traditional Arabic', 'Arial', serif;
+    line-height: 1.4;
+}
+
+.page[dir="rtl"] table {
+    direction: rtl;
+    border-collapse: collapse;
+}
+
+.page[dir="rtl"] table th,
+.page[dir="rtl"] table td {
+    vertical-align: middle;
+}
+
+/* Numeric columns are LTR even inside RTL pages */
+.page[dir="rtl"] td[style*="text-align:left"] {
+    direction: ltr;
+    unicode-bidi: embed;
+}
+
+/* Print specific */
+@media print {
+    .page { page-break-inside: avoid; }
+    table { page-break-inside: avoid; }
+    thead { display: table-header-group; }
+}

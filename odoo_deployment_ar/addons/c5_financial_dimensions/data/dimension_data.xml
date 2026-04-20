@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <!-- Sample departments / أقسام نموذجية -->
+  <record id="dim_dept_finance" model="financial.dimension">
+    <field name="name">Finance / المالية</field>
+    <field name="code">FIN</field>
+    <field name="dimension_type">department</field>
+  </record>
+  <record id="dim_dept_ops" model="financial.dimension">
+    <field name="name">Operations / العمليات</field>
+    <field name="code">OPS</field>
+    <field name="dimension_type">department</field>
+  </record>
+  <record id="dim_dept_sales" model="financial.dimension">
+    <field name="name">Sales / المبيعات</field>
+    <field name="code">SAL</field>
+    <field name="dimension_type">department</field>
+  </record>
+  <!-- Sample regions / مناطق نموذجية -->
+  <record id="dim_region_north" model="financial.dimension">
+    <field name="name">North / الشمال</field>
+    <field name="code">NORTH</field>
+    <field name="dimension_type">region</field>
+  </record>
+  <record id="dim_region_south" model="financial.dimension">
+    <field name="name">South / الجنوب</field>
+    <field name="code">SOUTH</field>
+    <field name="dimension_type">region</field>
+  </record>
+  <record id="dim_region_central" model="financial.dimension">
+    <field name="name">Central / الوسط</field>
+    <field name="code">CTR</field>
+    <field name="dimension_type">region</field>
+  </record>
+</odoo>

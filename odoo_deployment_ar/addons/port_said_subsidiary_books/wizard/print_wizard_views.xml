@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_print_wizard_form" model="ir.ui.view">
+    <field name="name">port_said.subsidiary.print.wizard.form</field>
+    <field name="model">port_said.subsidiary.print.wizard</field>
+    <field name="arch" type="xml">
+      <form string="طباعة دفتر مساعد">
+        <sheet>
+          <group>
+            <group>
+              <field name="book_id" options="{'no_create': True}"/>
+              <field name="fiscal_year"/>
+              <field name="period_month"/>
+            </group>
+            <group>
+              <field name="only_closed"/>
+              <field name="include_zero_balance"/>
+            </group>
+          </group>
+          <group string="فلاتر اختيارية">
+            <field name="partner_ids" widget="many2many_tags"/>
+            <field name="account_ids" widget="many2many_tags"/>
+          </group>
+        </sheet>
+        <footer>
+          <button name="action_print" type="object" string="طباعة" class="oe_highlight"/>
+          <button special="cancel" string="إلغاء"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_print_wizard" model="ir.actions.act_window">
+    <field name="name">طباعة دفتر مساعد</field>
+    <field name="res_model">port_said.subsidiary.print.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+  </record>
+
+  <menuitem id="menu_print_wizard"
+            name="طباعة دفتر"
+            parent="menu_subsidiary_root"
+            action="action_print_wizard"
+            sequence="40"/>
+
+</odoo>
