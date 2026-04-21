@@ -70,7 +70,7 @@
             <field name="return_date" readonly="1"/>
           </group>
           <notebook>
-            <page string="الربط المحاسبي">
+            <page string="الربط المحاسبي" name="page_accounting">
               <group>
                 <field name="move_id" readonly="1"/>
                 <field name="payment_id" readonly="1"/>
@@ -79,10 +79,10 @@
                 <field name="payment_order_id"/>
               </group>
             </page>
-            <page string="إرتداد" invisible="state != 'returned'">
+            <page string="إرتداد" name="page_return" invisible="state != 'returned'">
               <field name="return_reason"/>
             </page>
-            <page string="ملاحظات">
+            <page string="ملاحظات" name="page_notes">
               <field name="notes"/>
             </page>
           </notebook>

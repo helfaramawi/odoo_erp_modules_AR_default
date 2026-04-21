@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <menuitem id='menu_gl_all_moves' name='دفتر الأستاذ العام' parent='port_said_subsidiary_books.menu_subsidiary_root' action='account.action_account_moves_all' sequence='40'/>
+    <menuitem id='menu_gl_sales' name='دفتر مبيعات العملاء' parent='port_said_subsidiary_books.menu_subsidiary_root' action='account.action_account_moves_journal_sales' sequence='41'/>
+    <menuitem id='menu_gl_purchase' name='دفتر مشتريات الموردين' parent='port_said_subsidiary_books.menu_subsidiary_root' action='account.action_account_moves_journal_purchase' sequence='42'/>
+    <menuitem id='menu_gl_partner' name='دفتر حركات الشركاء' parent='port_said_subsidiary_books.menu_subsidiary_root' action='account.action_account_moves_ledger_partner' sequence='43'/>
+    <menuitem id='menu_gl_journal' name='قيود اليومية' parent='port_said_subsidiary_books.menu_subsidiary_root' action='account.action_move_journal_line' sequence='44'/>
+</odoo>

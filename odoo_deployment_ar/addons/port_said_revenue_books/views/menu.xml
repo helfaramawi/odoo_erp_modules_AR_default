@@ -1,21 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
-
-  <menuitem id="menu_revenue_root"
-            name="دفاتر الإيرادات والمصروفات"
-            sequence="56"/>
-
-  <menuitem id="menu_revenue_folio"
-            name="الفوليوهات"
-            parent="menu_revenue_root"
-            action="action_revenue_folio"
-            sequence="10"/>
-
-  <menuitem id="menu_revenue_book"
-            name="تعريف الدفاتر"
-            parent="menu_revenue_root"
-            action="action_revenue_book"
-            sequence="20"
-            groups="group_revenue_manager"/>
-
+  <menuitem id='menu_revenue_root' name='دفاتر الإيرادات والمصروفات' parent='port_said_menu.menu_ps_20_accts' sequence='57'/>
+  <menuitem id='menu_revenue_folio' name='الفوليوهات' parent='menu_revenue_root' action='action_revenue_folio' sequence='10'/>
+  <menuitem id='menu_revenue_book' name='تعريف الدفاتر' parent='menu_revenue_root' action='action_revenue_book' sequence='20' groups='group_revenue_manager'/>
+  <menuitem id='menu_revenue_print' name='طباعة دفتر' parent='menu_revenue_root' action='action_revenue_print_wizard' sequence='30'/>
 </odoo>

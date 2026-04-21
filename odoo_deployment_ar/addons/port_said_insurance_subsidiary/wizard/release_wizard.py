@@ -14,7 +14,7 @@ class ReleaseWizard(models.TransientModel):
 
     bank_guarantee_ids = fields.Many2many('port_said.bank.guarantee',
         string='خطابات الضمان')
-    deposit_ids = fields.Many2many('port_said.insurance_deposit',
+    deposit_ids = fields.Many2many('port_said.insurance_deposit', relation='ins_deposit_release_wiz_rel',
         string='الإيداعات')
 
     @api.model

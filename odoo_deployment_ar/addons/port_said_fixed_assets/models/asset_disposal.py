@@ -34,7 +34,7 @@ class AssetDisposal(models.Model):
 
     disposal_date = fields.Date(
         string='تاريخ التصرف', required=True,
-        default=date.today, tracking=True
+        default=fields.Date.context_today, tracking=True
     )
     sale_value = fields.Monetary(
         string='قيمة البيع الفعلية (ج.م)',

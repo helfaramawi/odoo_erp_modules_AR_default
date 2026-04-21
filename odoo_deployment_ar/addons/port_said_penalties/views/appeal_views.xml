@@ -34,13 +34,13 @@
                   invisible="state != 'submitted'" class="oe_highlight"/>
           <button name="action_uphold" type="object" string="تأييد الجزاء"
                   invisible="state != 'under_review'"
-                  groups="group_penalty_manager"/>
+                  groups="port_said_penalties.group_penalty_manager"/>
           <button name="action_reduce" type="object" string="تخفيف"
                   invisible="state != 'under_review'" class="oe_highlight"
-                  groups="group_penalty_manager"/>
+                  groups="port_said_penalties.group_penalty_manager"/>
           <button name="action_overturn" type="object" string="إلغاء الجزاء"
                   invisible="state != 'under_review'" class="oe_highlight"
-                  groups="group_penalty_manager"/>
+                  groups="port_said_penalties.group_penalty_manager"/>
           <button name="action_withdraw" type="object" string="سحب التظلم"
                   invisible="state not in ['submitted','under_review']"/>
           <field name="state" widget="statusbar"

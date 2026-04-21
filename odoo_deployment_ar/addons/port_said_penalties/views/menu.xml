@@ -3,7 +3,8 @@
 
   <menuitem id="menu_penalty_root"
             name="دفتر الجزاءات"
-            sequence="60"/>
+            parent="port_said_menu.menu_ps_20_accts"
+            sequence="61"/>
 
   <menuitem id="menu_penalty"
             name="الجزاءات"
@@ -22,13 +23,13 @@
             parent="menu_penalty_root"
             action="action_violation_type"
             sequence="30"
-            groups="group_penalty_manager"/>
+            groups="port_said_penalties.group_penalty_manager"/>
 
   <menuitem id="menu_type_option"
             name="أنواع الجزاءات"
             parent="menu_penalty_root"
             action="action_type_option"
             sequence="40"
-            groups="group_penalty_manager"/>
+            groups="port_said_penalties.group_penalty_manager"/>
 
 </odoo>

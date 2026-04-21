@@ -42,6 +42,7 @@ class ViolationType(models.Model):
     # ── الجزاءات المتاحة لهذه المخالفة ──────────────────────────────────────
     allowed_penalty_types = fields.Many2many(
         'port_said.penalty.type_option',
+        relation='penalty_vtype_type_option_rel',
         string='أنواع الجزاء المسموحة',
         help='الجزاءات القانونية الممكنة لهذه المخالفة. '
              'عند تسجيل جزاء جديد، الاختيار محصور بهذه القائمة.')

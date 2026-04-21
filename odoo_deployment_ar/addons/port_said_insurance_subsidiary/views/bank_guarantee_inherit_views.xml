@@ -62,8 +62,6 @@
         <separator/>
         <filter string="بدون قيد محاسبي" name="f_no_move"
                 domain="[('activation_move_id','=',False), ('state','=','active')]"/>
-        <filter string="ينتهي قريباً" name="f_expiring"
-                domain="[('is_expiring_soon','=',True)]"/>
         <group expand="1" string="تجميع حسب">
           <filter string="التصنيف" name="g_class" context="{'group_by':'book_classification'}"/>
           <filter string="الحالة" name="g_state" context="{'group_by':'state'}"/>

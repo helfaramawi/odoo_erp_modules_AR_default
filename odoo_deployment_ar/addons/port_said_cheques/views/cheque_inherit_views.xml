@@ -17,7 +17,7 @@
       </xpath>
 
       <!-- أضف تبويب حقول التحصيل -->
-      <xpath expr="//page[@string='الربط المحاسبي']" position="after">
+      <xpath expr="//page[@name='page_accounting']" position="after">
         <page string="رسم التحصيل"
               invisible="cheque_category != 'for_collection'">
           <group>

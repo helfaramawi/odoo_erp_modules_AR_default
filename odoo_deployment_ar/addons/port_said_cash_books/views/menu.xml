@@ -1,39 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
-
-  <menuitem id="menu_cash_root"
-            name="دفاتر النقدية والبنك والكفالات"
-            sequence="57"/>
-
-  <menuitem id="menu_cash_folio"
-            name="فوليوهات النقدية والبنك"
-            parent="menu_cash_root"
-            action="action_cash_folio"
-            sequence="10"/>
-
-  <menuitem id="menu_payment_order"
-            name="أوامر الدفع الواردة"
-            parent="menu_cash_root"
-            action="action_payment_order"
-            sequence="20"/>
-
-  <menuitem id="menu_cheque"
-            name="الشيكات"
-            parent="menu_cash_root"
-            action="action_cheque"
-            sequence="30"/>
-
-  <menuitem id="menu_surety"
-            name="الكفالات"
-            parent="menu_cash_root"
-            action="action_surety"
-            sequence="40"/>
-
-  <menuitem id="menu_cash_book"
-            name="تعريف الدفاتر"
-            parent="menu_cash_root"
-            action="action_cash_book"
-            sequence="50"
-            groups="group_cash_manager"/>
-
+  <menuitem id='menu_cash_root' name='دفاتر النقدية والبنك والكفالات' parent='port_said_menu.menu_ps_20_accts' sequence='58'/>
+  <menuitem id='menu_cash_folio' name='فوليوهات النقدية والبنك' parent='menu_cash_root' action='action_cash_folio' sequence='10'/>
+  <menuitem id='menu_payment_order' name='أوامر الدفع الواردة' parent='menu_cash_root' action='action_payment_order' sequence='20'/>
+  <menuitem id='menu_cheque' name='الشيكات' parent='menu_cash_root' action='action_cheque' sequence='30'/>
+  <menuitem id='menu_surety' name='الكفالات' parent='menu_cash_root' action='action_surety' sequence='40'/>
+  <menuitem id='menu_cash_book' name='تعريف الدفاتر' parent='menu_cash_root' action='action_cash_book' sequence='50' groups='group_cash_manager'/>
 </odoo>

@@ -3,7 +3,8 @@
 
   <menuitem id="menu_insurance_root"
             name="دفاتر التأمينات"
-            sequence="59"/>
+            parent="port_said_menu.menu_ps_20_accts"
+            sequence="60"/>
 
   <menuitem id="menu_insurance_folio"
             name="الفوليوهات"
@@ -22,6 +23,6 @@
             parent="menu_insurance_root"
             action="action_insurance_movement"
             sequence="30"
-            groups="group_insurance_manager"/>
+            groups="port_said_insurance_subsidiary.group_insurance_manager"/>
 
 </odoo>
