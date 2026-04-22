@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_cash_book_tree" model="ir.ui.view">
+    <field name="name">port_said.cash.book.tree</field>
+    <field name="model">port_said.cash.book</field>
+    <field name="arch" type="xml">
+      <tree string="دفاتر النقدية والبنك">
+        <field name="sequence" widget="handle"/>
+        <field name="form_number"/>
+        <field name="name"/>
+        <field name="book_type"/>
+        <field name="journal_ids" widget="many2many_tags"/>
+        <field name="folio_count"/>
+        <field name="active" widget="boolean_toggle"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_cash_book_form" model="ir.ui.view">
+    <field name="name">port_said.cash.book.form</field>
+    <field name="model">port_said.cash.book</field>
+    <field name="arch" type="xml">
+      <form>
+        <header>
+          <button name="action_print_book" type="object"
+                  string="طباعة الدفتر" class="oe_highlight"/>
+          <button name="action_open_folios" type="object"
+                  string="فتح الفوليوهات"/>
+        </header>
+        <sheet>
+          <div class="oe_button_box">
+            <button name="action_open_folios" type="object"
+                    class="oe_stat_button" icon="fa-book">
+              <field name="folio_count" widget="statinfo" string="فوليوهات"/>
+            </button>
+          </div>
+          <div class="oe_title">
+            <label for="name"/>
+            <h1><field name="name"/></h1>
+          </div>
+          <group>
+            <group string="الهوية">
+              <field name="code"/>
+              <field name="form_number"/>
+              <field name="book_type"/>
+              <field name="sequence"/>
+              <field name="active"/>
+            </group>
+            <group string="الإعدادات">
+              <field name="sequence_id"/>
+              <field name="show_running_balance"/>
+              <field name="include_unreconciled"/>
+              <field name="company_id" groups="base.group_multi_company"/>
+            </group>
+          </group>
+          <group string="الربط باليوميات">
+            <field name="journal_ids" widget="many2many_tags"
+                   options="{'no_create': True}"/>
+            <field name="bank_account_id" options="{'no_create': True}"/>
+          </group>
+          <notebook>
+            <page string="ملاحظات">
+              <field name="notes"/>
+            </page>
+          </notebook>
+        </sheet>
+        <div class="oe_chatter">
+          <field name="message_follower_ids"/>
+          <field name="message_ids"/>
+        </div>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_cash_book" model="ir.actions.act_window">
+    <field name="name">تعريف الدفاتر</field>
+    <field name="res_model">port_said.cash.book</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+</odoo>

@@ -1,0 +1,23 @@
+/* Cash / bank / surety register printing */
+.page[dir="rtl"] {
+    font-family: 'Traditional Arabic', 'Arial', serif;
+    line-height: 1.4;
+}
+.page[dir="rtl"] table {
+    direction: rtl;
+    border-collapse: collapse;
+}
+.page[dir="rtl"] table th,
+.page[dir="rtl"] table td {
+    vertical-align: middle;
+}
+.page[dir="rtl"] td[style*="text-align:left"] {
+    direction: ltr;
+    unicode-bidi: embed;
+    font-variant-numeric: tabular-nums;
+}
+@media print {
+    .page { page-break-inside: avoid; }
+    table { page-break-inside: avoid; }
+    thead { display: table-header-group; }
+}
