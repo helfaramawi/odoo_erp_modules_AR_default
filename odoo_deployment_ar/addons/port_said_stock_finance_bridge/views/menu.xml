@@ -3,7 +3,7 @@
 
   <menuitem id="menu_sfb_root"
             name="ربط المخزون بالحسابات"
-            parent="general_ledger_ar.menu_helper_notebooks"
+            parent="port_said_subsidiary_books.menu_subsidiary_root"
             sequence="85"/>
 
   <menuitem id="menu_sfb_entries"

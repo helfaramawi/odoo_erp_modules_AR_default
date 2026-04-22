@@ -4,7 +4,7 @@
   <!-- تاب الفاتورة الإلكترونية ETA ضمن قائمة الحسابات -->
   <menuitem id="menu_ps_eta_root"
             name="🧾 الفاتورة الإلكترونية ETA"
-            parent="general_ledger_ar.menu_helper_notebooks"
+            parent="port_said_subsidiary_books.menu_subsidiary_root"
             sequence="90"/>
 
   <menuitem id="menu_ps_eta_invoices"

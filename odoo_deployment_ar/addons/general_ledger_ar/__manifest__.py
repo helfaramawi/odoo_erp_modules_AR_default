@@ -6,7 +6,7 @@
     'description': 'يضيف قائمة الديوان العام > الحسابات > الدفاتر المساعدة',
     'author': 'Custom',
     'license': 'LGPL-3',
-    'depends': ['account'],
+    'depends': ['account', 'port_said_subsidiary_books'],
     'data': [
         'views/menu_views.xml',
     ],

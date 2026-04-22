@@ -2,7 +2,7 @@
 <odoo>
   <menuitem id="menu_ps_gl_reports"
             name="التقارير المحاسبية"
-            parent="general_ledger_ar.menu_helper_notebooks"
+            parent="port_said_subsidiary_books.menu_subsidiary_root"
             action="port_said_gl_reports.action_gl_report_wizard"
             sequence="80"/>
 </odoo>

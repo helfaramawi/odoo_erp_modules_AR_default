@@ -2,7 +2,7 @@
 <odoo>
   <menuitem id="menu_subsidiary_root"
             name="الدفاتر المساعدة"
-            parent="general_ledger_ar.menu_helper_notebooks"
+            parent="port_said_menu.menu_ps_20_accts"
             sequence="45"/>
   <menuitem id="menu_folio"
             name="الفوليوهات"

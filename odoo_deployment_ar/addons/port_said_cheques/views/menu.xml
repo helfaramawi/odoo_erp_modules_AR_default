@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <odoo>
-  <menuitem id='menu_cheques_root' name='دفتر الشيكات وأوامر الدفع' parent='general_ledger_ar.menu_helper_notebooks' sequence='60'/>
+  <menuitem id='menu_cheques_root' name='دفتر الشيكات وأوامر الدفع' parent='port_said_subsidiary_books.menu_subsidiary_root' sequence='60'/>
   <menuitem id='menu_outgoing_po' name='أوامر الدفع المرسلة' parent='menu_cheques_root' action='action_outgoing_po' sequence='10'/>
   <menuitem id='menu_cheque_book' name='دفاتر الشيكات الورقية' parent='menu_cheques_root' action='action_cheque_book' sequence='20'/>
   <menuitem id='menu_bounced_followup' name='الشيكات المرتدة' parent='menu_cheques_root' action='action_bounced_followup' sequence='30'/>

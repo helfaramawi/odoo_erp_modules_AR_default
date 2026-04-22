@@ -3,7 +3,7 @@
 
   <menuitem id="menu_penalty_root"
             name="دفتر الجزاءات"
-            parent="general_ledger_ar.menu_helper_notebooks"
+            parent="port_said_subsidiary_books.menu_subsidiary_root"
             sequence="70"/>
 
   <menuitem id="menu_penalty"

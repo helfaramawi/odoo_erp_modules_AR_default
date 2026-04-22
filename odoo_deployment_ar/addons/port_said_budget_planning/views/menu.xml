@@ -2,7 +2,7 @@
 <odoo>
     <menuitem id="menu_budget_planning"
               name="الموازنة التقديرية"
-              parent="general_ledger_ar.menu_helper_notebooks"
+              parent="port_said_subsidiary_books.menu_subsidiary_root"
               action="port_said_budget_planning.action_budget_plans"
               sequence="75"/>
 </odoo>

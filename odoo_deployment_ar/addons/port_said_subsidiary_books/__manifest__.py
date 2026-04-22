@@ -30,7 +30,6 @@
         'port_said_daftar55',     # مرجعية لدفتر 55
         'port_said_daftar224',    # مرجعية ليومية 224
         'port_said_menu',         # القائمة الموحدة
-        'general_ledger_ar',
     ],
     'data': [
         'security/security_groups.xml',
