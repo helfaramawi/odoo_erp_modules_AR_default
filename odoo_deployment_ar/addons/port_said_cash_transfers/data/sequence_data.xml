@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="seq_cash_transfer_outgoing" model="ir.sequence">
+    <field name="name">دفتر 39 - نقود مرسلة</field>
+    <field name="code">port_said.cash_transfer.outgoing</field>
+    <field name="prefix">39-OUT/%(year)s/</field>
+    <field name="padding">4</field>
+    <field name="use_date_range">True</field>
+    <field name="company_id" eval="False"/>
+  </record>
+
+  <record id="seq_cash_transfer_incoming" model="ir.sequence">
+    <field name="name">دفتر 39 - نقود واردة</field>
+    <field name="code">port_said.cash_transfer.incoming</field>
+    <field name="prefix">39-IN/%(year)s/</field>
+    <field name="padding">4</field>
+    <field name="use_date_range">True</field>
+    <field name="company_id" eval="False"/>
+  </record>
+
+  <record id="seq_cash_transfer_folio_outgoing" model="ir.sequence">
+    <field name="name">فوليوهات نقود مرسلة</field>
+    <field name="code">port_said.cash_transfer.folio.outgoing</field>
+    <field name="prefix">FOL-OUT/%(year)s/</field>
+    <field name="padding">4</field>
+    <field name="use_date_range">True</field>
+    <field name="company_id" eval="False"/>
+  </record>
+
+  <record id="seq_cash_transfer_folio_incoming" model="ir.sequence">
+    <field name="name">فوليوهات نقود واردة</field>
+    <field name="code">port_said.cash_transfer.folio.incoming</field>
+    <field name="prefix">FOL-IN/%(year)s/</field>
+    <field name="padding">4</field>
+    <field name="use_date_range">True</field>
+    <field name="company_id" eval="False"/>
+  </record>
+
+  <!-- Cron: monthly folio generation -->
+  <record id="cron_transfer_generate_monthly" model="ir.cron">
+    <field name="name">دفاتر حركة النقود — توليد فوليوهات شهرية</field>
+    <field name="model_id" ref="model_port_said_cash_transfer_folio"/>
+    <field name="state">code</field>
+    <field name="code">model.cron_generate_monthly()</field>
+    <field name="interval_number">1</field>
+    <field name="interval_type">months</field>
+    <field name="numbercall">-1</field>
+    <field name="active" eval="True"/>
+  </record>
+
+</odoo>

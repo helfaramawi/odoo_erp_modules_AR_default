@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_cash_transfer_user,cash transfer user,model_port_said_cash_transfer,group_transfer_user,1,1,1,0
+access_cash_transfer_manager,cash transfer manager,model_port_said_cash_transfer,group_transfer_manager,1,1,1,1
+access_transfer_folio_user,transfer folio user,model_port_said_cash_transfer_folio,group_transfer_user,1,1,1,0
+access_transfer_folio_manager,transfer folio manager,model_port_said_cash_transfer_folio,group_transfer_manager,1,1,1,1
+access_print_wizard,print wizard,model_port_said_cash_transfer_print_wizard,group_transfer_user,1,1,1,1
