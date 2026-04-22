@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="rpt_commitment_status">
+  <t t-call="web.html_container">
+    <t t-foreach="docs" t-as="doc">
+      <t t-call="web.external_layout">
+        <div class="page" style="direction:rtl;font-family:'Noto Kufi Arabic',Cairo,Arial,sans-serif;font-size:11px;">
+          <!-- ══ الهيدر الرسمي ══ -->
+          <t t-call="port_said_reports.gov_page_style"/>
+          <t t-set="dept_line" t-value="'إدارة الحسابات'"/>
+          <t t-call="port_said_reports.gov_header"/>
+          <h2 style="text-align:center;font-size:13pt;text-decoration:underline;margin:10px 0 14px;">
+            كشف حالة الارتباطات والتسميح
+          </h2>
+          <div style="font-size:9pt;color:#444;margin-bottom:10px;text-align:center;">
+            الفترة من <t t-esc="doc.date_from"/> إلى <t t-esc="doc.date_to"/>
+            <t t-if="doc.fiscal_year"> — السنة المالية <t t-esc="doc.fiscal_year"/></t>
+          </div>
+
+          <t t-set="recs" t-value="doc._get_commitment_records()"/>
+          <t t-set="states_map" t-value="{'draft':'مسودة','submitted':'مُقدَّم','approved':'ارتباط معتمد','reserved':'تجنيب','cleared':'تسميح','paid':'صُرف','cancelled':'ملغي'}"/>
+
+          <!-- إحصاء حسب الحالة -->
+          <div style="margin-bottom:14px;">
+            <div style="background:#1F497D;color:white;padding:6px 10px;font-weight:bold;border-radius:4px 4px 0 0;">توزيع الارتباطات حسب الحالة</div>
+            <table style="width:100%;border-collapse:collapse;">
+              <tr>
+                <t t-foreach="['draft','submitted','approved','reserved','cleared','paid','cancelled']" t-as="st">
+                  <t t-set="st_recs" t-value="recs.filtered(lambda r: r.state == st)"/>
+                  <t t-set="st_amount" t-value="sum(r.amount_requested or 0 for r in st_recs)"/>
+                  <td style="text-align:center;padding:8px;border:1px solid #ddd;">
+                    <div style="font-size:16px;font-weight:bold;color:#1F497D;"><t t-esc="len(st_recs)"/></div>
+                    <div style="font-size:9px;color:#666;"><t t-esc="states_map.get(st, st)"/></div>
+                    <div style="font-size:9px;font-weight:bold;color:#333;"><t t-esc="'{:,.0f}'.format(st_amount)"/> ج.م</div>
+                  </td>
+                </t>
+              </tr>
+            </table>
+          </div>
+
+          <!-- جدول تفصيلي -->
+          <table style="width:100%;border-collapse:collapse;font-size:10px;">
+            <thead>
+              <tr style="background:#1F497D;color:white;">
+                <th style="padding:6px;border:1px solid #ddd;">#</th>
+                <th style="padding:6px;border:1px solid #ddd;">رقم الارتباط</th>
+                <th style="padding:6px;border:1px solid #ddd;">تاريخ الطلب</th>
+                <th style="padding:6px;border:1px solid #ddd;">الإدارة الطالبة</th>
+                <th style="padding:6px;border:1px solid #ddd;">رمز البند</th>
+                <th style="padding:6px;border:1px solid #ddd;text-align:left;">الاعتماد المقرر</th>
+                <th style="padding:6px;border:1px solid #ddd;text-align:left;">المبلغ المطلوب</th>
+                <th style="padding:6px;border:1px solid #ddd;text-align:left;">الرصيد المتاح</th>
+                <th style="padding:6px;border:1px solid #ddd;text-align:center;">الحالة</th>
+              </tr>
+            </thead>
+            <tbody>
+              <t t-foreach="recs" t-as="r">
+                <tr t-attf-style="background:{{ '#f0f7ee' if r_index % 2 == 0 else 'white' }};">
+                  <td style="padding:5px;border:1px solid #ddd;text-align:center;color:#888;"><t t-esc="r_index+1"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;font-weight:bold;color:#1F497D;"><t t-esc="r.commitment_number or ''"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;"><t t-esc="r.date_requested or ''"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;"><t t-esc="r.department_id.name if r.department_id else ''"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;"><t t-esc="r.budget_line_code or ''"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(r.budget_approved or 0)"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;text-align:left;font-weight:bold;"><t t-esc="'{:,.2f}'.format(r.amount_requested or 0)"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;text-align:left;"
+                      t-attf-style="color:{{ '#a94442' if (r.available_balance or 0) &lt; 0 else '#3c763d' }};">
+                    <t t-esc="'{:,.2f}'.format(r.available_balance or 0)"/>
+                  </td>
+                  <td style="padding:5px;border:1px solid #ddd;text-align:center;">
+                    <span style="padding:2px 6px;border-radius:8px;font-size:9px;font-weight:bold;background:#d9edf7;color:#31708f;">
+                      <t t-esc="states_map.get(r.state, r.state)"/>
+                    </span>
+                  </td>
+                </tr>
+              </t>
+            </tbody>
+            <tfoot>
+              <tr style="background:#1F497D;color:white;font-weight:bold;">
+                <td colspan="5" style="padding:6px;border:1px solid #ddd;text-align:center;">الإجمالي (<t t-esc="len(recs)"/> ارتباط)</td>
+                <td style="padding:6px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(sum(r.budget_approved or 0 for r in recs))"/></td>
+                <td style="padding:6px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(sum(r.amount_requested or 0 for r in recs))"/></td>
+                <td style="padding:6px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(sum(r.available_balance or 0 for r in recs))"/></td>
+                <td style="padding:6px;border:1px solid #ddd;"/>
+              </tr>
+            </tfoot>
+          </table>
+
+          <div style="margin-top:30px;">
+            <table style="width:100%;border-collapse:collapse;">
+              <tr>
+                <td style="width:33%;text-align:center;padding:14px;border:1px solid #ccc;"><div style="font-weight:bold;color:#1F497D;">رئيس الحسابات</div><div style="margin-top:25px;border-top:1px solid #999;padding-top:4px;font-size:9px;color:#666;">الاسم والتوقيع</div></td>
+                <td style="width:33%;text-align:center;padding:14px;border:1px solid #ccc;"><div style="font-weight:bold;color:#1F497D;">مدير الشؤون المالية</div><div style="margin-top:25px;border-top:1px solid #999;padding-top:4px;font-size:9px;color:#666;">الاسم والتوقيع</div></td>
+                <td style="width:33%;text-align:center;padding:14px;border:1px solid #ccc;"><div style="font-weight:bold;color:#1F497D;">رئيس الديوان العام</div><div style="margin-top:25px;border-top:1px solid #999;padding-top:4px;font-size:9px;color:#666;">الاسم والختم الرسمي</div></td>
+              </tr>
+            </table>
+          </div>
+          
+          <!-- ══ الفوتر الرسمي ══ -->
+          <t t-set="report_name_ar" t-value="'كشف حالة الارتباطات والتسميح'"/>
+          <t t-call="port_said_reports.gov_footer"/>
+          <div style="display:none">نظام أوبو إيآر بي — الديوان العام لمحافظة بورسعيد — طُبع: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/></div>
+        </div>
+      </t>
+    </t>
+  </t>
+</template>
+</odoo>

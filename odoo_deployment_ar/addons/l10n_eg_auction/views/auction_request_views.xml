@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ══ Auction Request Form ══════════════════════════════════════════════ -->
+    <record id="view_auction_request_form" model="ir.ui.view">
+        <field name="name">auction.request.form</field>
+        <field name="model">auction.request</field>
+        <field name="arch" type="xml">
+            <form string="طلب مزاد">
+                <header>
+                    <button name="action_confirm"      string="تأكيد" type="object" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_open_session" string="فتح الجلسة" type="object" class="btn-primary" invisible="state != 'confirmed'"/>
+                    <button name="action_start_bidding" string="بدء تسجيل العروض" type="object" invisible="state != 'session_open'"/>
+                    <button name="action_award"        string="الترسية" type="object" class="btn-primary" invisible="state != 'bidding'"/>
+                    <button name="action_done"         string="إنهاء المزاد" type="object" invisible="state != 'awarded'"/>
+                    <button name="action_cancel"       string="إلغاء" type="object" invisible="state in ['done','cancelled']"/>
+                    <button name="action_print_award"  string="طباعة إخطار الترسية" type="object" class="btn-secondary" invisible="state not in ['awarded','done']"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,session_open,bidding,awarded,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
+                    <group string="بيانات المزاد">
+                        <group>
+                            <field name="auction_type" widget="radio" options="{'horizontal': true}"/>
+                            <field name="sale_type" invisible="auction_type != 'sale'"/>
+                            <field name="tender_method"/>
+                            <field name="has_committee"/>
+                            <field name="committee_formation_ref" invisible="not has_committee"/>
+                        </group>
+                        <group>
+                            <field name="auction_date"/>
+                            <field name="venue"/>
+                            <field name="initial_deposit"/>
+                            <field name="deposit_received"/>
+                        </group>
+                    </group>
+                    <group string="الصنف / الأصل" invisible="auction_type == 'lease' and sale_type == 'property'">
+                        <group>
+                            <field name="product_id" invisible="sale_type in ['property'] or auction_type == 'lease'"/>
+                            <field name="qty"        invisible="sale_type in ['property'] or auction_type == 'lease'"/>
+                            <field name="uom_id"     invisible="sale_type in ['property'] or auction_type == 'lease'"/>
+                            <field name="asset_description" invisible="sale_type == 'movables'"/>
+                        </group>
+                        <group>
+                            <field name="estimated_value"/>
+                        </group>
+                    </group>
+                    <group string="نتيجة الترسية" invisible="state not in ['awarded','done']">
+                        <group>
+                            <field name="awarded_partner_id" readonly="1"/>
+                            <field name="awarded_amount"     readonly="1"/>
+                            <field name="award_notification_date" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="sale_order_id"    readonly="1" invisible="auction_type != 'sale'"/>
+                            <field name="lease_contract_id" readonly="1" invisible="auction_type != 'lease'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="العروض المقدمة" name="bids">
+                            <field name="bid_ids">
+                                <tree editable="bottom" decoration-success="state=='accepted'" decoration-danger="state=='rejected'">
+                                    <field name="partner_id"/>
+                                    <field name="amount"/>
+                                    <field name="deposit_paid"/>
+                                    <field name="deposit_receipt_ref"/>
+                                    <field name="state" widget="badge" decoration-success="state=='accepted'" decoration-danger="state=='rejected'"/>
+                                    <button name="action_accept" string="قبول" type="object" invisible="state != 'submitted'" class="btn-sm btn-success"/>
+                                    <button name="action_reject" string="رفض"  type="object" invisible="state != 'submitted'" class="btn-sm btn-danger"/>
+                                </tree>
+                            </field>
+                            <group>
+                                <field name="bid_count"   readonly="1"/>
+                                <field name="highest_bid" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="ملاحظات">
+                            <field name="description"/>
+                            <field name="committee_notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ══ Auction Request List ══════════════════════════════════════════════ -->
+    <record id="view_auction_request_list" model="ir.ui.view">
+        <field name="name">auction.request.list</field>
+        <field name="model">auction.request</field>
+        <field name="arch" type="xml">
+            <tree string="المزادات" decoration-info="state=='bidding'" decoration-success="state=='done'">
+                <field name="name"/>
+                <field name="auction_type"/>
+                <field name="sale_type"/>
+                <field name="tender_method"/>
+                <field name="auction_date"/>
+                <field name="bid_count"/>
+                <field name="highest_bid"/>
+                <field name="awarded_partner_id"/>
+                <field name="awarded_amount"/>
+                <field name="state" widget="badge"
+                    decoration-info="state=='bidding'"
+                    decoration-success="state in ['awarded','done']"
+                    decoration-warning="state=='session_open'"
+                    decoration-muted="state in ['draft','cancelled']"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ══ Auction Request Search ════════════════════════════════════════════ -->
+    <record id="view_auction_request_search" model="ir.ui.view">
+        <field name="name">auction.request.search</field>
+        <field name="model">auction.request</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="awarded_partner_id"/>
+                <filter name="sale"    string="بيع"   domain="[('auction_type','=','sale')]"/>
+                <filter name="lease"   string="إيجار" domain="[('auction_type','=','lease')]"/>
+                <filter name="active"  string="نشطة"  domain="[('state','in',['confirmed','session_open','bidding'])]"/>
+                <filter name="awarded" string="مرسّاة" domain="[('state','in',['awarded','done'])]"/>
+                <group expand="0" string="تجميع">
+                    <filter name="g_type"   string="النوع"       context="{'group_by':'auction_type'}"/>
+                    <filter name="g_state"  string="الحالة"      context="{'group_by':'state'}"/>
+                    <filter name="g_method" string="طريقة الطرح" context="{'group_by':'tender_method'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ══ Action + Menu ════════════════════════════════════════════════════ -->
+    <record id="action_auction_request" model="ir.actions.act_window">
+        <field name="name">المزادات</field>
+        <field name="res_model">auction.request</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+    </record>
+
+    <!-- Menu items managed by port_said_menu module under الديوان العام - محافظة بورسعيد -->
+</odoo>

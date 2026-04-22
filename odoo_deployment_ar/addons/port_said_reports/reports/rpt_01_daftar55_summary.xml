@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="rpt_gov_header">
+  <!-- ══ هيدر موحد لجميع التقارير الحكومية ══ -->
+  <div style="direction:rtl;font-family:'Noto Kufi Arabic',Cairo,Arial,sans-serif;">
+    <table style="width:100%;border-bottom:3px double #1F497D;padding-bottom:10px;margin-bottom:14px;border-collapse:collapse;">
+      <tr>
+        <td style="width:80px;text-align:center;vertical-align:middle;">
+          <div style="width:70px;height:70px;border:2px solid #1F497D;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;color:#1F497D;text-align:center;line-height:1.4;">
+            شعار<br/>بورسعيد
+          </div>
+        </td>
+        <td style="text-align:center;vertical-align:middle;">
+          <div style="font-size:11px;color:#666;">جمهورية مصر العربية</div>
+          <div style="font-size:15px;font-weight:bold;color:#1F497D;">محافظة بورسعيد — الديوان العام</div>
+          <div style="font-size:13px;font-weight:bold;color:#333;margin-top:3px;">
+            <t t-esc="report_title"/>
+          </div>
+          <div style="font-size:9px;color:#888;margin-top:2px;">
+            الفترة من <t t-esc="doc.date_from"/> إلى <t t-esc="doc.date_to"/>
+            <t t-if="doc.fiscal_year"> — السنة المالية <t t-esc="doc.fiscal_year"/></t>
+          </div>
+        </td>
+        <td style="width:110px;text-align:center;vertical-align:middle;">
+          <div style="border:1px solid #ccc;border-radius:5px;padding:6px;background:#f8f8f8;font-size:10px;">
+            <div style="color:#1F497D;font-weight:bold;">تاريخ الإصدار</div>
+            <div><t t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d')"/></div>
+            <div style="margin-top:4px;color:#666;">الوقت</div>
+            <div><t t-esc="context_timestamp(datetime.datetime.now()).strftime('%H:%M')"/></div>
+          </div>
+        </td>
+      </tr>
+    </table>
+    <t t-if="doc.department_name or doc.budget_line or (doc.state_filter and doc.state_filter != 'all')">
+      <div style="background:#EBF2FB;border:1px solid #BDD7EE;border-radius:4px;padding:6px 10px;margin-bottom:10px;font-size:10px;color:#444;">
+        <strong>معايير التصفية:</strong>
+        <t t-if="doc.department_name"> المصلحة: <t t-esc="doc.department_name"/></t>
+        <t t-if="doc.budget_line"> | البند: <t t-esc="doc.budget_line"/></t>
+        <t t-if="doc.state_filter and doc.state_filter != 'all'"> | الحالة: <t t-esc="doc.state_filter"/></t>
+      </div>
+    </t>
+  </div>
+</template>
+
+<!-- ══════════════════════════════════════════════════════════════
+     التقرير 01: ملخص دفتر 55 ع.ح
+══════════════════════════════════════════════════════════════ -->
+<template id="rpt_daftar55_summary">
+  <t t-call="web.html_container">
+    <t t-foreach="docs" t-as="doc">
+      <t t-call="web.external_layout">
+        <div class="page" style="direction:rtl;font-family:'Noto Kufi Arabic',Cairo,Arial,sans-serif;font-size:11px;">
+          <!-- ══ الهيدر الرسمي ══ -->
+          <t t-call="port_said_reports.gov_page_style"/>
+          <t t-set="dept_line" t-value="'إدارة الحسابات'"/>
+          <t t-call="port_said_reports.gov_header"/>
+          <h2 style="text-align:center;font-size:13pt;text-decoration:underline;margin:10px 0 14px;">
+            ملخص دفتر 55 ع.ح — سجل الصرف وأوامر الدفع
+          </h2>
+          <div style="font-size:9pt;color:#444;margin-bottom:10px;text-align:center;">
+            الفترة من <t t-esc="doc.date_from"/> إلى <t t-esc="doc.date_to"/>
+            <t t-if="doc.fiscal_year"> — السنة المالية <t t-esc="doc.fiscal_year"/></t>
+          </div>
+
+          <!-- ملخص إحصائي -->
+          <t t-set="recs" t-value="doc._get_daftar55_records()"/>
+          <t t-set="total_gross" t-value="sum(r.amount_gross or 0 for r in recs)"/>
+          <t t-set="total_deductions" t-value="sum(r.total_deductions or 0 for r in recs)"/>
+          <t t-set="total_net" t-value="sum(r.amount_net or 0 for r in recs)"/>
+
+          <table style="width:100%;border-collapse:collapse;margin-bottom:14px;">
+            <tr>
+              <td style="width:25%;background:#1F497D;color:white;text-align:center;padding:10px;border-radius:4px 0 0 4px;">
+                <div style="font-size:18px;font-weight:bold;"><t t-esc="len(recs)"/></div>
+                <div style="font-size:10px;">إجمالي السجلات</div>
+              </td>
+              <td style="width:25%;background:#2E75B6;color:white;text-align:center;padding:10px;">
+                <div style="font-size:14px;font-weight:bold;"><t t-esc="'{:,.2f}'.format(total_gross)"/></div>
+                <div style="font-size:10px;">إجمالي الأصل (ج.م)</div>
+              </td>
+              <td style="width:25%;background:#C55A11;color:white;text-align:center;padding:10px;">
+                <div style="font-size:14px;font-weight:bold;"><t t-esc="'{:,.2f}'.format(total_deductions)"/></div>
+                <div style="font-size:10px;">إجمالي الاستقطاعات (ج.م)</div>
+              </td>
+              <td style="width:25%;background:#375623;color:white;text-align:center;padding:10px;border-radius:0 4px 4px 0;">
+                <div style="font-size:14px;font-weight:bold;"><t t-esc="'{:,.2f}'.format(total_net)"/></div>
+                <div style="font-size:10px;">صافي المدفوعات (ج.م)</div>
+              </td>
+            </tr>
+          </table>
+
+          <!-- جدول البيانات التفصيلية -->
+          <table style="width:100%;border-collapse:collapse;font-size:10px;">
+            <thead>
+              <tr style="background:#1F497D;color:white;">
+                <th style="padding:6px;border:1px solid #ddd;text-align:center;">#</th>
+                <th style="padding:6px;border:1px solid #ddd;">رقم المسلسل</th>
+                <th style="padding:6px;border:1px solid #ddd;">تاريخ الورود</th>
+                <th style="padding:6px;border:1px solid #ddd;">المصلحة</th>
+                <th style="padding:6px;border:1px solid #ddd;">صاحب الحق</th>
+                <th style="padding:6px;border:1px solid #ddd;">البند</th>
+                <th style="padding:6px;border:1px solid #ddd;text-align:left;">الأصل</th>
+                <th style="padding:6px;border:1px solid #ddd;text-align:left;">الاستقطاعات</th>
+                <th style="padding:6px;border:1px solid #ddd;text-align:left;">الصافي</th>
+                <th style="padding:6px;border:1px solid #ddd;text-align:center;">الحالة</th>
+              </tr>
+            </thead>
+            <tbody>
+              <t t-foreach="recs" t-as="r">
+                <tr t-attf-style="background:{{ '#f0f7ee' if r_index % 2 == 0 else 'white' }};">
+                  <td style="padding:5px;border:1px solid #ddd;text-align:center;color:#888;"><t t-esc="r_index + 1"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;font-weight:bold;color:#1F497D;"><t t-esc="r.sequence_number or ''"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;"><t t-esc="r.date_received or ''"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;"><t t-esc="r.department_name or ''"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;"><t t-esc="r.vendor_id.name if r.vendor_id else ''"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;"><t t-esc="r.budget_line or ''"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(r.amount_gross or 0)"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;text-align:left;color:#C55A11;"><t t-esc="'{:,.2f}'.format(r.total_deductions or 0)"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;text-align:left;font-weight:bold;color:#375623;"><t t-esc="'{:,.2f}'.format(r.amount_net or 0)"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;text-align:center;">
+                    <span t-attf-style="padding:2px 6px;border-radius:8px;font-size:9px;font-weight:bold;background:{{ '#dff0d8' if r.state in ('posted','archived') else '#fcf8e3' if r.state == 'cleared' else '#f2dede' if r.state == 'draft' else '#d9edf7' }};color:{{ '#3c763d' if r.state in ('posted','archived') else '#8a6d3b' if r.state == 'cleared' else '#a94442' if r.state == 'draft' else '#31708f' }};">
+                      <t t-esc="{'draft':'مسودة','received':'مستلم','reviewed':'مراجعة','cleared':'مسمّح','posted':'مرحّل','archived':'محفوظ'}.get(r.state, r.state)"/>
+                    </span>
+                  </td>
+                </tr>
+              </t>
+            </tbody>
+            <tfoot>
+              <tr style="background:#1F497D;color:white;font-weight:bold;">
+                <td colspan="6" style="padding:6px;border:1px solid #ddd;text-align:center;">الإجمالي</td>
+                <td style="padding:6px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(total_gross)"/></td>
+                <td style="padding:6px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(total_deductions)"/></td>
+                <td style="padding:6px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(total_net)"/></td>
+                <td style="padding:6px;border:1px solid #ddd;"/>
+              </tr>
+            </tfoot>
+          </table>
+
+          <!-- توقيعات -->
+          <div style="margin-top:30px;">
+            <table style="width:100%;border-collapse:collapse;">
+              <tr>
+                <td style="width:33%;text-align:center;padding:14px;border:1px solid #ccc;">
+                  <div style="font-weight:bold;color:#1F497D;">رئيس الحسابات</div>
+                  <div style="margin-top:25px;border-top:1px solid #999;padding-top:4px;font-size:9px;color:#666;">الاسم والتوقيع</div>
+                </td>
+                <td style="width:33%;text-align:center;padding:14px;border:1px solid #ccc;">
+                  <div style="font-weight:bold;color:#1F497D;">مراقب الحسابات</div>
+                  <div style="margin-top:25px;border-top:1px solid #999;padding-top:4px;font-size:9px;color:#666;">الاسم والتوقيع</div>
+                </td>
+                <td style="width:33%;text-align:center;padding:14px;border:1px solid #ccc;">
+                  <div style="font-weight:bold;color:#1F497D;">رئيس الديوان العام</div>
+                  <div style="margin-top:25px;border-top:1px solid #999;padding-top:4px;font-size:9px;color:#666;">الاسم والختم الرسمي</div>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          
+          <!-- ══ الفوتر الرسمي ══ -->
+          <t t-set="report_name_ar" t-value="'ملخص دفتر 55 ع.ح — سجل الصرف وأوامر الدفع'"/>
+          <t t-call="port_said_reports.gov_footer"/>
+          <div style="display:none">
+            نظام أوبو إيآر بي — الديوان العام لمحافظة بورسعيد — طُبع: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/>
+          </div>
+        </div>
+      </t>
+    </t>
+  </t>
+</template>
+</odoo>

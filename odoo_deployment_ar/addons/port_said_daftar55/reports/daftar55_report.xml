@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="action_report_daftar55" model="ir.actions.report">
+    <field name="name">دفتر 55 ع.ح - تقرير</field>
+    <field name="model">port_said.daftar55</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_daftar55.report_daftar55_template</field>
+    <field name="report_file">port_said_daftar55.report_daftar55_template</field>
+    <field name="binding_model_id" ref="model_port_said_daftar55"/>
+    <field name="binding_type">report</field>
+  </record>
+</odoo>

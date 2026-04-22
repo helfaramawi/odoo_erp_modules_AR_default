@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_inspection_user,port_said.inspection user,model_port_said_inspection_committee,stock.group_stock_user,1,1,1,0
+access_inspection_mgr,port_said.inspection manager,model_port_said_inspection_committee,stock.group_stock_manager,1,1,1,1
+access_addition_user,port_said.warehouse.addition user,model_port_said_warehouse_addition,stock.group_stock_user,1,1,1,0
+access_addition_mgr,port_said.warehouse.addition manager,model_port_said_warehouse_addition,stock.group_stock_manager,1,1,1,1
+access_addition_line_user,port_said.warehouse.addition.line user,model_port_said_warehouse_addition_line,stock.group_stock_user,1,1,1,0

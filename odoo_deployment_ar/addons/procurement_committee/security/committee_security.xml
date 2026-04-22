@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_procurement_eg" model="ir.module.category">
+        <field name="name">التعاقدات الحكومية — بورسعيد</field>
+        <field name="sequence">85</field>
+    </record>
+
+    <!-- موظف التعاقدات — يقرأ ويُنشئ فقط -->
+    <record id="group_contract_user" model="res.groups">
+        <field name="name">موظف التعاقدات</field>
+        <field name="category_id" ref="module_category_procurement_eg"/>
+        <field name="comment">إنشاء وتعديل اللجان — لا يملك صلاحية الحذف أو الاعتماد</field>
+    </record>
+
+    <!-- مدير التعاقدات — صلاحيات كاملة -->
+    <record id="group_contract_manager" model="res.groups">
+        <field name="name">مدير التعاقدات</field>
+        <field name="category_id" ref="module_category_procurement_eg"/>
+        <field name="implied_ids" eval="[(4, ref('group_contract_user'))]"/>
+        <field name="comment">صلاحيات كاملة: تفعيل اللجان، إغلاقها، الحذف</field>
+    </record>
+
+    <!-- مدير عام — يملك كل الصلاحيات -->
+    <record id="group_contract_director" model="res.groups">
+        <field name="name">مدير عام التعاقدات</field>
+        <field name="category_id" ref="module_category_procurement_eg"/>
+        <field name="implied_ids" eval="[(4, ref('group_contract_manager'))]"/>
+        <field name="comment">مدير عام: اعتماد قرارات الترسية وإخطارها</field>
+    </record>
+</odoo>

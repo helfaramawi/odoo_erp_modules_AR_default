@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_form75_user,port_said.form75 user,model_port_said_form75,account.group_account_user,1,0,0,0
+access_form75_manager,port_said.form75 manager,model_port_said_form75,account.group_account_manager,1,1,1,0

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <template id="report_daftar224_daily">
+    <t t-call="web.html_container">
+      <t t-call="web.external_layout">
+        <div class="page" style="direction:rtl; font-family:'Amiri', 'Noto Naskh Arabic', Arial, sans-serif;">
+            <!-- ═══ هيدر الديوان العام — شعار المحافظة ═══ -->
+            <div style="direction:rtl; display:table; width:100%; border-bottom:3px double #1F497D; padding-bottom:10px; margin-bottom:14px;">
+              <!-- شعار المحافظة — يسار الصفحة (يمين في RTL) -->
+              <div style="display:table-cell; width:80px; vertical-align:middle; text-align:center;">
+                <img t-if="rec.company_id.logo"
+                     t-att-src="'data:image/png;base64,' + rec.company_id.logo.decode('utf-8')"
+                     style="max-height:70px; max-width:70px; object-fit:contain;"
+                     alt="شعار المحافظة"/>
+                <div t-else="" style="width:70px; height:70px; border:2px solid #1F497D; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:9px; color:#1F497D; text-align:center; line-height:1.3;">
+                  شعار<br/>المحافظة
+                </div>
+              </div>
+              <!-- النص المركزي -->
+              <div style="display:table-cell; vertical-align:middle; text-align:center; padding:0 10px;">
+                <div style="font-size:11px; color:#666; margin-bottom:2px;">جمهورية مصر العربية — محافظة بورسعيد</div>
+                <div style="font-size:17px; font-weight:bold; color:#1F497D; margin-bottom:2px;">الديوان العام لمحافظة بورسعيد</div>
+                <div style="font-size:13px; font-weight:bold; color:#333; margin-bottom:4px;">دفتر 224 ع.ح — السجل اليومي المزدوج</div>
+                <div style="font-size:9px; color:#999;">Paradise Integrated Solutions | إدارة المالية</div>
+              </div>
+              <!-- رقم السجل / التاريخ — يمين الصفحة (يسار في RTL) -->
+              <div style="display:table-cell; width:100px; vertical-align:middle; text-align:center; font-size:10px; color:#444;">
+                <div style="border:1px solid #ddd; border-radius:4px; padding:4px 6px; background:#f9f9f9;">
+                  <div style="color:#1F497D; font-weight:bold; margin-bottom:2px;">رقم المستند</div>
+                  <div><t t-esc="rec.display_name or ''"/></div>
+                  <div style="margin-top:4px; color:#666;">التاريخ</div>
+                  <div><t t-esc="rec.entry_date or ''"/></div>
+                </div>
+              </div>
+            </div>
+            <!-- ════════════════════════════════════════════════ -->
+
+          <table class="table table-bordered" style="font-size:11px; width:100%;">
+            <thead style="background:#1F497D; color:white;">
+              <tr>
+                <th>م</th><th>التاريخ</th><th>نوع السجل</th><th>مرجع 55</th>
+                <th>صاحب الحق</th><th>البند</th><th>الإجمالي</th><th>الخصومات</th><th>الصافي</th>
+              </tr>
+            </thead>
+            <tbody>
+              <t t-foreach="docs" t-as="rec">
+                <tr t-attf-style="background:{{ '#E8F5E9' if rec.register_type == 'taswiyat' else '#E3F2FD' }}">
+                  <td><t t-esc="rec.sequence_in_day"/></td>
+                  <td><t t-esc="rec.entry_date"/></td>
+                  <td><t t-esc="dict(rec._fields['register_type'].selection).get(rec.register_type)"/></td>
+                  <td><t t-esc="rec.daftar55_id.sequence_number or ''"/></td>
+                  <td><t t-esc="rec.vendor_id.name or ''"/></td>
+                  <td><t t-esc="rec.budget_line or ''"/></td>
+                  <td><t t-esc="rec.amount_gross"/></td>
+                  <td><t t-esc="rec.amount_deductions"/></td>
+                  <td style="font-weight:bold;"><t t-esc="rec.amount_net"/></td>
+                </tr>
+              </t>
+            </tbody>
+          </table>
+        </div>
+      </t>
+    </t>
+  </template>
+</odoo>

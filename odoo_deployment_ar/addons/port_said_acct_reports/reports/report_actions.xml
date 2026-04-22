@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="action_rpt_acct_trial_balance" model="ir.actions.report">
+    <field name="name">ميزان المراجعة الحكومي</field>
+    <field name="model">port_said.acct.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_acct_reports.rpt_acct_trial_balance</field>
+    <field name="binding_model_id" ref="model_port_said_acct_report_wizard"/>
+    <field name="binding_type">report</field>
+  </record>
+  <record id="action_rpt_acct_partner_ledger" model="ir.actions.report">
+    <field name="name">كشف حساب مورد / عميل</field>
+    <field name="model">port_said.acct.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_acct_reports.rpt_acct_partner_ledger</field>
+    <field name="binding_model_id" ref="model_port_said_acct_report_wizard"/>
+    <field name="binding_type">report</field>
+  </record>
+</odoo>

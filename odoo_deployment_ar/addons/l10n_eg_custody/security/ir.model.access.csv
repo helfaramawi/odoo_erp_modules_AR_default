@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_custody_assignment_manager,custody.assignment manager,model_custody_assignment,l10n_eg_custody.group_custody_manager,1,1,1,1
+access_custody_assignment_user,custody.assignment user,model_custody_assignment,l10n_eg_custody.group_custody_user,1,1,1,0
+access_custody_assignment_readonly,custody.assignment readonly,model_custody_assignment,base.group_user,1,0,0,0
+access_custody_transfer_manager,custody.transfer manager,model_custody_transfer,l10n_eg_custody.group_custody_manager,1,1,1,1
+access_custody_transfer_user,custody.transfer user,model_custody_transfer,l10n_eg_custody.group_custody_user,1,1,1,0
+access_custody_transfer_readonly,custody.transfer readonly,model_custody_transfer,base.group_user,1,0,0,0
+access_new_custody_wizard_user,new.custody.wizard user,model_new_custody_wizard,base.group_user,1,1,1,1

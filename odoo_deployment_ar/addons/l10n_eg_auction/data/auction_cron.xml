@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Annual lease increase recalculation — runs daily, triggers on anniversary -->
+    <record id="cron_auction_annual_increase" model="ir.cron">
+        <field name="name">مزايدات: تطبيق الزيادة السنوية على عقود الإيجار</field>
+        <field name="model_id" ref="model_auction_lease_contract"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_apply_annual_increase()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="active">True</field>
+        <field name="priority">100</field>
+    </record>
+    <!-- Daily overdue payment updater -->
+    <record id="cron_payment_overdue" model="ir.cron">
+        <field name="name">مزايدات: تحديث حالة الدفعات المتأخرة</field>
+        <field name="model_id" ref="model_payment_schedule_line"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_update_overdue()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

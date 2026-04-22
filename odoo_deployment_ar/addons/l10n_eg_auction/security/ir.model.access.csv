@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_auction_request_readonly,auction request readonly,model_auction_request,base.group_user,1,0,0,0
+access_auction_request_user,auction request user,model_auction_request,l10n_eg_auction.group_auction_user,1,1,1,0
+access_auction_request_manager,auction request manager,model_auction_request,l10n_eg_auction.group_auction_manager,1,1,1,1
+access_auction_bid_readonly,auction bid readonly,model_auction_bid,base.group_user,1,0,0,0
+access_auction_bid_user,auction bid user,model_auction_bid,l10n_eg_auction.group_auction_user,1,1,1,0
+access_auction_bid_manager,auction bid manager,model_auction_bid,l10n_eg_auction.group_auction_manager,1,1,1,1
+access_lease_contract_readonly,lease contract readonly,model_auction_lease_contract,base.group_user,1,0,0,0
+access_lease_contract_manager,lease contract manager,model_auction_lease_contract,l10n_eg_auction.group_auction_manager,1,1,1,1
+access_payment_schedule_readonly,payment schedule readonly,model_payment_schedule_line,base.group_user,1,0,0,0
+access_payment_schedule_manager,payment schedule manager,model_payment_schedule_line,l10n_eg_auction.group_auction_manager,1,1,1,1

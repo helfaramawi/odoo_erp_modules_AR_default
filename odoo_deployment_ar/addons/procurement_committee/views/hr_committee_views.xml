@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hr_employee_committee_inherit" model="ir.ui.view">
+        <field name="name">hr.employee.committee.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <!-- invisible fields needed for modifiers -->
+                <field name="is_committee_chairman" invisible="1"/>
+                <button name="action_view_committees" type="object"
+                    class="oe_stat_button" icon="fa-users"
+                    invisible="committee_count == 0">
+                    <div class="o_stat_info">
+                        <field name="committee_count" class="o_stat_value"/>
+                        <span class="o_stat_text">لجنة</span>
+                    </div>
+                </button>
+                <button name="action_view_committees" type="object"
+                    class="oe_stat_button" icon="fa-star"
+                    invisible="not is_committee_chairman">
+                    <div class="o_stat_info">
+                        <span class="o_stat_value">رئيس</span>
+                        <span class="o_stat_text">لجنة</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Enrich committee member list with HR phone/email -->
+    <record id="view_committee_member_hr_inherit" model="ir.ui.view">
+        <field name="name">committee.member.hr.inherit</field>
+        <field name="model">procurement.committee</field>
+        <field name="inherit_id" ref="procurement_committee.view_procurement_committee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='member_ids']/tree" position="attributes">
+                <attribute name="decoration-warning">not employee_active</attribute>
+            </xpath>
+            <xpath expr="//field[@name='member_ids']/tree/field[@name='notes']" position="before">
+                <field name="work_phone"      optional="show" readonly="1"/>
+                <field name="work_email"      optional="hide" readonly="1"/>
+                <field name="employee_active" column_invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

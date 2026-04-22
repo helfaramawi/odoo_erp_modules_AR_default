@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_auction_eg" model="ir.module.category">
+        <field name="name">المزايدات الحكومية — بورسعيد</field>
+        <field name="sequence">87</field>
+    </record>
+
+    <record id="group_auction_user" model="res.groups">
+        <field name="name">موظف المزايدات</field>
+        <field name="category_id" ref="l10n_eg_auction.module_category_auction_eg"/>
+        <field name="comment">تسجيل بيانات المزاد وعروض المزايدين</field>
+    </record>
+
+    <record id="group_auction_manager" model="res.groups">
+        <field name="name">مدير المزايدات</field>
+        <field name="category_id" ref="l10n_eg_auction.module_category_auction_eg"/>
+        <field name="implied_ids" eval="[(4, ref('group_auction_user'))]"/>
+        <field name="comment">قبول/رفض العروض وإخطار الترسية وإنشاء عقود الإيجار</field>
+    </record>
+</odoo>

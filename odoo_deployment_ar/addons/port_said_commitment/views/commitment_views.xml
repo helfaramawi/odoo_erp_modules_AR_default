@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_commitment_form" model="ir.ui.view">
+    <field name="name">port_said.commitment.form</field>
+    <field name="model">port_said.commitment</field>
+    <field name="arch" type="xml">
+      <form string="نموذج الارتباط">
+        <header>
+          <button name="action_submit"   string="تقديم"              type="object" class="btn-primary"  invisible="state != 'draft'"/>
+          <button name="action_approve"  string="✅ اعتماد الارتباط" type="object" class="btn-success"  invisible="state != 'submitted'"/>
+          <button name="action_reserve"  string="🔒 تجنيب"          type="object" class="btn-warning"  invisible="state != 'approved'"/>
+          <button name="action_clear"    string="✅ تسميح البند"     type="object" class="btn-success"  invisible="state != 'reserved'"/>
+          <button name="action_mark_paid" string="صُرف"             type="object"                       invisible="state != 'cleared'"/>
+          <button name="action_cancel"   string="إلغاء"   type="object" class="btn-danger" invisible="state in ('draft','paid','cancelled')"/>
+          <button name="action_print_commitment" string="طباعة" type="object" class="btn-secondary" invisible="state == 'draft'"/>
+          <field name="state" widget="statusbar"
+                 statusbar_visible="draft,submitted,approved,reserved,cleared,paid"/>
+        </header>
+        <sheet>
+          <div class="oe_title">
+            <h1><field name="commitment_number" readonly="1" placeholder="يُعيَّن تلقائياً"/></h1>
+          </div>
+          <group>
+            <group string="بيانات الارتباط">
+              <field name="fiscal_year"/>
+              <field name="date_requested"/>
+              <field name="department_id"/>
+            </group>
+            <group string="بيانات الموازنة">
+              <field name="budget_line_code"/>
+              <field name="budget_approved"/>
+              <field name="budget_consumed" readonly="1"/>
+              <field name="available_balance" readonly="1"/>
+              <field name="amount_requested"/>
+            </group>
+          </group>
+          <group string="الاعتماد والتسميح">
+            <group>
+              <field name="approved_by" readonly="1"/>
+              <field name="approved_date" readonly="1"/>
+            </group>
+            <group>
+              <field name="cleared_by" readonly="1"/>
+              <field name="cleared_date" readonly="1"/>
+            </group>
+          </group>
+          <field name="description" placeholder="وصف الاحتياج..."/>
+          <field name="notes" placeholder="ملاحظات..."/>
+        </sheet>
+        <chatter/>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_commitment_tree" model="ir.ui.view">
+    <field name="name">port_said.commitment.tree</field>
+    <field name="model">port_said.commitment</field>
+    <field name="arch" type="xml">
+      <tree string="دفتر الارتباطات">
+        <field name="commitment_number"/>
+        <field name="fiscal_year"/>
+        <field name="date_requested"/>
+        <field name="department_id"/>
+        <field name="budget_line_code"/>
+        <field name="amount_requested" sum="الإجمالي"/>
+        <field name="available_balance"/>
+        <field name="state" widget="badge"
+               decoration-success="state in ('cleared','paid')"
+               decoration-warning="state == 'reserved'"
+               decoration-info="state == 'approved'"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="action_commitment" model="ir.actions.act_window">
+    <field name="name">دفتر الارتباطات</field>
+    <field name="res_model">port_said.commitment</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+  <!-- Menu managed by port_said_menu module -->
+</odoo>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="action_rpt_chart_of_accounts" model="ir.actions.report">
+    <field name="name">دليل الحسابات المصرية</field>
+    <field name="model">port_said.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_reports.rpt_chart_of_accounts_template</field>
+    <field name="print_report_name">'دليل الحسابات - ' + object.company_id.name</field>
+    <field name="binding_model_id" ref="model_port_said_report_wizard"/>
+    <field name="binding_type">report</field>
+  </record>
+
+  <template id="rpt_chart_of_accounts_template">
+    <t t-call="web.html_container">
+      <t t-foreach="docs" t-as="wizard">
+        <t t-call="web.external_layout">
+          <div class="page" style="direction:rtl; font-family:'Cairo','Amiri',Arial,sans-serif; font-size:10px;">
+
+            <!-- Header -->
+            <div style="text-align:center; border-bottom:3px double #1F497D; padding-bottom:10px; margin-bottom:14px;">
+              <div style="font-size:11px; color:#666;">جمهورية مصر العربية — محافظة بورسعيد</div>
+              <div style="font-size:17px; font-weight:bold; color:#1F497D;">الديوان العام لمحافظة بورسعيد</div>
+              <div style="font-size:14px; font-weight:bold; margin-top:4px;">دليل الحسابات المصرية — شجرة الحسابات</div>
+              <div style="font-size:10px; color:#888; margin-top:2px;">
+                حتى تاريخ: <t t-esc="wizard.date_to"/>
+                &#160;|&#160; السنة المالية: <t t-esc="wizard.fiscal_year"/>
+                &#160;|&#160; <t t-esc="wizard.company_id.name"/>
+              </div>
+            </div>
+
+            <t t-set="accounts" t-value="wizard._get_chart_of_accounts_data()"/>
+
+            <!-- Summary boxes -->
+            <div style="display:table; width:100%; margin-bottom:12px;">
+              <div style="display:table-cell; width:25%; text-align:center; border:1px solid #1F497D; border-radius:4px; padding:6px; margin-left:4px; background:#EBF3FB;">
+                <div style="font-size:18px; font-weight:bold; color:#1F497D;"><t t-esc="len(accounts)"/></div>
+                <div style="font-size:10px; color:#555;">إجمالي الحسابات</div>
+              </div>
+              <div style="display:table-cell; width:25%; text-align:center; border:1px solid #1E7145; border-radius:4px; padding:6px; margin-left:4px; background:#EBF8EE;">
+                <div style="font-size:18px; font-weight:bold; color:#1E7145;"><t t-esc="len([a for a in accounts if not a['deprecated']])"/></div>
+                <div style="font-size:10px; color:#555;">حسابات نشطة</div>
+              </div>
+              <div style="display:table-cell; width:25%; text-align:center; border:1px solid #C55A11; border-radius:4px; padding:6px; margin-left:4px; background:#FEF3EC;">
+                <div style="font-size:18px; font-weight:bold; color:#C55A11;"><t t-esc="'{:,.0f}'.format(sum(a['debit'] for a in accounts))"/></div>
+                <div style="font-size:10px; color:#555;">إجمالي المدين</div>
+              </div>
+              <div style="display:table-cell; width:25%; text-align:center; border:1px solid #7B2C9E; border-radius:4px; padding:6px; background:#F8F0FB;">
+                <div style="font-size:18px; font-weight:bold; color:#7B2C9E;"><t t-esc="'{:,.0f}'.format(sum(a['credit'] for a in accounts))"/></div>
+                <div style="font-size:10px; color:#555;">إجمالي الدائن</div>
+              </div>
+            </div>
+
+            <!-- Table -->
+            <table style="width:100%; border-collapse:collapse; font-size:9px;">
+              <thead>
+                <tr style="background:#1F497D; color:white;">
+                  <th style="border:1px solid #ccc; padding:5px; text-align:center; width:9%;">كود الحساب</th>
+                  <th style="border:1px solid #ccc; padding:5px; text-align:right; width:30%;">اسم الحساب</th>
+                  <th style="border:1px solid #ccc; padding:5px; text-align:center; width:16%;">نوع الحساب</th>
+                  <th style="border:1px solid #ccc; padding:5px; text-align:center; width:6%;">العملة</th>
+                  <th style="border:1px solid #ccc; padding:5px; text-align:center; width:13%;">مجموع المدين</th>
+                  <th style="border:1px solid #ccc; padding:5px; text-align:center; width:13%;">مجموع الدائن</th>
+                  <th style="border:1px solid #ccc; padding:5px; text-align:center; width:13%;">الرصيد</th>
+                </tr>
+              </thead>
+              <tbody>
+                <t t-set="prev_type" t-value="''"/>
+                <t t-foreach="accounts" t-as="acc">
+                  <t t-if="acc['account_type'] != prev_type">
+                    <tr style="background:#D6E4F0;">
+                      <td colspan="7" style="border:1px solid #aac; padding:4px 8px; font-weight:bold; color:#1F497D; font-size:10px;">
+                        &#9658; <t t-esc="acc['account_type']"/>
+                      </td>
+                    </tr>
+                    <t t-set="prev_type" t-value="acc['account_type']"/>
+                  </t>
+                  <tr t-att-style="'opacity:0.6;' if acc['deprecated'] else ''">
+                    <td style="border:1px solid #eee; padding:3px 5px; text-align:center; font-family:monospace; font-weight:bold; color:#1F497D;">
+                      <t t-esc="acc['code']"/>
+                    </td>
+                    <td style="border:1px solid #eee; padding:3px 5px;">
+                      <t t-esc="acc['name']"/>
+                      <t t-if="acc['deprecated']"><span style="color:#bbb;"> ✗</span></t>
+                    </td>
+                    <td style="border:1px solid #eee; padding:3px 5px; text-align:center; color:#666;">
+                      <t t-esc="acc['account_type']"/>
+                    </td>
+                    <td style="border:1px solid #eee; padding:3px 5px; text-align:center; color:#888;">
+                      <t t-esc="acc['currency']"/>
+                    </td>
+                    <td style="border:1px solid #eee; padding:3px 5px; text-align:left; font-family:monospace;">
+                      <t t-if="acc['debit'] > 0"><t t-esc="'{:,.2f}'.format(acc['debit'])"/></t>
+                      <t t-else="">—</t>
+                    </td>
+                    <td style="border:1px solid #eee; padding:3px 5px; text-align:left; font-family:monospace;">
+                      <t t-if="acc['credit'] > 0"><t t-esc="'{:,.2f}'.format(acc['credit'])"/></t>
+                      <t t-else="">—</t>
+                    </td>
+                    <td t-att-style="'border:1px solid #eee; padding:3px 5px; text-align:left; font-family:monospace; font-weight:bold; color:' + ('#1E7145' if acc['balance'] >= 0 else '#C00000') + ';'">
+                      <t t-esc="'{:,.2f}'.format(acc['balance'])"/>
+                    </td>
+                  </tr>
+                </t>
+              </tbody>
+              <tfoot>
+                <tr style="background:#1F497D; color:white; font-weight:bold; font-size:10px;">
+                  <td colspan="4" style="border:1px solid #ccc; padding:5px; text-align:center;">الإجمالي العام</td>
+                  <td style="border:1px solid #ccc; padding:5px; text-align:left; font-family:monospace;">
+                    <t t-esc="'{:,.2f}'.format(sum(a['debit'] for a in accounts))"/>
+                  </td>
+                  <td style="border:1px solid #ccc; padding:5px; text-align:left; font-family:monospace;">
+                    <t t-esc="'{:,.2f}'.format(sum(a['credit'] for a in accounts))"/>
+                  </td>
+                  <td style="border:1px solid #ccc; padding:5px; text-align:left; font-family:monospace;">
+                    <t t-esc="'{:,.2f}'.format(sum(a['balance'] for a in accounts))"/>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <div style="margin-top:14px; font-size:9px; color:#888; text-align:center; border-top:1px solid #ccc; padding-top:6px;">
+              Paradise Integrated Solutions — نظام أوبو ERP — دليل الحسابات المصرية — محافظة بورسعيد
+            </div>
+
+          </div>
+        </t>
+      </t>
+    </t>
+  </template>
+
+</odoo>

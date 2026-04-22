@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="action_rpt_daftar55_summary" model="ir.actions.report">
+    <field name="name">ملخص دفتر 55 ع.ح</field>
+    <field name="model">port_said.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_reports.rpt_daftar55_summary</field>
+  </record>
+
+  <record id="action_rpt_commitment_status" model="ir.actions.report">
+    <field name="name">كشف حالة الارتباطات</field>
+    <field name="model">port_said.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_reports.rpt_commitment_status</field>
+  </record>
+
+  <record id="action_rpt_budget_execution" model="ir.actions.report">
+    <field name="name">تقرير تنفيذ الموازنة</field>
+    <field name="model">port_said.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_reports.rpt_budget_execution</field>
+  </record>
+
+  <record id="action_rpt_daftar224_daily" model="ir.actions.report">
+    <field name="name">تقرير دفتر 224 اليومي</field>
+    <field name="model">port_said.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_reports.rpt_daftar224_daily</field>
+  </record>
+
+  <record id="action_rpt_auction_results" model="ir.actions.report">
+    <field name="name">نتائج المزادات</field>
+    <field name="model">port_said.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_reports.rpt_auction_results</field>
+  </record>
+
+  <record id="action_rpt_lease_collection" model="ir.actions.report">
+    <field name="name">كشف تحصيل عقود الإيجار</field>
+    <field name="model">port_said.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_reports.rpt_lease_collection</field>
+  </record>
+
+  <record id="action_rpt_monthly_expenditure" model="ir.actions.report">
+    <field name="name">كشف المصروفات الشهرية</field>
+    <field name="model">port_said.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_reports.rpt_monthly_expenditure</field>
+  </record>
+
+  <record id="action_rpt_deductions_summary" model="ir.actions.report">
+    <field name="name">ملخص الاستقطاعات</field>
+    <field name="model">port_said.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_reports.rpt_deductions_summary</field>
+  </record>
+
+  <record id="action_rpt_daftar55_detail" model="ir.actions.report">
+    <field name="name">كشف تفصيلي دفتر 55 ع.ح</field>
+    <field name="model">port_said.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_reports.rpt_daftar55_detail</field>
+  </record>
+
+  <record id="action_rpt_lease_overdue" model="ir.actions.report">
+    <field name="name">كشف متأخرات عقود الإيجار</field>
+    <field name="model">port_said.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_reports.rpt_lease_overdue</field>
+  </record>
+
+  <record id="action_rpt_payment_methods" model="ir.actions.report">
+    <field name="name">توزيع المدفوعات حسب طريقة الصرف</field>
+    <field name="model">port_said.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_reports.rpt_payment_methods</field>
+  </record>
+
+  <record id="action_rpt_dept_expenditure" model="ir.actions.report">
+    <field name="name">المصروفات حسب المصلحة / الإدارة</field>
+    <field name="model">port_said.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_reports.rpt_dept_expenditure</field>
+  </record>
+
+
+  <record id="action_rpt_trial_balance" model="ir.actions.report">
+    <field name="name">ميزان المراجعة الحكومي</field>
+    <field name="model">port_said.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_reports.rpt_trial_balance</field>
+    <field name="binding_model_id" ref="model_port_said_report_wizard"/>
+    <field name="binding_type">report</field>
+  </record>
+
+  <record id="action_rpt_partner_ledger" model="ir.actions.report">
+    <field name="name">كشف حساب مورد / عميل</field>
+    <field name="model">port_said.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_reports.rpt_partner_ledger</field>
+    <field name="binding_model_id" ref="model_port_said_report_wizard"/>
+    <field name="binding_type">report</field>
+  </record>
+
+
+  <record id="action_rpt_general_ledger" model="ir.actions.report">
+    <field name="name">دفتر الأستاذ العام</field>
+    <field name="model">port_said.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_reports.rpt_general_ledger</field>
+    <field name="binding_model_id" ref="model_port_said_report_wizard"/>
+    <field name="binding_type">report</field>
+  </record>
+
+  <record id="action_rpt_budget_summary" model="ir.actions.report">
+    <field name="name">ملخص الموازنة التقديرية</field>
+    <field name="model">port_said.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_reports.rpt_budget_summary_gov</field>
+    <field name="binding_model_id" ref="model_port_said_report_wizard"/>
+    <field name="binding_type">report</field>
+  </record>
+
+
+  <record id="action_rpt_budget_variance" model="ir.actions.report">
+    <field name="name">تقرير الانحرافات عن الموازنة</field>
+    <field name="model">port_said.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_reports.rpt_budget_variance</field>
+    <field name="binding_model_id" ref="model_port_said_report_wizard"/>
+    <field name="binding_type">report</field>
+  </record>
+  <record id="action_rpt_budget_by_dept" model="ir.actions.report">
+    <field name="name">تنفيذ الموازنة حسب الإدارة</field>
+    <field name="model">port_said.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_reports.rpt_budget_by_dept</field>
+    <field name="binding_model_id" ref="model_port_said_report_wizard"/>
+    <field name="binding_type">report</field>
+  </record>
+  <record id="action_rpt_aging_suppliers" model="ir.actions.report">
+    <field name="name">تقرير أعمار الموردين</field>
+    <field name="model">port_said.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_reports.rpt_aging_suppliers</field>
+    <field name="binding_model_id" ref="model_port_said_report_wizard"/>
+    <field name="binding_type">report</field>
+  </record>
+  <record id="action_rpt_aging_customers" model="ir.actions.report">
+    <field name="name">تقرير أعمار العملاء</field>
+    <field name="model">port_said.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_reports.rpt_aging_customers</field>
+    <field name="binding_model_id" ref="model_port_said_report_wizard"/>
+    <field name="binding_type">report</field>
+  </record>
+  <record id="action_rpt_cash_bank" model="ir.actions.report">
+    <field name="name">حركة الصندوق والبنك</field>
+    <field name="model">port_said.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_reports.rpt_cash_bank</field>
+    <field name="binding_model_id" ref="model_port_said_report_wizard"/>
+    <field name="binding_type">report</field>
+  </record>
+  <record id="action_rpt_advances_register" model="ir.actions.report">
+    <field name="name">سجل السلف القائمة</field>
+    <field name="model">port_said.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_reports.rpt_advances_register_gov</field>
+    <field name="binding_model_id" ref="model_port_said_report_wizard"/>
+    <field name="binding_type">report</field>
+  </record>
+  <record id="action_rpt_guarantees_register" model="ir.actions.report">
+    <field name="name">سجل خطابات الضمان</field>
+    <field name="model">port_said.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_reports.rpt_guarantees_register_gov</field>
+    <field name="binding_model_id" ref="model_port_said_report_wizard"/>
+    <field name="binding_type">report</field>
+  </record>
+  <record id="action_rpt_stock_valuation" model="ir.actions.report">
+    <field name="name">كشف المخزون بالقيمة</field>
+    <field name="model">port_said.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_reports.rpt_stock_valuation_gov</field>
+    <field name="binding_model_id" ref="model_port_said_report_wizard"/>
+    <field name="binding_type">report</field>
+  </record>
+
+</odoo>
+<!-- append before closing odoo tag -->

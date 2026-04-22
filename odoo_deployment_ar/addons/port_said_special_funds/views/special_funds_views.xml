@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <!-- Fund form -->
+  <record id="view_special_fund_form" model="ir.ui.view">
+    <field name="name">port_said.special_fund.form</field>
+    <field name="model">port_said.special_fund</field>
+    <field name="arch" type="xml">
+      <form string="الصندوق الخاص">
+        <sheet>
+          <div class="oe_title"><h1><field name="name_ar"/></h1></div>
+          <group>
+            <group>
+              <field name="fund_code"/><field name="fund_type"/>
+              <field name="responsible_manager_id"/>
+            </group>
+            <group>
+              <field name="budget_approved"/>
+              <field name="total_revenue" readonly="1"/>
+              <field name="total_expenditure" readonly="1"/>
+              <field name="current_balance" readonly="1"/>
+            </group>
+          </group>
+          <div class="alert alert-warning" invisible="current_balance >= 0">
+            <strong>⚠️ تحذير: الرصيد سالب — يُعد ذلك مخالفة مالية!</strong>
+          </div>
+          <field name="transaction_ids">
+            <tree><field name="date"/><field name="transaction_type" widget="badge"/><field name="description"/><field name="amount"/><field name="state" widget="badge"/></tree>
+          </field>
+        </sheet>
+        <chatter/>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_special_funds" model="ir.actions.act_window">
+    <field name="name">الصناديق والحسابات الخاصة</field>
+    <field name="res_model">port_said.special_fund</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+    <!-- Menus managed by port_said_menu -->
+
+  <menuitem id="menu_ps_special_funds"
+            name="الصناديق والحسابات الخاصة"
+            parent="port_said_menu.menu_ps_20_accts"
+            action="port_said_special_funds.action_special_funds"
+            sequence="22"/>
+</odoo>

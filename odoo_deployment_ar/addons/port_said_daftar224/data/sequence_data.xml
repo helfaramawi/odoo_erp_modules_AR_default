@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="seq_daftar224" model="ir.sequence">
+    <field name="name">دفتر 224 ع.ح</field>
+    <field name="code">port_said.daftar224</field>
+    <field name="prefix">224/%(year)s/</field>
+    <field name="padding">4</field>
+    <field name="number_next">1</field>
+    <field name="number_increment">1</field>
+    <field name="use_date_range">True</field>
+  </record>
+</odoo>

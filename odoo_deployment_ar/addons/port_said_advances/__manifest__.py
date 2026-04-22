@@ -1,0 +1,27 @@
+{
+    'name': 'السلف والضمانات البنكية — محافظة بورسعيد',
+    'summary': 'FR-D-03: سلف مستديمة (62 ع.ح) + دفعات مقدمة + خطابات ضمان بنكية',
+    'version': '17.0.2.0.0',
+    'category': 'Accounting/Egypt Government',
+    'author': 'Paradise Integrated Solutions',
+    'license': 'LGPL-3',
+    'depends': [
+        'base', 'mail', 'account', 'hr', 'purchase',
+        'port_said_daftar55',
+        'port_said_commitment',
+        'port_said_dossier',
+    ],
+    'data': [
+        'security/ir.model.access.csv',
+        'data/sequences.xml',
+        'views/advance_views.xml',
+        'views/bank_guarantee_views.xml',
+        'views/menu.xml',
+        'reports/report_actions.xml',
+        'reports/report_advance_form62.xml',
+        'reports/report_bank_guarantee.xml',
+        'reports/report_advances_register.xml',
+    ],
+    'installable': True,
+    'application': False,
+}

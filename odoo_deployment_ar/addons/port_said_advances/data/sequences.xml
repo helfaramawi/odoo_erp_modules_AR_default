@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_advance" model="ir.sequence">
+        <field name="name">سلفة حكومية</field>
+        <field name="code">port_said.advance</field>
+        <field name="prefix">ADV/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="number_next">1</field>
+    </record>
+    <record id="seq_bank_guarantee" model="ir.sequence">
+        <field name="name">خطاب ضمان</field>
+        <field name="code">port_said.bank.guarantee</field>
+        <field name="prefix">BG/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="number_next">1</field>
+    </record>
+</odoo>

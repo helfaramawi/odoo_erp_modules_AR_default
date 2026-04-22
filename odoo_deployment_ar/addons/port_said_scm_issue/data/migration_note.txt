@@ -1,0 +1,23 @@
+MIGRATION NOTE — v17.0.1.1.0
+==============================
+اذا كانت هناك أذونات صرف مرحّلة قبل هذا التحديث (بدون issue_register_line_id)،
+يجب تشغيل السكريبت التالي من Odoo Shell مرة واحدة فقط بعد التحديث:
+
+env['stock.issue.permit'].search([
+    ('state', '=', 'posted'),
+    ('issue_register_line_id', '=', False),
+]).mapped(lambda p: env['stock.issue.register.line'].create({
+    'issue_permit_id': p.id,
+    'issue_date': p.issue_date,
+    'issue_type': dict(p._fields['issue_type'].selection).get(p.issue_type, p.issue_type),
+    'warehouse_id': p.warehouse_id.id if p.warehouse_id else False,
+    'requesting_dept': p.requesting_dept,
+    'form50_ref': p.reference_no,
+    'purpose': p.purpose,
+    'storekeeper_id': p.storekeeper_id.id if p.storekeeper_id else False,
+    'total_value': p.total_value,
+    'journal_entry_id': p.journal_entry_id.id if p.journal_entry_id else False,
+}) and p.write({'issue_register_line_id': env['stock.issue.register.line'].search(
+    [('issue_permit_id', '=', p.id)], limit=1).id}))
+
+env.cr.commit()

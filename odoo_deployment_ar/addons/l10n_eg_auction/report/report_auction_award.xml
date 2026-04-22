@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_auction_award" model="ir.actions.report">
+        <field name="name">إخطار الترسية - Award Notification</field>
+        <field name="model">auction.request</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">l10n_eg_auction.report_auction_award_template</field>
+        <field name="print_report_name">'إخطار الترسية - ' + (object.name or '')</field>
+        <field name="binding_model_id" ref="model_auction_request"/>
+<field name="paperformat_id" ref="l10n_eg_auction.paperformat_gov_a4"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_auction_award_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                
+                    <t t-call="web.external_layout">
+                
+                    <div class="page" style="direction:rtl;font-family:'Amiri','Noto Naskh Arabic',Arial,sans-serif;font-size:12pt;">
+<style>
+    .o_company_logo,.o_address_name,.o_report_layout_header,header.o_report_layout_header,
+    .odoo-header,.header-content,footer,.footer,.o_footer{display:none!important;}
+    .page{margin-top:0!important;padding-top:0!important;}
+</style>
+
+                        
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:6px;border-bottom:2px solid #000;padding-bottom:6px;">
+                            <tr>
+                                <td style="width:78px;text-align:center;vertical-align:top;">&#160;</td>
+                                <td style="text-align:center;vertical-align:middle;">
+                                    <div style="font-size:13pt;font-weight:bold;">جمهورية مصر العربية</div>
+                                    <div style="font-size:12pt;font-weight:bold;">محافظة بورسعيد</div>
+                                    <div style="font-size:11pt;">الإدارة العامة للشؤون المالية والإدارية</div>
+                                    <div style="font-size:11pt;font-weight:bold;">إدارة التعاقدات</div>
+                                </td>
+                                <td style="width:78px;text-align:center;vertical-align:middle;">
+                                    <img src="data:image/png;base64,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" style="width:70px;height:70px;object-fit:contain;" alt="محافظة بورسعيد"/>
+                                </td>
+                            </tr>
+                        </table>
+                        <h2 style="text-align:center;text-decoration:underline;margin-bottom:20px;">إخطار الترسية</h2>
+
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:16px;">
+                            <tr>
+                                <td style="border:1px solid #000;padding:7px;background:#f0f0f0;font-weight:bold;width:30%;">رقم المزاد</td>
+                                <td style="border:1px solid #000;padding:7px;"><t t-esc="doc.name"/></td>
+                                <td style="border:1px solid #000;padding:7px;background:#f0f0f0;font-weight:bold;width:20%;">تاريخ الإخطار</td>
+                                <td style="border:1px solid #000;padding:7px;"><t t-esc="doc.award_notification_date"/></td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #000;padding:7px;background:#f0f0f0;font-weight:bold;">نوع المزاد</td>
+                                <td style="border:1px solid #000;padding:7px;">
+                                    <t t-if="doc.auction_type == 'sale'">بيع</t>
+                                    <t t-else="">إيجار / حق انتفاع</t>
+                                </td>
+                                <td style="border:1px solid #000;padding:7px;background:#f0f0f0;font-weight:bold;">طريقة الطرح</td>
+                                <td style="border:1px solid #000;padding:7px;">
+                                    <t t-if="doc.tender_method == 'public'">مزايدة عامة</t>
+                                    <t t-elif="doc.tender_method == 'local'">مزايدة محلية</t>
+                                    <t t-else="">اتفاق مباشر</t>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <p style="margin-bottom:14px;line-height:1.8;">
+                            <strong>يُشعر </strong>السيد/ <strong><t t-esc="doc.awarded_partner_id.name"/></strong>
+                            بأنه قد تمت الترسية عليه في مزاد رقم (<t t-esc="doc.name"/>)
+                            المنعقد بتاريخ <t t-esc="doc.auction_date"/>
+                            بمبلغ <strong><t t-esc="'{:,.2f}'.format(doc.awarded_amount)"/> جنيه مصري</strong>
+                            عن: <t t-esc="doc.asset_description or doc.product_id.name or doc.description or ''"/>
+                        </p>
+
+                        <t t-if="doc.auction_type == 'sale'">
+                            <p style="line-height:1.8;">
+                                يرجى التفضل بتسديد المبلغ المستحق والتوقيع على عقد البيع خلال
+                                <strong>ثلاثة أيام عمل</strong> من تاريخ هذا الإخطار.
+                                رقم أمر البيع: <strong><t t-esc="doc.sale_order_id.name if doc.sale_order_id else '—'"/></strong>
+                            </p>
+                        </t>
+                        <t t-else="">
+                            <p style="line-height:1.8;">
+                                يرجى التفضل بتسديد التأمين النهائي والتوقيع على عقد الإيجار خلال
+                                <strong>أسبوع</strong> من تاريخ هذا الإخطار.
+                                رقم العقد: <strong><t t-esc="doc.lease_contract_id.name if doc.lease_contract_id else '—'"/></strong>
+                            </p>
+                        </t>
+
+                        <div style="margin-top:40px;">
+                            <table style="width:100%;border-collapse:collapse;">
+                                <tr>
+                                    <td style="border:1px solid #000;padding:20px 15px;text-align:center;width:50%;">
+                                        <p style="font-weight:bold;margin:0;">مدير إدارة التعاقدات</p>
+                                        <p style="margin-top:40px;color:#555;">التوقيع: .........................</p>
+                                        <p style="color:#555;">التاريخ: .........................</p>
+                                    </td>
+                                    <td style="border:1px solid #000;padding:20px 15px;text-align:center;width:50%;">
+                                        <p style="font-weight:bold;margin:0;">الفائز بالمزاد - <t t-esc="doc.awarded_partner_id.name"/></p>
+                                        <p style="margin-top:40px;color:#555;">التوقيع: .........................</p>
+                                        <p style="color:#555;">التاريخ: .........................</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <div style="margin-top:6px;font-size:8pt;color:#555;text-align:center;border-top:1px solid #ccc;padding-top:4px;">
+                            نظام أوبو إيآر بي — Paradise AI Solutions طُبع بتاريخ: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%Y %H:%M')"/> إخطار الترسية — محافظة بورسعيد
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

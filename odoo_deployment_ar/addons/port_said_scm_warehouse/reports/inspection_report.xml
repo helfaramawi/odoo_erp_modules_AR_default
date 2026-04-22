@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="action_report_inspection" model="ir.actions.report">
+    <field name="name">محضر لجنة الفحص — نموذج 12</field>
+    <field name="model">port_said.inspection.committee</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_scm_warehouse.report_inspection_template</field>
+    <field name="binding_model_id" ref="model_port_said_inspection_committee"/>
+    <field name="binding_type">report</field>
+  </record>
+</odoo>

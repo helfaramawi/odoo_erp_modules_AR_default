@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_aging_wizard_form" model="ir.ui.view">
+    <field name="name">aging.report.wizard.form</field>
+    <field name="model">aging.report.wizard</field>
+    <field name="arch" type="xml">
+      <form string="AR/AP Aging Report / تقرير الأعمار">
+        <group>
+          <group><field name="report_type"/><field name="as_of_date"/>
+            <field name="company_id" groups="base.group_multi_company"/></group>
+        </group>
+        <group string="Filter Partners / تصفية الشركاء">
+          <field name="partner_ids" widget="many2many_tags" nolabel="1"/></group>
+        <footer>
+          <button name="action_print_report" string="Print / طباعة" type="object" class="btn-primary"/>
+          <button string="Cancel / إلغاء" special="cancel"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+  <record id="action_aging_report_wizard" model="ir.actions.act_window">
+    <field name="name">AR/AP Aging Report / تقرير الأعمار</field>
+    <field name="res_model">aging.report.wizard</field>
+    <field name="view_mode">form</field><field name="target">new</field>
+  </record>
+  <menuitem id="menu_aging_report" name="Aging Report / تقرير الأعمار"
+    parent="account.menu_finance_reports" action="action_aging_report_wizard" sequence="30"/>
+</odoo>

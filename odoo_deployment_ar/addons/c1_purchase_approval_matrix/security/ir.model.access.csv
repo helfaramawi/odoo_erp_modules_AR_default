@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_purchase_approval_threshold,purchase.approval.threshold,model_purchase_approval_threshold,purchase.group_purchase_manager,1,1,1,1
+access_purchase_approval_threshold_user,purchase.approval.threshold.user,model_purchase_approval_threshold,,1,0,0,0
+access_purchase_approval_log,purchase.approval.log,model_purchase_approval_log,base.group_user,1,0,1,0
+access_purchase_rejection_wizard,purchase.rejection.wizard,model_purchase_rejection_wizard,base.group_user,1,1,1,1

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1F4E79;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#1F4E79CC;stop-opacity:1"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  
+  <!-- Background rounded square -->
+  <rect width="100" height="100" rx="18" ry="18" fill="url(#bgGrad)"/>
+  
+  <!-- Icon shape -->
+  
+        <rect x="26" y="46" width="48" height="34" rx="3" fill="#FFFFFF" opacity="0.9"/>
+        <rect x="22" y="38" width="56" height="10" rx="2" fill="#FFFFFF"/>
+        <rect x="36" y="52" width="28" height="4" rx="2" fill="#1F4E79" opacity="0.5"/>
+        
+  
+  <!-- Arabic label at bottom -->
+  <text x="50" y="92" 
+        font-family="Arial, sans-serif" 
+        font-size="11"
+        font-weight="bold"
+        fill="#FFFFFF"
+        text-anchor="middle"
+        opacity="0.85">عهد</text>
+</svg>

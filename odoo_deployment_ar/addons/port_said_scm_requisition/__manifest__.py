@@ -1,0 +1,19 @@
+{
+    'name': 'طلب الاحتياج — التدبير والمشتريات',
+    'summary': 'C-SCM-01: Purchase Requisition with Budget Commitment Auto-Integration',
+    'version': '17.0.1.0.0',
+    'author': 'Paradise Integrated Solutions',
+    'license': 'LGPL-3',
+    'depends': ['purchase', 'port_said_commitment', 'mail',
+        'uom'],
+    'data': [
+        'security/ir.model.access.csv',
+        'data/sequence_data.xml',
+        'views/requisition_views.xml',
+        'reports/requisition_report.xml',
+        'reports/requisition_template.xml',
+        'reports/requisition_report.xml',
+        'reports/requisition_template.xml',
+    ],
+    'installable': True,
+}

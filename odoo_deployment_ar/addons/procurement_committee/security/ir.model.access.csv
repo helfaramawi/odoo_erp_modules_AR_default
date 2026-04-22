@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_committee_readonly,committee readonly,model_procurement_committee,base.group_user,1,0,0,0
+access_committee_user,committee user,model_procurement_committee,procurement_committee.group_contract_user,1,1,1,0
+access_committee_manager,committee manager,model_procurement_committee,procurement_committee.group_contract_manager,1,1,1,1
+access_committee_member_readonly,committee.member readonly,model_committee_member,base.group_user,1,0,0,0
+access_committee_member_user,committee.member user,model_committee_member,procurement_committee.group_contract_user,1,1,1,0
+access_committee_member_manager,committee.member manager,model_committee_member,procurement_committee.group_contract_manager,1,1,1,1

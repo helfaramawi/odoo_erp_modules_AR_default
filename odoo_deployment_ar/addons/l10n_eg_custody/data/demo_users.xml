@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- ══════════════════════════════════════════════════════════════
+         مستخدمو العرض التجريبي — الديوان العام لمحافظة بورسعيد
+         noupdate="1" → لا يُعاد إنشاؤهم عند كل Upgrade
+         كلمة المرور الموحدة: Diwan@2024
+    ══════════════════════════════════════════════════════════════════ -->
+
+    <!-- 1. مدير عام — أشرف محمد علي -->
+    <record id="user_director_general" model="res.users">
+        <field name="name">أشرف محمد علي</field>
+        <field name="login">ashraf.ali</field>
+        <field name="email">ashraf.ali@portsaid.gov.eg</field>
+        <field name="password">Diwan@2024</field>
+        <field name="groups_id" eval="[
+            (4, ref('base.group_user')),
+            (4, ref('base.group_system')),
+            (4, ref('l10n_eg_custody.group_custody_manager')),
+            (4, ref('procurement_committee.group_contract_director')),
+            (4, ref('stock_addition_permit.group_warehouse_manager')),
+            (4, ref('stock_stocktaking_eg.group_stocktaking_chairman')),
+            (4, ref('procurement_adjudication.group_adjudication_director')),
+            (4, ref('l10n_eg_auction.group_auction_manager')),
+            (4, ref('purchase.group_purchase_manager')),
+            (4, ref('stock.group_stock_manager')),
+        ]"/>
+    </record>
+
+    <!-- 2. مدير التعاقدات — نادية عبد السلام -->
+    <record id="user_contracts_manager" model="res.users">
+        <field name="name">نادية عبد السلام</field>
+        <field name="login">nadia.salam</field>
+        <field name="email">nadia.salam@portsaid.gov.eg</field>
+        <field name="password">Diwan@2024</field>
+        <field name="groups_id" eval="[
+            (4, ref('base.group_user')),
+            (4, ref('procurement_committee.group_contract_manager')),
+            (4, ref('procurement_adjudication.group_adjudication_director')),
+            (4, ref('l10n_eg_auction.group_auction_manager')),
+            (4, ref('purchase.group_purchase_manager')),
+            (4, ref('stock.group_stock_user')),
+        ]"/>
+    </record>
+
+    <!-- 3. موظف التعاقدات — إسلام أيمن -->
+    <record id="user_contracts_officer" model="res.users">
+        <field name="name">إسلام أيمن</field>
+        <field name="login">eslam.ayman</field>
+        <field name="email">eslam.ayman@portsaid.gov.eg</field>
+        <field name="password">Diwan@2024</field>
+        <field name="groups_id" eval="[
+            (4, ref('base.group_user')),
+            (4, ref('procurement_committee.group_contract_user')),
+            (4, ref('procurement_adjudication.group_adjudication_member')),
+            (4, ref('l10n_eg_auction.group_auction_user')),
+            (4, ref('purchase.group_purchase_user')),
+            (4, ref('stock.group_stock_user')),
+        ]"/>
+    </record>
+
+    <!-- 4. رئيس لجنة البت — خالد إبراهيم -->
+    <record id="user_adjudication_chairman" model="res.users">
+        <field name="name">خالد إبراهيم</field>
+        <field name="login">khaled.ibrahim</field>
+        <field name="email">khaled.ibrahim@portsaid.gov.eg</field>
+        <field name="password">Diwan@2024</field>
+        <field name="groups_id" eval="[
+            (4, ref('base.group_user')),
+            (4, ref('procurement_committee.group_contract_user')),
+            (4, ref('procurement_adjudication.group_adjudication_chairman')),
+            (4, ref('purchase.group_purchase_user')),
+            (4, ref('stock.group_stock_user')),
+        ]"/>
+    </record>
+
+    <!-- 5. مدير المخازن — هاني سمير -->
+    <record id="user_warehouse_manager" model="res.users">
+        <field name="name">هاني سمير</field>
+        <field name="login">hany.samir</field>
+        <field name="email">hany.samir@portsaid.gov.eg</field>
+        <field name="password">Diwan@2024</field>
+        <field name="groups_id" eval="[
+            (4, ref('base.group_user')),
+            (4, ref('l10n_eg_custody.group_custody_manager')),
+            (4, ref('stock_addition_permit.group_warehouse_manager')),
+            (4, ref('stock_stocktaking_eg.group_stocktaking_chairman')),
+            (4, ref('stock.group_stock_manager')),
+            (4, ref('purchase.group_purchase_user')),
+        ]"/>
+    </record>
+
+    <!-- 6. أمين المخزن — محمد عبد الله -->
+    <record id="user_storekeeper" model="res.users">
+        <field name="name">محمد عبد الله</field>
+        <field name="login">mohamed.abdallah</field>
+        <field name="email">m.abdallah@portsaid.gov.eg</field>
+        <field name="password">Diwan@2024</field>
+        <field name="groups_id" eval="[
+            (4, ref('base.group_user')),
+            (4, ref('l10n_eg_custody.group_custody_user')),
+            (4, ref('stock_addition_permit.group_storekeeper')),
+            (4, ref('stock_stocktaking_eg.group_stocktaking_user')),
+            (4, ref('stock.group_stock_user')),
+        ]"/>
+    </record>
+
+    <!-- 7. مفتش المخزن — سامي حسن -->
+    <record id="user_inspector" model="res.users">
+        <field name="name">سامي حسن</field>
+        <field name="login">sami.hassan</field>
+        <field name="email">sami.hassan@portsaid.gov.eg</field>
+        <field name="password">Diwan@2024</field>
+        <field name="groups_id" eval="[
+            (4, ref('base.group_user')),
+            (4, ref('stock_addition_permit.group_inspector')),
+            (4, ref('stock_stocktaking_eg.group_stocktaking_user')),
+            (4, ref('stock.group_stock_user')),
+        ]"/>
+    </record>
+
+</odoo>

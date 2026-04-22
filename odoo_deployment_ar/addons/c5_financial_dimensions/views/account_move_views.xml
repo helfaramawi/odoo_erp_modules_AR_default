@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_move_line_dimensions" model="ir.ui.view">
+    <field name="name">account.move.line.dimensions</field>
+    <field name="model">account.move.line</field>
+    <field name="inherit_id" ref="account.view_move_line_tree"/>
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='analytic_distribution']" position="after">
+        <field name="x_dimension_department_id" optional="show" string="Dept / القسم"/>
+        <field name="x_dimension_project_id" optional="show" string="Project / المشروع"/>
+        <field name="x_dimension_region_id" optional="show" string="Region / المنطقة"/>
+      </xpath>
+    </field>
+  </record>
+
+  <record id="view_account_account_form_dims" model="ir.ui.view">
+    <field name="name">account.account.form.dims</field>
+    <field name="model">account.account</field>
+    <field name="inherit_id" ref="account.view_account_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//group[last()]" position="after">
+        <group string="Dimension Validation / التحقق من الأبعاد">
+          <field name="x_requires_department"/>
+          <field name="x_requires_project"/>
+          <field name="x_requires_region"/>
+        </group>
+      </xpath>
+    </field>
+  </record>
+</odoo>

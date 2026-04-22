@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="rpt_deductions_summary">
+  <t t-call="web.html_container">
+    <t t-foreach="docs" t-as="doc">
+      <t t-call="web.external_layout">
+        <div class="page" style="direction:rtl;font-family:'Noto Kufi Arabic',Cairo,Arial,sans-serif;font-size:11px;">
+          <!-- ══ الهيدر الرسمي ══ -->
+          <t t-call="port_said_reports.gov_page_style"/>
+          <t t-set="dept_line" t-value="'إدارة الحسابات'"/>
+          <t t-call="port_said_reports.gov_header"/>
+          <h2 style="text-align:center;font-size:13pt;text-decoration:underline;margin:10px 0 14px;">
+            ملخص الاستقطاعات — دمغة وضريبة
+          </h2>
+          <div style="font-size:9pt;color:#444;margin-bottom:10px;text-align:center;">
+            الفترة من <t t-esc="doc.date_from"/> إلى <t t-esc="doc.date_to"/>
+            <t t-if="doc.fiscal_year"> — السنة المالية <t t-esc="doc.fiscal_year"/></t>
+          </div>
+
+          <t t-set="recs" t-value="doc._get_daftar55_records()"/>
+          <t t-set="total_gross"  t-value="sum(r.amount_gross or 0 for r in recs)"/>
+          <t t-set="total_normal" t-value="sum(r.deductions_stamp_normal or 0 for r in recs)"/>
+          <t t-set="total_extra"  t-value="sum(r.deductions_stamp_extra or 0 for r in recs)"/>
+          <t t-set="total_prop"   t-value="sum(r.deductions_stamp_proportional or 0 for r in recs)"/>
+          <t t-set="total_comm"   t-value="sum(r.deductions_commercial_tax or 0 for r in recs)"/>
+          <t t-set="total_ded"    t-value="sum(r.total_deductions or 0 for r in recs)"/>
+          <t t-set="total_net"    t-value="sum(r.amount_net or 0 for r in recs)"/>
+
+          <!-- بطاقات الاستقطاعات -->
+          <div style="background:#1F497D;color:white;padding:6px 10px;font-weight:bold;border-radius:4px 4px 0 0;margin-bottom:0;">
+            ملخص أنواع الاستقطاعات — المحوَّلة للخزينة العامة
+          </div>
+          <table style="width:100%;border-collapse:collapse;margin-bottom:14px;">
+            <tr>
+              <td style="width:20%;text-align:center;padding:10px;border:1px solid #ddd;background:#FFF2CC;">
+                <div style="font-size:13px;font-weight:bold;color:#7F6000;"><t t-esc="'{:,.2f}'.format(total_normal)"/> ج.م</div>
+                <div style="font-size:10px;color:#666;margin-top:4px;">الدمغة العادية (1%)</div>
+              </td>
+              <td style="width:20%;text-align:center;padding:10px;border:1px solid #ddd;background:#FCE4D6;">
+                <div style="font-size:13px;font-weight:bold;color:#833C00;"><t t-esc="'{:,.2f}'.format(total_extra)"/> ج.م</div>
+                <div style="font-size:10px;color:#666;margin-top:4px;">الدمغة الإضافية (3×)</div>
+              </td>
+              <td style="width:20%;text-align:center;padding:10px;border:1px solid #ddd;background:#EDEDED;">
+                <div style="font-size:13px;font-weight:bold;color:#404040;"><t t-esc="'{:,.2f}'.format(total_prop)"/> ج.م</div>
+                <div style="font-size:10px;color:#666;margin-top:4px;">الدمغة النسبية (0.008)</div>
+              </td>
+              <td style="width:20%;text-align:center;padding:10px;border:1px solid #ddd;background:#DAEEF3;">
+                <div style="font-size:13px;font-weight:bold;color:#17375E;"><t t-esc="'{:,.2f}'.format(total_comm)"/> ج.م</div>
+                <div style="font-size:10px;color:#666;margin-top:4px;">ضريبة الأرباح التجارية (3%)</div>
+              </td>
+              <td style="width:20%;text-align:center;padding:10px;border:1px solid #ddd;background:#E2EFDA;">
+                <div style="font-size:15px;font-weight:bold;color:#375623;"><t t-esc="'{:,.2f}'.format(total_ded)"/> ج.م</div>
+                <div style="font-size:10px;color:#666;margin-top:4px;">إجمالي الاستقطاعات</div>
+              </td>
+            </tr>
+          </table>
+
+          <!-- الجدول التفصيلي -->
+          <table style="width:100%;border-collapse:collapse;font-size:9px;">
+            <thead>
+              <tr style="background:#1F497D;color:white;">
+                <th style="padding:5px;border:1px solid #ddd;">#</th>
+                <th style="padding:5px;border:1px solid #ddd;">رقم مسلسل 55</th>
+                <th style="padding:5px;border:1px solid #ddd;">تاريخ الورود</th>
+                <th style="padding:5px;border:1px solid #ddd;">صاحب الحق</th>
+                <th style="padding:5px;border:1px solid #ddd;text-align:left;">الأصل</th>
+                <th style="padding:5px;border:1px solid #ddd;text-align:left;">الدمغة العادية</th>
+                <th style="padding:5px;border:1px solid #ddd;text-align:left;">الدمغة الإضافية</th>
+                <th style="padding:5px;border:1px solid #ddd;text-align:left;">الدمغة النسبية</th>
+                <th style="padding:5px;border:1px solid #ddd;text-align:left;">ضريبة الأرباح</th>
+                <th style="padding:5px;border:1px solid #ddd;text-align:left;">إجمالي الاستقطاع</th>
+                <th style="padding:5px;border:1px solid #ddd;text-align:left;">الصافي</th>
+              </tr>
+            </thead>
+            <tbody>
+              <t t-foreach="recs" t-as="r">
+                <tr t-attf-style="background:{{ '#f5f5f5' if r_index % 2 == 0 else 'white' }};">
+                  <td style="padding:4px;border:1px solid #ddd;text-align:center;color:#888;"><t t-esc="r_index+1"/></td>
+                  <td style="padding:4px;border:1px solid #ddd;font-weight:bold;color:#1F497D;"><t t-esc="r.sequence_number or ''"/></td>
+                  <td style="padding:4px;border:1px solid #ddd;"><t t-esc="r.date_received or ''"/></td>
+                  <td style="padding:4px;border:1px solid #ddd;"><t t-esc="r.vendor_id.name if r.vendor_id else ''"/></td>
+                  <td style="padding:4px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(r.amount_gross or 0)"/></td>
+                  <td style="padding:4px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(r.deductions_stamp_normal or 0)"/></td>
+                  <td style="padding:4px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(r.deductions_stamp_extra or 0)"/></td>
+                  <td style="padding:4px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(r.deductions_stamp_proportional or 0)"/></td>
+                  <td style="padding:4px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(r.deductions_commercial_tax or 0)"/></td>
+                  <td style="padding:4px;border:1px solid #ddd;text-align:left;font-weight:bold;color:#C55A11;"><t t-esc="'{:,.2f}'.format(r.total_deductions or 0)"/></td>
+                  <td style="padding:4px;border:1px solid #ddd;text-align:left;font-weight:bold;color:#375623;"><t t-esc="'{:,.2f}'.format(r.amount_net or 0)"/></td>
+                </tr>
+              </t>
+            </tbody>
+            <tfoot>
+              <tr style="background:#1F497D;color:white;font-weight:bold;">
+                <td colspan="4" style="padding:5px;border:1px solid #ddd;text-align:center;">الإجمالي</td>
+                <td style="padding:5px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(total_gross)"/></td>
+                <td style="padding:5px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(total_normal)"/></td>
+                <td style="padding:5px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(total_extra)"/></td>
+                <td style="padding:5px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(total_prop)"/></td>
+                <td style="padding:5px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(total_comm)"/></td>
+                <td style="padding:5px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(total_ded)"/></td>
+                <td style="padding:5px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(total_net)"/></td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <!-- ملاحظة قانونية -->
+          <div style="margin-top:10px;background:#FFF2CC;border:1px solid #FFD966;border-radius:4px;padding:8px 12px;font-size:9px;color:#7F6000;">
+            <strong>ملاحظة:</strong> تُحوَّل الاستقطاعات الواردة في هذا الكشف إلى الخزانة العامة للدولة وفق أحكام قانون الدمغة والقانون رقم 91 لسنة 2005 بشأن الضريبة على الدخل.
+          </div>
+
+          <div style="margin-top:20px;">
+            <table style="width:100%;border-collapse:collapse;">
+              <tr>
+                <td style="width:33%;text-align:center;padding:14px;border:1px solid #ccc;"><div style="font-weight:bold;color:#1F497D;">رئيس الحسابات</div><div style="margin-top:25px;border-top:1px solid #999;padding-top:4px;font-size:9px;color:#666;">الاسم والتوقيع</div></td>
+                <td style="width:33%;text-align:center;padding:14px;border:1px solid #ccc;"><div style="font-weight:bold;color:#1F497D;">مراقب الحسابات</div><div style="margin-top:25px;border-top:1px solid #999;padding-top:4px;font-size:9px;color:#666;">الاسم والتوقيع</div></td>
+                <td style="width:33%;text-align:center;padding:14px;border:1px solid #ccc;"><div style="font-weight:bold;color:#1F497D;">رئيس الديوان العام</div><div style="margin-top:25px;border-top:1px solid #999;padding-top:4px;font-size:9px;color:#666;">الاسم والختم الرسمي</div></td>
+              </tr>
+            </table>
+          </div>
+          
+          <!-- ══ الفوتر الرسمي ══ -->
+          <t t-set="report_name_ar" t-value="'ملخص الاستقطاعات — دمغة وضريبة'"/>
+          <t t-call="port_said_reports.gov_footer"/>
+          <div style="display:none">نظام أوبو إيآر بي — الديوان العام لمحافظة بورسعيد — طُبع: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/></div>
+        </div>
+      </t>
+    </t>
+  </t>
+</template>
+</odoo>

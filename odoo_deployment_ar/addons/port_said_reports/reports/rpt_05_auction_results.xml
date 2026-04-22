@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="rpt_auction_results">
+  <t t-call="web.html_container">
+    <t t-foreach="docs" t-as="doc">
+      <t t-call="web.external_layout">
+        <div class="page" style="direction:rtl;font-family:'Noto Kufi Arabic',Cairo,Arial,sans-serif;font-size:11px;">
+          <!-- ══ الهيدر الرسمي ══ -->
+          <t t-call="port_said_reports.gov_page_style"/>
+          <t t-set="dept_line" t-value="'إدارة التعاقدات'"/>
+          <t t-call="port_said_reports.gov_header"/>
+          <h2 style="text-align:center;font-size:13pt;text-decoration:underline;margin:10px 0 14px;">
+            نتائج المزادات والمزايدات
+          </h2>
+          <div style="font-size:9pt;color:#444;margin-bottom:10px;text-align:center;">
+            الفترة من <t t-esc="doc.date_from"/> إلى <t t-esc="doc.date_to"/>
+            <t t-if="doc.fiscal_year"> — السنة المالية <t t-esc="doc.fiscal_year"/></t>
+          </div>
+
+          <t t-set="recs" t-value="doc._get_auction_records()"/>
+          <t t-set="awarded" t-value="recs.filtered(lambda r: r.state in ('awarded','done'))"/>
+          <t t-set="total_est" t-value="sum(r.estimated_value or 0 for r in awarded)"/>
+          <t t-set="total_awd" t-value="sum(r.awarded_amount or 0 for r in awarded)"/>
+          <t t-set="saving" t-value="round((total_est - total_awd) / total_est * 100, 1) if total_est else 0"/>
+
+          <!-- ملخص -->
+          <table style="width:100%;border-collapse:collapse;margin-bottom:14px;">
+            <tr>
+              <td style="width:20%;background:#1F497D;color:white;text-align:center;padding:10px;"><div style="font-size:18px;font-weight:bold;"><t t-esc="len(recs)"/></div><div style="font-size:10px;">إجمالي المزادات</div></td>
+              <td style="width:20%;background:#375623;color:white;text-align:center;padding:10px;"><div style="font-size:15px;font-weight:bold;"><t t-esc="len(awarded)"/></div><div style="font-size:10px;">تمت الترسية</div></td>
+              <td style="width:20%;background:#2E75B6;color:white;text-align:center;padding:10px;"><div style="font-size:13px;font-weight:bold;"><t t-esc="'{:,.0f}'.format(total_est)"/></div><div style="font-size:10px;">القيمة التقديرية (ج.م)</div></td>
+              <td style="width:20%;background:#C55A11;color:white;text-align:center;padding:10px;"><div style="font-size:13px;font-weight:bold;"><t t-esc="'{:,.0f}'.format(total_awd)"/></div><div style="font-size:10px;">قيمة الترسية (ج.م)</div></td>
+              <td style="width:20%;background:#7030A0;color:white;text-align:center;padding:10px;"><div style="font-size:18px;font-weight:bold;"><t t-esc="saving"/>%</div><div style="font-size:10px;">نسبة الوفر</div></td>
+            </tr>
+          </table>
+
+          <!-- جدول المزادات -->
+          <table style="width:100%;border-collapse:collapse;font-size:10px;">
+            <thead>
+              <tr style="background:#1F497D;color:white;">
+                <th style="padding:6px;border:1px solid #ddd;">#</th>
+                <th style="padding:6px;border:1px solid #ddd;">رقم المزاد</th>
+                <th style="padding:6px;border:1px solid #ddd;">النوع</th>
+                <th style="padding:6px;border:1px solid #ddd;">طريقة الطرح</th>
+                <th style="padding:6px;border:1px solid #ddd;">تاريخ الجلسة</th>
+                <th style="padding:6px;border:1px solid #ddd;">الفائز</th>
+                <th style="padding:6px;border:1px solid #ddd;text-align:left;">القيمة التقديرية</th>
+                <th style="padding:6px;border:1px solid #ddd;text-align:left;">مبلغ الترسية</th>
+                <th style="padding:6px;border:1px solid #ddd;text-align:center;">الحالة</th>
+              </tr>
+            </thead>
+            <tbody>
+              <t t-foreach="recs" t-as="r">
+                <tr t-attf-style="background:{{ '#f0f7ee' if r_index % 2 == 0 else 'white' }};">
+                  <td style="padding:5px;border:1px solid #ddd;text-align:center;color:#888;"><t t-esc="r_index+1"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;font-weight:bold;color:#1F497D;"><t t-esc="r.name or ''"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;"><t t-esc="'بيع' if r.auction_type == 'sale' else 'إيجار/انتفاع'"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;">
+                    <t t-esc="{'public':'عامة','local':'محلية','direct':'مباشر'}.get(r.tender_method or '', r.tender_method or '')"/>
+                  </td>
+                  <td style="padding:5px;border:1px solid #ddd;"><t t-esc="str(r.auction_date)[:10] if r.auction_date else ''"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;"><t t-esc="r.awarded_partner_id.name if r.awarded_partner_id else '—'"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(r.estimated_value or 0)"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;text-align:left;font-weight:bold;color:#375623;"><t t-esc="'{:,.2f}'.format(r.awarded_amount or 0)"/></td>
+                  <td style="padding:5px;border:1px solid #ddd;text-align:center;">
+                    <span style="padding:2px 6px;border-radius:8px;font-size:9px;font-weight:bold;background:#dff0d8;color:#3c763d;">
+                      <t t-esc="{'draft':'مسودة','confirmed':'معتمد','session_open':'الجلسة مفتوحة','bidding':'تسجيل العروض','awarded':'تمت الترسية','done':'منتهي','cancelled':'ملغي'}.get(r.state, r.state)"/>
+                    </span>
+                  </td>
+                </tr>
+              </t>
+            </tbody>
+            <tfoot>
+              <tr style="background:#1F497D;color:white;font-weight:bold;">
+                <td colspan="6" style="padding:6px;border:1px solid #ddd;text-align:center;">الإجمالي</td>
+                <td style="padding:6px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(total_est)"/></td>
+                <td style="padding:6px;border:1px solid #ddd;text-align:left;"><t t-esc="'{:,.2f}'.format(total_awd)"/></td>
+                <td style="padding:6px;border:1px solid #ddd;text-align:center;">وفر <t t-esc="saving"/>%</td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <div style="margin-top:30px;">
+            <table style="width:100%;border-collapse:collapse;">
+              <tr>
+                <td style="width:33%;text-align:center;padding:14px;border:1px solid #ccc;"><div style="font-weight:bold;color:#1F497D;">مدير إدارة التعاقدات</div><div style="margin-top:25px;border-top:1px solid #999;padding-top:4px;font-size:9px;color:#666;">الاسم والتوقيع</div></td>
+                <td style="width:33%;text-align:center;padding:14px;border:1px solid #ccc;"><div style="font-weight:bold;color:#1F497D;">مدير الشؤون المالية</div><div style="margin-top:25px;border-top:1px solid #999;padding-top:4px;font-size:9px;color:#666;">الاسم والتوقيع</div></td>
+                <td style="width:33%;text-align:center;padding:14px;border:1px solid #ccc;"><div style="font-weight:bold;color:#1F497D;">رئيس الديوان العام</div><div style="margin-top:25px;border-top:1px solid #999;padding-top:4px;font-size:9px;color:#666;">الاسم والختم الرسمي</div></td>
+              </tr>
+            </table>
+          </div>
+          
+          <!-- ══ الفوتر الرسمي ══ -->
+          <t t-set="report_name_ar" t-value="'نتائج المزادات والمزايدات'"/>
+          <t t-call="port_said_reports.gov_footer"/>
+          <div style="display:none">نظام أوبو إيآر بي — الديوان العام لمحافظة بورسعيد — طُبع: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/></div>
+        </div>
+      </t>
+    </t>
+  </t>
+</template>
+</odoo>

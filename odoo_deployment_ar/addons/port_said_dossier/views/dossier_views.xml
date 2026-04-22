@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_dossier_form" model="ir.ui.view">
+    <field name="name">port_said.dossier.form</field>
+    <field name="model">port_said.dossier</field>
+    <field name="arch" type="xml">
+      <form string="الاضبارة - استمارة 101 ساير">
+        <header>
+          <button name="action_validate_attachments" string="التحقق من المرفقات" type="object" class="btn-primary"/>
+          <button name="action_print_dossier" string="طباعة 101 ساير" type="object" class="btn-secondary"/>
+        </header>
+        <sheet>
+          <div class="oe_title"><h1><field name="dossier_number" readonly="1"/></h1></div>
+          <group>
+            <group>
+              <field name="budget_line"/><field name="fiscal_year"/>
+              <field name="daftar55_id"/><field name="form50_ref"/>
+            </group>
+            <group>
+              <field name="vendor_id"/><field name="amount"/>
+              <field name="attachment_count"/>
+              <field name="is_complete" widget="boolean_toggle"/>
+            </group>
+          </group>
+          <div class="alert alert-danger" invisible="is_complete">
+            <strong>⚠️ المرفقات الناقصة: </strong>
+            <field name="missing_attachments" readonly="1"/>
+          </div>
+          <notebook>
+            <page string="المرفقات التسعة المطلوبة">
+              <field name="attachment_ids">
+                <tree editable="bottom">
+                  <field name="attachment_type"/>
+                  <field name="attachment_id"/>
+                  <field name="notes"/>
+                </tree>
+              </field>
+            </page>
+            <page string="معلومات إضافية">
+              <group>
+                <field name="physical_shelf"/>
+                <field name="state"/>
+              </group>
+              <field name="notes"/>
+            </page>
+          </notebook>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <record id="action_dossier" model="ir.actions.act_window">
+    <field name="name">الاضابير - استمارة 101 ساير</field>
+    <field name="res_model">port_said.dossier</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+    <!-- Menu managed by port_said_menu -->
+</odoo>

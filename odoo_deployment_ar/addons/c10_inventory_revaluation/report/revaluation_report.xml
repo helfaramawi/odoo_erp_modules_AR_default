@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="action_report_revaluation" model="ir.actions.report">
+    <field name="name">تقرير إعادة تقييم المخزون</field>
+    <field name="model">inventory.revaluation.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">c10_inventory_revaluation.report_revaluation_template</field>
+    <field name="binding_model_id" ref="model_inventory_revaluation_wizard"/>
+    <field name="binding_type">report</field>
+  </record>
+
+  <template id="report_revaluation_template">
+    <t t-call="web.html_container">
+      <t t-foreach="docs" t-as="wizard">
+        <div style="direction:rtl; font-family:'Cairo',Arial,sans-serif; font-size:10px; padding:20px;">
+
+          <!-- Header -->
+          <div style="text-align:center; border-bottom:3px double #1F497D; padding-bottom:10px; margin-bottom:14px;">
+            <div style="font-size:11px; color:#666;">جمهورية مصر العربية — محافظة بورسعيد</div>
+            <div style="font-size:17px; font-weight:bold; color:#1F497D;">الديوان العام لمحافظة بورسعيد</div>
+            <div style="font-size:14px; font-weight:bold; margin-top:4px;">تقرير إعادة تقييم المخزون</div>
+            <div style="font-size:10px; color:#888; margin-top:2px;">
+              حتى تاريخ: <t t-esc="str(wizard.as_of_date)"/>
+              &#160;|&#160;
+              <t t-esc="wizard.company_id.name"/>
+            </div>
+          </div>
+
+          <!-- Table -->
+          <t t-set="rows" t-value="wizard._get_revaluation_data()"/>
+          <table style="width:100%; border-collapse:collapse; font-size:9px;">
+            <thead>
+              <tr style="background:#1F497D; color:white;">
+                <th style="border:1px solid #ccc; padding:5px; text-align:right;">#</th>
+                <th style="border:1px solid #ccc; padding:5px; text-align:right;">المنتج</th>
+                <th style="border:1px solid #ccc; padding:5px; text-align:right;">الفئة</th>
+                <th style="border:1px solid #ccc; padding:5px; text-align:center;">الكمية</th>
+                <th style="border:1px solid #ccc; padding:5px; text-align:center;">الوحدة</th>
+                <th style="border:1px solid #ccc; padding:5px; text-align:center;">التكلفة</th>
+                <th style="border:1px solid #ccc; padding:5px; text-align:center;">القيمة الحالية</th>
+                <th style="border:1px solid #ccc; padding:5px; text-align:center;">الشهر السابق</th>
+                <th style="border:1px solid #ccc; padding:5px; text-align:center;">الفارق</th>
+              </tr>
+            </thead>
+            <tbody>
+              <t t-foreach="rows" t-as="ln">
+                <tr t-att-style="'background:#f9f9f9;' if ln_odd else 'background:white;'">
+                  <td style="border:1px solid #eee; padding:3px 5px; text-align:center;"><t t-esc="ln_index + 1"/></td>
+                  <td style="border:1px solid #eee; padding:3px 5px;"><t t-esc="ln['product']"/></td>
+                  <td style="border:1px solid #eee; padding:3px 5px;"><t t-esc="ln['category']"/></td>
+                  <td style="border:1px solid #eee; padding:3px 5px; text-align:center; font-family:monospace;"><t t-esc="'%.2f' % ln['qty']"/></td>
+                  <td style="border:1px solid #eee; padding:3px 5px; text-align:center;"><t t-esc="ln['uom']"/></td>
+                  <td style="border:1px solid #eee; padding:3px 5px; text-align:center; font-family:monospace;"><t t-esc="'%.2f' % ln['cost']"/></td>
+                  <td style="border:1px solid #eee; padding:3px 5px; text-align:center; font-family:monospace; font-weight:bold; color:#1E7145;"><t t-esc="'%.2f' % ln['current_value']"/></td>
+                  <td style="border:1px solid #eee; padding:3px 5px; text-align:center; font-family:monospace;"><t t-esc="'%.2f' % ln['prior_value']"/></td>
+                  <td t-att-style="'border:1px solid #eee; padding:3px 5px; text-align:center; font-family:monospace; font-weight:bold; color:' + ('#C00000' if ln['variance'] &lt; 0 else '#1E7145') + ';'">
+                    <t t-esc="'%.2f' % ln['variance']"/>
+                  </td>
+                </tr>
+              </t>
+            </tbody>
+            <tfoot>
+              <tr style="background:#1F497D; color:white; font-weight:bold;">
+                <td colspan="6" style="border:1px solid #ccc; padding:5px; text-align:center;">الإجمالي</td>
+                <td style="border:1px solid #ccc; padding:5px; text-align:center; font-family:monospace;">
+                  <t t-esc="'%.2f' % sum(r['current_value'] for r in rows)"/>
+                </td>
+                <td style="border:1px solid #ccc; padding:5px; text-align:center; font-family:monospace;">
+                  <t t-esc="'%.2f' % sum(r['prior_value'] for r in rows)"/>
+                </td>
+                <td style="border:1px solid #ccc; padding:5px; text-align:center; font-family:monospace;">
+                  <t t-esc="'%.2f' % sum(r['variance'] for r in rows)"/>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <!-- Footer -->
+          <div style="margin-top:20px; display:flex; justify-content:space-between; text-align:center;">
+            <div style="width:30%; border-top:1px solid #333; padding-top:5px;">رئيس الديوان العام<br/><br/>الاسم والختم</div>
+            <div style="width:30%; border-top:1px solid #333; padding-top:5px;">مدير الشؤون المالية<br/><br/>الاسم والتوقيع</div>
+            <div style="width:30%; border-top:1px solid #333; padding-top:5px;">رئيس قسم الحسابات<br/><br/>الاسم والتوقيع</div>
+          </div>
+
+        </div>
+      </t>
+    </t>
+  </template>
+
+</odoo>

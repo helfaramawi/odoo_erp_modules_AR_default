@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- ══ Wizard Form View ════════════════════════════════════════════════ -->
+  <record id="view_port_said_report_wizard_form" model="ir.ui.view">
+    <field name="name">port_said.report.wizard.form</field>
+    <field name="model">port_said.report.wizard</field>
+    <field name="arch" type="xml">
+      <form string="التقارير الحكومية — محافظة بورسعيد">
+
+        <div style="background:#1F497D;color:white;padding:12px 16px;border-radius:6px;margin-bottom:14px;text-align:center;">
+          <span style="font-size:16px;font-weight:bold;">🏛️ التقارير الحكومية الرسمية</span><br/>
+          <span style="font-size:11px;opacity:0.85;">الديوان العام لمحافظة بورسعيد — إدارة الشؤون المالية</span>
+        </div>
+
+        <group string="اختيار التقرير">
+          <field name="report_type" widget="radio"/>
+        </group>
+
+        <group string="نطاق التقرير">
+          <group>
+            <field name="date_from"/>
+            <field name="date_to"/>
+            <field name="fiscal_year"/>
+          </group>
+          <group>
+            <field name="department_name" placeholder="اتركه فارغاً لكل المصالح"/>
+            <field name="budget_line"     placeholder="اتركه فارغاً لكل البنود"/>
+            <field name="state_filter"/>
+          </group>
+        </group>
+        <group string="فلاتر التقارير المحاسبية"
+               invisible="report_type not in ('trial_balance','partner_ledger')">
+          <group>
+            <field name="company_id"/>
+            <field name="hide_zero_balance"
+                   invisible="report_type != 'trial_balance'"/>
+          </group>
+          <group>
+            <field name="partner_type"
+                   invisible="report_type != 'partner_ledger'"/>
+          </group>
+        </group>
+
+        <footer>
+          <button name="action_print_report"
+                  string="🖨️ إصدار التقرير PDF"
+                  type="object"
+                  class="btn-primary"/>
+          <button string="إغلاق" class="btn-secondary" special="cancel"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+
+  <!-- ══ Action to open wizard ═══════════════════════════════════════════ -->
+  <record id="action_port_said_report_wizard" model="ir.actions.act_window">
+    <field name="name">التقارير الحكومية</field>
+    <field name="res_model">port_said.report.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+  </record>
+
+  <!-- ══ Menu ════════════════════════════════════════════════════════════ -->
+  <menuitem id="menu_ps_reports_gov"
+            name="📋 التقارير الحكومية"
+            parent="port_said_menu.menu_ps_50_reports"
+            action="action_port_said_report_wizard"
+            sequence="5"/>
+
+</odoo>

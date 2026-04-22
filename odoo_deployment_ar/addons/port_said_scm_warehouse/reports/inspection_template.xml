@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <template id="report_inspection_template">
+    <t t-call="web.html_container">
+      <t t-foreach="docs" t-as="rec">
+        <t t-call="web.external_layout">
+          <div class="page" style="direction:rtl; font-family:'Amiri', 'Noto Naskh Arabic', Arial, sans-serif; font-size:12px;">
+            <!-- ═══ هيدر الديوان العام — شعار المحافظة ═══ -->
+            <div style="direction:rtl; display:table; width:100%; border-bottom:3px double #1F497D; padding-bottom:10px; margin-bottom:14px;">
+              <!-- شعار المحافظة — يسار الصفحة (يمين في RTL) -->
+              <div style="display:table-cell; width:80px; vertical-align:middle; text-align:center;">
+                <img t-if="rec.company_id.logo"
+                     t-att-src="'data:image/png;base64,' + rec.company_id.logo.decode('utf-8')"
+                     style="max-height:70px; max-width:70px; object-fit:contain;"
+                     alt="شعار المحافظة"/>
+                <div t-else="" style="width:70px; height:70px; border:2px solid #1F497D; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:9px; color:#1F497D; text-align:center; line-height:1.3;">
+                  شعار<br/>المحافظة
+                </div>
+              </div>
+              <!-- النص المركزي -->
+              <div style="display:table-cell; vertical-align:middle; text-align:center; padding:0 10px;">
+                <div style="font-size:11px; color:#666; margin-bottom:2px;">جمهورية مصر العربية — محافظة بورسعيد</div>
+                <div style="font-size:17px; font-weight:bold; color:#1F497D; margin-bottom:2px;">الديوان العام لمحافظة بورسعيد</div>
+                <div style="font-size:13px; font-weight:bold; color:#333; margin-bottom:4px;">محضر لجنة الفحص — نموذج 12 مخازن</div>
+                <div style="font-size:9px; color:#999;">Paradise Integrated Solutions | إدارة المالية</div>
+              </div>
+              <!-- رقم السجل / التاريخ — يمين الصفحة (يسار في RTL) -->
+              <div style="display:table-cell; width:100px; vertical-align:middle; text-align:center; font-size:10px; color:#444;">
+                <div style="border:1px solid #ddd; border-radius:4px; padding:4px 6px; background:#f9f9f9;">
+                  <div style="color:#1F497D; font-weight:bold; margin-bottom:2px;">رقم المستند</div>
+                  <div><t t-esc="rec.committee_number or ''"/></div>
+                  <div style="margin-top:4px; color:#666;">التاريخ</div>
+                  <div><t t-esc="rec.date_inspection or ''"/></div>
+                </div>
+              </div>
+            </div>
+            <!-- ════════════════════════════════════════════════ -->
+
+            <table style="width:100%; border-collapse:collapse; font-size:11px; margin-bottom:12px;">
+              <tr>
+                <td style="width:25%; color:#444;">رقم المحضر:</td>
+                <td style="border-bottom:1px solid #999; font-weight:bold;"><t t-esc="rec.committee_number"/></td>
+                <td style="width:25%; color:#444;">التاريخ:</td>
+                <td style="border-bottom:1px solid #999;"><t t-esc="rec.date_inspection"/></td>
+              </tr>
+              <tr>
+                <td style="color:#444; padding-top:6px;">أمر التوريد:</td>
+                <td colspan="3" style="border-bottom:1px solid #999; padding-top:6px;"><t t-esc="rec.purchase_order_id.name if rec.purchase_order_id else ''"/></td>
+              </tr>
+            </table>
+            <div style="border:1px solid #375623; padding:8px; margin-bottom:8px;">
+              <div style="background:#375623; color:white; padding:4px 8px; margin:-8px -8px 8px; font-weight:bold;">بيانات الفحص والاستلام</div>
+              <table style="width:100%; font-size:11px;">
+                <tr><td style="color:#444;">الكمية المطلوبة:</td><td><t t-esc="rec.quantity_ordered"/></td>
+                    <td style="color:#444;">الكمية المُستلمة:</td><td><t t-esc="rec.quantity_received"/></td></tr>
+                <tr><td style="color:#444;">الكمية المقبولة:</td><td><t t-esc="rec.quantity_accepted"/></td>
+                    <td style="color:#444;">الكمية المرفوضة:</td><td><t t-esc="rec.quantity_rejected"/></td></tr>
+                <tr><td colspan="4" style="padding-top:8px;"><strong>مطابقة المواصفات: </strong><t t-esc="dict(rec._fields['specs_conformity'].selection).get(rec.specs_conformity)"/></td></tr>
+                <tr><td colspan="4" style="padding-top:4px;"><strong>قرار اللجنة: </strong><t t-esc="dict(rec._fields['result'].selection).get(rec.result)"/></td></tr>
+              </table>
+            </div>
+            <div style="border:1px solid #375623; padding:8px; margin-bottom:8px;">
+              <div style="font-weight:bold; margin-bottom:6px;">إقرار أمين المخازن</div>
+              <t t-esc="rec.storekeeper_declaration or '_______________________________________________'"/>
+            </div>
+            <table style="width:100%; margin-top:20px; font-size:11px;">
+              <tr>
+                <td style="text-align:center; width:25%;"><div style="border-bottom:1px solid #666; margin-bottom:4px; min-height:30px;"></div>رئيس اللجنة<br/><t t-esc="rec.chairman_id.name if rec.chairman_id else ''"/></td>
+                <td style="text-align:center; width:25%;"><div style="border-bottom:1px solid #666; margin-bottom:4px; min-height:30px;"></div>العضو الأول<br/><t t-esc="rec.member1_id.name if rec.member1_id else ''"/></td>
+                <td style="text-align:center; width:25%;"><div style="border-bottom:1px solid #666; margin-bottom:4px; min-height:30px;"></div>العضو الثاني<br/><t t-esc="rec.member2_id.name if rec.member2_id else ''"/></td>
+                <td style="text-align:center; width:25%;"><div style="border-bottom:1px solid #666; margin-bottom:4px; min-height:30px;"></div>أمين المخازن<br/><t t-esc="rec.storekeeper_id.name if rec.storekeeper_id else ''"/></td>
+              </tr>
+            </table>
+          </div>
+        </t>
+      </t>
+    </t>
+  </template>
+</odoo>
