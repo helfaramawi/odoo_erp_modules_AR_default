@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_budget_plan" model="ir.sequence">
+        <field name="name">موازنة تقديرية</field>
+        <field name="code">port_said.budget.plan</field>
+        <field name="prefix">BUD/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="number_next">1</field>
+    </record>
+</odoo>

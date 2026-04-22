@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="action_rpt_budget_summary" model="ir.actions.report">
+    <field name="name">ملخص الموازنة التقديرية</field>
+    <field name="model">port_said.budget.plan</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_budget_planning.rpt_budget_summary</field>
+    <field name="binding_model_id" ref="model_port_said_budget_plan"/>
+    <field name="binding_type">report</field>
+  </record>
+  <record id="action_rpt_budget_variance" model="ir.actions.report">
+    <field name="name">تقرير الانحرافات</field>
+    <field name="model">port_said.budget.plan</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_budget_planning.rpt_budget_variance</field>
+    <field name="binding_model_id" ref="model_port_said_budget_plan"/>
+    <field name="binding_type">report</field>
+  </record>
+  <record id="action_rpt_budget_execution" model="ir.actions.report">
+    <field name="name">تقرير تنفيذ الموازنة</field>
+    <field name="model">port_said.budget.plan</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_budget_planning.rpt_budget_execution</field>
+    <field name="binding_model_id" ref="model_port_said_budget_plan"/>
+    <field name="binding_type">report</field>
+  </record>
+</odoo>

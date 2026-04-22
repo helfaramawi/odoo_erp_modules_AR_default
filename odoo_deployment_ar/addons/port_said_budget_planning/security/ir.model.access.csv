@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_budget_plan_user,port_said.budget.plan user,model_port_said_budget_plan,account.group_account_user,1,0,0,0
+access_budget_plan_manager,port_said.budget.plan manager,model_port_said_budget_plan,account.group_account_manager,1,1,1,0
+access_budget_line_user,port_said.budget.line user,model_port_said_budget_line,account.group_account_user,1,0,0,0
+access_budget_line_manager,port_said.budget.line manager,model_port_said_budget_line,account.group_account_manager,1,1,1,1

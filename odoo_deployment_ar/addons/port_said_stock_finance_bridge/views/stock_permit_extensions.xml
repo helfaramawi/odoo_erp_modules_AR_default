@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<!-- إذن الصرف — إضافة مؤشر الحالة المحاسبية فقط -->
+<!-- زر action_create_journal_entry معرّف في issue_permit_views.xml الأساسي -->
+<record id="view_issue_permit_form_sfb" model="ir.ui.view">
+  <field name="name">stock.issue.permit.form.sfb</field>
+  <field name="model">stock.issue.permit</field>
+  <field name="inherit_id" ref="port_said_scm_issue.view_issue_permit_form"/>
+  <field name="arch" type="xml">
+    <div class="o_field_widget" position="before">
+      <div style="margin-bottom:4px;">
+        <button name="action_create_journal_entry"
+                string="إنشاء قيد محاسبي"
+                type="object"
+                class="btn btn-warning btn-sm"
+                invisible="state != 'posted' or finance_status == 'posted'"/>
+        <button name="action_view_journal_entries"
+                type="object"
+                class="btn btn-secondary btn-sm"
+                invisible="journal_entry_count == 0">
+          <field name="journal_entry_count" invisible="1"/> قيد محاسبي
+        </button>
+        <field name="finance_status" widget="badge"
+               decoration-success="finance_status == 'posted'"
+               decoration-warning="finance_status == 'pending'"
+               invisible="state != 'posted'"/>
+        <field name="finance_status" invisible="1"/>
+        <field name="journal_entry_count" invisible="1"/>
+      </div>
+    </div>
+  </field>
+</record>
+
+<!-- إذن الإضافة -->
+<record id="view_addition_permit_form_sfb" model="ir.ui.view">
+  <field name="name">stock.addition.permit.form.sfb</field>
+  <field name="model">stock.addition.permit</field>
+  <field name="inherit_id" ref="stock_addition_permit.view_addition_permit_form"/>
+  <field name="arch" type="xml">
+    <field name="state" widget="statusbar" position="after">
+      <div style="margin:4px 0;">
+        <button name="action_create_journal_entry"
+                string="إنشاء قيد محاسبي"
+                type="object"
+                class="btn btn-warning btn-sm"
+                invisible="state != 'posted' or finance_status == 'posted'"/>
+        <field name="finance_status" invisible="1"/>
+        <field name="journal_entry_count" invisible="1"/>
+      </div>
+    </field>
+  </field>
+</record>
+
+<!-- إذن التحويل -->
+<record id="view_transfer_permit_form_sfb" model="ir.ui.view">
+  <field name="name">stock.transfer.permit.form.sfb</field>
+  <field name="model">stock.transfer.permit</field>
+  <field name="inherit_id" ref="port_said_scm_issue.view_transfer_permit_form"/>
+  <field name="arch" type="xml">
+    <field name="state" widget="statusbar" position="after">
+      <div style="margin:4px 0;">
+        <button name="action_create_journal_entry"
+                string="إنشاء قيد محاسبي"
+                type="object"
+                class="btn btn-warning btn-sm"
+                invisible="state not in ('posted','received') or finance_status == 'posted'"/>
+        <field name="finance_status" invisible="1"/>
+        <field name="journal_entry_count" invisible="1"/>
+      </div>
+    </field>
+  </field>
+</record>
+
+<!-- إذن الارتجاع -->
+<record id="view_return_permit_form_sfb" model="ir.ui.view">
+  <field name="name">stock.return.permit.form.sfb</field>
+  <field name="model">stock.return.permit</field>
+  <field name="inherit_id" ref="port_said_scm_issue.view_return_permit_form"/>
+  <field name="arch" type="xml">
+    <field name="state" widget="statusbar" position="after">
+      <div style="margin:4px 0;">
+        <button name="action_create_journal_entry"
+                string="إنشاء قيد محاسبي"
+                type="object"
+                class="btn btn-warning btn-sm"
+                invisible="state != 'posted' or finance_status == 'posted'"/>
+        <field name="finance_status" invisible="1"/>
+        <field name="journal_entry_count" invisible="1"/>
+      </div>
+    </field>
+  </field>
+</record>
+
+</odoo>

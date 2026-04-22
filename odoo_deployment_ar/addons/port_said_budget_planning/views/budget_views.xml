@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<record id="view_budget_plan_form" model="ir.ui.view">
+  <field name="name">port_said.budget.plan.form</field>
+  <field name="model">port_said.budget.plan</field>
+  <field name="arch" type="xml">
+    <form string="الموازنة التقديرية الحكومية">
+      <header>
+        <field name="state" widget="statusbar" statusbar_visible="draft,approved,active,closed"/>
+      </header>
+      <sheet>
+        <div class="o_field_widget" style="margin-bottom:10px;">
+          <button name="action_submit" string="تقديم للاعتماد" type="object" class="btn btn-primary btn-sm" invisible="state != 'draft'"/>
+          <button name="action_approve" string="اعتماد الموازنة" type="object" class="btn btn-success btn-sm" invisible="state != 'submitted'" groups="account.group_account_manager"/>
+          <button name="action_activate" string="تفعيل للتنفيذ" type="object" class="btn btn-primary btn-sm" invisible="state != 'approved'" groups="account.group_account_manager"/>
+          <button name="action_compute_actual" string="تحديث المصروف الفعلي" type="object" class="btn btn-secondary btn-sm" invisible="state not in ('active',)"/>
+          <button name="action_close" string="إغلاق الموازنة" type="object" class="btn btn-danger btn-sm" invisible="state != 'active'" groups="account.group_account_manager"/>
+        </div>
+        <div class="oe_title">
+          <h1><field name="name"/></h1>
+        </div>
+        <group>
+          <group>
+            <field name="fiscal_year"/>
+            <field name="date_from"/>
+            <field name="date_to"/>
+          </group>
+          <group>
+            <field name="department"/>
+            <field name="responsible_id"/>
+            <field name="approved_by" readonly="1"/>
+          </group>
+        </group>
+        <!-- KPIs شريط ملخص -->
+        <div style="background:#1F3864;color:white;border-radius:6px;padding:12px;margin:10px 0;">
+          <table style="width:100%;border-collapse:collapse;">
+            <tr>
+              <td style="text-align:center;padding:6px;border-left:1px solid rgba(255,255,255,0.3);">
+                <div style="font-size:14pt;font-weight:bold;"><field name="total_approved" readonly="1"/> ج.م</div>
+                <div style="font-size:9pt;opacity:0.8;">الاعتمادات المعتمدة</div>
+              </td>
+              <td style="text-align:center;padding:6px;border-left:1px solid rgba(255,255,255,0.3);">
+                <div style="font-size:14pt;font-weight:bold;"><field name="total_committed" readonly="1"/> ج.م</div>
+                <div style="font-size:9pt;opacity:0.8;">الارتباطات</div>
+              </td>
+              <td style="text-align:center;padding:6px;border-left:1px solid rgba(255,255,255,0.3);">
+                <div style="font-size:14pt;font-weight:bold;"><field name="total_actual" readonly="1"/> ج.م</div>
+                <div style="font-size:9pt;opacity:0.8;">المصروف الفعلي</div>
+              </td>
+              <td style="text-align:center;padding:6px;">
+                <div style="font-size:14pt;font-weight:bold;"><field name="execution_rate" readonly="1" widget="percentage"/>%</div>
+                <div style="font-size:9pt;opacity:0.8;">نسبة التنفيذ</div>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <field name="line_ids">
+          <tree editable="bottom"
+                decoration-danger="amount_available &lt; 0"
+                decoration-warning="execution_pct &gt; 90">
+            <field name="bab"/>
+            <field name="fasle"/>
+            <field name="band"/>
+            <field name="noa" optional="hide"/>
+            <field name="full_code" readonly="1"/>
+            <field name="description"/>
+            <field name="budget_category"/>
+            <field name="account_id" optional="show"/>
+            <field name="amount_approved" sum="الاعتمادات"/>
+            <field name="amount_committed" readonly="1" sum="الارتباطات"/>
+            <field name="amount_actual" sum="المصروف الفعلي"/>
+            <field name="amount_available" readonly="1" sum="الرصيد"
+                   decoration-danger="amount_available &lt; 0"/>
+            <field name="execution_pct" readonly="1" string="تنفيذ %"
+                   decoration-warning="execution_pct &gt; 90"
+                   decoration-danger="execution_pct &gt; 100"/>
+            <field name="variance" readonly="1" sum="الانحراف"
+                   decoration-danger="variance &lt; 0"
+                   decoration-success="variance &gt; 0"/>
+            <field name="notes" optional="show"/>
+          </tree>
+        </field>
+        <field name="notes"/>
+      </sheet>
+      <chatter/>
+    </form>
+  </field>
+</record>
+
+<record id="view_budget_plan_list" model="ir.ui.view">
+  <field name="name">port_said.budget.plan.list</field>
+  <field name="model">port_said.budget.plan</field>
+  <field name="arch" type="xml">
+    <tree string="الموازنات التقديرية"
+          decoration-success="state == 'active'"
+          decoration-muted="state == 'closed'">
+      <field name="name"/>
+      <field name="fiscal_year"/>
+      <field name="date_from"/>
+      <field name="date_to"/>
+      <field name="department"/>
+      <field name="total_approved" string="الاعتمادات" sum="الإجمالي"/>
+      <field name="total_actual" string="الفعلي" sum="الفعلي"/>
+      <field name="execution_rate" string="التنفيذ %"
+             decoration-warning="execution_rate &gt; 90"/>
+      <field name="state" widget="badge"/>
+    </tree>
+  </field>
+</record>
+
+<record id="action_budget_plans" model="ir.actions.act_window">
+  <field name="name">الموازنات التقديرية</field>
+  <field name="res_model">port_said.budget.plan</field>
+  <field name="view_mode">list,form</field>
+</record>
+
+</odoo>

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="rpt_chart_of_accounts" model="ir.actions.report">
+    <field name="name">شجرة الحسابات المصرية</field>
+    <field name="model">port_said.gl.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_gl_reports.report_chart_of_accounts_template</field>
+    <field name="print_report_name">'شجرة الحسابات - ' + object.company_id.name</field>
+    <field name="binding_model_id" ref="model_port_said_gl_report_wizard"/>
+    <field name="binding_type">report</field>
+  </record>
+
+  <template id="report_chart_of_accounts_template">
+    <t t-call="web.html_container">
+      <t t-foreach="docs" t-as="wizard">
+        <t t-call="web.external_layout">
+          <div class="page" style="direction:rtl; font-family:'Amiri', 'Noto Naskh Arabic', Arial, sans-serif; font-size:11px;">
+
+            <!-- Header -->
+            <div style="text-align:center; border-bottom:3px double #1F497D; padding-bottom:10px; margin-bottom:14px;">
+              <div style="font-size:11px; color:#666;">جمهورية مصر العربية — محافظة بورسعيد</div>
+              <div style="font-size:17px; font-weight:bold; color:#1F497D;">الديوان العام لمحافظة بورسعيد</div>
+              <div style="font-size:14px; font-weight:bold; margin-top:4px;">شجرة الحسابات المصرية</div>
+              <div style="font-size:10px; color:#888; margin-top:2px;">
+                حتى تاريخ: <t t-esc="wizard.date_to"/>
+                &#160;|&#160;
+                <t t-esc="wizard.company_id.name"/>
+              </div>
+            </div>
+
+            <!-- Table -->
+            <table style="width:100%; border-collapse:collapse; font-size:10px;">
+              <thead>
+                <tr style="background:#1F497D; color:white;">
+                  <th style="border:1px solid #ccc; padding:5px; text-align:center; width:8%;">كود الحساب</th>
+                  <th style="border:1px solid #ccc; padding:5px; text-align:right; width:32%;">اسم الحساب</th>
+                  <th style="border:1px solid #ccc; padding:5px; text-align:center; width:15%;">نوع الحساب</th>
+                  <th style="border:1px solid #ccc; padding:5px; text-align:center; width:8%;">العملة</th>
+                  <th style="border:1px solid #ccc; padding:5px; text-align:center; width:12%;">مجموع المدين</th>
+                  <th style="border:1px solid #ccc; padding:5px; text-align:center; width:12%;">مجموع الدائن</th>
+                  <th style="border:1px solid #ccc; padding:5px; text-align:center; width:13%;">الرصيد</th>
+                </tr>
+              </thead>
+              <tbody>
+                <t t-set="accounts" t-value="wizard._get_chart_of_accounts_data()"/>
+                <t t-set="prev_type" t-value="''"/>
+                <t t-foreach="accounts" t-as="acc">
+                  <!-- Group header when type changes -->
+                  <t t-if="acc['account_type'] != prev_type">
+                    <tr style="background:#E8F0F7;">
+                      <td colspan="7" style="border:1px solid #ccc; padding:4px 8px; font-weight:bold; color:#1F497D; font-size:11px;">
+                        &#9658; <t t-esc="acc['account_type']"/>
+                      </td>
+                    </tr>
+                    <t t-set="prev_type" t-value="acc['account_type']"/>
+                  </t>
+                  <tr t-att-style="'background:#f9f9f9;' if acc_odd else 'background:white;'">
+                    <td style="border:1px solid #eee; padding:4px 6px; text-align:center; font-family:monospace; font-weight:bold; color:#1F497D;">
+                      <t t-esc="acc['code']"/>
+                    </td>
+                    <td style="border:1px solid #eee; padding:4px 6px;">
+                      <t t-esc="acc['name']"/>
+                      <t t-if="acc['deprecated']">
+                        <span style="color:#999; font-size:9px;"> (موقوف)</span>
+                      </t>
+                    </td>
+                    <td style="border:1px solid #eee; padding:4px 6px; text-align:center; font-size:9px; color:#555;">
+                      <t t-esc="acc['account_type']"/>
+                    </td>
+                    <td style="border:1px solid #eee; padding:4px 6px; text-align:center; color:#888;">
+                      <t t-esc="acc['currency'] or 'EGP'"/>
+                    </td>
+                    <td style="border:1px solid #eee; padding:4px 6px; text-align:left; font-family:monospace;">
+                      <t t-if="acc['debit'] > 0">
+                        <t t-esc="'{:,.2f}'.format(acc['debit'])"/>
+                      </t>
+                      <t t-else="">—</t>
+                    </td>
+                    <td style="border:1px solid #eee; padding:4px 6px; text-align:left; font-family:monospace;">
+                      <t t-if="acc['credit'] > 0">
+                        <t t-esc="'{:,.2f}'.format(acc['credit'])"/>
+                      </t>
+                      <t t-else="">—</t>
+                    </td>
+                    <td t-att-style="'border:1px solid #eee; padding:4px 6px; text-align:left; font-family:monospace; font-weight:bold; color:' + ('#1E7145' if acc['balance'] >= 0 else '#C00000') + ';'">
+                      <t t-esc="'{:,.2f}'.format(acc['balance'])"/>
+                    </td>
+                  </tr>
+                </t>
+              </tbody>
+              <!-- Totals -->
+              <tfoot>
+                <tr style="background:#1F497D; color:white; font-weight:bold;">
+                  <td colspan="4" style="border:1px solid #ccc; padding:5px; text-align:center;">الإجمالي</td>
+                  <td style="border:1px solid #ccc; padding:5px; text-align:left; font-family:monospace;">
+                    <t t-esc="'{:,.2f}'.format(sum(a['debit'] for a in accounts))"/>
+                  </td>
+                  <td style="border:1px solid #ccc; padding:5px; text-align:left; font-family:monospace;">
+                    <t t-esc="'{:,.2f}'.format(sum(a['credit'] for a in accounts))"/>
+                  </td>
+                  <td style="border:1px solid #ccc; padding:5px; text-align:left; font-family:monospace;">
+                    <t t-esc="'{:,.2f}'.format(sum(a['balance'] for a in accounts))"/>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <!-- Summary -->
+            <div style="margin-top:16px; display:table; width:60%;">
+              <table style="border-collapse:collapse; font-size:10px;">
+                <tr style="background:#f0f0f0; font-weight:bold;">
+                  <td style="border:1px solid #ccc; padding:4px 8px;">إجمالي الحسابات</td>
+                  <td style="border:1px solid #ccc; padding:4px 12px; text-align:center;">
+                    <t t-esc="len(accounts)"/>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="border:1px solid #ccc; padding:4px 8px;">حسابات نشطة</td>
+                  <td style="border:1px solid #ccc; padding:4px 12px; text-align:center; color:#1E7145; font-weight:bold;">
+                    <t t-esc="len([a for a in accounts if not a['deprecated']])"/>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="border:1px solid #ccc; padding:4px 8px;">حسابات موقوفة</td>
+                  <td style="border:1px solid #ccc; padding:4px 12px; text-align:center; color:#999;">
+                    <t t-esc="len([a for a in accounts if a['deprecated']])"/>
+                  </td>
+                </tr>
+              </table>
+            </div>
+
+            <!-- Footer -->
+            <div style="margin-top:20px; border-top:1px solid #ccc; padding-top:6px; font-size:9px; color:#888; display:flex; justify-content:space-between;">
+              <span>Paradise Integrated Solutions — نظام أوبو ERP</span>
+              <span>طُبع بتاريخ: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/></span>
+              <span>شجرة الحسابات — محافظة بورسعيد</span>
+            </div>
+
+          </div>
+        </t>
+      </t>
+    </t>
+  </template>
+
+</odoo>
