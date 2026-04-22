@@ -31,7 +31,7 @@
               <field name="attachment_ids">
                 <tree editable="bottom">
                   <field name="attachment_type"/>
-                  <field name="attachment_id" widget="many2many_binary"/>
+                  <field name="attachment_id"/>
                   <field name="notes"/>
                 </tree>
               </field>
@@ -48,12 +48,10 @@
       </form>
     </field>
   </record>
-
   <record id="action_dossier" model="ir.actions.act_window">
     <field name="name">الاضابير - استمارة 101 ساير</field>
     <field name="res_model">port_said.dossier</field>
     <field name="view_mode">tree,form</field>
   </record>
-
     <!-- Menu managed by port_said_menu -->
 </odoo>
