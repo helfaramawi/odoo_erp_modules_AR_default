@@ -1,0 +1,27 @@
+/* Cash transfer register printing */
+.page[dir="rtl"] {
+    font-family: 'Traditional Arabic', 'Arial', serif;
+    line-height: 1.35;
+}
+.page[dir="rtl"] table {
+    direction: rtl;
+    border-collapse: collapse;
+}
+.page[dir="rtl"] table th {
+    vertical-align: middle;
+    text-align: center;
+}
+.page[dir="rtl"] td[style*="text-align:left"] {
+    direction: ltr;
+    unicode-bidi: embed;
+    font-variant-numeric: tabular-nums;
+}
+.page[dir="rtl"] td[style*="font-family:monospace"] {
+    direction: ltr;
+    unicode-bidi: embed;
+}
+@media print {
+    .page { page-break-inside: avoid; }
+    table { page-break-inside: avoid; }
+    thead { display: table-header-group; }
+}

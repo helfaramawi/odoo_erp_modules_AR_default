@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <template id="report_transfer_register">
+    <t t-call="web.html_container">
+      <t t-call="web.external_layout">
+        <div class="page" dir="rtl"
+             style="font-family:'Traditional Arabic',Arial,serif;">
+
+          <!-- Header -->
+          <div style="text-align:center; margin-bottom:10px;">
+            <h3 style="margin:0;">دفتر حساب حركة النقود</h3>
+            <div style="font-size:11px;">
+              استمارة رقم 39 ع.ح — محافظة بورسعيد — الديوان العام
+            </div>
+            <div style="font-size:10px;">
+              عدد التحويلات: <t t-out="len(docs)"/>
+              <t t-if="docs">
+                — من <t t-out="docs[0].transfer_date"/>
+                إلى <t t-out="docs[-1].transfer_date"/>
+              </t>
+            </div>
+          </div>
+
+          <!-- Main register table -->
+          <table style="width:100%; font-size:8px; border-collapse:collapse;
+                        border:1.5px solid #000;">
+            <thead>
+              <tr style="background:#dddddd;">
+                <th style="padding:3px; border:1px solid #000;">تسلسل<br/>الدفتر</th>
+                <th style="padding:3px; border:1px solid #000;">التاريخ</th>
+                <th style="padding:3px; border:1px solid #000;">الاتجاه</th>
+                <th style="padding:3px; border:1px solid #000;">المُرسِل</th>
+                <th style="padding:3px; border:1px solid #000;">المُستلِم</th>
+                <th style="padding:3px; border:1px solid #000;">الجهة</th>
+                <th style="padding:3px; border:1px solid #000;">المبلغ<br/>(ج.م.)</th>
+                <th style="padding:3px; border:1px solid #000;">الغرض</th>
+                <th style="padding:3px; border:1px solid #000;">دفتر 55</th>
+                <th style="padding:3px; border:1px solid #000;">تاريخ<br/>التأكيد</th>
+                <th style="padding:3px; border:1px solid #000;">الحالة</th>
+              </tr>
+            </thead>
+            <tbody>
+              <t t-set="total_out" t-value="0"/>
+              <t t-set="total_in" t-value="0"/>
+              <t t-set="count_out" t-value="0"/>
+              <t t-set="count_in" t-value="0"/>
+              <t t-set="total_disputed" t-value="0"/>
+              <t t-set="total_lost" t-value="0"/>
+              <t t-foreach="docs" t-as="t">
+                <t t-if="t.direction == 'outgoing' and t.state in ['confirmed','closed']">
+                  <t t-set="total_out" t-value="total_out + t.amount"/>
+                  <t t-set="count_out" t-value="count_out + 1"/>
+                </t>
+                <t t-if="t.direction == 'incoming' and t.state in ['confirmed','closed']">
+                  <t t-set="total_in" t-value="total_in + t.amount"/>
+                  <t t-set="count_in" t-value="count_in + 1"/>
+                </t>
+                <t t-if="t.state == 'disputed'">
+                  <t t-set="total_disputed" t-value="total_disputed + t.disputed_amount"/>
+                </t>
+                <t t-if="t.state == 'lost'">
+                  <t t-set="total_lost" t-value="total_lost + t.amount"/>
+                </t>
+                <tr t-att-style="
+                  'background:#ffe5e5;' if t.state == 'lost' else
+                  'background:#fff4d0;' if t.state == 'disputed' else
+                  'background:#e8f0ff;' if t.direction == 'outgoing' else
+                  'background:#fff5e5;' if t.direction == 'incoming' else
+                  'background:#f5f5f5;' if t.state == 'cancelled' else ''">
+                  <td style="padding:2px; border:1px solid #000; font-family:monospace;
+                             font-size:7.5px;">
+                    <t t-out="t.sequence_number"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:7.5px;">
+                    <t t-out="t.transfer_date"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; text-align:center;
+                             font-size:7.5px;">
+                    <t t-if="t.direction == 'outgoing'">مرسل</t>
+                    <t t-else="">وارد</t>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:7.5px;">
+                    <t t-out="t.sender_employee_id.name or '—'"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:7.5px;">
+                    <t t-if="t.receiver_employee_id">
+                      <t t-out="t.receiver_employee_id.name"/>
+                    </t>
+                    <t t-elif="t.receiver_external_name">
+                      <t t-out="t.receiver_external_name"/>
+                    </t>
+                    <t t-else="">—</t>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:7.5px;">
+                    <t t-out="t.receiver_unit_name"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; text-align:left;
+                             font-weight:bold;">
+                    <t t-out="'%.2f' % t.amount"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:7px;">
+                    <t t-out="(t.purpose or '')[:55]"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:7.5px;
+                             font-family:monospace;">
+                    <t t-out="t.daftar55_id.sequence_number or '—'"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:7.5px;">
+                    <t t-out="t.confirmation_date and t.confirmation_date.strftime('%Y-%m-%d') or '—'"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:7.5px;
+                             text-align:center;">
+                    <t t-out="dict(t._fields['state'].selection).get(t.state)"/>
+                  </td>
+                </tr>
+              </t>
+
+              <!-- Totals row -->
+              <tr style="background:#e8f0ff; font-weight:bold;">
+                <td colspan="6" style="padding:3px; border:1.5px solid #000;
+                                        text-align:center;">
+                  إجمالي المُرسَل المُؤكَّد
+                  (<t t-out="count_out"/>)
+                </td>
+                <td style="padding:3px; border:1.5px solid #000; text-align:left;">
+                  <t t-out="'%.2f' % total_out"/>
+                </td>
+                <td colspan="4" style="padding:3px; border:1.5px solid #000;"></td>
+              </tr>
+              <tr style="background:#fff5e5; font-weight:bold;">
+                <td colspan="6" style="padding:3px; border:1.5px solid #000;
+                                        text-align:center;">
+                  إجمالي الوارد المُؤكَّد
+                  (<t t-out="count_in"/>)
+                </td>
+                <td style="padding:3px; border:1.5px solid #000; text-align:left;">
+                  <t t-out="'%.2f' % total_in"/>
+                </td>
+                <td colspan="4" style="padding:3px; border:1.5px solid #000;"></td>
+              </tr>
+              <tr t-if="total_disputed" style="background:#fff4d0; font-weight:bold;">
+                <td colspan="6" style="padding:3px; border:1.5px solid #d4a017;
+                                        text-align:center;">
+                  ⚠ إجمالي المُتنازَع فيه
+                </td>
+                <td style="padding:3px; border:1.5px solid #d4a017; text-align:left;
+                           color:#a60;">
+                  <t t-out="'%.2f' % total_disputed"/>
+                </td>
+                <td colspan="4" style="padding:3px; border:1.5px solid #d4a017;"></td>
+              </tr>
+              <tr t-if="total_lost" style="background:#ffe5e5; font-weight:bold;">
+                <td colspan="6" style="padding:3px; border:1.5px solid #a00;
+                                        text-align:center;">
+                  ⚠ إجمالي المفقود/المسروق
+                </td>
+                <td style="padding:3px; border:1.5px solid #a00; text-align:left;
+                           color:#a00;">
+                  <t t-out="'%.2f' % total_lost"/>
+                </td>
+                <td colspan="4" style="padding:3px; border:1.5px solid #a00;"></td>
+              </tr>
+              <tr style="background:#f5f5f5; font-weight:bold; font-size:10px;">
+                <td colspan="6" style="padding:4px; border:2px solid #000;
+                                        text-align:center;">
+                  صافي حركة النقد (وارد − مرسل)
+                </td>
+                <td style="padding:4px; border:2px solid #000; text-align:left;
+                           background:#ffe9c6;">
+                  <t t-out="'%.2f' % (total_in - total_out)"/>
+                </td>
+                <td colspan="4" style="padding:4px; border:2px solid #000;"></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Chain-of-custody summary -->
+          <div style="margin-top:15px; font-size:10px;">
+            <strong>توزيع حسب جهة الاستلام:</strong>
+            <t t-set="by_receiver_type" t-value="{}"/>
+            <t t-foreach="docs" t-as="t">
+              <t t-if="t.state in ('confirmed','closed')">
+                <t t-set="rt" t-value="t.receiver_unit_type"/>
+                <t t-set="prev" t-value="by_receiver_type.get(rt, (0, 0.0))"/>
+                <t t-set="by_receiver_type" t-value="{**by_receiver_type, rt: (prev[0]+1, prev[1]+t.amount)}"/>
+              </t>
+            </t>
+            <table style="width:70%; margin-top:6px; font-size:9.5px;
+                          border:1px solid #000; border-collapse:collapse;">
+              <tr style="background:#f0f0f0;">
+                <th style="padding:3px; border:1px solid #000;">جهة الاستلام</th>
+                <th style="padding:3px; border:1px solid #000;">العدد</th>
+                <th style="padding:3px; border:1px solid #000;">الإجمالي</th>
+              </tr>
+              <t t-foreach="by_receiver_type.items()" t-as="item">
+                <tr>
+                  <td style="padding:3px; border:1px solid #000;">
+                    <t t-out="dict(docs._fields['receiver_unit_type'].selection).get(item[0])"/>
+                  </td>
+                  <td style="padding:3px; border:1px solid #000; text-align:center;">
+                    <t t-out="item[1][0]"/>
+                  </td>
+                  <td style="padding:3px; border:1px solid #000; text-align:left;">
+                    <t t-out="'%.2f' % item[1][1]"/>
+                  </td>
+                </tr>
+              </t>
+            </table>
+          </div>
+
+          <!-- Signatures -->
+          <table style="width:100%; margin-top:30px; font-size:10px;"
+                 class="table-borderless">
+            <tr>
+              <td style="text-align:center;">
+                <div>أمين الخزينة</div>
+                <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                  ............................
+                </div>
+              </td>
+              <td style="text-align:center;">
+                <div>رئيس الحسابات</div>
+                <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                  ............................
+                </div>
+              </td>
+              <td style="text-align:center;">
+                <div>المراجع المالي</div>
+                <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                  ............................
+                </div>
+              </td>
+            </tr>
+          </table>
+
+        </div>
+      </t>
+    </t>
+  </template>
+
+</odoo>

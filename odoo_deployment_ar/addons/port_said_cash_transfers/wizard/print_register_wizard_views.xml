@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_print_register_wizard_form" model="ir.ui.view">
+    <field name="name">port_said.cash_transfer.print.wizard.form</field>
+    <field name="model">port_said.cash_transfer.print.wizard</field>
+    <field name="arch" type="xml">
+      <form string="طباعة دفتر حركة النقود">
+        <sheet>
+          <group>
+            <group>
+              <field name="direction"/>
+              <field name="fiscal_year"/>
+            </group>
+            <group>
+              <field name="date_from"/>
+              <field name="date_to"/>
+            </group>
+          </group>
+          <group>
+            <field name="include_disputed"/>
+            <field name="include_lost"/>
+          </group>
+        </sheet>
+        <footer>
+          <button name="action_print" type="object" string="طباعة" class="oe_highlight"/>
+          <button special="cancel" string="إلغاء"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_print_register_wizard" model="ir.actions.act_window">
+    <field name="name">طباعة دفتر حركة النقود</field>
+    <field name="res_model">port_said.cash_transfer.print.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+  </record>
+
+  <menuitem id="menu_print_register"
+            name="طباعة دفتر 39"
+            parent="menu_transfer_root"
+            action="action_print_register_wizard"
+            sequence="30"/>
+
+</odoo>

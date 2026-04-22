@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <menuitem id="menu_transfer_root"
+            name="دفاتر حركة النقود"
+            parent="general_ledger_ar.menu_helper_notebooks"
+            sequence="57"/>
+
+  <menuitem id="menu_transfer"
+            name="التحويلات النقدية"
+            parent="menu_transfer_root"
+            action="action_cash_transfer"
+            sequence="10"/>
+
+  <menuitem id="menu_transfer_folio"
+            name="الفوليوهات"
+            parent="menu_transfer_root"
+            action="action_transfer_folio"
+            sequence="20"/>
+
+</odoo>

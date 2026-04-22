@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <template id="report_transfer_slip">
+    <t t-call="web.html_container">
+      <t t-foreach="docs" t-as="t">
+        <t t-call="web.external_layout">
+          <div class="page" dir="rtl"
+               style="font-family:'Traditional Arabic',Arial,serif;">
+
+            <!-- Header -->
+            <div style="text-align:center; margin-bottom:15px;">
+              <h2 style="margin:0;">
+                <t t-if="t.direction == 'outgoing'">إذن تحويل نقدي — صادر</t>
+                <t t-else="">إذن تحويل نقدي — وارد</t>
+              </h2>
+              <div style="font-size:11px; margin-top:4px;">
+                استمارة رقم 39 ع.ح — محافظة بورسعيد
+              </div>
+            </div>
+
+            <div style="margin-bottom:12px; font-size:11px; text-align:left;">
+              التاريخ: <t t-out="t.transfer_date"/>
+              — رقم بالدفتر: <strong><t t-out="t.sequence_number or '—'"/></strong>
+              — الحالة: <t t-out="dict(t._fields['state'].selection).get(t.state)"/>
+            </div>
+
+            <!-- Amount block (prominent) -->
+            <div style="margin-bottom:15px; padding:12px; background:#fff4d0;
+                        border:2px solid #d4a017; text-align:center;">
+              <div style="font-size:13px;">المبلغ المُحوَّل</div>
+              <div style="font-size:20px; font-weight:bold; margin-top:4px;">
+                <t t-out="'%.2f' % t.amount"/>
+                <span t-field="t.currency_id.symbol"/>
+              </div>
+              <div t-if="t.denomination_notes" style="font-size:10px; margin-top:6px; color:#555;">
+                تفصيل الفئات: <t t-out="t.denomination_notes"/>
+              </div>
+            </div>
+
+            <!-- Parties -->
+            <h4 style="margin-top:12px; margin-bottom:6px;">الأطراف</h4>
+            <table style="width:100%; font-size:11px; border-collapse:collapse;
+                          border:1px solid #000;">
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#e8f0ff; width:30%;">
+                  <strong>المُرسِل</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="t.sender_employee_id.name or '—'"/>
+                  <t t-if="t.sender_unit">
+                    <br/><span style="font-size:9.5px; color:#555;">
+                      <t t-out="t.sender_unit"/>
+                    </span>
+                  </t>
+                </td>
+              </tr>
+              <tr t-if="t.direction == 'outgoing'">
+                <td style="padding:5px; border:1px solid #000; background:#e8f0ff;">
+                  <strong>الناقل</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="t.transporter_id.name or (t.sender_employee_id.name + ' (ذاته)')"/>
+                  <t t-if="t.transport_vehicle_plate">
+                    — مركبة: <t t-out="t.transport_vehicle_plate"/>
+                  </t>
+                  <t t-if="t.escort_security">
+                    <span style="color:#060;"> — مع مرافقة أمنية ✓</span>
+                  </t>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#fff5e5;">
+                  <strong>المُستلِم</strong>
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <strong><t t-out="t.receiver_unit_name"/></strong>
+                  (<t t-out="dict(t._fields['receiver_unit_type'].selection).get(t.receiver_unit_type)"/>)
+                  <br/>
+                  <t t-if="t.receiver_employee_id">
+                    <t t-out="t.receiver_employee_id.name"/>
+                  </t>
+                  <t t-elif="t.receiver_external_name">
+                    <t t-out="t.receiver_external_name"/>
+                  </t>
+                  <t t-if="t.receiver_id_number">
+                    — رقم قومي: <t t-out="t.receiver_id_number"/>
+                  </t>
+                </td>
+              </tr>
+            </table>
+
+            <!-- Timeline -->
+            <h4 style="margin-top:12px; margin-bottom:6px;">التواريخ والتوقيت</h4>
+            <table style="width:100%; font-size:11px; border-collapse:collapse;
+                          border:1px solid #000;">
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  تاريخ الإعداد
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="t.preparation_date or '—'"/>
+                </td>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  تاريخ/وقت المغادرة
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="t.dispatch_datetime or '—'"/>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  تاريخ/وقت الوصول
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="t.arrival_datetime or '—'"/>
+                </td>
+                <td style="padding:5px; border:1px solid #000; background:#f0f0f0;">
+                  تاريخ التأكيد
+                </td>
+                <td style="padding:5px; border:1px solid #000;">
+                  <t t-out="t.confirmation_date or '—'"/>
+                </td>
+              </tr>
+            </table>
+
+            <!-- Purpose -->
+            <h4 style="margin-top:12px; margin-bottom:6px;">الغرض</h4>
+            <div style="padding:8px; border:1px solid #000; min-height:40px;">
+              <t t-out="t.purpose"/>
+            </div>
+
+            <!-- References -->
+            <div t-if="t.daftar55_id" style="margin-top:10px; font-size:10px;">
+              <strong>مرجع دفتر 55:</strong>
+              <t t-out="t.daftar55_id.sequence_number or t.daftar55_id.name"/>
+            </div>
+
+            <!-- Exception blocks -->
+            <t t-if="t.state == 'disputed'">
+              <div style="margin-top:12px; padding:10px; border:2px solid #d4a017;
+                          background:#fff9f0;">
+                <h4 style="margin:0; color:#a60;">⚠ تنازع</h4>
+                <table style="width:100%; font-size:10px; margin-top:6px;">
+                  <tr>
+                    <td style="width:30%;"><strong>المبلغ المتنازَع فيه:</strong></td>
+                    <td>
+                      <t t-out="'%.2f' % t.disputed_amount"/>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="vertical-align:top;"><strong>السبب:</strong></td>
+                    <td><t t-out="t.dispute_reason or '—'"/></td>
+                  </tr>
+                </table>
+              </div>
+            </t>
+
+            <t t-if="t.state == 'lost'">
+              <div style="margin-top:12px; padding:10px; border:2px solid #a00;
+                          background:#ffe5e5;">
+                <h4 style="margin:0; color:#a00;">⚠ فقدان / سرقة</h4>
+                <table style="width:100%; font-size:10px; margin-top:6px;">
+                  <tr>
+                    <td style="width:30%;"><strong>محضر الشرطة:</strong></td>
+                    <td>
+                      رقم <t t-out="t.police_report_number or '—'"/>
+                      <t t-if="t.police_report_date">
+                        — بتاريخ <t t-out="t.police_report_date"/>
+                      </t>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="vertical-align:top;"><strong>الوصف:</strong></td>
+                    <td><t t-out="t.loss_description or '—'"/></td>
+                  </tr>
+                </table>
+              </div>
+            </t>
+
+            <!-- Signatures -->
+            <table style="width:100%; margin-top:35px; font-size:10.5px;"
+                   class="table-borderless">
+              <tr>
+                <td style="text-align:center;">
+                  <div>المُرسِل</div>
+                  <div style="margin-top:30px; border-top:1px solid #000; padding-top:3px;">
+                    <t t-out="t.sender_employee_id.name or '—'"/>
+                  </div>
+                </td>
+                <td style="text-align:center;" t-if="t.direction == 'outgoing'">
+                  <div>الناقل</div>
+                  <div style="margin-top:30px; border-top:1px solid #000; padding-top:3px;">
+                    <t t-out="t.transporter_id.name or '—'"/>
+                  </div>
+                </td>
+                <td style="text-align:center;">
+                  <div>المُستلِم</div>
+                  <div style="margin-top:30px; border-top:1px solid #000; padding-top:3px;">
+                    <t t-out="t.receiver_employee_id.name or t.receiver_external_name or '—'"/>
+                  </div>
+                </td>
+              </tr>
+            </table>
+
+          </div>
+          <p style="page-break-after: always;"/>
+        </t>
+      </t>
+    </t>
+  </template>
+
+</odoo>

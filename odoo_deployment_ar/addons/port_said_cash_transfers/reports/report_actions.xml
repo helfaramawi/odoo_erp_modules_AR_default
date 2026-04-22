@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="action_report_transfer_register" model="ir.actions.report">
+    <field name="name">دفتر حركة النقود — نموذج 39</field>
+    <field name="model">port_said.cash_transfer</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_cash_transfers.report_transfer_register</field>
+    <field name="report_file">port_said_cash_transfers.report_transfer_register</field>
+    <field name="paperformat_id" ref="paperformat_transfer_register"/>
+  </record>
+
+  <record id="action_report_transfer_slip" model="ir.actions.report">
+    <field name="name">إذن تحويل نقدي</field>
+    <field name="model">port_said.cash_transfer</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_cash_transfers.report_transfer_slip</field>
+    <field name="report_file">port_said_cash_transfers.report_transfer_slip</field>
+    <field name="paperformat_id" ref="paperformat_transfer_slip"/>
+    <field name="binding_model_id" ref="model_port_said_cash_transfer"/>
+    <field name="binding_type">report</field>
+  </record>
+
+</odoo>
