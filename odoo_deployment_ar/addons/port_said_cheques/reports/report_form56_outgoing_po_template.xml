@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <template id="report_form56_outgoing_po">
+    <t t-call="web.html_container">
+      <t t-call="web.external_layout">
+        <div class="page" dir="rtl"
+             style="font-family:'Traditional Arabic',Arial,serif;">
+
+          <div style="text-align:center; margin-bottom:8px;">
+            <h3 style="margin:0;">دفتر حساب أوامر الدفع المرسلة</h3>
+            <div style="font-size:11px;">
+              استمارة رقم 56 ع.ح — محافظة بورسعيد
+            </div>
+            <div style="font-size:10px;">
+              من <t t-out="docs[0].issue_date if docs else ''"/>
+              إلى <t t-out="docs[-1].issue_date if docs else ''"/>
+              — عدد الأوامر: <t t-out="len(docs)"/>
+            </div>
+          </div>
+
+          <table style="width:100%; font-size:9px; border-collapse:collapse;
+                        border:1.5px solid #000;">
+            <thead>
+              <tr style="background:#dddddd;">
+                <th style="padding:3px; border:1px solid #000;">تسلسل<br/>الدفتر</th>
+                <th style="padding:3px; border:1px solid #000;">رقم<br/>أمر الدفع</th>
+                <th style="padding:3px; border:1px solid #000;">تاريخ<br/>الإصدار</th>
+                <th style="padding:3px; border:1px solid #000;">المستفيد</th>
+                <th style="padding:3px; border:1px solid #000;">البنك</th>
+                <th style="padding:3px; border:1px solid #000;">IBAN</th>
+                <th style="padding:3px; border:1px solid #000;">المبلغ</th>
+                <th style="padding:3px; border:1px solid #000;">آلية<br/>الدفع</th>
+                <th style="padding:3px; border:1px solid #000;">رقم<br/>الشيك</th>
+                <th style="padding:3px; border:1px solid #000;">دفتر 55</th>
+                <th style="padding:3px; border:1px solid #000;">الحالة</th>
+              </tr>
+            </thead>
+            <tbody>
+              <t t-set="total" t-value="0"/>
+              <t t-foreach="docs" t-as="po">
+                <t t-set="total" t-value="total + po.amount"/>
+                <tr t-att-style="
+                  'background:#ffe5e5;' if po.state == 'rejected' else
+                  'background:#e5f5e5;' if po.state == 'cleared' else
+                  'background:#f5f5f5;' if po.state == 'cancelled' else ''">
+                  <td style="padding:2px; border:1px solid #000; font-family:monospace;">
+                    <t t-out="po.sequence_number or '—'"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-family:monospace;">
+                    <t t-out="po.po_number"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000;">
+                    <t t-out="po.issue_date"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:8.5px;">
+                    <t t-out="po.beneficiary_id.name"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:8.5px;">
+                    <t t-out="po.beneficiary_bank or '—'"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:8px;
+                             font-family:monospace;">
+                    <t t-out="po.beneficiary_iban or '—'"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; text-align:left;
+                             font-weight:bold;">
+                    <t t-out="'%.2f' % po.amount"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:8.5px;">
+                    <t t-out="dict(po._fields['payment_method'].selection).get(po.payment_method)"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-family:monospace;">
+                    <t t-out="po.cheque_id.cheque_number or '—'"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:8.5px;">
+                    <t t-out="po.daftar55_sequence or '—'"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:8.5px;">
+                    <t t-out="dict(po._fields['state'].selection).get(po.state)"/>
+                  </td>
+                </tr>
+              </t>
+              <tr style="background:#f5f5f5; font-weight:bold;">
+                <td colspan="6" style="padding:3px; border:1.5px solid #000; text-align:center;">
+                  إجمالي أوامر الدفع المرسلة
+                </td>
+                <td style="padding:3px; border:1.5px solid #000; text-align:left;
+                           background:#ffe9c6;">
+                  <t t-out="'%.2f' % total"/>
+                </td>
+                <td colspan="4" style="padding:3px; border:1.5px solid #000;"></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Signatures -->
+          <table style="width:100%; margin-top:30px; font-size:10px;"
+                 class="table-borderless">
+            <tr>
+              <td style="text-align:center;">
+                <div>رئيس الحسابات</div>
+                <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                  ............................
+                </div>
+              </td>
+              <td style="text-align:center;">
+                <div>المراجع المالي</div>
+                <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                  ............................
+                </div>
+              </td>
+              <td style="text-align:center;">
+                <div>الجهاز المركزي للمحاسبات</div>
+                <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                  ............................
+                </div>
+              </td>
+            </tr>
+          </table>
+
+        </div>
+      </t>
+    </t>
+  </template>
+
+</odoo>

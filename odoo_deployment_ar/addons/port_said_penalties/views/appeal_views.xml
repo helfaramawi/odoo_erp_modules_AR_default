@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_appeal_tree" model="ir.ui.view">
+    <field name="name">port_said.penalty.appeal.tree</field>
+    <field name="model">port_said.penalty.appeal</field>
+    <field name="arch" type="xml">
+      <tree string="التظلمات"
+            decoration-warning="state in ['submitted','under_review']"
+            decoration-success="state == 'overturned' or state == 'partial_reduction'"
+            decoration-danger="state == 'upheld'"
+            decoration-muted="state == 'withdrawn'">
+        <field name="penalty_sequence"/>
+        <field name="subject_display_name"/>
+        <field name="submission_date"/>
+        <field name="appeal_venue"/>
+        <field name="case_number"/>
+        <field name="original_amount"/>
+        <field name="reduced_amount"/>
+        <field name="reduction_percentage"/>
+        <field name="processing_days" optional="show"/>
+        <field name="state"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_appeal_form" model="ir.ui.view">
+    <field name="name">port_said.penalty.appeal.form</field>
+    <field name="model">port_said.penalty.appeal</field>
+    <field name="arch" type="xml">
+      <form>
+        <header>
+          <button name="action_start_review" type="object" string="بدء المراجعة"
+                  invisible="state != 'submitted'" class="oe_highlight"/>
+          <button name="action_uphold" type="object" string="تأييد الجزاء"
+                  invisible="state != 'under_review'"
+                  groups="port_said_penalties.group_penalty_manager"/>
+          <button name="action_reduce" type="object" string="تخفيف"
+                  invisible="state != 'under_review'" class="oe_highlight"
+                  groups="port_said_penalties.group_penalty_manager"/>
+          <button name="action_overturn" type="object" string="إلغاء الجزاء"
+                  invisible="state != 'under_review'" class="oe_highlight"
+                  groups="port_said_penalties.group_penalty_manager"/>
+          <button name="action_withdraw" type="object" string="سحب التظلم"
+                  invisible="state not in ['submitted','under_review']"/>
+          <field name="state" widget="statusbar"
+                 statusbar_visible="submitted,under_review,upheld"/>
+        </header>
+        <sheet>
+          <div class="oe_title">
+            <h1><field name="display_name" readonly="1"/></h1>
+          </div>
+          <group>
+            <group string="الجزاء المُتظلَّم عليه">
+              <field name="penalty_id"/>
+              <field name="penalty_sequence" readonly="1"/>
+              <field name="subject_display_name" readonly="1"/>
+              <field name="original_amount" readonly="1"/>
+              <field name="currency_id" invisible="1"/>
+            </group>
+            <group string="تقديم التظلم">
+              <field name="submission_date"/>
+              <field name="submission_reference"/>
+              <field name="appeal_venue"/>
+              <field name="case_number"/>
+            </group>
+          </group>
+          <group string="أسباب التظلم">
+            <field name="grounds" nolabel="1"
+                   placeholder="الحجج القانونية والواقعية للطعن في الجزاء..."/>
+          </group>
+          <group string="القرار" invisible="state in ['submitted','under_review']">
+            <group>
+              <field name="decision_date" readonly="1"/>
+              <field name="decision_reference"/>
+              <field name="processing_days" readonly="1"/>
+            </group>
+            <group>
+              <field name="reduced_amount"
+                     invisible="state != 'partial_reduction'"
+                     required="state == 'partial_reduction'"/>
+              <field name="reduction_percentage" readonly="1"
+                     invisible="state != 'partial_reduction'"/>
+              <field name="legal_fees"/>
+            </group>
+          </group>
+          <group string="ملخص القرار" invisible="state in ['submitted','under_review']">
+            <field name="decision_summary" nolabel="1"/>
+          </group>
+          <notebook>
+            <page string="ملاحظات">
+              <field name="notes"/>
+            </page>
+          </notebook>
+        </sheet>
+        <div class="oe_chatter">
+          <field name="message_follower_ids"/>
+          <field name="activity_ids"/>
+          <field name="message_ids"/>
+        </div>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_appeal_search" model="ir.ui.view">
+    <field name="name">port_said.penalty.appeal.search</field>
+    <field name="model">port_said.penalty.appeal</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="penalty_sequence"/>
+        <field name="case_number"/>
+        <field name="subject_display_name"/>
+        <separator/>
+        <filter string="قيد المراجعة" name="f_active"
+                domain="[('state', 'in', ['submitted','under_review'])]"/>
+        <filter string="أُيِّد الجزاء" name="f_upheld" domain="[('state','=','upheld')]"/>
+        <filter string="أُلغي الجزاء" name="f_overturned" domain="[('state','=','overturned')]"/>
+        <filter string="خُفِّف" name="f_reduced" domain="[('state','=','partial_reduction')]"/>
+        <group expand="1" string="تجميع حسب">
+          <filter string="الحالة" name="g_state" context="{'group_by':'state'}"/>
+          <filter string="الجهة المراجِعة" name="g_venue" context="{'group_by':'appeal_venue'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <record id="action_appeal" model="ir.actions.act_window">
+    <field name="name">التظلمات</field>
+    <field name="res_model">port_said.penalty.appeal</field>
+    <field name="view_mode">tree,form</field>
+    <field name="search_view_id" ref="view_appeal_search"/>
+  </record>
+
+</odoo>

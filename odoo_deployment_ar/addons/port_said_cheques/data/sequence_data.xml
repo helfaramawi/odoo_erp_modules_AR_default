@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- التسلسل القانوني لدفتر 56 - الشيكات الصادرة -->
+  <record id="seq_form56_out" model="ir.sequence">
+    <field name="name">دفتر 56 - الشيكات الصادرة</field>
+    <field name="code">port_said.cheque.form56.out</field>
+    <field name="prefix">56-OUT/%(year)s/</field>
+    <field name="padding">4</field>
+    <field name="use_date_range">True</field>
+    <field name="company_id" eval="False"/>
+  </record>
+
+  <!-- التسلسل القانوني لدفتر 78 - شيكات رسم التحصيل -->
+  <record id="seq_form78_collection" model="ir.sequence">
+    <field name="name">دفتر 78 - شيكات رسم التحصيل</field>
+    <field name="code">port_said.cheque.form78.collection</field>
+    <field name="prefix">78-COL/%(year)s/</field>
+    <field name="padding">4</field>
+    <field name="use_date_range">True</field>
+    <field name="company_id" eval="False"/>
+  </record>
+
+  <!-- التسلسل القانوني لأوامر الدفع المرسلة -->
+  <record id="seq_outgoing_po" model="ir.sequence">
+    <field name="name">دفتر 56 - أوامر الدفع المرسلة</field>
+    <field name="code">port_said.outgoing_po</field>
+    <field name="prefix">PO-OUT/%(year)s/</field>
+    <field name="padding">4</field>
+    <field name="use_date_range">True</field>
+    <field name="company_id" eval="False"/>
+  </record>
+
+</odoo>

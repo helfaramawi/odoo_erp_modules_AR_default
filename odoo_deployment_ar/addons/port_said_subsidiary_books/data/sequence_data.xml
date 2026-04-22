@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- مهمة دورية شهرية: تنشئ فوليوهات الشهر السابق ليلة يوم 2 من كل شهر -->
+  <record id="cron_generate_monthly_folios" model="ir.cron">
+    <field name="name">دفاتر مساعدة — توليد الفوليوهات الشهرية</field>
+    <field name="model_id" ref="model_port_said_subsidiary_folio"/>
+    <field name="state">code</field>
+    <field name="code">model.cron_generate_monthly_folios()</field>
+    <field name="interval_number">1</field>
+    <field name="interval_type">months</field>
+    <field name="numbercall">-1</field>
+    <field name="active" eval="True"/>
+  </record>
+  <!-- مهمة ليلية: تُعيد حساب أرصدة الفوليوهات المفتوحة لقراءة القيود الجديدة -->
+  <record id="cron_recompute_open_folios" model="ir.cron">
+    <field name="name">دفاتر مساعدة — إعادة حساب الفوليوهات المفتوحة</field>
+    <field name="model_id" ref="model_port_said_subsidiary_folio"/>
+    <field name="state">code</field>
+    <field name="code">model.cron_recompute_open_folios()</field>
+    <field name="interval_number">1</field>
+    <field name="interval_type">days</field>
+    <field name="numbercall">-1</field>
+    <field name="active" eval="True"/>
+  </record>
+
+</odoo>

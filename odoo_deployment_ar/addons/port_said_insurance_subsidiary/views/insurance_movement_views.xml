@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_insurance_movement_tree" model="ir.ui.view">
+    <field name="name">port_said.insurance.movement.tree</field>
+    <field name="model">port_said.insurance.movement</field>
+    <field name="arch" type="xml">
+      <tree string="حركات التأمينات" create="false"
+            decoration-success="movement_type=='deposit'"
+            decoration-info="movement_type=='withdrawal'"
+            decoration-danger="movement_type=='forfeiture'">
+        <field name="movement_date"/>
+        <field name="movement_type"/>
+        <field name="collateral_type"/>
+        <field name="partner_id"/>
+        <field name="amount" sum="الإجمالي"/>
+        <field name="description"/>
+        <field name="bank_guarantee_id" optional="show"/>
+        <field name="insurance_deposit_id" optional="show"/>
+        <field name="folio_id" optional="hide"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_insurance_movement_search" model="ir.ui.view">
+    <field name="name">port_said.insurance.movement.search</field>
+    <field name="model">port_said.insurance.movement</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="partner_id"/>
+        <field name="description"/>
+        <separator/>
+        <filter string="إيداعات" name="f_dep" domain="[('movement_type','=','deposit')]"/>
+        <filter string="استردادات" name="f_wd" domain="[('movement_type','=','withdrawal')]"/>
+        <filter string="مصادرات" name="f_forf" domain="[('movement_type','=','forfeiture')]"/>
+        <separator/>
+        <filter string="نقدية" name="f_cash" domain="[('collateral_type','=','cash')]"/>
+        <filter string="شيك" name="f_chq" domain="[('collateral_type','=','cheque')]"/>
+        <filter string="خطاب ضمان" name="f_grt" domain="[('collateral_type','=','guarantee')]"/>
+        <separator/>
+        <filter string="بدون فولية" name="f_nofolio" domain="[('folio_id','=',False)]"/>
+        <group expand="1" string="تجميع حسب">
+          <filter string="النوع" name="g_type" context="{'group_by':'movement_type'}"/>
+          <filter string="الصيغة" name="g_col" context="{'group_by':'collateral_type'}"/>
+          <filter string="المورد" name="g_partner" context="{'group_by':'partner_id'}"/>
+          <filter string="الفولية" name="g_folio" context="{'group_by':'folio_id'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <record id="action_insurance_movement" model="ir.actions.act_window">
+    <field name="name">حركات التأمينات</field>
+    <field name="res_model">port_said.insurance.movement</field>
+    <field name="view_mode">tree</field>
+    <field name="search_view_id" ref="view_insurance_movement_search"/>
+  </record>
+
+</odoo>

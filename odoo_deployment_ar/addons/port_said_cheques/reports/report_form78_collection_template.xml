@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <template id="report_form78_collection">
+    <t t-call="web.html_container">
+      <t t-call="web.external_layout">
+        <div class="page" dir="rtl"
+             style="font-family:'Traditional Arabic',Arial,serif;">
+
+          <div style="text-align:center; margin-bottom:8px;">
+            <h3 style="margin:0;">دفتر حساب الشيكات - رسم التحصيل</h3>
+            <div style="font-size:11px;">
+              استمارة رقم 78 ع.ح — محافظة بورسعيد
+            </div>
+            <div style="font-size:10px;">
+              عدد الشيكات: <t t-out="len(docs)"/>
+            </div>
+          </div>
+
+          <table style="width:100%; font-size:9px; border-collapse:collapse;
+                        border:1.5px solid #000;">
+            <thead>
+              <tr style="background:#dddddd;">
+                <th style="padding:3px; border:1px solid #000;">تسلسل<br/>78</th>
+                <th style="padding:3px; border:1px solid #000;">رقم<br/>الشيك</th>
+                <th style="padding:3px; border:1px solid #000;">تاريخ<br/>الاستلام</th>
+                <th style="padding:3px; border:1px solid #000;">المُصدِر</th>
+                <th style="padding:3px; border:1px solid #000;">البنك<br/>المسحوب عليه</th>
+                <th style="padding:3px; border:1px solid #000;">المبلغ<br/>الأصلي</th>
+                <th style="padding:3px; border:1px solid #000;">رسم<br/>التحصيل</th>
+                <th style="padding:3px; border:1px solid #000;">الصافي<br/>المُحصَّل</th>
+                <th style="padding:3px; border:1px solid #000;">تاريخ<br/>الإيداع</th>
+                <th style="padding:3px; border:1px solid #000;">تاريخ<br/>التحصيل</th>
+                <th style="padding:3px; border:1px solid #000;">الحالة</th>
+              </tr>
+            </thead>
+            <tbody>
+              <t t-set="t_orig" t-value="0"/>
+              <t t-set="t_fee" t-value="0"/>
+              <t t-set="t_net" t-value="0"/>
+              <t t-foreach="docs" t-as="c">
+                <t t-set="t_orig" t-value="t_orig + c.amount"/>
+                <t t-set="t_fee" t-value="t_fee + (c.collection_fee or 0)"/>
+                <t t-set="t_net" t-value="t_net + (c.net_collected or 0)"/>
+                <tr t-att-style="
+                  'background:#ffe5e5;' if c.state == 'returned' else
+                  'background:#e5f5e5;' if c.state == 'cleared' else
+                  'background:#fff9e5;' if c.state == 'deposited' else ''">
+                  <td style="padding:2px; border:1px solid #000; font-family:monospace;">
+                    <t t-out="c.form56_sequence or '—'"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-family:monospace;">
+                    <t t-out="c.cheque_number"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000;">
+                    <t t-out="c.received_date or c.issue_date"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:8.5px;">
+                    <t t-out="c.partner_id.name"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:8.5px;">
+                    <t t-out="c.drawn_on_bank"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; text-align:left;">
+                    <t t-out="'%.2f' % c.amount"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; text-align:left;
+                             color:#a00;">
+                    <t t-out="'%.2f' % (c.collection_fee or 0)"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; text-align:left;
+                             font-weight:bold;">
+                    <t t-out="'%.2f' % (c.net_collected or 0)"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000;">
+                    <t t-out="c.deposit_date or '—'"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000;">
+                    <t t-out="c.clearing_date or '—'"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:8.5px;">
+                    <t t-out="dict(c._fields['state'].selection).get(c.state)"/>
+                  </td>
+                </tr>
+              </t>
+              <tr style="background:#f5f5f5; font-weight:bold;">
+                <td colspan="5" style="padding:3px; border:1.5px solid #000; text-align:center;">
+                  الإجمالي
+                </td>
+                <td style="padding:3px; border:1.5px solid #000; text-align:left;">
+                  <t t-out="'%.2f' % t_orig"/>
+                </td>
+                <td style="padding:3px; border:1.5px solid #000; text-align:left; color:#a00;">
+                  <t t-out="'%.2f' % t_fee"/>
+                </td>
+                <td style="padding:3px; border:1.5px solid #000; text-align:left;
+                           background:#ffe9c6;">
+                  <t t-out="'%.2f' % t_net"/>
+                </td>
+                <td colspan="3" style="padding:3px; border:1.5px solid #000;"></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Signatures -->
+          <table style="width:100%; margin-top:30px; font-size:10px;"
+                 class="table-borderless">
+            <tr>
+              <td style="text-align:center;">
+                <div>أمين التحصيل</div>
+                <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                  ............................
+                </div>
+              </td>
+              <td style="text-align:center;">
+                <div>رئيس الحسابات</div>
+                <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                  ............................
+                </div>
+              </td>
+              <td style="text-align:center;">
+                <div>المراجع المالي</div>
+                <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                  ............................
+                </div>
+              </td>
+            </tr>
+          </table>
+
+        </div>
+      </t>
+    </t>
+  </template>
+
+</odoo>

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_insurance_folio_tree" model="ir.ui.view">
+    <field name="name">port_said.insurance.folio.tree</field>
+    <field name="model">port_said.insurance.folio</field>
+    <field name="arch" type="xml">
+      <tree string="فوليوهات دفاتر التأمينات"
+            decoration-info="state=='draft'"
+            decoration-success="state=='audited'"
+            decoration-muted="state=='archived'">
+        <field name="folio_number"/>
+        <field name="book_classification"/>
+        <field name="fiscal_year"/>
+        <field name="period_month"/>
+        <field name="opening_balance" sum="إجمالي"/>
+        <field name="total_deposits" sum="إجمالي"/>
+        <field name="total_withdrawals" sum="إجمالي"/>
+        <field name="total_forfeitures" sum="إجمالي"/>
+        <field name="closing_balance" sum="إجمالي"/>
+        <field name="movement_count"/>
+        <field name="state"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_insurance_folio_form" model="ir.ui.view">
+    <field name="name">port_said.insurance.folio.form</field>
+    <field name="model">port_said.insurance.folio</field>
+    <field name="arch" type="xml">
+      <form>
+        <header>
+          <button name="action_refresh_movements" type="object"
+                  string="تحديث الحركات"
+                  invisible="state != 'draft'"/>
+          <button name="action_close" type="object" string="إقفال شهري"
+                  invisible="state != 'draft'" class="oe_highlight"/>
+          <button name="action_audit" type="object" string="اعتماد المراجعة"
+                  invisible="state != 'closed'"
+                  groups="account.group_account_manager"/>
+          <button name="action_reopen" type="object" string="إعادة فتح"
+                  invisible="state == 'draft'"
+                  groups="account.group_account_manager"
+                  confirm="إعادة فتح إجراء استثنائي يُسجَّل."/>
+          <field name="state" widget="statusbar"
+                 statusbar_visible="draft,closed,audited,archived"/>
+        </header>
+        <sheet>
+          <div class="oe_title">
+            <label for="folio_number" string="رقم الفولية"/>
+            <h1><field name="folio_number" readonly="1"/></h1>
+          </div>
+          <group>
+            <group>
+              <field name="book_classification" readonly="state != 'draft'"/>
+              <field name="fiscal_year" readonly="state != 'draft'"/>
+              <field name="period_month" readonly="state != 'draft'"/>
+              <field name="date_from" readonly="state != 'draft'"/>
+              <field name="date_to" readonly="state != 'draft'"/>
+            </group>
+            <group>
+              <field name="previous_folio_id" readonly="1"/>
+              <field name="movement_count" readonly="1"/>
+              <field name="currency_id" invisible="1"/>
+            </group>
+          </group>
+          <group string="الأرصدة" col="4">
+            <field name="opening_balance" readonly="state != 'draft'"/>
+            <field name="total_deposits" readonly="1"/>
+            <field name="total_withdrawals" readonly="1"/>
+            <field name="closing_balance" readonly="1"/>
+          </group>
+          <group string="تفصيل الإيداعات حسب الصيغة" col="3">
+            <field name="total_deposits_cash" readonly="1"/>
+            <field name="total_deposits_cheque" readonly="1"/>
+            <field name="total_deposits_guarantee" readonly="1"/>
+          </group>
+          <group string="المصادرات" invisible="total_forfeitures == 0">
+            <field name="total_forfeitures" readonly="1"/>
+          </group>
+          <notebook>
+            <page string="الحركات">
+              <field name="movement_ids" readonly="1">
+                <tree>
+                  <field name="movement_date"/>
+                  <field name="movement_type"/>
+                  <field name="collateral_type"/>
+                  <field name="partner_id"/>
+                  <field name="amount"/>
+                  <field name="description"/>
+                </tree>
+              </field>
+            </page>
+            <page string="التواقيع والإقفال">
+              <group>
+                <group>
+                  <field name="cashier_signed_by"/>
+                  <field name="accounts_head_signed_by"/>
+                </group>
+                <group>
+                  <field name="closed_by" readonly="1"/>
+                  <field name="closed_date" readonly="1"/>
+                </group>
+              </group>
+            </page>
+            <page string="ملاحظات">
+              <field name="notes"/>
+            </page>
+          </notebook>
+        </sheet>
+        <div class="oe_chatter">
+          <field name="message_follower_ids"/>
+          <field name="activity_ids"/>
+          <field name="message_ids"/>
+        </div>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_insurance_folio_search" model="ir.ui.view">
+    <field name="name">port_said.insurance.folio.search</field>
+    <field name="model">port_said.insurance.folio</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="folio_number"/>
+        <field name="fiscal_year"/>
+        <separator/>
+        <filter string="مفتوحة" name="f_draft" domain="[('state','=','draft')]"/>
+        <filter string="مُقفَلة" name="f_closed" domain="[('state','=','closed')]"/>
+        <filter string="مراجَعة" name="f_audited" domain="[('state','=','audited')]"/>
+        <filter string="مؤرشفة" name="f_archived" domain="[('state','=','archived')]"/>
+        <separator/>
+        <filter string="تأمين مؤقت" name="f_prov"
+                domain="[('book_classification','=','provisional')]"/>
+        <filter string="تأمين نهائي" name="f_final"
+                domain="[('book_classification','=','final')]"/>
+        <group expand="1" string="تجميع حسب">
+          <filter string="التصنيف" name="g_class" context="{'group_by':'book_classification'}"/>
+          <filter string="السنة المالية" name="g_fy" context="{'group_by':'fiscal_year'}"/>
+          <filter string="الشهر" name="g_month" context="{'group_by':'period_month'}"/>
+          <filter string="الحالة" name="g_state" context="{'group_by':'state'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <record id="action_insurance_folio" model="ir.actions.act_window">
+    <field name="name">فوليوهات التأمينات</field>
+    <field name="res_model">port_said.insurance.folio</field>
+    <field name="view_mode">tree,form</field>
+    <field name="search_view_id" ref="view_insurance_folio_search"/>
+  </record>
+
+</odoo>

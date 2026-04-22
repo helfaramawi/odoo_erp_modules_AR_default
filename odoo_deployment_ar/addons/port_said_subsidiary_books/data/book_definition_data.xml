@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+  <!--
+    تعريف الدفاتر القانونية الثمانية
+    ===================================
+    نفس المحرك (port_said.subsidiary.book) + نفس مصدر البيانات (account.move.line)
+    + 8 سجلات مختلفة = 8 دفاتر قانونية مختلفة في الطباعة.
+  -->
+
+  <!-- ─── 1. مفردات الحسابات الجارية المدينة ────────────────────────────── -->
+  <record id="book_current_dr_detail" model="port_said.subsidiary.book">
+    <field name="name">دفتر مفردات الحسابات الجارية المدينة</field>
+    <field name="code">SUB_CUR_DR_DETAIL</field>
+    <field name="form_number">39 ع.ح</field>
+    <field name="sequence">10</field>
+    <field name="account_class">current</field>
+    <field name="side">debit</field>
+    <field name="scope">detail</field>
+    <field name="account_classification_ids" eval="[(6, 0, [ref('classification_current_dr')])]"/>
+    <field name="grouping_key">partner_account</field>
+    <field name="print_template">detail</field>
+    <field name="columns_layout">single_amount</field>
+  </record>
+
+  <!-- ─── 2. مفردات الحسابات الجارية الدائنة ────────────────────────────── -->
+  <record id="book_current_cr_detail" model="port_said.subsidiary.book">
+    <field name="name">دفتر مفردات الحسابات الجارية الدائنة</field>
+    <field name="code">SUB_CUR_CR_DETAIL</field>
+    <field name="form_number">39 ع.ح</field>
+    <field name="sequence">20</field>
+    <field name="account_class">current</field>
+    <field name="side">credit</field>
+    <field name="scope">detail</field>
+    <field name="account_classification_ids" eval="[(6, 0, [ref('classification_current_cr')])]"/>
+    <field name="grouping_key">partner_account</field>
+    <field name="print_template">detail</field>
+    <field name="columns_layout">single_amount</field>
+  </record>
+
+  <!-- ─── 3. إجمالي الحسابات الجارية المدينة ────────────────────────────── -->
+  <record id="book_current_dr_totals" model="port_said.subsidiary.book">
+    <field name="name">دفتر إجمالي الحسابات الجارية المدينة</field>
+    <field name="code">SUB_CUR_DR_TOTALS</field>
+    <field name="form_number">71 مكرر ع.ح</field>
+    <field name="sequence">30</field>
+    <field name="account_class">current</field>
+    <field name="side">debit</field>
+    <field name="scope">totals</field>
+    <field name="account_classification_ids" eval="[(6, 0, [ref('classification_current_dr')])]"/>
+    <field name="grouping_key">account</field>
+    <field name="print_template">totals</field>
+    <field name="columns_layout">debit_credit</field>
+  </record>
+
+  <!-- ─── 4. إجمالي الحسابات الجارية الدائنة ────────────────────────────── -->
+  <record id="book_current_cr_totals" model="port_said.subsidiary.book">
+    <field name="name">دفتر إجمالي الحسابات الجارية الدائنة</field>
+    <field name="code">SUB_CUR_CR_TOTALS</field>
+    <field name="form_number">71 ع.ح</field>
+    <field name="sequence">40</field>
+    <field name="account_class">current</field>
+    <field name="side">credit</field>
+    <field name="scope">totals</field>
+    <field name="account_classification_ids" eval="[(6, 0, [ref('classification_current_cr')])]"/>
+    <field name="grouping_key">account</field>
+    <field name="print_template">totals</field>
+    <field name="columns_layout">debit_credit</field>
+  </record>
+
+  <!-- ─── 5. مفردات الحسابات النظامية المدينة ───────────────────────────── -->
+  <record id="book_memo_dr_detail" model="port_said.subsidiary.book">
+    <field name="name">دفتر مفردات الحسابات النظامية المدينة</field>
+    <field name="code">SUB_MEMO_DR_DETAIL</field>
+    <field name="form_number">39 مكرر ع.ح</field>
+    <field name="sequence">50</field>
+    <field name="account_class">memo</field>
+    <field name="side">debit</field>
+    <field name="scope">detail</field>
+    <field name="account_classification_ids" eval="[(6, 0, [ref('classification_memo_dr')])]"/>
+    <field name="grouping_key">partner_account</field>
+    <field name="print_template">detail</field>
+    <field name="columns_layout">single_amount</field>
+  </record>
+
+  <!-- ─── 6. مفردات الحسابات النظامية الدائنة ───────────────────────────── -->
+  <record id="book_memo_cr_detail" model="port_said.subsidiary.book">
+    <field name="name">دفتر مفردات الحسابات النظامية الدائنة</field>
+    <field name="code">SUB_MEMO_CR_DETAIL</field>
+    <field name="form_number">39 مكرر ع.ح</field>
+    <field name="sequence">60</field>
+    <field name="account_class">memo</field>
+    <field name="side">credit</field>
+    <field name="scope">detail</field>
+    <field name="account_classification_ids" eval="[(6, 0, [ref('classification_memo_cr')])]"/>
+    <field name="grouping_key">partner_account</field>
+    <field name="print_template">detail</field>
+    <field name="columns_layout">single_amount</field>
+  </record>
+
+  <!-- ─── 7. إجمالي الحسابات النظامية المدينة ───────────────────────────── -->
+  <record id="book_memo_dr_totals" model="port_said.subsidiary.book">
+    <field name="name">دفتر إجمالي الحسابات النظامية المدينة</field>
+    <field name="code">SUB_MEMO_DR_TOTALS</field>
+    <field name="form_number">78 مكرر ع.ح</field>
+    <field name="sequence">70</field>
+    <field name="account_class">memo</field>
+    <field name="side">debit</field>
+    <field name="scope">totals</field>
+    <field name="account_classification_ids" eval="[(6, 0, [ref('classification_memo_dr')])]"/>
+    <field name="grouping_key">account</field>
+    <field name="print_template">totals</field>
+    <field name="columns_layout">debit_credit</field>
+  </record>
+
+  <!-- ─── 8. إجمالي الحسابات النظامية الدائنة ───────────────────────────── -->
+  <record id="book_memo_cr_totals" model="port_said.subsidiary.book">
+    <field name="name">دفتر إجمالي الحسابات النظامية الدائنة</field>
+    <field name="code">SUB_MEMO_CR_TOTALS</field>
+    <field name="form_number">78 مكرر ع.ح</field>
+    <field name="sequence">80</field>
+    <field name="account_class">memo</field>
+    <field name="side">credit</field>
+    <field name="scope">totals</field>
+    <field name="account_classification_ids" eval="[(6, 0, [ref('classification_memo_cr')])]"/>
+    <field name="grouping_key">account</field>
+    <field name="print_template">totals</field>
+    <field name="columns_layout">debit_credit</field>
+  </record>
+
+  <!-- ─── 9. الحسابات الشخصية ذو الخانتين (نموذج 29) ─────────────────────── -->
+  <record id="book_personal_dual" model="port_said.subsidiary.book">
+    <field name="name">دفتر الحسابات الشخصية ذو الخانتين</field>
+    <field name="code">SUB_PERSONAL_DUAL</field>
+    <field name="form_number">29 حسابات</field>
+    <field name="sequence">90</field>
+    <field name="account_class">personal</field>
+    <field name="side">both</field>
+    <field name="scope">personal</field>
+    <field name="account_classification_ids" eval="[(6, 0, [ref('classification_personal')])]"/>
+    <field name="grouping_key">partner</field>
+    <field name="print_template">personal</field>
+    <field name="columns_layout">multi_deduction</field>
+  </record>
+
+</odoo>

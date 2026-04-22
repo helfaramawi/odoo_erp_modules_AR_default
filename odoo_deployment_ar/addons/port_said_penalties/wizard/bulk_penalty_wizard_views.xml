@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_bulk_penalty_wizard_form" model="ir.ui.view">
+    <field name="name">port_said.penalty.bulk.wizard.form</field>
+    <field name="model">port_said.penalty.bulk.wizard</field>
+    <field name="arch" type="xml">
+      <form string="جزاءات جماعية">
+        <sheet>
+          <group>
+            <group>
+              <field name="subject_type"/>
+              <field name="violation_type_id"/>
+              <field name="penalty_type_option_id"
+                     domain="['|', ('subject_type','=',subject_type), ('subject_type','=','both')]"/>
+            </group>
+            <group>
+              <field name="incident_date"/>
+              <field name="amount"/>
+              <field name="currency_id" invisible="1"/>
+            </group>
+          </group>
+          <group>
+            <field name="employee_ids" widget="many2many_tags"
+                   invisible="subject_type != 'employee'"
+                   required="subject_type == 'employee'"/>
+            <field name="vendor_ids" widget="many2many_tags"
+                   invisible="subject_type != 'vendor'"
+                   required="subject_type == 'vendor'"/>
+          </group>
+          <group>
+            <field name="incident_description" nolabel="1"
+                   placeholder="وصف الواقعة المشتركة..."/>
+          </group>
+        </sheet>
+        <footer>
+          <button name="action_create_penalties" type="object"
+                  string="إنشاء الجزاءات" class="oe_highlight"/>
+          <button special="cancel" string="إلغاء"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_bulk_penalty_wizard" model="ir.actions.act_window">
+    <field name="name">جزاءات جماعية</field>
+    <field name="res_model">port_said.penalty.bulk.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+  </record>
+
+  <menuitem id="menu_bulk_penalty"
+            name="جزاءات جماعية"
+            parent="menu_penalty_root"
+            action="action_bulk_penalty_wizard"
+            sequence="50"/>
+
+</odoo>

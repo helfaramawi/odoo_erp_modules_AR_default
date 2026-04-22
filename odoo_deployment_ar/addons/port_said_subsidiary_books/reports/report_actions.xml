@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="action_report_subsidiary_detail" model="ir.actions.report">
+    <field name="name">دفتر المفردات</field>
+    <field name="model">port_said.subsidiary.folio</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_subsidiary_books.report_subsidiary_detail</field>
+    <field name="report_file">port_said_subsidiary_books.report_subsidiary_detail</field>
+    <field name="paperformat_id" ref="paperformat_subsidiary_register"/>
+    <field name="binding_model_id" ref="model_port_said_subsidiary_folio"/>
+    <field name="binding_type">report</field>
+  </record>
+
+  <record id="action_report_subsidiary_totals" model="ir.actions.report">
+    <field name="name">دفتر الإجمالي</field>
+    <field name="model">port_said.subsidiary.folio</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_subsidiary_books.report_subsidiary_totals</field>
+    <field name="report_file">port_said_subsidiary_books.report_subsidiary_totals</field>
+    <field name="paperformat_id" ref="paperformat_subsidiary_register"/>
+  </record>
+
+  <record id="action_report_personal_dual" model="ir.actions.report">
+    <field name="name">الحسابات الشخصية ذو الخانتين</field>
+    <field name="model">port_said.subsidiary.folio</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_subsidiary_books.report_personal_dual</field>
+    <field name="report_file">port_said_subsidiary_books.report_personal_dual</field>
+    <field name="paperformat_id" ref="paperformat_subsidiary_personal"/>
+  </record>
+
+</odoo>

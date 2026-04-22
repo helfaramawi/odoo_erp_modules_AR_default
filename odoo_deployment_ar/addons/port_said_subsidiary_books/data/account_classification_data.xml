@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+  <!--
+    تصنيفات الحسابات الافتراضية
+    ==============================
+    استدلال على دليل الحسابات الموحد للوحدات الحكومية المصرية (وزارة المالية).
+    هذه القيم استرشادية وتحتاج تأكيد من العميل قبل الإنتاج.
+
+    الافتراضات:
+    - 11x = نقدية وبنوك → ليست تصنيف مساعد (تظهر في دفتر النقدية)
+    - 12x = سلف ومدفوعات مقدمة → CUR_DR
+    - 13x = ذمم مدينة وعملاء → CUR_DR / PERSONAL
+    - 14x = مخزون → ليس تصنيف مساعد (دفتر مخازن منفصل)
+    - 21x = ذمم دائنة وموردون → CUR_CR / PERSONAL
+    - 22x = استقطاعات وضرائب مستحقة → CUR_CR
+    - 31x = مخصصات → CUR_CR
+    - 9xx = حسابات نظامية (off-balance) → MEMO_DR / MEMO_CR
+  -->
+
+  <record id="classification_current_dr" model="port_said.subsidiary.account.classification">
+    <field name="name">حسابات جارية مدينة</field>
+    <field name="code">CUR_DR</field>
+    <field name="sequence">10</field>
+    <field name="nature">current</field>
+    <field name="natural_side">debit</field>
+    <field name="coa_code_prefix">12</field>
+    <field name="description">السلف، المدفوعات المقدمة، العهد المستديمة، الذمم المدينة قصيرة الأجل،
+السلف المنصرفة للموظفين، السلف على الحساب الجاري للوحدات الفرعية.
+تظهر في دفتر مفردات الحسابات الجارية المدينة (39 ع.ح) والإجمالي (71 مكرر ع.ح).</field>
+  </record>
+
+  <record id="classification_current_cr" model="port_said.subsidiary.account.classification">
+    <field name="name">حسابات جارية دائنة</field>
+    <field name="code">CUR_CR</field>
+    <field name="sequence">20</field>
+    <field name="nature">current</field>
+    <field name="natural_side">credit</field>
+    <field name="coa_code_prefix">21</field>
+    <field name="description">الذمم الدائنة للموردين والمقاولين، الاستقطاعات قبل التوريد،
+الضرائب المستحقة، حسابات الجاري الدائنة للجهات الأخرى، أمانات.
+تظهر في دفتر مفردات الحسابات الجارية الدائنة (39 ع.ح) والإجمالي (71 ع.ح).</field>
+  </record>
+
+  <record id="classification_memo_dr" model="port_said.subsidiary.account.classification">
+    <field name="name">حسابات نظامية مدينة</field>
+    <field name="code">MEMO_DR</field>
+    <field name="sequence">30</field>
+    <field name="nature">memo</field>
+    <field name="natural_side">debit</field>
+    <field name="coa_code_prefix">91</field>
+    <field name="description">الارتباطات القائمة، الاعتمادات المخصصة، خطابات الضمان الصادرة،
+حسابات نظامية مقابلة للالتزامات. تظهر في دفتر مفردات الحسابات النظامية المدينة
+(39 مكرر ع.ح) والإجمالي (78 مكرر ع.ح).</field>
+  </record>
+
+  <record id="classification_memo_cr" model="port_said.subsidiary.account.classification">
+    <field name="name">حسابات نظامية دائنة</field>
+    <field name="code">MEMO_CR</field>
+    <field name="sequence">40</field>
+    <field name="nature">memo</field>
+    <field name="natural_side">credit</field>
+    <field name="coa_code_prefix">92</field>
+    <field name="description">الالتزامات المحتملة، خطابات الضمان المستلمة، التأمينات الواردة،
+الكفالات المحصلة. تظهر في دفتر مفردات الحسابات النظامية الدائنة (39 مكرر ع.ح)
+والإجمالي (78 مكرر ع.ح).</field>
+  </record>
+
+  <record id="classification_personal" model="port_said.subsidiary.account.classification">
+    <field name="name">حسابات شخصية</field>
+    <field name="code">PERSONAL</field>
+    <field name="sequence">50</field>
+    <field name="nature">personal</field>
+    <field name="natural_side">debit</field>
+    <field name="coa_code_prefix">13</field>
+    <field name="description">الحسابات الفرعية للأشخاص بالاسم — موظفون، مستفيدون، أصحاب حقوق،
+ذمم مدينة شخصية. تظهر في دفتر الحسابات الشخصية ذو الخانتين (نموذج رقم 29 حسابات).</field>
+  </record>
+
+</odoo>

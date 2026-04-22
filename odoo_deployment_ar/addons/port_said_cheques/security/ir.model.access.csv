@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_cheque_book_user,cheque book user,model_port_said_cheque_book,group_cheques_user,1,1,1,0
+access_cheque_book_manager,cheque book manager,model_port_said_cheque_book,group_cheques_manager,1,1,1,1
+access_outgoing_po_user,outgoing po user,model_port_said_outgoing_po,group_cheques_user,1,1,1,0
+access_outgoing_po_manager,outgoing po manager,model_port_said_outgoing_po,group_cheques_manager,1,1,1,1
+access_bounced_followup_user,bounced followup user,model_port_said_cheque_bounced_followup,group_cheques_user,1,1,1,0
+access_bounced_followup_manager,bounced followup manager,model_port_said_cheque_bounced_followup,group_cheques_manager,1,1,1,1
+access_form56_wizard,form56 wizard,model_port_said_cheque_form56_print_wizard,group_cheques_user,1,1,1,1
+access_form78_wizard,form78 wizard,model_port_said_cheque_form78_collection_wizard,group_cheques_user,1,1,1,1

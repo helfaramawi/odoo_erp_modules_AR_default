@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <template id="report_subsidiary_totals">
+    <t t-call="web.html_container">
+      <t t-call="web.external_layout">
+        <t t-set="first" t-value="docs[:1]"/>
+        <div class="page" dir="rtl" style="font-family:'Diwani Letter','Traditional Arabic',serif;">
+
+          <div style="text-align:center; margin-bottom:6px;">
+            <h3 style="margin:0;">
+              <t t-out="first.book_id.name"/>
+            </h3>
+            <div style="font-size:11px;">
+              نموذج رقم <t t-out="first.book_id.form_number"/>
+              — السنة المالية <t t-out="first.fiscal_year"/>
+              — محافظة بورسعيد
+            </div>
+          </div>
+
+          <table style="width:100%; font-size:9.5px; border-collapse:collapse;" class="table">
+            <thead>
+              <tr style="background:#dddddd;">
+                <th style="padding:3px; border:1px solid #000;">رقم الفولية</th>
+                <th style="padding:3px; border:1px solid #000;">الشهر</th>
+                <th style="padding:3px; border:1px solid #000;">كود الحساب</th>
+                <th style="padding:3px; border:1px solid #000;">اسم الحساب</th>
+                <th style="padding:3px; border:1px solid #000;">رصيد أول الشهر</th>
+                <th style="padding:3px; border:1px solid #000;">إجمالي مدين</th>
+                <th style="padding:3px; border:1px solid #000;">إجمالي دائن</th>
+                <th style="padding:3px; border:1px solid #000;">رصيد آخر الشهر</th>
+                <th style="padding:3px; border:1px solid #000;">عدد السطور</th>
+              </tr>
+            </thead>
+            <tbody>
+              <t t-set="grand_open" t-value="0"/>
+              <t t-set="grand_dr" t-value="0"/>
+              <t t-set="grand_cr" t-value="0"/>
+              <t t-set="grand_close" t-value="0"/>
+              <t t-foreach="docs" t-as="folio">
+                <t t-set="grand_open" t-value="grand_open + folio.opening_balance"/>
+                <t t-set="grand_dr" t-value="grand_dr + folio.period_debit"/>
+                <t t-set="grand_cr" t-value="grand_cr + folio.period_credit"/>
+                <t t-set="grand_close" t-value="grand_close + folio.closing_balance"/>
+                <tr>
+                  <td style="padding:2px; border:1px solid #000;"><t t-out="folio.folio_number"/></td>
+                  <td style="padding:2px; border:1px solid #000;">
+                    <t t-out="dict(folio._fields['period_month'].selection).get(folio.period_month)"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000;"><t t-out="folio.account_id.code"/></td>
+                  <td style="padding:2px; border:1px solid #000;"><t t-out="folio.account_id.name"/></td>
+                  <td style="padding:2px; border:1px solid #000; text-align:left;">
+                    <t t-out="'%.2f' % folio.opening_balance"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; text-align:left;">
+                    <t t-out="'%.2f' % folio.period_debit"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; text-align:left;">
+                    <t t-out="'%.2f' % folio.period_credit"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; text-align:left; font-weight:bold;">
+                    <t t-out="'%.2f' % folio.closing_balance"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; text-align:center;">
+                    <t t-out="folio.line_count"/>
+                  </td>
+                </tr>
+              </t>
+              <tr style="background:#f5f5f5; font-weight:bold;">
+                <td colspan="4" style="padding:3px; border:1px solid #000; text-align:center;">
+                  الإجمالي الكلي
+                </td>
+                <td style="padding:3px; border:1px solid #000; text-align:left;">
+                  <t t-out="'%.2f' % grand_open"/>
+                </td>
+                <td style="padding:3px; border:1px solid #000; text-align:left;">
+                  <t t-out="'%.2f' % grand_dr"/>
+                </td>
+                <td style="padding:3px; border:1px solid #000; text-align:left;">
+                  <t t-out="'%.2f' % grand_cr"/>
+                </td>
+                <td style="padding:3px; border:1px solid #000; text-align:left;">
+                  <t t-out="'%.2f' % grand_close"/>
+                </td>
+                <td style="padding:3px; border:1px solid #000;"></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <table style="width:100%; margin-top:30px; font-size:10px;" class="table-borderless">
+            <tr>
+              <td style="text-align:center;">
+                <div>رئيس الحسابات</div>
+                <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                  ............................
+                </div>
+              </td>
+              <td style="text-align:center;">
+                <div>المراجع المالي</div>
+                <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                  ............................
+                </div>
+              </td>
+              <td style="text-align:center;">
+                <div>الجهاز المركزي للمحاسبات</div>
+                <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                  ............................
+                </div>
+              </td>
+            </tr>
+          </table>
+
+        </div>
+      </t>
+    </t>
+  </template>
+
+</odoo>

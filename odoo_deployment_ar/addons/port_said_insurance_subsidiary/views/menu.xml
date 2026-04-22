@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <menuitem id="menu_insurance_root"
+            name="دفاتر التأمينات"
+            parent="general_ledger_ar.menu_helper_notebooks"
+            sequence="65"/>
+
+  <menuitem id="menu_insurance_folio"
+            name="الفوليوهات"
+            parent="menu_insurance_root"
+            action="action_insurance_folio"
+            sequence="10"/>
+
+  <menuitem id="menu_insurance_deposit"
+            name="إيداعات التأمينات"
+            parent="menu_insurance_root"
+            action="action_insurance_deposit"
+            sequence="20"/>
+
+  <menuitem id="menu_insurance_movement"
+            name="حركات التأمينات"
+            parent="menu_insurance_root"
+            action="action_insurance_movement"
+            sequence="30"
+            groups="port_said_insurance_subsidiary.group_insurance_manager"/>
+
+</odoo>

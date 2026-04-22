@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_revenue_book_user,revenue book user,model_port_said_revenue_book,group_revenue_user,1,0,0,0
+access_revenue_book_manager,revenue book manager,model_port_said_revenue_book,group_revenue_manager,1,1,1,1
+access_revenue_folio_user,revenue folio user,model_port_said_revenue_folio,group_revenue_user,1,1,1,0
+access_revenue_folio_manager,revenue folio manager,model_port_said_revenue_folio,group_revenue_manager,1,1,1,1
+access_revenue_print_wizard,revenue print wizard,model_port_said_revenue_print_wizard,group_revenue_user,1,1,1,1

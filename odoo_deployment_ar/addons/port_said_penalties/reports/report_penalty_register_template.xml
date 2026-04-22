@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <template id="report_penalty_register">
+    <t t-call="web.html_container">
+      <t t-call="web.external_layout">
+        <div class="page" dir="rtl"
+             style="font-family:'Traditional Arabic',Arial,serif;">
+
+          <!-- Header -->
+          <div style="text-align:center; margin-bottom:10px;">
+            <h3 style="margin:0;">دفتر حساب الجزاءات</h3>
+            <div style="font-size:11px;">
+              استمارة رقم 39 ع.ح — محافظة بورسعيد — الديوان العام
+            </div>
+            <div style="font-size:10px;">
+              عدد الجزاءات: <t t-out="len(docs)"/>
+              <t t-if="docs">
+                — من <t t-out="docs[0].incident_date"/>
+                إلى <t t-out="docs[-1].incident_date"/>
+              </t>
+            </div>
+          </div>
+
+          <!-- Main register table -->
+          <table style="width:100%; font-size:8.5px; border-collapse:collapse;
+                        border:1.5px solid #000;">
+            <thead>
+              <tr style="background:#dddddd;">
+                <th style="padding:3px; border:1px solid #000;">تسلسل<br/>الدفتر</th>
+                <th style="padding:3px; border:1px solid #000;">تاريخ<br/>الواقعة</th>
+                <th style="padding:3px; border:1px solid #000;">النوع</th>
+                <th style="padding:3px; border:1px solid #000;">اسم<br/>الجهة</th>
+                <th style="padding:3px; border:1px solid #000;">الوظيفة /<br/>العقد</th>
+                <th style="padding:3px; border:1px solid #000;">المخالفة</th>
+                <th style="padding:3px; border:1px solid #000;">المرجع<br/>القانوني</th>
+                <th style="padding:3px; border:1px solid #000;">الجزاء</th>
+                <th style="padding:3px; border:1px solid #000;">قيمة<br/>الغرامة</th>
+                <th style="padding:3px; border:1px solid #000;">رقم<br/>القرار</th>
+                <th style="padding:3px; border:1px solid #000;">طريقة<br/>التنفيذ</th>
+                <th style="padding:3px; border:1px solid #000;">الحالة</th>
+              </tr>
+            </thead>
+            <tbody>
+              <t t-set="total_emp" t-value="0"/>
+              <t t-set="total_ven" t-value="0"/>
+              <t t-set="count_emp" t-value="0"/>
+              <t t-set="count_ven" t-value="0"/>
+              <t t-foreach="docs" t-as="p">
+                <t t-if="p.subject_type == 'employee'">
+                  <t t-set="total_emp" t-value="total_emp + p.amount"/>
+                  <t t-set="count_emp" t-value="count_emp + 1"/>
+                </t>
+                <t t-if="p.subject_type == 'vendor'">
+                  <t t-set="total_ven" t-value="total_ven + p.amount"/>
+                  <t t-set="count_ven" t-value="count_ven + 1"/>
+                </t>
+                <tr t-att-style="
+                  'background:#fff5e5;' if p.subject_type == 'vendor' else
+                  'background:#e8f0ff;' if p.subject_type == 'employee' else ''">
+                  <td style="padding:2px; border:1px solid #000; font-family:monospace;">
+                    <t t-out="p.sequence_number"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000;">
+                    <t t-out="p.incident_date"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:8px;
+                             text-align:center;">
+                    <t t-if="p.subject_type == 'employee'">موظف</t>
+                    <t t-if="p.subject_type == 'vendor'">مورد</t>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:8px;
+                             font-weight:bold;">
+                    <t t-out="p.subject_display_name"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:7.5px;">
+                    <t t-if="p.subject_type == 'employee'">
+                      <t t-out="p.employee_job_title or '—'"/>
+                    </t>
+                    <t t-else="">
+                      <t t-out="p.purchase_order_id.name or '—'"/>
+                    </t>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:7.5px;">
+                    <t t-out="p.violation_type_id.name"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:7px;">
+                    <t t-out="p.violation_type_id.legal_law_number or '—'"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:7.5px;">
+                    <t t-out="p.penalty_type_option_id.name"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; text-align:left;
+                             font-weight:bold;">
+                    <t t-if="p.amount"><t t-out="'%.2f' % p.amount"/></t>
+                    <t t-else="">—</t>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-family:monospace;
+                             font-size:7.5px;">
+                    <t t-out="p.decision_number or '—'"/>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:7.5px;">
+                    <t t-if="p.execution_method">
+                      <t t-out="dict(p._fields['execution_method'].selection).get(p.execution_method)"/>
+                    </t>
+                    <t t-else="">—</t>
+                  </td>
+                  <td style="padding:2px; border:1px solid #000; font-size:7.5px;
+                             text-align:center;">
+                    <t t-out="dict(p._fields['state'].selection).get(p.state)"/>
+                  </td>
+                </tr>
+              </t>
+
+              <!-- Totals -->
+              <tr style="background:#e8f0ff; font-weight:bold;">
+                <td colspan="8" style="padding:3px; border:1.5px solid #000; text-align:center;">
+                  إجمالي جزاءات الموظفين
+                  (<t t-out="count_emp"/>)
+                </td>
+                <td style="padding:3px; border:1.5px solid #000; text-align:left;">
+                  <t t-out="'%.2f' % total_emp"/>
+                </td>
+                <td colspan="3" style="padding:3px; border:1.5px solid #000;"></td>
+              </tr>
+              <tr style="background:#fff5e5; font-weight:bold;">
+                <td colspan="8" style="padding:3px; border:1.5px solid #000; text-align:center;">
+                  إجمالي جزاءات الموردين
+                  (<t t-out="count_ven"/>)
+                </td>
+                <td style="padding:3px; border:1.5px solid #000; text-align:left;">
+                  <t t-out="'%.2f' % total_ven"/>
+                </td>
+                <td colspan="3" style="padding:3px; border:1.5px solid #000;"></td>
+              </tr>
+              <tr style="background:#f5f5f5; font-weight:bold; font-size:10px;">
+                <td colspan="8" style="padding:4px; border:2px solid #000; text-align:center;">
+                  الإجمالي العام
+                </td>
+                <td style="padding:4px; border:2px solid #000; text-align:left;
+                           background:#ffe9c6;">
+                  <t t-out="'%.2f' % (total_emp + total_ven)"/>
+                </td>
+                <td colspan="3" style="padding:4px; border:2px solid #000;"></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Summary by status -->
+          <div style="margin-top:12px; font-size:10px;">
+            <strong>توزيع حسب الحالة:</strong>
+            <t t-set="by_state" t-value="{}"/>
+            <t t-foreach="docs" t-as="p">
+              <t t-set="st" t-value="p.state"/>
+              <t t-set="prev" t-value="by_state.get(st, 0)"/>
+              <t t-set="by_state" t-value="{**by_state, st: prev + 1}"/>
+            </t>
+            <t t-foreach="by_state.items()" t-as="item">
+              <span style="margin-left:12px; padding:2px 6px; background:#eee;
+                           border-radius:3px; display:inline-block; margin-top:4px;">
+                <t t-out="dict(docs._fields['state'].selection).get(item[0])"/>:
+                <strong><t t-out="item[1]"/></strong>
+              </span>
+            </t>
+          </div>
+
+          <!-- Signatures -->
+          <table style="width:100%; margin-top:30px; font-size:10px;"
+                 class="table-borderless">
+            <tr>
+              <td style="text-align:center;">
+                <div>مسؤول شؤون الموظفين</div>
+                <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                  ............................
+                </div>
+              </td>
+              <td style="text-align:center;">
+                <div>رئيس الحسابات</div>
+                <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                  ............................
+                </div>
+              </td>
+              <td style="text-align:center;">
+                <div>السيد المحافظ</div>
+                <div style="margin-top:25px; border-top:1px solid #000; padding-top:3px;">
+                  ............................
+                </div>
+              </td>
+            </tr>
+          </table>
+
+        </div>
+      </t>
+    </t>
+  </template>
+
+</odoo>

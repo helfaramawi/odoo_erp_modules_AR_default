@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="action_report_insurance_folio" model="ir.actions.report">
+    <field name="name">دفتر التأمينات - الفولية الشهرية</field>
+    <field name="model">port_said.insurance.folio</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_insurance_subsidiary.report_insurance_folio</field>
+    <field name="report_file">port_said_insurance_subsidiary.report_insurance_folio</field>
+    <field name="paperformat_id" ref="paperformat_insurance_register"/>
+    <field name="binding_model_id" ref="model_port_said_insurance_folio"/>
+    <field name="binding_type">report</field>
+  </record>
+
+  <record id="action_report_insurance_receipt" model="ir.actions.report">
+    <field name="name">إيصال إيداع تأمين</field>
+    <field name="model">port_said.insurance_deposit</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_insurance_subsidiary.report_insurance_receipt</field>
+    <field name="report_file">port_said_insurance_subsidiary.report_insurance_receipt</field>
+    <field name="paperformat_id" ref="paperformat_insurance_receipt"/>
+    <field name="binding_model_id" ref="model_port_said_insurance_deposit"/>
+    <field name="binding_type">report</field>
+  </record>
+
+</odoo>

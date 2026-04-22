@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <template id="report_penalty_decision">
+    <t t-call="web.html_container">
+      <t t-foreach="docs" t-as="p">
+        <t t-call="web.external_layout">
+          <div class="page" dir="rtl"
+               style="font-family:'Traditional Arabic',Arial,serif;">
+
+            <!-- Header -->
+            <div style="text-align:center; margin-bottom:20px;">
+              <h2 style="margin:0;">قرار إداري بفرض جزاء</h2>
+              <div style="font-size:12px; margin-top:4px;">
+                <t t-if="p.subject_type == 'employee'">
+                  استناداً لقانون الخدمة المدنية رقم 81 لسنة 2016
+                </t>
+                <t t-else="">
+                  استناداً لقانون المناقصات والمزايدات رقم 182 لسنة 2018
+                </t>
+              </div>
+              <div style="font-size:11px; margin-top:4px;">
+                محافظة بورسعيد — الديوان العام
+              </div>
+            </div>
+
+            <div style="margin-bottom:12px; font-size:11px; text-align:left;">
+              التاريخ: <t t-out="p.decision_date or p.incident_date"/>
+              — رقم بالدفتر: <strong><t t-out="p.sequence_number or '—'"/></strong>
+            </div>
+
+            <!-- Subject block -->
+            <div style="margin-bottom:15px; padding:10px; background:#f5f5f5;
+                        border-right:4px solid #1f4e79;">
+              <div style="font-size:12px;"><strong>الجهة المعاقَبة:</strong></div>
+              <table style="width:100%; font-size:11px; margin-top:5px;">
+                <tr>
+                  <td style="width:25%; padding:2px;">الاسم:</td>
+                  <td style="padding:2px; font-weight:bold;">
+                    <t t-out="p.subject_display_name"/>
+                  </td>
+                </tr>
+                <tr t-if="p.subject_type == 'employee'">
+                  <td style="padding:2px;">الوظيفة:</td>
+                  <td style="padding:2px;"><t t-out="p.employee_job_title or '—'"/></td>
+                </tr>
+                <tr t-if="p.subject_type == 'employee' and p.employee_department_id">
+                  <td style="padding:2px;">الإدارة / القسم:</td>
+                  <td style="padding:2px;"><t t-out="p.employee_department_id.name"/></td>
+                </tr>
+                <tr t-if="p.subject_type == 'vendor' and p.purchase_order_id">
+                  <td style="padding:2px;">العقد:</td>
+                  <td style="padding:2px;"><t t-out="p.purchase_order_id.name"/></td>
+                </tr>
+                <tr t-if="p.subject_type == 'vendor' and p.contract_value">
+                  <td style="padding:2px;">قيمة العقد:</td>
+                  <td style="padding:2px;"><t t-out="'%.2f' % p.contract_value"/> ج.م.</td>
+                </tr>
+              </table>
+            </div>
+
+            <!-- Violation block -->
+            <div style="margin-bottom:15px;">
+              <div style="font-size:12px;"><strong>أولاً: المخالفة المُرتكَبة</strong></div>
+              <table style="width:100%; font-size:11px; margin-top:5px;
+                            border:1px solid #888; padding:0; border-collapse:collapse;">
+                <tr>
+                  <td style="padding:6px; border:1px solid #888; background:#eee; width:30%;">
+                    نوع المخالفة
+                  </td>
+                  <td style="padding:6px; border:1px solid #888;">
+                    <t t-out="p.violation_type_id.name"/>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:6px; border:1px solid #888; background:#eee;">
+                    تاريخ الواقعة
+                  </td>
+                  <td style="padding:6px; border:1px solid #888;">
+                    <t t-out="p.incident_date"/>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:6px; border:1px solid #888; background:#eee;">
+                    المرجع القانوني
+                  </td>
+                  <td style="padding:6px; border:1px solid #888;">
+                    <t t-out="p.violation_type_id.legal_reference or '—'"/>
+                    (<t t-out="p.violation_type_id.legal_law_number or ''"/>)
+                  </td>
+                </tr>
+                <tr t-if="p.investigation_reference">
+                  <td style="padding:6px; border:1px solid #888; background:#eee;">
+                    محضر التحقيق
+                  </td>
+                  <td style="padding:6px; border:1px solid #888;">
+                    رقم: <t t-out="p.investigation_reference"/>
+                    <t t-if="p.investigation_date">
+                      — بتاريخ <t t-out="p.investigation_date"/>
+                    </t>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:6px; border:1px solid #888; background:#eee;
+                             vertical-align:top;">
+                    وصف الواقعة
+                  </td>
+                  <td style="padding:6px; border:1px solid #888;">
+                    <t t-out="p.incident_description"/>
+                  </td>
+                </tr>
+              </table>
+            </div>
+
+            <!-- Penalty block -->
+            <div style="margin-bottom:15px;">
+              <div style="font-size:12px;"><strong>ثانياً: الجزاء المفروض</strong></div>
+              <table style="width:100%; font-size:11px; margin-top:5px;
+                            border:1.5px solid #1f4e79; border-collapse:collapse;">
+                <tr style="background:#d5e8f0;">
+                  <td style="padding:6px; border:1px solid #1f4e79; width:30%;">
+                    <strong>نوع الجزاء</strong>
+                  </td>
+                  <td style="padding:6px; border:1px solid #1f4e79; font-weight:bold;">
+                    <t t-out="p.penalty_type_option_id.name"/>
+                  </td>
+                </tr>
+                <tr t-if="p.amount">
+                  <td style="padding:6px; border:1px solid #1f4e79; background:#f8f8f8;">
+                    قيمة الغرامة
+                  </td>
+                  <td style="padding:6px; border:1px solid #1f4e79;
+                             text-align:left; font-weight:bold;">
+                    <t t-out="'%.2f' % p.amount"/>
+                    <span t-field="p.currency_id.symbol"/>
+                    <t t-if="p.fine_percentage">
+                      (<t t-out="'%.2f' % p.fine_percentage"/>%)
+                    </t>
+                  </td>
+                </tr>
+                <tr t-if="p.suspension_days">
+                  <td style="padding:6px; border:1px solid #1f4e79; background:#f8f8f8;">
+                    مدة الإيقاف
+                  </td>
+                  <td style="padding:6px; border:1px solid #1f4e79;">
+                    <t t-out="p.suspension_days"/> يوم
+                    <t t-if="p.suspension_from">
+                      من <t t-out="p.suspension_from"/>
+                    </t>
+                    <t t-if="p.suspension_to">
+                      إلى <t t-out="p.suspension_to"/>
+                    </t>
+                  </td>
+                </tr>
+                <tr t-if="p.penalty_description">
+                  <td style="padding:6px; border:1px solid #1f4e79; background:#f8f8f8;
+                             vertical-align:top;">
+                    تفاصيل إضافية
+                  </td>
+                  <td style="padding:6px; border:1px solid #1f4e79;">
+                    <t t-out="p.penalty_description"/>
+                  </td>
+                </tr>
+                <tr t-if="p.execution_method">
+                  <td style="padding:6px; border:1px solid #1f4e79; background:#f8f8f8;">
+                    طريقة التنفيذ
+                  </td>
+                  <td style="padding:6px; border:1px solid #1f4e79;">
+                    <t t-out="dict(p._fields['execution_method'].selection).get(p.execution_method)"/>
+                  </td>
+                </tr>
+              </table>
+            </div>
+
+            <!-- Appeal notice -->
+            <div style="margin-bottom:15px; padding:10px; border:1px dashed #a00;
+                        background:#fff9f0; font-size:10px;">
+              <strong>حق التظلم:</strong>
+              <t t-if="p.subject_type == 'employee'">
+                للموظف الحق في التظلم من هذا القرار أمام الرئيس المباشر خلال
+                15 يوماً من تاريخ الإبلاغ، ثم أمام لجنة التظلمات، ثم أمام المحكمة الإدارية.
+                (المادة 61 من قانون الخدمة المدنية)
+              </t>
+              <t t-else="">
+                للمورد الحق في التظلم من هذا القرار أمام لجنة البت بالمناقصات
+                خلال المدة المحددة بلائحة العقود الحكومية.
+              </t>
+            </div>
+
+            <!-- Signatures -->
+            <table style="width:100%; margin-top:40px; font-size:11px;"
+                   class="table-borderless">
+              <tr>
+                <td style="text-align:center; width:50%;">
+                  <div>اعتمده: <t t-out="p.approved_by.name or '—'"/></div>
+                  <div style="margin-top:30px; border-top:1px solid #000; padding-top:4px;">
+                    الإمضاء والختم
+                  </div>
+                </td>
+                <td style="text-align:center; width:50%;">
+                  <div>تسلَّمه: <t t-out="p.subject_display_name"/></div>
+                  <div style="margin-top:30px; border-top:1px solid #000; padding-top:4px;">
+                    إمضاء الاستلام
+                  </div>
+                </td>
+              </tr>
+            </table>
+
+            <div t-if="p.decision_number or p.decision_date"
+                 style="text-align:left; margin-top:15px; font-size:9px; color:#666;">
+              رقم القرار: <t t-out="p.decision_number or '—'"/>
+              — تاريخ القرار: <t t-out="p.decision_date or '—'"/>
+            </div>
+
+          </div>
+          <p style="page-break-after: always;"/>
+        </t>
+      </t>
+    </t>
+  </template>
+
+</odoo>

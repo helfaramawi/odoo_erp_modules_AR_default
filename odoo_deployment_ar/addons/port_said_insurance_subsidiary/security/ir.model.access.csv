@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_insurance_deposit_user,deposit user,model_port_said_insurance_deposit,group_insurance_user,1,1,1,0
+access_insurance_deposit_manager,deposit manager,model_port_said_insurance_deposit,group_insurance_manager,1,1,1,1
+access_insurance_folio_user,folio user,model_port_said_insurance_folio,group_insurance_user,1,1,1,0
+access_insurance_folio_manager,folio manager,model_port_said_insurance_folio,group_insurance_manager,1,1,1,1
+access_insurance_movement_user,movement user,model_port_said_insurance_movement,group_insurance_user,1,0,0,0
+access_insurance_movement_manager,movement manager,model_port_said_insurance_movement,group_insurance_manager,1,1,1,1
+access_generate_folio_wizard,generate folio wizard,model_port_said_insurance_generate_folio_wizard,group_insurance_user,1,1,1,1
+access_release_wizard,release wizard,model_port_said_insurance_release_wizard,group_insurance_user,1,1,1,1

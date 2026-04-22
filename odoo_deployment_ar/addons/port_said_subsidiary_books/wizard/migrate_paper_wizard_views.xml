@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_migrate_paper_wizard_form" model="ir.ui.view">
+    <field name="name">port_said.subsidiary.migrate.paper.wizard.form</field>
+    <field name="model">port_said.subsidiary.migrate.paper.wizard</field>
+    <field name="arch" type="xml">
+      <form string="استيراد فوليوهات ورقية تاريخية">
+        <sheet>
+          <div class="alert alert-info" role="alert">
+            <strong>تنسيق ملف CSV المطلوب (UTF-8 with BOM):</strong>
+            <pre>partner_code,account_code,closing_balance
+12345,1201,15000.00
+12346,1201,8500.50</pre>
+            سيتم إنشاء فولية لكل سطر بحالة "مؤرشفة" بتاريخ 30 يونيو من السنة المنتهية،
+            تستخدم كرصيد افتتاحي للفولية الإلكترونية الأولى في 1 يوليو.
+          </div>
+          <group>
+            <field name="book_id"/>
+            <field name="fiscal_year" placeholder="2023/2024"/>
+            <field name="csv_file" filename="csv_filename"/>
+            <field name="csv_filename" invisible="1"/>
+          </group>
+          <group string="سجل العملية" invisible="not log">
+            <field name="log" nolabel="1" readonly="1"/>
+          </group>
+        </sheet>
+        <footer>
+          <button name="action_import" type="object" string="استيراد" class="oe_highlight"
+                  invisible="not csv_file"/>
+          <button special="cancel" string="إغلاق"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_migrate_paper_wizard" model="ir.actions.act_window">
+    <field name="name">استيراد بيانات ورقية</field>
+    <field name="res_model">port_said.subsidiary.migrate.paper.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+  </record>
+
+  <menuitem id="menu_migrate_paper"
+            name="استيراد بيانات ورقية"
+            parent="menu_subsidiary_root"
+            action="action_migrate_paper_wizard"
+            sequence="50"
+            groups="group_subsidiary_manager"/>
+
+</odoo>

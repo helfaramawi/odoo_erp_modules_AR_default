@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- Add cheque_book + category + Form56 sequence to cheque form -->
+  <record id="view_cheque_form_inherit" model="ir.ui.view">
+    <field name="name">port_said.cheque.form.cheques_ext</field>
+    <field name="model">port_said.cheque</field>
+    <field name="inherit_id" ref="port_said_cash_books.view_cheque_form"/>
+    <field name="arch" type="xml">
+      <!-- أضف تصنيف الشيك ودفتر الشيكات الورقي في أعلى النموذج -->
+      <xpath expr="//field[@name='direction']" position="after">
+        <field name="cheque_category"/>
+        <field name="cheque_book_id"
+               invisible="direction != 'outgoing'"
+               required="direction == 'outgoing' and state != 'draft'"/>
+        <field name="form56_sequence" readonly="1"/>
+      </xpath>
+
+      <!-- أضف تبويب حقول التحصيل -->
+      <xpath expr="//page[@name='page_accounting']" position="after">
+        <page string="رسم التحصيل"
+              invisible="cheque_category != 'for_collection'">
+          <group>
+            <field name="collection_fee"/>
+            <field name="net_collected" readonly="1"/>
+            <field name="collection_account_id"/>
+          </group>
+        </page>
+        <page string="متابعة الارتداد"
+              invisible="state != 'returned' and not bounce_followup_id">
+          <field name="bounce_followup_id" readonly="1"/>
+        </page>
+      </xpath>
+
+      <!-- أضف ربط outgoing_po في قسم الربط المحاسبي -->
+      <xpath expr="//field[@name='payment_order_id']" position="after">
+        <field name="outgoing_po_id" invisible="direction != 'outgoing'"/>
+      </xpath>
+    </field>
+  </record>
+
+  <!-- Add extra filters to cheque search -->
+  <record id="view_cheque_search_inherit" model="ir.ui.view">
+    <field name="name">port_said.cheque.search.cheques_ext</field>
+    <field name="model">port_said.cheque</field>
+    <field name="inherit_id" ref="port_said_cash_books.view_cheque_search"/>
+    <field name="arch" type="xml">
+      <xpath expr="//filter[@name='f_returned']" position="after">
+        <separator/>
+        <filter string="شيكات رسم التحصيل" name="f_collection"
+                domain="[('cheque_category','=','for_collection')]"/>
+        <filter string="صادرة عادية" name="f_standard_out"
+                domain="[('cheque_category','=','standard_out')]"/>
+        <separator/>
+        <filter string="لها ملف ارتداد" name="f_has_bounce"
+                domain="[('bounce_followup_id','!=', False)]"/>
+      </xpath>
+      <xpath expr="//filter[@name='g_bank']" position="after">
+        <filter string="الدفتر الورقي" name="g_book" context="{'group_by':'cheque_book_id'}"/>
+        <filter string="التصنيف" name="g_cat" context="{'group_by':'cheque_category'}"/>
+      </xpath>
+    </field>
+  </record>
+
+</odoo>

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+  <!-- Penalty type options - employee -->
+  <record id="pto_emp_warning" model="port_said.penalty.type_option">
+    <field name="name">إنذار كتابي</field>
+    <field name="code">EMP-WARN</field>
+    <field name="subject_type">employee</field>
+    <field name="sequence">10</field>
+    <field name="is_warning_only" eval="True"/>
+    <field name="has_fine" eval="False"/>
+  </record>
+
+  <record id="pto_emp_salary_deduction_1day" model="port_said.penalty.type_option">
+    <field name="name">خصم أجر يوم واحد</field>
+    <field name="code">EMP-DED-1D</field>
+    <field name="subject_type">employee</field>
+    <field name="sequence">20</field>
+    <field name="has_fine" eval="True"/>
+  </record>
+
+  <record id="pto_emp_salary_deduction_3days" model="port_said.penalty.type_option">
+    <field name="name">خصم أجر ثلاثة أيام</field>
+    <field name="code">EMP-DED-3D</field>
+    <field name="subject_type">employee</field>
+    <field name="sequence">30</field>
+    <field name="has_fine" eval="True"/>
+  </record>
+
+  <record id="pto_emp_salary_deduction_5days" model="port_said.penalty.type_option">
+    <field name="name">خصم أجر خمسة أيام</field>
+    <field name="code">EMP-DED-5D</field>
+    <field name="subject_type">employee</field>
+    <field name="sequence">40</field>
+    <field name="has_fine" eval="True"/>
+  </record>
+
+  <record id="pto_emp_suspension" model="port_said.penalty.type_option">
+    <field name="name">إيقاف عن العمل مع صرف نصف الأجر</field>
+    <field name="code">EMP-SUSP</field>
+    <field name="subject_type">employee</field>
+    <field name="sequence">50</field>
+    <field name="has_fine" eval="True"/>
+    <field name="has_suspension" eval="True"/>
+  </record>
+
+  <record id="pto_emp_promotion_delay" model="port_said.penalty.type_option">
+    <field name="name">تأجيل العلاوة الدورية سنة</field>
+    <field name="code">EMP-PROM-DELAY</field>
+    <field name="subject_type">employee</field>
+    <field name="sequence">60</field>
+    <field name="has_fine" eval="False"/>
+  </record>
+
+  <!-- Penalty type options - vendor -->
+  <record id="pto_ven_late_delivery_fine" model="port_said.penalty.type_option">
+    <field name="name">غرامة تأخير</field>
+    <field name="code">VEN-LATE</field>
+    <field name="subject_type">vendor</field>
+    <field name="sequence">10</field>
+    <field name="has_fine" eval="True"/>
+  </record>
+
+  <record id="pto_ven_quality_deduction" model="port_said.penalty.type_option">
+    <field name="name">خصم نسبة جودة</field>
+    <field name="code">VEN-QUAL</field>
+    <field name="subject_type">vendor</field>
+    <field name="sequence">20</field>
+    <field name="has_fine" eval="True"/>
+  </record>
+
+  <record id="pto_ven_guarantee_forfeit" model="port_said.penalty.type_option">
+    <field name="name">مصادرة جزئية من خطاب الضمان</field>
+    <field name="code">VEN-GRT-FORF</field>
+    <field name="subject_type">vendor</field>
+    <field name="sequence">30</field>
+    <field name="has_fine" eval="True"/>
+  </record>
+
+  <record id="pto_ven_blacklist_warning" model="port_said.penalty.type_option">
+    <field name="name">إنذار بالإدراج في القائمة السوداء</field>
+    <field name="code">VEN-BLACK-WARN</field>
+    <field name="subject_type">vendor</field>
+    <field name="sequence">40</field>
+    <field name="is_warning_only" eval="True"/>
+    <field name="has_fine" eval="False"/>
+  </record>
+
+  <!-- Violation types - employee -->
+  <record id="vio_tardy" model="port_said.penalty.violation_type">
+    <field name="name">التأخير عن العمل</field>
+    <field name="code">VIO-EMP-TARDY</field>
+    <field name="subject_type">employee</field>
+    <field name="severity">minor</field>
+    <field name="legal_reference">المادة 52 من قانون الخدمة المدنية</field>
+    <field name="legal_law_number">81/2016</field>
+    <field name="max_fine_percentage">3.0</field>
+    <field name="allowed_penalty_types"
+           eval="[(6, 0, [ref('pto_emp_warning'), ref('pto_emp_salary_deduction_1day'), ref('pto_emp_salary_deduction_3days')])]"/>
+  </record>
+
+  <record id="vio_absence" model="port_said.penalty.violation_type">
+    <field name="name">الغياب بدون إذن</field>
+    <field name="code">VIO-EMP-ABSENCE</field>
+    <field name="subject_type">employee</field>
+    <field name="severity">moderate</field>
+    <field name="legal_reference">المادة 53 من قانون الخدمة المدنية</field>
+    <field name="legal_law_number">81/2016</field>
+    <field name="max_fine_percentage">10.0</field>
+    <field name="allowed_penalty_types"
+           eval="[(6, 0, [ref('pto_emp_salary_deduction_3days'), ref('pto_emp_salary_deduction_5days'), ref('pto_emp_suspension')])]"/>
+  </record>
+
+  <record id="vio_negligence" model="port_said.penalty.violation_type">
+    <field name="name">الإهمال في أداء الواجب</field>
+    <field name="code">VIO-EMP-NEG</field>
+    <field name="subject_type">employee</field>
+    <field name="severity">moderate</field>
+    <field name="legal_reference">المادة 54 من قانون الخدمة المدنية</field>
+    <field name="legal_law_number">81/2016</field>
+    <field name="requires_investigation" eval="True"/>
+    <field name="allowed_penalty_types"
+           eval="[(6, 0, [ref('pto_emp_salary_deduction_3days'), ref('pto_emp_salary_deduction_5days'), ref('pto_emp_suspension'), ref('pto_emp_promotion_delay')])]"/>
+  </record>
+
+  <record id="vio_serious_misconduct" model="port_said.penalty.violation_type">
+    <field name="name">سوء سلوك جسيم</field>
+    <field name="code">VIO-EMP-MISCOND</field>
+    <field name="subject_type">employee</field>
+    <field name="severity">major</field>
+    <field name="legal_reference">المادة 55 من قانون الخدمة المدنية</field>
+    <field name="legal_law_number">81/2016</field>
+    <field name="requires_investigation" eval="True"/>
+    <field name="requires_manager_approval" eval="True"/>
+    <field name="allowed_penalty_types"
+           eval="[(6, 0, [ref('pto_emp_suspension'), ref('pto_emp_promotion_delay')])]"/>
+  </record>
+
+  <!-- Violation types - vendor -->
+  <record id="vio_late_delivery" model="port_said.penalty.violation_type">
+    <field name="name">التأخر في التسليم عن المدة المتعاقد عليها</field>
+    <field name="code">VIO-VEN-LATE</field>
+    <field name="subject_type">vendor</field>
+    <field name="severity">moderate</field>
+    <field name="legal_reference">المادة 76 من قانون المناقصات</field>
+    <field name="legal_law_number">182/2018</field>
+    <field name="max_fine_percentage">10.0</field>
+    <field name="allowed_penalty_types"
+           eval="[(6, 0, [ref('pto_ven_late_delivery_fine')])]"/>
+  </record>
+
+  <record id="vio_quality_deviation" model="port_said.penalty.violation_type">
+    <field name="name">انحراف عن المواصفات الفنية</field>
+    <field name="code">VIO-VEN-QUALITY</field>
+    <field name="subject_type">vendor</field>
+    <field name="severity">moderate</field>
+    <field name="legal_reference">المادة 77 من قانون المناقصات</field>
+    <field name="legal_law_number">182/2018</field>
+    <field name="requires_investigation" eval="True"/>
+    <field name="max_fine_percentage">15.0</field>
+    <field name="allowed_penalty_types"
+           eval="[(6, 0, [ref('pto_ven_quality_deduction'), ref('pto_ven_guarantee_forfeit')])]"/>
+  </record>
+
+  <record id="vio_breach_major" model="port_said.penalty.violation_type">
+    <field name="name">إخلال جسيم بالعقد</field>
+    <field name="code">VIO-VEN-BREACH</field>
+    <field name="subject_type">vendor</field>
+    <field name="severity">critical</field>
+    <field name="legal_reference">المواد 78-80 من قانون المناقصات</field>
+    <field name="legal_law_number">182/2018</field>
+    <field name="requires_investigation" eval="True"/>
+    <field name="requires_manager_approval" eval="True"/>
+    <field name="allowed_penalty_types"
+           eval="[(6, 0, [ref('pto_ven_guarantee_forfeit'), ref('pto_ven_blacklist_warning')])]"/>
+  </record>
+
+</odoo>

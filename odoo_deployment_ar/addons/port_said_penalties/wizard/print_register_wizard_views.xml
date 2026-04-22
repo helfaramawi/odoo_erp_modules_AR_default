@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_print_register_wizard_form" model="ir.ui.view">
+    <field name="name">port_said.penalty.print.wizard.form</field>
+    <field name="model">port_said.penalty.print.wizard</field>
+    <field name="arch" type="xml">
+      <form string="طباعة دفتر 39">
+        <sheet>
+          <group>
+            <group>
+              <field name="subject_type"/>
+              <field name="fiscal_year"/>
+              <field name="only_executed"/>
+            </group>
+            <group>
+              <field name="date_from"/>
+              <field name="date_to"/>
+            </group>
+          </group>
+        </sheet>
+        <footer>
+          <button name="action_print" type="object" string="طباعة" class="oe_highlight"/>
+          <button special="cancel" string="إلغاء"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_print_register_wizard" model="ir.actions.act_window">
+    <field name="name">طباعة دفتر 39</field>
+    <field name="res_model">port_said.penalty.print.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+  </record>
+
+  <menuitem id="menu_print_register"
+            name="طباعة دفتر 39"
+            parent="menu_penalty_root"
+            action="action_print_register_wizard"
+            sequence="60"/>
+
+</odoo>

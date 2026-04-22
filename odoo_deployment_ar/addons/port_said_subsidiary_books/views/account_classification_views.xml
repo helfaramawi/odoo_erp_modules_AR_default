@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_classification_tree" model="ir.ui.view">
+    <field name="name">port_said.subsidiary.classification.tree</field>
+    <field name="model">port_said.subsidiary.account.classification</field>
+    <field name="arch" type="xml">
+      <tree string="تصنيفات الحسابات">
+        <field name="sequence" widget="handle"/>
+        <field name="code"/>
+        <field name="name"/>
+        <field name="nature"/>
+        <field name="natural_side"/>
+        <field name="coa_code_prefix"/>
+        <field name="account_count"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_classification_form" model="ir.ui.view">
+    <field name="name">port_said.subsidiary.classification.form</field>
+    <field name="model">port_said.subsidiary.account.classification</field>
+    <field name="arch" type="xml">
+      <form>
+        <header>
+          <button name="action_auto_assign_by_prefix" type="object"
+                  string="إسناد تلقائي بالبادئة"
+                  confirm="سيتم إسناد كل الحسابات التي تبدأ بهذه البادئة إلى هذا التصنيف. متابعة؟"/>
+        </header>
+        <sheet>
+          <div class="oe_button_box">
+            <button name="action_open_accounts" type="object" class="oe_stat_button" icon="fa-list">
+              <field name="account_count" widget="statinfo" string="حسابات"/>
+            </button>
+          </div>
+          <div class="oe_title">
+            <label for="name"/>
+            <h1><field name="name"/></h1>
+          </div>
+          <group>
+            <group>
+              <field name="code"/>
+              <field name="sequence"/>
+              <field name="nature"/>
+              <field name="natural_side"/>
+            </group>
+            <group>
+              <field name="coa_code_prefix"/>
+              <field name="active"/>
+              <field name="company_id" groups="base.group_multi_company"/>
+            </group>
+          </group>
+          <group string="الوصف القانوني">
+            <field name="description" nolabel="1"/>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_classification" model="ir.actions.act_window">
+    <field name="name">تصنيفات الحسابات</field>
+    <field name="res_model">port_said.subsidiary.account.classification</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+  <!-- account.account inherit: add classification field to existing form -->
+  <record id="view_account_form_inherit" model="ir.ui.view">
+    <field name="name">account.account.form.subsidiary</field>
+    <field name="model">account.account</field>
+    <field name="inherit_id" ref="account.view_account_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='account_type']" position="after">
+        <field name="x_subsidiary_classification_id"/>
+        <field name="x_subsidiary_book_ids" widget="many2many_tags" readonly="1"/>
+      </xpath>
+    </field>
+  </record>
+
+</odoo>
