@@ -1,0 +1,771 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="dashboard_main_template" name="PortSaid Dashboard">
+        <t t-call="web.layout">
+            <t t-set="head_dashboard">
+                <meta charset="UTF-8"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+                <title>لوحة القيادة التنفيذية — بورسعيد</title>
+                <link rel="preconnect" href="https://fonts.googleapis.com"/>
+                <link rel="stylesheet"
+                    href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&amp;family=Cairo:wght@300;400;600;700;900&amp;display=swap"/>
+                <style>
+/* ── Reset ── */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+
+/* ── Theme variables ── */
+:root{
+  --navy:#0D1B2A; --navy2:#1A2E45; --gold:#C9A84C; --gold2:#E8C87A;
+  --teal2:#27A99A; --red2:#E74C3C; --green2:#27AE60; --amber2:#F39C12;
+  --blue2:#2196F3; --text:#F0ECE3; --muted:#9BAAB8;
+  --border:rgba(201,168,76,0.2); --glass:rgba(255,255,255,0.04);
+  --glass2:rgba(255,255,255,0.08);
+}
+
+/* ── Root container ── */
+#ps-root{
+  font-family:'Tajawal',sans-serif; background:var(--navy); color:var(--text);
+  height:100vh; direction:rtl; display:flex; flex-direction:column;
+  overflow:hidden; position:relative;
+}
+#ps-root::before{
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 0%,rgba(201,168,76,.07) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 100%,rgba(30,127,116,.08) 0%,transparent 60%);
+}
+
+/* ── Header ── */
+.ps-hdr{
+  position:relative; z-index:10; flex-shrink:0;
+  padding:12px 24px 10px; border-bottom:1px solid var(--border);
+  background:rgba(13,27,42,.97); display:flex;
+  align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+}
+.ps-brand{display:flex;align-items:center;gap:12px}
+.ps-emblem{
+  width:42px;height:42px;border:2px solid var(--gold);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;background:rgba(201,168,76,.1);flex-shrink:0;
+}
+.ps-brand h1{font-family:'Cairo',sans-serif;font-size:16px;font-weight:700;color:var(--gold2);line-height:1.2}
+.ps-brand p{font-size:11px;color:var(--muted);margin-top:1px}
+.ps-meta{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.ps-stat .val{font-family:'Cairo',sans-serif;font-size:20px;font-weight:800;color:var(--gold2)}
+.ps-stat .lbl{font-size:10px;color:var(--muted)}
+.ps-div{width:1px;height:32px;background:var(--border)}
+.live{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--green2)}
+.live::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green2);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+
+/* ── Nav ── */
+.ps-nav{
+  position:relative;z-index:10;flex-shrink:0;
+  display:flex;gap:2px;padding:8px 24px 0;
+  border-bottom:1px solid var(--border);
+  background:rgba(13,27,42,.8);overflow-x:auto;
+}
+.pnb{
+  padding:7px 14px;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:500;
+  border:none;background:transparent;cursor:pointer;color:var(--muted);
+  border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;
+  display:flex;align-items:center;gap:6px;
+}
+.pnb:hover{color:var(--text)}
+.pnb.active{color:var(--gold2);border-bottom-color:var(--gold)}
+.nb{width:17px;height:17px;border-radius:4px;font-size:10px;font-weight:700;
+  display:flex;align-items:center;justify-content:center}
+
+/* ── Main ── */
+#ps-main{position:relative;z-index:5;flex:1;overflow-y:auto;padding:16px 24px}
+
+/* ── Pages ── */
+.ppage{display:none;animation:fadeUp .3s ease}
+.ppage.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── Section title ── */
+.psec{
+  font-family:'Cairo',sans-serif;font-size:11px;font-weight:700;
+  color:var(--gold);text-transform:uppercase;letter-spacing:2px;
+  margin-bottom:10px;display:flex;align-items:center;gap:8px;
+}
+.psec::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── KPI grid ── */
+.pkpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px}
+.pkpi{
+  background:var(--glass);border:1px solid var(--border);border-radius:10px;
+  padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden;
+}
+.pkpi::before{
+  content:'';position:absolute;top:0;right:0;width:3px;height:100%;
+  background:var(--kc,var(--gold));border-radius:0 10px 10px 0;
+}
+.pkpi:hover{background:var(--glass2);transform:translateY(-2px);border-color:var(--kc,var(--gold));box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.pkpi .ki{font-size:20px;margin-bottom:7px}
+.pkpi .kv{font-family:'Cairo',sans-serif;font-size:28px;font-weight:900;color:var(--kc,var(--gold2));line-height:1}
+.pkpi .kl{font-size:11px;color:var(--muted);margin-top:3px}
+.pkpi .ks{font-size:10px;margin-top:5px;color:var(--muted)}
+.pkpi .kb{position:absolute;top:8px;left:8px;font-size:8px;font-weight:700;
+  padding:2px 6px;border-radius:8px;background:rgba(201,168,76,.15);color:var(--gold2)}
+.up{color:var(--green2)}.dn{color:var(--red2)}
+
+/* ── Layout ── */
+.prow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.prow3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.pfull{margin-bottom:14px}
+
+/* ── Panel ── */
+.ppnl{background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:14px}
+.pptl{
+  font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;
+  color:var(--text);margin-bottom:12px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+
+/* ── State bars ── */
+.sbrow{display:flex;align-items:center;gap:8px;margin-bottom:6px;cursor:pointer}
+.sbrow:hover .sbfill{filter:brightness(1.3)}
+.sblbl{font-size:11px;color:var(--muted);min-width:120px;text-align:right}
+.sbtrk{flex:1;height:7px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden}
+.sbfill{height:100%;border-radius:4px;width:0;transition:width .9s cubic-bezier(.23,1,.32,1)}
+.sbcnt{font-size:11px;font-weight:700;min-width:28px;text-align:left}
+.sbpct{font-size:10px;color:var(--muted);min-width:34px;text-align:left}
+
+/* ── Bar chart ── */
+.pbars{display:flex;align-items:flex-end;gap:6px;height:90px;margin-top:6px}
+.pbc{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.pbf{width:100%;border-radius:4px 4px 0 0;height:4px;transition:height .9s cubic-bezier(.23,1,.32,1);cursor:pointer}
+.pbf:hover{filter:brightness(1.3)}
+.pbl{font-size:8px;color:var(--muted);text-align:center}
+.pbv{font-size:10px;font-weight:700}
+
+/* ── Donut ── */
+.pdw{display:flex;align-items:center;gap:14px}
+.pdn{position:relative;width:90px;height:90px;flex-shrink:0}
+.pdn svg{transform:rotate(-90deg)}
+.pdnc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.pdnp{font-family:'Cairo',sans-serif;font-size:18px;font-weight:900}
+.pdns{font-size:9px;color:var(--muted)}
+.pleg .li{display:flex;align-items:center;gap:7px;margin-bottom:6px;font-size:11px}
+.pleg .ld{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+.pleg .ll{flex:1;color:var(--muted)} .pleg .lv{font-weight:700}
+
+/* ── Table ── */
+.ptbl{width:100%;border-collapse:collapse}
+.ptbl th{font-size:11px;color:var(--muted);font-weight:500;padding:5px 7px;
+  text-align:right;border-bottom:1px solid var(--border)}
+.ptbl td{font-size:11px;padding:7px 7px;border-bottom:1px solid rgba(255,255,255,.04)}
+.ptbl tr:hover td{background:var(--glass2);cursor:pointer}
+
+/* ── Status badge ── */
+.sb{display:inline-flex;align-items:center;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+
+/* ── Alert ── */
+.palert{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;
+  margin-bottom:8px;background:var(--glass);border:1px solid var(--border);cursor:pointer;transition:all .2s}
+.palert:hover{background:var(--glass2);transform:translateX(-3px)}
+.pai{font-size:17px;flex-shrink:0}
+.pab{flex:1}
+.pat{font-size:13px;font-weight:600}
+.pad{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* ── Gauge ── */
+.pgauge{text-align:center}
+.pgauge svg{display:block;margin:0 auto 4px}
+.pgv{font-family:'Cairo',sans-serif;font-size:24px;font-weight:900;margin-top:-6px}
+.pgl{font-size:11px;color:var(--muted)}
+
+/* ── Loading ── */
+.pspin{display:flex;align-items:center;justify-content:center;min-height:300px;flex-direction:column;gap:14px}
+.spinner{width:44px;height:44px;border:3px solid var(--border);border-top-color:var(--gold);
+  border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Drill ── */
+.pdrill-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;
+  backdrop-filter:blur(8px);align-items:center;justify-content:center}
+.pdrill-ov.open{display:flex}
+.pdrill-pnl{
+  background:#152235;border:1px solid var(--border);border-radius:14px;
+  width:min(700px,95vw);max-height:85vh;overflow-y:auto;
+  padding:22px;position:relative;animation:fadeUp .25s ease;
+}
+.pdrill-x{position:absolute;top:12px;left:12px;background:rgba(255,255,255,.08);
+  border:none;color:var(--text);font-size:17px;width:30px;height:30px;
+  border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.pdrill-x:hover{background:rgba(255,255,255,.15)}
+.pdrill-ttl{font-family:'Cairo',sans-serif;font-size:16px;font-weight:700;
+  color:var(--gold2);margin-bottom:14px;padding-left:38px}
+.pdrill-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.pdkpi{background:var(--glass);border:1px solid var(--border);border-radius:10px;
+  padding:12px;text-align:center}
+.dkv{font-family:'Cairo',sans-serif;font-size:24px;font-weight:900;color:var(--gold2)}
+.dkl{font-size:11px;color:var(--muted);margin-top:2px}
+
+@media(max-width:700px){
+  .prow,.prow3{grid-template-columns:1fr}
+  .pkpis{grid-template-columns:1fr 1fr}
+  #ps-main{padding:12px}
+  .ps-hdr{padding:10px 12px}
+}
+                </style>
+            </t>
+            <t t-set="head">
+                <t t-out="head_dashboard"/>
+            </t>
+
+            <!-- Full page dashboard -->
+            <div id="ps-root">
+
+                <!-- Header -->
+                <div class="ps-hdr">
+                    <div class="ps-brand">
+                        <div class="ps-emblem">⚓</div>
+                        <div>
+                            <h1>لوحة القيادة التنفيذية</h1>
+                            <p>الديوان العام لمحافظة بورسعيد — سلسلة التوريد</p>
+                        </div>
+                    </div>
+                    <div class="ps-meta">
+                        <div class="ps-stat"><div class="val" id="hd-ops">...</div><div class="lbl">إجمالي العمليات</div></div>
+                        <div class="ps-div"/>
+                        <div class="ps-stat"><div class="val" id="hd-val">...</div><div class="lbl">قيمة التعاقدات</div></div>
+                        <div class="ps-div"/>
+                        <div class="ps-stat"><div class="val" id="hd-alr" style="color:#E74C3C">...</div><div class="lbl">تنبيهات عاجلة</div></div>
+                        <div class="ps-div"/>
+                        <div class="live">مباشر</div>
+                    </div>
+                </div>
+
+                <!-- Nav tabs -->
+                <div class="ps-nav">
+                    <button class="pnb active" data-page="overview">📊 نظرة عامة</button>
+                    <button class="pnb" data-page="contracts">📋 التعاقدات <span class="nb" id="nb-adj" style="background:rgba(201,168,76,.2);color:#E8C87A"></span></button>
+                    <button class="pnb" data-page="warehouse">🏭 المخازن <span class="nb" id="nb-prm" style="background:rgba(30,127,116,.2);color:#27A99A"></span></button>
+                    <button class="pnb" data-page="custody">🔑 العهد <span class="nb" id="nb-cus" style="background:rgba(33,150,243,.2);color:#90CAF9"></span></button>
+                    <button class="pnb" data-page="auction">🏛️ المزايدات <span class="nb" id="nb-auc" style="background:rgba(192,57,43,.2);color:#E74C3C"></span></button>
+                    <button class="pnb" data-page="alerts">🔔 التنبيهات <span class="nb" id="nb-alr" style="background:rgba(192,57,43,.3);color:#E74C3C"></span></button>
+                </div>
+
+                <!-- Content area -->
+                <div id="ps-main">
+                    <div class="pspin" id="ps-loading">
+                        <div class="spinner"></div>
+                        <div style="color:var(--muted);font-size:13px">جاري تحميل البيانات...</div>
+                    </div>
+                    <div id="ps-pages" style="display:none"></div>
+                </div>
+            </div>
+
+            <!-- Drill overlay -->
+            <div class="pdrill-ov" id="drill-ov">
+                <div class="pdrill-pnl">
+                    <button class="pdrill-x" onclick="closeDrill()">✕</button>
+                    <div class="pdrill-ttl" id="drill-ttl"></div>
+                    <div class="pdrill-kpis" id="drill-kpis"></div>
+                    <table class="ptbl" id="drill-tbl"></table>
+                </div>
+            </div>
+
+            <script>
+// ── Helpers ─────────────────────────────────────────────────────
+const SC = {
+  'نشطة':'#27AE60','نشط':'#27AE60','مرحّل':'#27AE60','مكتمل':'#27AE60','ساري':'#27AE60',
+  'مسودة':'#9BAAB8','منتهية':'#9BAAB8','ملغي':'#9BAAB8',
+  'إخطار الترسية':'#C9A84C','تمت المقارنة':'#C9A84C','معتمد':'#C9A84C','تسجيل العروض':'#C9A84C',
+  'مظاريف مالية مفتوحة':'#F39C12','مظاريف فنية مفتوحة':'#F39C12','الجلسة مفتوحة':'#F39C12','جاري الجرد':'#F39C12',
+  'أمر شراء صادر':'#2196F3','محوّل':'#2196F3',
+  'مرفوض':'#E74C3C','متأخرة':'#E74C3C','متأخر':'#E74C3C','مُرتجعة':'#9BAAB8',
+};
+const bdg = s => { const c=SC[s]||'#9BAAB8'; return `<span class="sb" style="background:${c}22;color:${c}">${s}</span>`; };
+const fmt = n => { if(!n)return'0'; if(n>=1e6)return(n/1e6).toFixed(1)+'م'; if(n>=1e3)return(n/1e3).toFixed(0)+'ك'; return n.toLocaleString(); };
+
+// ── Data store ───────────────────────────────────────────────────
+let D = null;
+
+// ── Fetch from Odoo RPC ──────────────────────────────────────────
+async function fetchData() {
+  try {
+    const res = await fetch('/portsaid/dashboard/data', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-Requested-With':'XMLHttpRequest'},
+      body: JSON.stringify({jsonrpc:'2.0',method:'call',id:1,params:{}})
+    });
+    const json = await res.json();
+    D = json.result;
+    initDashboard();
+  } catch(e) {
+    document.getElementById('ps-loading').innerHTML =
+      '<div style="color:#E74C3C;text-align:center;padding:40px">خطأ في تحميل البيانات<br><small>'+e.message+'</small></div>';
+  }
+}
+
+// ── Initialize ───────────────────────────────────────────────────
+function initDashboard() {
+  if(!D) return;
+  document.getElementById('ps-loading').style.display = 'none';
+  document.getElementById('ps-pages').style.display   = 'block';
+
+  // Header stats
+  document.getElementById('hd-ops').textContent = D.meta.total_ops || 0;
+  document.getElementById('hd-val').textContent = fmt(D.adjudication.total_estimated || 0) + ' ج.م';
+  document.getElementById('hd-alr').textContent = (D.alerts||[]).length;
+
+  // Nav badges
+  document.getElementById('nb-adj').textContent = D.adjudication.total || '';
+  document.getElementById('nb-prm').textContent = D.permits.total || '';
+  document.getElementById('nb-cus').textContent = D.custody.active || '';
+  document.getElementById('nb-auc').textContent = (D.auction.by_state.session_open||0) + (D.auction.by_state.bidding||0) || '';
+  document.getElementById('nb-alr').textContent = (D.alerts||[]).length || '';
+
+  renderPage('overview');
+
+  // Nav click
+  document.querySelectorAll('.pnb').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.pnb').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      renderPage(b.dataset.page);
+    });
+  });
+
+  // Drill close on overlay click
+  document.getElementById('drill-ov').addEventListener('click', e => {
+    if(e.target === document.getElementById('drill-ov')) closeDrill();
+  });
+}
+
+// ── Page renderer ────────────────────────────────────────────────
+function renderPage(pg) {
+  const el = document.getElementById('ps-pages');
+  el.innerHTML = buildPage(pg);
+  setTimeout(() => animBars(el), 60);
+}
+
+function buildPage(pg) {
+  switch(pg) {
+    case 'overview':   return pgOverview();
+    case 'contracts':  return pgContracts();
+    case 'warehouse':  return pgWarehouse();
+    case 'custody':    return pgCustody();
+    case 'auction':    return pgAuction();
+    case 'alerts':     return pgAlerts();
+    default:           return pgOverview();
+  }
+}
+
+// ── Component builders ───────────────────────────────────────────
+function kpi(icon,val,label,color,sub,drill) {
+  const d = drill ? `onclick="openDrill('${drill}')"` : '';
+  return `<div class="pkpi" style="--kc:${color}" ${d}>
+    <div class="ki">${icon}</div>
+    <div class="kv">${val}</div>
+    <div class="kl">${label}</div>
+    ${sub?`<div class="ks">${sub}</div>`:''}
+    ${drill?'<div class="kb">تفاصيل ↗</div>':''}
+  </div>`;
+}
+
+function sbars(data) {
+  const tot = data.reduce((s,d)=>s+(d.n||0),0)||1;
+  return data.map(d => {
+    const w = (d.n||0)/tot*100;
+    const p = Math.round(w);
+    return `<div class="sbrow">
+      <div class="sblbl">${d.l}</div>
+      <div class="sbtrk"><div class="sbfill" data-w="${w}" style="background:${d.c}"></div></div>
+      <div class="sbcnt">${d.n||0}</div>
+      <div class="sbpct">${p}%</div>
+    </div>`;
+  }).join('');
+}
+
+function barchart(data) {
+  const max = Math.max(...data.map(d=>d.v||0),1);
+  return `<div class="pbars">${data.map(d=>{
+    const h = Math.round((d.v||0)/max*75);
+    return `<div class="pbc">
+      <div class="pbv" style="color:${d.c||'#C9A84C'}">${d.v}</div>
+      <div class="pbf" data-h="${h}" style="background:${d.c||'#C9A84C'}"></div>
+      <div class="pbl">${d.l}</div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function donut(segs) {
+  const tot = segs.reduce((s,d)=>s+(d.v||0),0)||1;
+  const r=38, circ=2*Math.PI*r; let off=0;
+  const circles = segs.map(s=>{
+    const len=circ*(s.v||0)/tot, rot=off; off+=len;
+    return `<circle cx="50" cy="50" r="${r}" fill="none" stroke="${s.c}"
+      stroke-width="11" stroke-linecap="round"
+      stroke-dasharray="${len} ${circ-len}" stroke-dashoffset="${-rot}"/>`;
+  });
+  const pct = Math.round((segs[0].v||0)/tot*100);
+  return `<div class="pdw">
+    <div class="pdn">
+      <svg width="90" height="90" viewBox="0 0 100 100" style="transform:rotate(-90deg)">
+        <circle cx="50" cy="50" r="${r}" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="11"/>
+        ${circles.join('')}
+      </svg>
+      <div class="pdnc">
+        <div class="pdnp" style="color:${segs[0].c}">${pct}%</div>
+        <div class="pdns">${segs[0].l}</div>
+      </div>
+    </div>
+    <div class="pleg">${segs.map(s=>`<div class="li">
+      <div class="ld" style="background:${s.c}"></div>
+      <div class="ll">${s.l}</div>
+      <div class="lv">${s.v}</div>
+    </div>`).join('')}</div>
+  </div>`;
+}
+
+function gauge(title,val,pct,color,sub) {
+  const fill = Math.min(pct||0,100)*1.57;
+  return `<div class="ppnl pgauge">
+    <div class="pptl" style="justify-content:center">${title}</div>
+    <svg width="120" height="65" viewBox="0 0 130 70">
+      <path d="M 15 65 A 50 50 0 0 1 115 65" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="11" stroke-linecap="round"/>
+      <path d="M 15 65 A 50 50 0 0 1 115 65" fill="none" stroke="${color}" stroke-width="11" stroke-linecap="round"
+        stroke-dasharray="${fill} 157"/>
+    </svg>
+    <div class="pgv" style="color:${color}">${val}</div>
+    <div class="pgl">${sub}</div>
+  </div>`;
+}
+
+function trow(cols) { return `<tr>${cols.map(c=>`<td>${c}</td>`).join('')}</tr>`; }
+function thead(cols) { return `<thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead>`; }
+
+// ── Pages ────────────────────────────────────────────────────────
+function pgOverview() {
+  const c=D.committees, a=D.adjudication, p=D.permits, s=D.stocktaking, cu=D.custody, au=D.auction;
+  return `<div class="ppage active">
+    <div class="psec">مؤشرات الأداء الرئيسية</div>
+    <div class="pkpis">
+      ${kpi('👥',c.active,'لجنة نشطة','#C9A84C',`${c.draft} مسودة`,'committees')}
+      ${kpi('⚖️',a.by_state.awarded+a.by_state.po_created,'في مرحلة الترسية','#27AE60',`${a.total} إجمالي ملفات`,'adjudication')}
+      ${kpi('📦',p.total,'إذن إضافة','#27A99A',`${p.posted} مرحّل`,'permits')}
+      ${kpi('🔑',cu.active,'عهدة نشطة','#2196F3',`⚠️ ${cu.overdue} متأخرة`,'custody')}
+      ${kpi('📊',s.done,'جرد بانتظار الاعتماد','#E74C3C',`${s.validated} معتمد`,'stocktaking')}
+      ${kpi('🏛️',(au.by_state.session_open||0)+(au.by_state.bidding||0),'مزاد نشط','#F39C12',`${au.lease.active} عقد إيجار`,'auctions')}
+    </div>
+    <div class="prow">
+      <div class="ppnl"><div class="pptl">📋 مسار التعاقدات</div>
+        ${sbars([
+          {l:'مسودة',n:a.by_state.draft,c:'#9BAAB8'},
+          {l:'مظاريف فنية',n:a.by_state.technical_open,c:'#F39C12'},
+          {l:'مظاريف مالية',n:a.by_state.financial_open,c:'#C9A84C'},
+          {l:'تمت المقارنة',n:a.by_state.adjudicated,c:'#2196F3'},
+          {l:'إخطار الترسية',n:a.by_state.awarded,c:'#27AE60'},
+          {l:'أمر شراء',n:a.by_state.po_created,c:'#1565C0'},
+        ])}
+      </div>
+      <div class="ppnl"><div class="pptl">📦 نتائج الفحص والاستلام</div>
+        ${donut([
+          {c:'#27A99A',l:'مكتمل مطابق',v:p.inspection.done},
+          {c:'#C9A84C',l:'مطابق مع تحفظ',v:Math.max(0,Math.round(p.inspection.done*.1))},
+          {c:'#E74C3C',l:'مرفوض',v:p.inspection.rejected},
+        ])}
+      </div>
+    </div>
+    <div class="prow">
+      <div class="ppnl"><div class="pptl">📈 العمليات الشهرية</div>
+        ${barchart(D.monthly.map((m,i)=>({l:m.label,v:m.count,c:i===D.monthly.length-1?'#C9A84C':i===D.monthly.length-2?'#27A99A':'#2E4B6E'})))}
+      </div>
+      <div class="ppnl"><div class="pptl">🔑 توزيع العهد</div>
+        ${sbars([
+          {l:'نشطة',n:cu.active,c:'#27AE60'},
+          {l:'محوّلة',n:cu.transferred,c:'#2196F3'},
+          {l:'متأخرة',n:cu.overdue,c:'#E74C3C'},
+          {l:'مُرتجعة',n:cu.returned,c:'#9BAAB8'},
+        ])}
+      </div>
+    </div>
+  </div>`;
+}
+
+function pgContracts() {
+  const a=D.adjudication, c=D.committees;
+  const tLabels={public:'مناقصة عامة',local:'مناقصة محلية',limited:'مناقصة محدودة',
+    negotiation:'ممارسة',direct_supply:'أمر مباشر',direct_private:'اتفاق مباشر'};
+  return `<div class="ppage active">
+    <div class="psec">التعاقدات والمناقصات</div>
+    <div class="pkpis">
+      ${kpi('📝',c.total,'إجمالي اللجان','#C9A84C',`${c.active} نشطة`,'committees')}
+      ${kpi('⚖️',a.total,'ملف بت','#27AE60',`${a.by_state.awarded} ترسية`,'adjudication')}
+      ${kpi('💰',fmt(a.total_estimated),'قيمة تقديرية (ج.م)','#2196F3','')}
+      ${kpi('📊',(a.saving_pct||0)+'%','نسبة التوفير','#F39C12','مقارنة بالتقديري')}
+    </div>
+    <div class="prow">
+      <div class="ppnl"><div class="pptl">حالة ملفات البت</div>
+        ${sbars([
+          {l:'مسودة',n:a.by_state.draft,c:'#9BAAB8'},
+          {l:'مظاريف فنية مفتوحة',n:a.by_state.technical_open,c:'#F39C12'},
+          {l:'مظاريف مالية مفتوحة',n:a.by_state.financial_open,c:'#FFCC99'},
+          {l:'تمت المقارنة',n:a.by_state.adjudicated,c:'#C9A84C'},
+          {l:'إخطار الترسية',n:a.by_state.awarded,c:'#27AE60'},
+          {l:'أمر شراء صادر',n:a.by_state.po_created,c:'#1565C0'},
+          {l:'ملغي',n:a.by_state.cancelled,c:'#E74C3C'},
+        ])}
+      </div>
+      <div class="ppnl"><div class="pptl">توزيع وسائل الطرح</div>
+        ${barchart(Object.entries(a.tender_types||{}).map(([k,v])=>({l:tLabels[k]||k,v,c:'#2196F3'})))}
+      </div>
+    </div>
+    <div class="pfull"><div class="ppnl">
+      <div class="pptl">آخر ملفات البت</div>
+      <table class="ptbl">
+        ${thead(['المرجع','العملية','وسيلة الطرح','الحالة','القيمة التقديرية','قيمة الترسية','المورد'])}
+        <tbody>${(a.detail||[]).map(r=>trow([
+          `<span style="color:#E8C87A;font-weight:700">${r.ref}</span>`,
+          r.name, r.tender, bdg(r.state),
+          r.estimated?r.estimated.toLocaleString()+' ج.م':'—',
+          r.awarded?`<span style="color:#27AE60">${r.awarded.toLocaleString()} ج.م</span>`:'—',
+          r.supplier,
+        ])).join('')}</tbody>
+      </table>
+    </div></div>
+  </div>`;
+}
+
+function pgWarehouse() {
+  const p=D.permits, s=D.stocktaking;
+  return `<div class="ppage active">
+    <div class="psec">المخازن والجرد</div>
+    <div class="pkpis">
+      ${kpi('📦',p.total,'إذن إضافة','#27A99A',`${p.posted} مرحّل`,'permits')}
+      ${kpi('✅',p.posted,'مرحّل بنجاح','#27AE60',Math.round(p.posted/(p.total||1)*100)+'% قبول')}
+      ${kpi('❌',p.cancelled,'مرفوض/ملغي','#E74C3C','يحتاج مراجعة')}
+      ${kpi('🔍',s.total,'جلسة جرد','#C9A84C',`${s.done} بانتظار الاعتماد`,'stocktaking')}
+    </div>
+    <div class="prow">
+      <div class="ppnl"><div class="pptl">نتائج محاضر الفحص</div>
+        ${sbars([
+          {l:'مكتمل مطابق',n:p.inspection.done,c:'#27AE60'},
+          {l:'قيد الفحص',n:p.inspection.draft,c:'#F39C12'},
+          {l:'مرفوض',n:p.inspection.rejected,c:'#E74C3C'},
+        ])}
+      </div>
+      <div class="ppnl"><div class="pptl">جلسات الجرد — الحالة</div>
+        ${sbars([
+          {l:'مسودة',n:s.draft,c:'#9BAAB8'},
+          {l:'جاري الجرد',n:s.counting,c:'#F39C12'},
+          {l:'منتهي',n:s.done,c:'#2196F3'},
+          {l:'معتمد',n:s.validated,c:'#27AE60'},
+        ])}
+      </div>
+    </div>
+    <div class="prow3">
+      ${gauge('نسبة الزيادة',s.surplus_pct+'%',s.surplus_pct,'#27AE60','أصناف زيادة')}
+      ${gauge('نسبة العجز',s.deficit_pct+'%',s.deficit_pct,'#E74C3C','أصناف عجز')}
+      <div class="ppnl pgauge">
+        <div class="pptl" style="justify-content:center">أذونات الإضافة</div>
+        ${donut([
+          {c:'#27AE60',l:'مرحّل',v:p.posted},
+          {c:'#F39C12',l:'مسودة',v:p.draft},
+          {c:'#E74C3C',l:'ملغي',v:p.cancelled},
+        ])}
+      </div>
+    </div>
+  </div>`;
+}
+
+function pgCustody() {
+  const cu=D.custody;
+  return `<div class="ppage active">
+    <div class="psec">إدارة العهد</div>
+    <div class="pkpis">
+      ${kpi('🔑',cu.active,'عهدة نشطة','#2196F3','','custody')}
+      ${kpi('⚠️',cu.overdue,'متأخرة الاسترداد','#E74C3C','يجب المتابعة')}
+      ${kpi('↩️',cu.returned,'مُرتجعة','#27AE60','إجمالي')}
+      ${kpi('💎',fmt(cu.total_value),'قيمة العهد النشطة (ج.م)','#C9A84C','')}
+    </div>
+    <div class="prow">
+      <div class="ppnl"><div class="pptl">توزيع العهد حسب الحالة</div>
+        ${sbars([
+          {l:'نشطة',n:cu.active,c:'#27AE60'},
+          {l:'محوّلة',n:cu.transferred,c:'#2196F3'},
+          {l:'متأخرة',n:cu.overdue,c:'#E74C3C'},
+          {l:'مُرتجعة',n:cu.returned,c:'#9BAAB8'},
+        ])}
+      </div>
+      <div class="ppnl"><div class="pptl">نوع العهد</div>
+        ${sbars([
+          {l:'شخصية',n:cu.by_type.personal,c:'#2196F3'},
+          {l:'مشتركة',n:cu.by_type.shared,c:'#27A99A'},
+          {l:'منقولة',n:cu.by_type.transferred,c:'#C9A84C'},
+        ])}
+      </div>
+    </div>
+    <div class="pfull"><div class="ppnl">
+      <div class="pptl" style="color:#E74C3C">⚠️ العهد المتأخرة</div>
+      <table class="ptbl">
+        ${thead(['المرجع','الموظف','القيمة','تاريخ الاسترداد','الحالة'])}
+        <tbody>${(cu.overdue_detail||[]).length?
+          (cu.overdue_detail).map(r=>trow([
+            `<span style="color:#90CAF9;font-weight:700">${r.ref}</span>`,
+            r.employee, r.value?r.value.toLocaleString()+' ج.م':'—',
+            `<span style="color:#E74C3C">${r.due}</span>`, bdg('متأخرة'),
+          ])).join('') :
+          '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px">✅ لا توجد عهد متأخرة</td></tr>'
+        }</tbody>
+      </table>
+    </div></div>
+  </div>`;
+}
+
+function pgAuction() {
+  const au=D.auction;
+  return `<div class="ppage active">
+    <div class="psec">المزايدات والمزادات</div>
+    <div class="pkpis">
+      ${kpi('🏛️',(au.by_state.session_open||0)+(au.by_state.bidding||0),'مزاد نشط','#F39C12','','auctions')}
+      ${kpi('🏆',au.by_state.done,'مزاد مكتمل','#27AE60','')}
+      ${kpi('📃',au.lease.active,'عقد إيجار ساري','#2196F3',`${au.lease.expired} منتهي`)}
+      ${kpi('💸',au.payments.overdue,'دفعة متأخرة','#E74C3C','مطلوب تحصيل')}
+    </div>
+    <div class="prow">
+      <div class="ppnl"><div class="pptl">حالة طلبات المزاد</div>
+        ${sbars([
+          {l:'مسودة',n:au.by_state.draft,c:'#9BAAB8'},
+          {l:'الجلسة مفتوحة',n:au.by_state.session_open,c:'#F39C12'},
+          {l:'تسجيل العروض',n:au.by_state.bidding,c:'#C9A84C'},
+          {l:'تم الترسية',n:au.by_state.awarded,c:'#27AE60'},
+          {l:'منتهي',n:au.by_state.done,c:'#2E4B6E'},
+          {l:'ملغي',n:au.by_state.cancelled,c:'#E74C3C'},
+        ])}
+      </div>
+      <div class="ppnl"><div class="pptl">جدول سداد العقود</div>
+        ${sbars([
+          {l:'قيد الانتظار',n:au.payments.pending,c:'#9BAAB8'},
+          {l:'مدفوع جزئياً',n:au.payments.partial,c:'#F39C12'},
+          {l:'مدفوع',n:au.payments.paid,c:'#27AE60'},
+          {l:'متأخر',n:au.payments.overdue,c:'#E74C3C'},
+        ])}
+      </div>
+    </div>
+    <div class="pfull"><div class="ppnl">
+      <div class="pptl">المزادات الجارية والمكتملة</div>
+      <table class="ptbl">
+        ${thead(['المرجع','الاسم','النوع','الحالة','القيمة التقديرية','مبلغ الترسية'])}
+        <tbody>${(au.detail||[]).map(r=>trow([
+          `<span style="color:#FAC775;font-weight:700">${r.ref}</span>`,
+          r.name, r.type, bdg(r.state),
+          r.estimated?r.estimated.toLocaleString()+' ج.م':'—',
+          r.awarded?`<span style="color:#27AE60">${r.awarded.toLocaleString()} ج.م</span>`:'—',
+        ])).join('')}</tbody>
+      </table>
+    </div></div>
+  </div>`;
+}
+
+function pgAlerts() {
+  const clr={danger:'#E74C3C',warning:'#F39C12',info:'#2196F3'};
+  const als=D.alerts||[];
+  return `<div class="ppage active">
+    <div class="psec">التنبيهات العاجلة (${als.length})</div>
+    ${als.length?als.map(a=>`<div class="palert">
+      <div class="pai">${a.icon}</div>
+      <div class="pab">
+        <div class="pat" style="color:${clr[a.type]||'#C9A84C'}">${a.title}</div>
+        <div class="pad">${a.desc}</div>
+      </div>
+    </div>`).join(''):'<div style="text-align:center;padding:40px;color:var(--muted)">✅ لا توجد تنبيهات عاجلة</div>'}
+  </div>`;
+}
+
+// ── Animations ───────────────────────────────────────────────────
+function animBars(el) {
+  el.querySelectorAll('.sbfill[data-w]').forEach(e => { e.style.width = e.dataset.w+'%'; });
+  el.querySelectorAll('.pbf[data-h]').forEach(e  => { e.style.height = (parseInt(e.dataset.h)||4)+'px'; });
+}
+
+// ── Drill-down ───────────────────────────────────────────────────
+const DRILLS = {
+  committees: () => ({
+    title:'👥 تفاصيل اللجان المشكّلة',
+    kpis:[{v:D.committees.total,l:'إجمالي'},{v:D.committees.active,l:'نشطة'},{v:D.committees.draft,l:'مسودة'}],
+    headers:['المرجع','الاسم','النوع','الحالة','الأعضاء','التاريخ'],
+    rows:(D.committees.detail||[]).map(r=>[
+      `<span style="color:#E8C87A;font-weight:700">${r.ref}</span>`,
+      r.name,r.type,bdg(r.state),r.members,r.date
+    ]),
+  }),
+  adjudication: () => ({
+    title:'⚖️ تفاصيل ملفات البت',
+    kpis:[{v:D.adjudication.total,l:'إجمالي'},{v:fmt(D.adjudication.total_estimated),l:'قيمة تقديرية'},{v:(D.adjudication.saving_pct||0)+'%',l:'توفير'}],
+    headers:['المرجع','العملية','الحالة','التقديري','الترسية','المورد'],
+    rows:(D.adjudication.detail||[]).map(r=>[
+      `<span style="color:#E8C87A">${r.ref}</span>`,r.name,bdg(r.state),
+      r.estimated?r.estimated.toLocaleString()+' ج.م':'—',
+      r.awarded?r.awarded.toLocaleString()+' ج.م':'—',r.supplier
+    ]),
+  }),
+  permits: () => ({
+    title:'📦 تفاصيل أذونات الإضافة',
+    kpis:[{v:D.permits.total,l:'إجمالي'},{v:D.permits.posted,l:'مرحّل'},{v:D.permits.cancelled,l:'ملغي'}],
+    headers:['المرجع','الصنف','الحالة','الكمية','المستودع','التاريخ'],
+    rows:(D.permits.detail||[]).map(r=>[
+      `<span style="color:#27A99A;font-weight:700">${r.ref}</span>`,
+      r.name,bdg(r.state),r.qty,r.warehouse,r.date
+    ]),
+  }),
+  custody: () => ({
+    title:'🔑 تفاصيل العهد النشطة',
+    kpis:[{v:D.custody.active,l:'نشطة'},{v:D.custody.overdue,l:'متأخرة'},{v:fmt(D.custody.total_value),l:'القيمة الكلية'}],
+    headers:['المرجع','الموظف','الحالة','القيمة','تاريخ الاسترداد'],
+    rows:(D.custody.detail||[]).map(r=>[
+      `<span style="color:#90CAF9;font-weight:700">${r.ref}</span>`,
+      r.employee,bdg(r.state),
+      r.value?r.value.toLocaleString()+' ج.م':'—',r.due
+    ]),
+  }),
+  stocktaking: () => ({
+    title:'📊 تفاصيل جلسات الجرد',
+    kpis:[{v:D.stocktaking.total,l:'إجمالي'},{v:D.stocktaking.done,l:'بانتظار اعتماد'},{v:D.stocktaking.validated,l:'معتمد'}],
+    headers:['الجلسة','المستودع','السنة المالية','الحالة','رئيس اللجنة'],
+    rows:(D.stocktaking.detail||[]).map(r=>[
+      `<span style="color:#C9A84C;font-weight:700">${r.name}</span>`,
+      r.warehouse,r.year,bdg(r.state),r.chairman
+    ]),
+  }),
+  auctions: () => ({
+    title:'🏛️ تفاصيل المزادات',
+    kpis:[{v:D.auction.by_state.session_open+D.auction.by_state.bidding,l:'نشط'},{v:D.auction.by_state.done,l:'مكتمل'},{v:D.auction.lease.active,l:'عقد إيجار'}],
+    headers:['المرجع','الاسم','النوع','الحالة','التقديري','الترسية'],
+    rows:(D.auction.detail||[]).map(r=>[
+      `<span style="color:#FAC775;font-weight:700">${r.ref}</span>`,
+      r.name,r.type,bdg(r.state),
+      r.estimated?r.estimated.toLocaleString()+' ج.م':'—',
+      r.awarded?r.awarded.toLocaleString()+' ج.م':'—'
+    ]),
+  }),
+};
+
+function openDrill(key) {
+  const fn = DRILLS[key];
+  if(!fn) return;
+  const info = fn();
+  document.getElementById('drill-ttl').innerHTML = info.title;
+  document.getElementById('drill-kpis').innerHTML = info.kpis.map(k=>
+    `<div class="pdkpi"><div class="dkv">${k.v}</div><div class="dkl">${k.l}</div></div>`
+  ).join('');
+  const tbody = info.rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('');
+  document.getElementById('drill-tbl').innerHTML =
+    `<thead><tr>${info.headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${tbody}</tbody>`;
+  document.getElementById('drill-ov').classList.add('open');
+}
+function closeDrill() { document.getElementById('drill-ov').classList.remove('open'); }
+
+// ── Boot ─────────────────────────────────────────────────────────
+fetchData();
+setInterval(fetchData, 300000); // refresh every 5 min
+            </script>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<record id="view_asset_disposal_form" model="ir.ui.view">
+  <field name="name">port_said.asset.disposal.form</field>
+  <field name="model">port_said.asset.disposal</field>
+  <field name="arch" type="xml">
+    <form string="التصرف في اصل ثابت">
+      <header>
+        <field name="state" widget="statusbar"/>
+      </header>
+      <sheet>
+        <div class="o_field_widget" style="margin-bottom:12px;">
+          <button name="action_approve" string="اعتماد القرار"
+                  type="object" class="btn btn-primary btn-sm"
+                  invisible="state != 'draft'"
+                  groups="account.group_account_manager"/>
+          <button name="action_post" string="ترحيل قيد التصرف"
+                  type="object" class="btn btn-danger btn-sm"
+                  invisible="state != 'approved'"
+                  groups="account.group_account_manager"/>
+        </div>
+        <div class="oe_title">
+          <h1><field name="name" readonly="1"/></h1>
+        </div>
+        <group>
+          <group string="بيانات التصرف">
+            <field name="asset_id"/>
+            <field name="disposal_type"/>
+            <field name="disposal_date"/>
+            <field name="auction_id" invisible="disposal_type != 'sale'"/>
+          </group>
+          <group string="القيم المالية">
+            <field name="book_value_at_disposal" readonly="1"/>
+            <field name="sale_value" invisible="disposal_type not in ('sale',)"/>
+            <field name="gain_loss" readonly="1"
+                   decoration-danger="gain_loss &lt; 0"
+                   decoration-success="gain_loss &gt; 0"/>
+            <field name="move_id" readonly="1"/>
+          </group>
+        </group>
+        <field name="notes" placeholder="قرار اللجنة / الملاحظات..."/>
+      </sheet>
+      <chatter/>
+    </form>
+  </field>
+</record>
+
+<record id="view_asset_disposal_list" model="ir.ui.view">
+  <field name="name">port_said.asset.disposal.list</field>
+  <field name="model">port_said.asset.disposal</field>
+  <field name="arch" type="xml">
+    <tree string="قرارات التصرف">
+      <field name="name"/>
+      <field name="asset_id"/>
+      <field name="disposal_type"/>
+      <field name="disposal_date"/>
+      <field name="book_value_at_disposal"/>
+      <field name="sale_value"/>
+      <field name="gain_loss" decoration-danger="gain_loss &lt; 0"/>
+      <field name="state" widget="badge"/>
+    </tree>
+  </field>
+</record>
+
+</odoo>

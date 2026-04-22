@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="action_rpt_asset_register" model="ir.actions.report">
+    <field name="name">سجل الأصول الثابتة</field>
+    <field name="model">port_said.fixed.asset</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_fixed_assets.rpt_asset_register</field>
+    <field name="binding_model_id" ref="model_port_said_fixed_asset"/>
+    <field name="binding_type">report</field>
+  </record>
+
+  <record id="action_rpt_asset_card" model="ir.actions.report">
+    <field name="name">كارت الأصل الثابت</field>
+    <field name="model">port_said.fixed.asset</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_fixed_assets.rpt_asset_card</field>
+    <field name="print_report_name">'كارت_أصل_' + (object.asset_number or '')</field>
+    <field name="binding_model_id" ref="model_port_said_fixed_asset"/>
+    <field name="binding_type">report</field>
+  </record>
+
+  <record id="action_rpt_depreciation_schedule" model="ir.actions.report">
+    <field name="name">جدول الإهلاك</field>
+    <field name="model">port_said.fixed.asset</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_fixed_assets.rpt_depreciation_schedule</field>
+    <field name="binding_model_id" ref="model_port_said_fixed_asset"/>
+    <field name="binding_type">report</field>
+  </record>
+
+  <record id="action_rpt_asset_disposal" model="ir.actions.report">
+    <field name="name">قرار التصرف في الأصل</field>
+    <field name="model">port_said.asset.disposal</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_fixed_assets.rpt_asset_disposal</field>
+    <field name="binding_model_id" ref="model_port_said_asset_disposal"/>
+    <field name="binding_type">report</field>
+  </record>
+
+</odoo>

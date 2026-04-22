@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<!-- جدول الاهلاك المستقبلي - قالب مستقل -->
+<template id="rpt_depreciation_schedule">
+  <t t-call="web.html_container">
+    <t t-foreach="docs" t-as="doc">
+      <t t-call="web.external_layout">
+        <div class="page" style="direction:rtl;font-family:'Amiri','Noto Naskh Arabic',Arial,sans-serif;font-size:10pt;">
+<style>
+.o_company_logo,.o_address_name,.o_report_layout_header,
+header.o_report_layout_header,.odoo-header,.header-content,
+footer,.footer,.o_footer{display:none!important;}
+.page{margin-top:0!important;padding-top:0!important;}
+</style>
+          <table style="width:100%;border-collapse:collapse;margin-bottom:8px;border-bottom:2px solid #000;padding-bottom:6px;">
+            <tr>
+              <td style="width:78px;border:none;text-align:center;">&#160;</td>
+              <td style="border:none;text-align:center;">
+                <div style="font-size:13pt;font-weight:bold;">جمهورية مصر العربية</div>
+                <div style="font-size:12pt;font-weight:bold;">محافظة بورسعيد</div>
+                <div style="font-size:11pt;">الادارة العامة للشؤون المالية والادارية</div>
+                <div style="font-size:11pt;font-weight:bold;">ادارة الاصول الثابتة</div>
+              </td>
+              <td style="width:78px;border:none;text-align:center;">
+                <img t-att-src="'data:image/png;base64,' + (env.company.logo.decode('utf-8') if env.company.logo else '')"
+                     style="width:65px;height:65px;object-fit:contain;" alt=""/>
+              </td>
+            </tr>
+          </table>
+
+          <h2 style="text-align:center;font-size:13pt;text-decoration:underline;margin:10px 0;">
+            جدول الاهلاك — <t t-esc="doc.asset_number"/> — <t t-esc="doc.name"/>
+          </h2>
+
+          <table style="width:100%;border-collapse:collapse;margin-bottom:10px;">
+            <tr>
+              <td style="padding:6px;border:1px solid #ddd;text-align:center;background:#EBF5FB;">
+                <div style="font-size:12pt;font-weight:bold;color:#1F3864;">
+                  <t t-esc="'%s' % '{:,.2f}'.format(doc.purchase_value)"/> ج.م
+                </div>
+                <div style="font-size:9pt;color:#666;">تكلفة الاقتناء</div>
+              </td>
+              <td style="padding:6px;border:1px solid #ddd;text-align:center;background:#FFF3E0;">
+                <div style="font-size:12pt;font-weight:bold;color:#C55A11;">
+                  <t t-esc="'%s' % '{:,.2f}'.format(doc.accumulated_depreciation)"/> ج.م
+                </div>
+                <div style="font-size:9pt;color:#666;">مجمع الاهلاك</div>
+              </td>
+              <td style="padding:6px;border:1px solid #ddd;text-align:center;background:#E8F5E9;">
+                <div style="font-size:12pt;font-weight:bold;color:#375623;">
+                  <t t-esc="'%s' % '{:,.2f}'.format(doc.book_value)"/> ج.م
+                </div>
+                <div style="font-size:9pt;color:#666;">القيمة الدفترية</div>
+              </td>
+              <td style="padding:6px;border:1px solid #ddd;text-align:center;">
+                <div style="font-size:11pt;font-weight:bold;">
+                  <t t-esc="doc.depreciation_rate"/>% سنوياً
+                </div>
+                <div style="font-size:9pt;color:#666;">
+                  <t t-esc="doc.category_id.useful_life_years if doc.category_id else 0"/> سنة
+                </div>
+              </td>
+            </tr>
+          </table>
+
+          <table style="width:100%;border-collapse:collapse;font-size:10pt;">
+            <thead>
+              <tr style="background:#1F3864;color:white;">
+                <th style="padding:5px;border:1px solid #ddd;text-align:center;">السنة</th>
+                <th style="padding:5px;border:1px solid #ddd;">السنة المالية</th>
+                <th style="padding:5px;border:1px solid #ddd;">تاريخ الاهلاك</th>
+                <th style="padding:5px;border:1px solid #ddd;text-align:left;">قسط الاهلاك</th>
+                <th style="padding:5px;border:1px solid #ddd;text-align:left;">القيمة الدفترية</th>
+                <th style="padding:5px;border:1px solid #ddd;text-align:center;">الحالة</th>
+              </tr>
+            </thead>
+            <tbody>
+              <t t-foreach="doc.depreciation_line_ids" t-as="line">
+                <tr t-attf-style="background:{{ '#f0f7ee' if line.move_id else '#fffff0' }};">
+                  <td style="padding:4px;border:1px solid #ddd;text-align:center;font-weight:bold;color:#1F3864;">
+                    <t t-esc="line.sequence"/>
+                  </td>
+                  <td style="padding:4px;border:1px solid #ddd;text-align:center;">
+                    <t t-esc="line.fiscal_year or ''"/>
+                  </td>
+                  <td style="padding:4px;border:1px solid #ddd;">
+                    <t t-esc="line.depreciation_date or ''"/>
+                  </td>
+                  <td style="padding:4px;border:1px solid #ddd;text-align:left;font-weight:bold;color:#1F3864;">
+                    <t t-esc="'%s' % '{:,.2f}'.format(line.amount)"/>
+                  </td>
+                  <td style="padding:4px;border:1px solid #ddd;text-align:left;color:#375623;">
+                    <t t-esc="'%s' % '{:,.2f}'.format(line.remaining_value)"/>
+                  </td>
+                  <td style="padding:4px;border:1px solid #ddd;text-align:center;font-size:9pt;">
+                    <t t-if="line.move_id">
+                      <span style="color:#375623;font-weight:bold;">مرحَّل</span>
+                    </t>
+                    <t t-else="">
+                      <span style="color:#999;">معلق</span>
+                    </t>
+                  </td>
+                </tr>
+              </t>
+            </tbody>
+          </table>
+
+          <table style="width:100%;border-collapse:collapse;margin-top:16px;">
+            <tr>
+              <td style="width:33%;text-align:center;padding:12px;border:1px solid #ccc;">
+                <div style="font-weight:bold;color:#1F3864;">رئيس قسم الاصول</div>
+                <div style="margin-top:22px;border-top:1px solid #999;padding-top:4px;font-size:9pt;color:#666;">الاسم والتوقيع</div>
+              </td>
+              <td style="width:33%;text-align:center;padding:12px;border:1px solid #ccc;">
+                <div style="font-weight:bold;color:#1F3864;">مدير الشؤون المالية</div>
+                <div style="margin-top:22px;border-top:1px solid #999;padding-top:4px;font-size:9pt;color:#666;">الاسم والتوقيع</div>
+              </td>
+              <td style="width:33%;text-align:center;padding:12px;border:1px solid #ccc;">
+                <div style="font-weight:bold;color:#1F3864;">رئيس الديوان العام</div>
+                <div style="margin-top:22px;border-top:1px solid #999;padding-top:4px;font-size:9pt;color:#666;">الاسم والختم</div>
+              </td>
+            </tr>
+          </table>
+
+          <div style="margin-top:8px;font-size:8pt;color:#555;text-align:center;border-top:1px solid #ccc;padding-top:4px;">
+            Paradise Integrated Solutions — طُبع بتاريخ:
+            <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%Y %H:%M')"/>
+            — محافظة بورسعيد
+          </div>
+        </div>
+      </t>
+    </t>
+  </t>
+</template>
+</odoo>

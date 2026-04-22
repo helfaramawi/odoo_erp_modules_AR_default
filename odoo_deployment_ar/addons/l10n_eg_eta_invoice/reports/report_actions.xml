@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="action_rpt_eta_invoice_from_move" model="ir.actions.report">
+    <field name="name">فاتورة إلكترونية ETA</field>
+    <field name="model">account.move</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">l10n_eg_eta_invoice.rpt_eta_invoice_from_move</field>
+    <field name="print_report_name">'فاتورة_ETA_' + (object.name or '')</field>
+    <field name="binding_model_id" ref="account.model_account_move"/>
+    <field name="binding_type">report</field>
+  </record>
+</odoo>

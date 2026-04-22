@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_eta_config_manager,eta.config manager,model_eta_config,account.group_account_manager,1,1,1,0
+access_eta_invoice_user,eta.invoice user,model_eta_invoice,account.group_account_user,1,0,0,0
+access_eta_invoice_manager,eta.invoice manager,model_eta_invoice,account.group_account_manager,1,1,1,0

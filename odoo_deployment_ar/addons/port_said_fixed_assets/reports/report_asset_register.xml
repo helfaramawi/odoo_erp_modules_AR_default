@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="rpt_asset_register">
+  <t t-call="web.html_container">
+    <t t-foreach="docs" t-as="doc">
+      <t t-call="web.external_layout">
+        <div class="page" style="direction:rtl;font-family:'Cairo','Amiri', 'Noto Naskh Arabic', Arial, sans-serif;font-size:10pt;">
+<style>
+  .o_company_logo,.o_address_name,.o_report_layout_header,
+  header.o_report_layout_header,.odoo-header,.header-content,
+  footer,.footer,.o_footer{display:none!important;}
+  .page{margin-top:0!important;padding-top:0!important;}
+</style>
+
+          <!-- ══ هيدر حكومي رسمي ══ -->
+          <table style="width:100%;border-collapse:collapse;margin-bottom:8px;border-bottom:2px solid #000;padding-bottom:6px;">
+            <tr>
+              <td style="width:78px;text-align:center;vertical-align:top;">&#160;</td>
+              <td style="text-align:center;vertical-align:middle;">
+                <div style="font-size:13pt;font-weight:bold;">جمهورية مصر العربية</div>
+                <div style="font-size:12pt;font-weight:bold;">محافظة بورسعيد</div>
+                <div style="font-size:11pt;">الإدارة العامة للشؤون المالية والإدارية</div>
+                <div style="font-size:11pt;font-weight:bold;">إدارة الأصول الثابتة والمخازن</div>
+              </td>
+              <td style="width:78px;text-align:center;vertical-align:middle;">
+                <img t-att-src="'data:image/png;base64,' + (env.company.logo.decode('utf-8') if env.company.logo else '')"
+                     style="width:70px;height:70px;object-fit:contain;" alt="شعار المحافظة"/>
+              </td>
+            </tr>
+          </table>
+
+          <h2 style="text-align:center;font-size:13pt;text-decoration:underline;margin:10px 0;">
+            سجل الأصل الثابت الحكومي
+          </h2>
+
+          <!-- بيانات الأصل -->
+          <table style="width:100%;border-collapse:collapse;margin-bottom:12px;font-size:10pt;">
+            <tr>
+              <td style="padding:5px;border:1px solid #ddd;font-weight:bold;background:#EBF5FB;width:30%;">رقم الأصل</td>
+              <td style="padding:5px;border:1px solid #ddd;font-weight:bold;color:#1F3864;font-size:12pt;"><t t-esc="doc.asset_number"/></td>
+            </tr>
+            <tr>
+              <td style="padding:5px;border:1px solid #ddd;font-weight:bold;background:#EBF5FB;">الاسم / الوصف</td>
+              <td style="padding:5px;border:1px solid #ddd;"><t t-esc="doc.name"/></td>
+            </tr>
+            <tr>
+              <td style="padding:5px;border:1px solid #ddd;font-weight:bold;background:#EBF5FB;">الفئة</td>
+              <td style="padding:5px;border:1px solid #ddd;"><t t-esc="doc.category_id.name if doc.category_id else ''"/></td>
+            </tr>
+            <tr>
+              <td style="padding:5px;border:1px solid #ddd;font-weight:bold;background:#EBF5FB;">الرقم التسلسلي</td>
+              <td style="padding:5px;border:1px solid #ddd;"><t t-esc="doc.serial_number or '—'"/></td>
+            </tr>
+            <tr>
+              <td style="padding:5px;border:1px solid #ddd;font-weight:bold;background:#EBF5FB;">الإدارة المسؤولة</td>
+              <td style="padding:5px;border:1px solid #ddd;"><t t-esc="doc.department_id.name if doc.department_id else '—'"/></td>
+            </tr>
+            <tr>
+              <td style="padding:5px;border:1px solid #ddd;font-weight:bold;background:#EBF5FB;">أمين العهدة</td>
+              <td style="padding:5px;border:1px solid #ddd;"><t t-esc="doc.custodian_employee_id.name if doc.custodian_employee_id else '—'"/></td>
+            </tr>
+            <tr>
+              <td style="padding:5px;border:1px solid #ddd;font-weight:bold;background:#EBF5FB;">الموقع</td>
+              <td style="padding:5px;border:1px solid #ddd;"><t t-esc="doc.location or '—'"/></td>
+            </tr>
+          </table>
+
+          <!-- القيم المالية -->
+          <div style="background:#1F3864;color:white;padding:5px 10px;font-weight:bold;border-radius:4px 4px 0 0;">القيم المالية</div>
+          <table style="width:100%;border-collapse:collapse;margin-bottom:12px;">
+            <tr>
+              <td style="padding:8px;border:1px solid #ddd;text-align:center;background:#EBF5FB;">
+                <div style="font-size:13pt;font-weight:bold;color:#1F3864;"><t t-esc="'%s' % '{:,.2f}'.format(doc.purchase_value)"/> ج.م</div>
+                <div style="font-size:9pt;color:#666;">تكلفة الاقتناء</div>
+              </td>
+              <td style="padding:8px;border:1px solid #ddd;text-align:center;background:#FFF3E0;">
+                <div style="font-size:13pt;font-weight:bold;color:#C55A11;"><t t-esc="'%s' % '{:,.2f}'.format(doc.accumulated_depreciation)"/> ج.م</div>
+                <div style="font-size:9pt;color:#666;">مجمع الإهلاك</div>
+              </td>
+              <td style="padding:8px;border:1px solid #ddd;text-align:center;background:#E8F5E9;">
+                <div style="font-size:13pt;font-weight:bold;color:#375623;"><t t-esc="'%s' % '{:,.2f}'.format(doc.book_value)"/> ج.م</div>
+                <div style="font-size:9pt;color:#666;">القيمة الدفترية</div>
+              </td>
+              <td style="padding:8px;border:1px solid #ddd;text-align:center;background:#f5f5f5;">
+                <div style="font-size:11pt;font-weight:bold;color:#555;"><t t-esc="doc.depreciation_rate"/>%</div>
+                <div style="font-size:9pt;color:#666;">معدل الإهلاك</div>
+              </td>
+            </tr>
+          </table>
+
+          <!-- التواريخ -->
+          <table style="width:100%;border-collapse:collapse;margin-bottom:12px;font-size:10pt;">
+            <tr style="background:#1F3864;color:white;">
+              <th style="padding:5px;border:1px solid #ddd;">تاريخ الاقتناء</th>
+              <th style="padding:5px;border:1px solid #ddd;">بدء الإهلاك</th>
+              <th style="padding:5px;border:1px solid #ddd;">نهاية العمر الإنتاجي</th>
+              <th style="padding:5px;border:1px solid #ddd;">الحالة</th>
+            </tr>
+            <tr style="text-align:center;">
+              <td style="padding:6px;border:1px solid #ddd;"><t t-esc="doc.purchase_date or '—'"/></td>
+              <td style="padding:6px;border:1px solid #ddd;"><t t-esc="doc.activation_date or '—'"/></td>
+              <td style="padding:6px;border:1px solid #ddd;font-weight:bold;"><t t-esc="doc.end_of_life_date or '—'"/></td>
+              <td style="padding:6px;border:1px solid #ddd;font-weight:bold;">
+                <t t-esc="{'draft':'مسودة','active':'نشط','suspended':'موقوف','disposed':'مستغنى عنه'}.get(doc.state, doc.state)"/>
+              </td>
+            </tr>
+          </table>
+
+          <!-- توقيعات -->
+          <table style="width:100%;border-collapse:collapse;margin-top:20px;">
+            <tr>
+              <td style="width:33%;text-align:center;padding:12px;border:1px solid #ccc;">
+                <div style="font-weight:bold;color:#1F3864;">رئيس قسم الأصول الثابتة</div>
+                <div style="margin-top:22px;border-top:1px solid #999;padding-top:4px;font-size:9pt;color:#666;">الاسم والتوقيع</div>
+              </td>
+              <td style="width:33%;text-align:center;padding:12px;border:1px solid #ccc;">
+                <div style="font-weight:bold;color:#1F3864;">مدير الشؤون المالية</div>
+                <div style="margin-top:22px;border-top:1px solid #999;padding-top:4px;font-size:9pt;color:#666;">الاسم والتوقيع</div>
+              </td>
+              <td style="width:33%;text-align:center;padding:12px;border:1px solid #ccc;">
+                <div style="font-weight:bold;color:#1F3864;">رئيس الديوان العام</div>
+                <div style="margin-top:22px;border-top:1px solid #999;padding-top:4px;font-size:9pt;color:#666;">الاسم والختم الرسمي</div>
+              </td>
+            </tr>
+          </table>
+
+          <!-- فوتر -->
+          <div style="margin-top:8px;font-size:8pt;color:#555;text-align:center;border-top:1px solid #ccc;padding-top:4px;">
+            نظام أوبو إيآر بي — Paradise Integrated Solutions
+            طُبع بتاريخ: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%Y %H:%M')"/>
+            — محافظة بورسعيد
+          </div>
+        </div>
+      </t>
+    </t>
+  </t>
+</template>
+</odoo>

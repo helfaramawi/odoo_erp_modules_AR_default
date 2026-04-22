@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_asset_category_user,port_said.asset.category user,model_port_said_asset_category,account.group_account_user,1,0,0,0
+access_asset_category_manager,port_said.asset.category manager,model_port_said_asset_category,account.group_account_manager,1,1,1,0
+access_fixed_asset_user,port_said.fixed.asset user,model_port_said_fixed_asset,account.group_account_user,1,0,0,0
+access_fixed_asset_manager,port_said.fixed.asset manager,model_port_said_fixed_asset,account.group_account_manager,1,1,1,0
+access_dep_line_user,port_said.asset.depreciation.line user,model_port_said_asset_depreciation_line,account.group_account_user,1,0,0,0
+access_dep_line_manager,port_said.asset.depreciation.line manager,model_port_said_asset_depreciation_line,account.group_account_manager,1,1,1,1
+access_disposal_user,port_said.asset.disposal user,model_port_said_asset_disposal,account.group_account_user,1,0,0,0
+access_disposal_manager,port_said.asset.disposal manager,model_port_said_asset_disposal,account.group_account_manager,1,1,1,0

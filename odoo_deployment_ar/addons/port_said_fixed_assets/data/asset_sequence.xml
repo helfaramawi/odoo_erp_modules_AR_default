@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_fixed_asset" model="ir.sequence">
+        <field name="name">أصل ثابت حكومي</field>
+        <field name="code">port_said.fixed.asset</field>
+        <field name="prefix">ASSET/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_asset_disposal" model="ir.sequence">
+        <field name="name">تصرف في أصل ثابت</field>
+        <field name="code">port_said.asset.disposal</field>
+        <field name="prefix">DISP/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>

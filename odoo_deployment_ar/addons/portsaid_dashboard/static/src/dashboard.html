@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>لوحة القيادة التنفيذية — بورسعيد</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Cairo:wght@300;400;600;700;900&display=swap"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#0D1B2A}
+:root{--navy:#0D1B2A;--gold:#C9A84C;--gold2:#E8C87A;--teal2:#27A99A;--red2:#E74C3C;--green2:#27AE60;--amber2:#F39C12;--blue2:#2196F3;--text:#F0ECE3;--muted:#9BAAB8;--border:rgba(201,168,76,0.2);--glass:rgba(255,255,255,0.04);--glass2:rgba(255,255,255,0.08)}
+#ps{font-family:'Tajawal',sans-serif;background:var(--navy);color:var(--text);height:100vh;direction:rtl;display:flex;flex-direction:column;overflow:hidden;position:relative}
+#ps::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 80% 50% at 20% 0%,rgba(201,168,76,.07) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 100%,rgba(30,127,116,.08) 0%,transparent 60%)}
+.hdr{position:relative;z-index:10;flex-shrink:0;padding:12px 24px 10px;border-bottom:1px solid var(--border);background:rgba(13,27,42,.97);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}
+.embl{width:42px;height:42px;border:2px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(201,168,76,.1);flex-shrink:0}
+.brand h1{font-family:'Cairo',sans-serif;font-size:16px;font-weight:700;color:var(--gold2);line-height:1.2}
+.brand p{font-size:11px;color:var(--muted);margin-top:1px}
+.meta{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.stat .v{font-family:'Cairo',sans-serif;font-size:20px;font-weight:800;color:var(--gold2)}
+.stat .l{font-size:10px;color:var(--muted)}
+.div{width:1px;height:32px;background:var(--border)}
+.live{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--green2)}
+.live::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green2);animation:pu 2s infinite}
+@keyframes pu{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+.nav{position:relative;z-index:10;flex-shrink:0;display:flex;gap:2px;padding:8px 24px 0;border-bottom:1px solid var(--border);background:rgba(13,27,42,.8);overflow-x:auto}
+.nb{padding:7px 14px;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:500;border:none;background:transparent;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.nb:hover{color:var(--text)}.nb.on{color:var(--gold2);border-bottom-color:var(--gold)}
+.nbdot{width:17px;height:17px;border-radius:4px;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center}
+#main{position:relative;z-index:5;flex:1;overflow-y:auto;padding:16px 24px}
+.pg{display:none;animation:fu .3s ease}.pg.on{display:block}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.sec{font-family:'Cairo',sans-serif;font-size:11px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.sec::after{content:'';flex:1;height:1px;background:var(--border)}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px}
+.kpi{background:var(--glass);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;right:0;width:3px;height:100%;background:var(--kc,var(--gold));border-radius:0 10px 10px 0}
+.kpi:hover{background:var(--glass2);transform:translateY(-2px);border-color:var(--kc,var(--gold));box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.ki{font-size:20px;margin-bottom:7px}.kv{font-family:'Cairo',sans-serif;font-size:28px;font-weight:900;color:var(--kc,var(--gold2));line-height:1}
+.kl{font-size:11px;color:var(--muted);margin-top:3px}.ks{font-size:10px;margin-top:5px;color:var(--muted)}
+.kb{position:absolute;top:8px;left:8px;font-size:8px;font-weight:700;padding:2px 6px;border-radius:8px;background:rgba(201,168,76,.15);color:var(--gold2)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.full{margin-bottom:14px}
+.pnl{background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:14px}
+.ptl{font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.sr{display:flex;align-items:center;gap:8px;margin-bottom:6px;cursor:pointer}
+.sr:hover .sf{filter:brightness(1.3)}
+.sl{font-size:11px;color:var(--muted);min-width:120px;text-align:right}
+.st{flex:1;height:7px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden}
+.sf{height:100%;border-radius:4px;width:0;transition:width .9s cubic-bezier(.23,1,.32,1)}
+.sc{font-size:11px;font-weight:700;min-width:28px;text-align:left}
+.sp{font-size:10px;color:var(--muted);min-width:34px;text-align:left}
+.bars{display:flex;align-items:flex-end;gap:6px;height:90px;margin-top:6px}
+.bc{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bf{width:100%;border-radius:4px 4px 0 0;height:4px;transition:height .9s cubic-bezier(.23,1,.32,1);cursor:pointer}
+.bf:hover{filter:brightness(1.3)}
+.bl{font-size:8px;color:var(--muted);text-align:center}.bv{font-size:10px;font-weight:700}
+.dw{display:flex;align-items:center;gap:14px}
+.dn{position:relative;width:90px;height:90px;flex-shrink:0}
+.dn svg{transform:rotate(-90deg)}
+.dc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.dp{font-family:'Cairo',sans-serif;font-size:18px;font-weight:900}
+.ds{font-size:9px;color:var(--muted)}
+.leg .li{display:flex;align-items:center;gap:7px;margin-bottom:6px;font-size:11px}
+.leg .ld{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+.leg .ll{flex:1;color:var(--muted)}.leg .lv{font-weight:700}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-size:11px;color:var(--muted);font-weight:500;padding:5px 7px;text-align:right;border-bottom:1px solid var(--border)}
+.tbl td{font-size:11px;padding:7px 7px;border-bottom:1px solid rgba(255,255,255,.04)}
+.tbl tr:hover td{background:var(--glass2);cursor:pointer}
+.sb{display:inline-flex;align-items:center;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+.alrt{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;margin-bottom:8px;background:var(--glass);border:1px solid var(--border);cursor:pointer;transition:all .2s}
+.alrt:hover{background:var(--glass2);transform:translateX(-3px)}
+.ai{font-size:17px;flex-shrink:0}.ab{flex:1}
+.at{font-size:13px;font-weight:600}.ad{font-size:11px;color:var(--muted);margin-top:2px}
+.gw{text-align:center}
+.gw svg{display:block;margin:0 auto 4px}
+.gv{font-family:'Cairo',sans-serif;font-size:24px;font-weight:900;margin-top:-6px}
+.gl{font-size:11px;color:var(--muted)}
+.spin{display:flex;align-items:center;justify-content:center;min-height:300px;flex-direction:column;gap:14px}
+.spr{width:44px;height:44px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.dov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;backdrop-filter:blur(8px);align-items:center;justify-content:center}
+.dov.on{display:flex}
+.dpnl{background:#152235;border:1px solid var(--border);border-radius:14px;width:min(700px,95vw);max-height:85vh;overflow-y:auto;padding:22px;position:relative;animation:fu .25s ease}
+.dx{position:absolute;top:12px;left:12px;background:rgba(255,255,255,.08);border:none;color:var(--text);font-size:17px;width:30px;height:30px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.dx:hover{background:rgba(255,255,255,.15)}
+.dttl{font-family:'Cairo',sans-serif;font-size:16px;font-weight:700;color:var(--gold2);margin-bottom:14px;padding-left:38px}
+.dkpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.dkpi{background:var(--glass);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.dkv{font-family:'Cairo',sans-serif;font-size:24px;font-weight:900;color:var(--gold2)}
+.dkl{font-size:11px;color:var(--muted);margin-top:2px}
+@media(max-width:700px){.row,.row3{grid-template-columns:1fr}.kgrid{grid-template-columns:1fr 1fr}#main{padding:12px}.hdr{padding:10px 12px}}
+.fn-alert{animation:fnpulse 2.5s ease-in-out infinite}
+@keyframes fnpulse{0%,100%{box-shadow:0 0 0 0 rgba(231,76,60,0)}50%{box-shadow:0 0 0 5px rgba(231,76,60,0.3)}}
+</style>
+</head>
+<body>
+<div id="ps">
+  <div class="hdr">
+    <div class="brand">
+      <div class="embl">⚓</div>
+      <div><h1>لوحة القيادة التنفيذية</h1><p>الديوان العام لمحافظة بورسعيد — سلسلة التوريد</p></div>
+    </div>
+    <div class="meta">
+      <div class="stat"><div class="v" id="hd-ops">...</div><div class="l">إجمالي العمليات</div></div>
+      <div class="div"></div>
+      <div class="stat"><div class="v" id="hd-val">...</div><div class="l">قيمة التعاقدات</div></div>
+      <div class="div"></div>
+      <div class="stat"><div class="v" id="hd-alr" style="color:#E74C3C">...</div><div class="l">تنبيهات عاجلة</div></div>
+      <div class="div"></div>
+      <div class="live">مباشر</div>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="nb on" data-pg="ov">📊 نظرة عامة</button>
+    <button class="nb" data-pg="ct">📋 التعاقدات <span class="nbdot" id="nb-a" style="background:rgba(201,168,76,.2);color:#E8C87A"></span></button>
+    <button class="nb" data-pg="wh">🏭 المخازن <span class="nbdot" id="nb-p" style="background:rgba(30,127,116,.2);color:#27A99A"></span></button>
+    <button class="nb" data-pg="cu">🔑 العهد <span class="nbdot" id="nb-c" style="background:rgba(33,150,243,.2);color:#90CAF9"></span></button>
+    <button class="nb" data-pg="au">🏛️ المزايدات <span class="nbdot" id="nb-au" style="background:rgba(192,57,43,.2);color:#E74C3C"></span></button>
+    <button class="nb" data-pg="fn">💰 الحسابات والمالية</button>
+    <button class="nb" data-pg="al">🔔 التنبيهات <span class="nbdot" id="nb-al" style="background:rgba(192,57,43,.3);color:#E74C3C"></span></button>
+  </div>
+  <div id="main">
+    <div class="spin" id="ld"><div class="spr"></div><div style="color:var(--muted);font-size:13px">جاري تحميل البيانات...</div></div>
+    <div id="pgs" style="display:none"></div>
+  </div>
+</div>
+<div class="dov" id="dov"><div class="dpnl">
+  <button class="dx" onclick="cDr()">✕</button>
+  <div class="dttl" id="dttl"></div>
+  <div class="dkpis" id="dkps"></div>
+  <table class="tbl" id="dtbl"></table>
+</div></div>
+<script>
+/* __ODOO_DATA_PLACEHOLDER__ */
+
+const SC={
+  'نشطة':'#27AE60','نشط':'#27AE60','مرحّل':'#27AE60','مكتمل':'#27AE60','ساري':'#27AE60',
+  'مسودة':'#9BAAB8','منتهية':'#9BAAB8','ملغي':'#9BAAB8','مُرتجعة':'#9BAAB8',
+  'إخطار الترسية':'#C9A84C','تمت المقارنة':'#C9A84C','معتمد':'#C9A84C','تسجيل العروض':'#C9A84C',
+  'مظاريف مالية مفتوحة':'#F39C12','مظاريف فنية مفتوحة':'#F39C12','الجلسة مفتوحة':'#F39C12','جاري الجرد':'#F39C12',
+  'أمر شراء صادر':'#2196F3','محوّل':'#2196F3',
+  'مرفوض':'#E74C3C','متأخرة':'#E74C3C','متأخر':'#E74C3C',
+};
+const bdg=s=>{const c=SC[s]||'#9BAAB8';return`<span class="sb" style="background:${c}22;color:${c}">${s}</span>`};
+const fmt=n=>{if(!n)return'0';if(n>=1e6)return(n/1e6).toFixed(1)+'م';if(n>=1e3)return(n/1e3).toFixed(0)+'ك';return n.toLocaleString()};
+let D=null;
+
+async function load(){
+  try{
+    // Use pre-loaded server data (injected by Odoo controller)
+    if(window.ODOO_DATA){
+      D = window.ODOO_DATA;
+      init();
+      return;
+    }
+    // Fallback: fetch via AJAX if data not pre-loaded
+    const csrf = document.cookie.split(';')
+      .find(c=>c.trim().startsWith('session_id='));
+    const r=await fetch('/portsaid/dashboard/data',{
+      method:'POST',
+      credentials:'include',
+      headers:{
+        'Content-Type':'application/json',
+        'X-Requested-With':'XMLHttpRequest'
+      },
+      body:JSON.stringify({jsonrpc:'2.0',method:'call',id:1,params:{}})
+    });
+    const j=await r.json();
+    if(j.error){throw new Error(j.error.data?.message||'Server error')}
+    D=j.result;
+    init();
+  }catch(e){
+    document.getElementById('ld').innerHTML=
+      '<div style="color:#E74C3C;text-align:center;padding:40px">'+
+      '<div style="font-size:32px;margin-bottom:12px">⚠️</div>'+
+      '<div style="font-size:16px;margin-bottom:8px">خطأ في تحميل البيانات</div>'+
+      '<div style="font-size:12px;color:#9BAAB8">'+e.message+'</div>'+
+      '<div style="margin-top:16px"><a href="/web" style="color:#C9A84C;text-decoration:none">← العودة إلى Odoo</a></div>'+
+      '</div>';
+  }
+}
+
+function init(){
+  if(!D)return;
+  document.getElementById('ld').style.display='none';
+  document.getElementById('pgs').style.display='block';
+  document.getElementById('hd-ops').textContent=D.meta.total_ops||0;
+  document.getElementById('hd-val').textContent=fmt(D.adjudication.total_estimated||0)+' ج.م';
+  document.getElementById('hd-alr').textContent=(D.alerts||[]).length;
+  document.getElementById('nb-a').textContent=D.adjudication.total||'';
+  document.getElementById('nb-p').textContent=D.permits.total||'';
+  document.getElementById('nb-c').textContent=D.custody.active||'';
+  document.getElementById('nb-au').textContent=((D.auction.by_state.session_open||0)+(D.auction.by_state.bidding||0))||'';
+  document.getElementById('nb-al').textContent=(D.alerts||[]).length||'';
+  rp('ov');
+  document.querySelectorAll('.nb').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('.nb').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on'); rp(b.dataset.pg);
+    });
+  });
+  document.getElementById('dov').addEventListener('click',e=>{if(e.target===document.getElementById('dov'))cDr()});
+}
+
+function rp(pg){
+  const el=document.getElementById('pgs');
+  el.innerHTML=bp(pg);
+  setTimeout(()=>ab(el),60);
+}
+
+function bp(pg){
+  switch(pg){case'ov':return pOv();case'fn':return pFn();case'ct':return pCt();case'wh':return pWh();case'cu':return pCu();case'au':return pAu();case'al':return pAl();default:return pOv()}
+}
+
+function kpi(ic,vl,lb,cl,sb,dr){
+  const d=dr?`onclick="oD('${dr}')"`:'';
+  return`<div class="kpi" style="--kc:${cl}" ${d}><div class="ki">${ic}</div><div class="kv">${vl}</div><div class="kl">${lb}</div>${sb?`<div class="ks">${sb}</div>`:''} ${dr?'<div class="kb">تفاصيل ↗</div>':''}</div>`;
+}
+
+function sbars(data){
+  const tot=data.reduce((s,d)=>s+(d.n||0),0)||1;
+  return data.map(d=>{const w=(d.n||0)/tot*100,p=Math.round(w);
+    return`<div class="sr"><div class="sl">${d.l}</div><div class="st"><div class="sf" data-w="${w}" style="background:${d.c}"></div></div><div class="sc">${d.n||0}</div><div class="sp">${p}%</div></div>`;
+  }).join('');
+}
+
+function bars(data){
+  const mx=Math.max(...data.map(d=>d.v||0),1);
+  return`<div class="bars">${data.map(d=>{const h=Math.round((d.v||0)/mx*75);
+    return`<div class="bc"><div class="bv" style="color:${d.c||'#C9A84C'}">${d.v}</div><div class="bf" data-h="${h}" style="background:${d.c||'#C9A84C'}"></div><div class="bl">${d.l}</div></div>`;
+  }).join('')}</div>`;
+}
+
+function donut(segs){
+  const tot=segs.reduce((s,d)=>s+(d.v||0),0)||1;
+  const r=38,ci=2*Math.PI*r;let off=0;
+  const crs=segs.map(s=>{const ln=ci*(s.v||0)/tot,ro=off;off+=ln;
+    return`<circle cx="50" cy="50" r="${r}" fill="none" stroke="${s.c}" stroke-width="11" stroke-linecap="round" stroke-dasharray="${ln} ${ci-ln}" stroke-dashoffset="${-ro}"/>`;
+  });
+  const pct=Math.round((segs[0].v||0)/tot*100);
+  return`<div class="dw"><div class="dn"><svg width="90" height="90" viewBox="0 0 100 100" style="transform:rotate(-90deg)">
+    <circle cx="50" cy="50" r="${r}" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="11"/>${crs.join('')}
+  </svg><div class="dc"><div class="dp" style="color:${segs[0].c}">${pct}%</div><div class="ds">${segs[0].l}</div></div></div>
+  <div class="leg">${segs.map(s=>`<div class="li"><div class="ld" style="background:${s.c}"></div><div class="ll">${s.l}</div><div class="lv">${s.v}</div></div>`).join('')}</div></div>`;
+}
+
+function gauge(ttl,vl,pct,cl,sb){
+  const f=Math.min(pct||0,100)*1.57;
+  return`<div class="pnl gw"><div class="ptl" style="justify-content:center">${ttl}</div>
+  <svg width="120" height="65" viewBox="0 0 130 70">
+    <path d="M 15 65 A 50 50 0 0 1 115 65" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="11" stroke-linecap="round"/>
+    <path d="M 15 65 A 50 50 0 0 1 115 65" fill="none" stroke="${cl}" stroke-width="11" stroke-linecap="round" stroke-dasharray="${f} 157"/>
+  </svg><div class="gv" style="color:${cl}">${vl}</div><div class="gl">${sb}</div></div>`;
+}
+
+function tr(cs){return`<tr>${cs.map(c=>`<td>${c}</td>`).join('')}</tr>`}
+function th(cs){return`<thead><tr>${cs.map(c=>`<th>${c}</th>`).join('')}</tr></thead>`}
+
+function pOv(){
+  const c=D.committees,a=D.adjudication,p=D.permits,s=D.stocktaking,cu=D.custody,au=D.auction;
+  return`<div class="pg on"><div class="sec">مؤشرات الأداء الرئيسية</div>
+  <div class="kgrid">
+    ${kpi('👥',c.active,'لجنة نشطة','#C9A84C',`${c.draft} مسودة`,'committees')}
+    ${kpi('⚖️',a.by_state.awarded+a.by_state.po_created,'في مرحلة الترسية','#27AE60',`${a.total} ملف بت`,'adjudication')}
+    ${kpi('📦',p.total,'إذن إضافة','#27A99A',`${p.posted} مرحّل`,'permits')}
+    ${kpi('🔑',cu.active,'عهدة نشطة','#2196F3',`⚠️ ${cu.overdue} متأخرة`,'custody')}
+    ${kpi('📊',s.done,'جرد بانتظار الاعتماد','#E74C3C',`${s.validated} معتمد`,'stocktaking')}
+    ${kpi('🏛️',(au.by_state.session_open||0)+(au.by_state.bidding||0),'مزاد نشط','#F39C12',`${au.lease.active} عقد إيجار`,'auctions')}
+  </div>
+  <div class="row">
+    <div class="pnl"><div class="ptl">📋 مسار التعاقدات</div>
+      ${sbars([{l:'مسودة',n:a.by_state.draft,c:'#9BAAB8'},{l:'مظاريف فنية',n:a.by_state.technical_open,c:'#F39C12'},{l:'مظاريف مالية',n:a.by_state.financial_open,c:'#C9A84C'},{l:'تمت المقارنة',n:a.by_state.adjudicated,c:'#2196F3'},{l:'إخطار الترسية',n:a.by_state.awarded,c:'#27AE60'},{l:'أمر شراء',n:a.by_state.po_created,c:'#1565C0'}])}
+    </div>
+    <div class="pnl"><div class="ptl">📦 نتائج الفحص</div>
+      ${donut([{c:'#27A99A',l:'مكتمل مطابق',v:p.inspection.done},{c:'#C9A84C',l:'مع تحفظ',v:Math.max(0,Math.round(p.inspection.done*.1))},{c:'#E74C3C',l:'مرفوض',v:p.inspection.rejected}])}
+    </div>
+  </div>
+  <div class="row">
+    <div class="pnl"><div class="ptl">📈 العمليات الشهرية</div>
+      ${bars(D.monthly.map((m,i)=>({l:m.label,v:m.count,c:i===D.monthly.length-1?'#C9A84C':i===D.monthly.length-2?'#27A99A':'#2E4B6E'})))}
+    </div>
+    <div class="pnl"><div class="ptl">🔑 توزيع العهد</div>
+      ${sbars([{l:'نشطة',n:cu.active,c:'#27AE60'},{l:'محوّلة',n:cu.transferred,c:'#2196F3'},{l:'متأخرة',n:cu.overdue,c:'#E74C3C'},{l:'مُرتجعة',n:cu.returned,c:'#9BAAB8'}])}
+    </div>
+  </div></div>`;
+}
+
+function pFn(){
+  const f=D.finance, au=D.auction;
+  const totalPay   = f.total_payments||0;
+  const commAmt    = f.commitments_amount||0;
+  const availBal   = f.available_balance||0;
+  const auctRev    = f.auction_revenue||0;
+  const leaseOut   = f.lease_outstanding||0;
+  const leaseCol   = f.lease_collected||0;
+  const utilizePct = commAmt ? Math.min(100,Math.round((commAmt-availBal)/commAmt*100)) : 0;
+  const collPct    = (auctRev+leaseCol)>0 ? Math.min(100,Math.round(leaseCol/(auctRev+leaseCol)*100)) : 0;
+  const d55Total   = f.daftar55_count||0;
+  const d55Done    = (f.d55_posted||0)+(f.d55_archived||0);
+  const d55Pct     = d55Total ? Math.round(d55Done/d55Total*100) : 0;
+  const pyTotal    = (f.py_paid||0)+(f.py_pending||0)+(f.py_overdue||0)+(f.py_partial||0);
+  const overduePct = pyTotal ? Math.round((f.py_overdue||0)/pyTotal*100) : 0;
+
+  /* ── مؤشرات الأداء الرئيسية الست ── */
+  const scorecard = [
+    { ic:'💸', val:fmt(totalPay),    lbl:'إجمالي المصروفات',     unit:'ج.م', sub:d55Total+' إذن صرف | '+d55Pct+'% مكتمل', col:'#27AE60', drKey:'d55_detail',      alert: d55Total&&d55Pct<50 },
+    { ic:'📋', val:fmt(commAmt),     lbl:'قيمة الارتباطات',      unit:'ج.م', sub:(f.commitments_approved||0)+' معتمد | '+(f.commitments_total||0)+' إجمالي', col:'#C9A84C', drKey:'commitments_detail', alert:false },
+    { ic:'🏦', val:fmt(availBal),    lbl:'الرصيد المتاح',         unit:'ج.م', sub:'نسبة الاستهلاك '+utilizePct+'%',  col: utilizePct>80?'#E74C3C':utilizePct>60?'#F39C12':'#2196F3', drKey:null, alert: utilizePct>80 },
+    { ic:'🏛️', val:fmt(auctRev),    lbl:'قيمة عقود الإيجار',    unit:'ج.م', sub:(f.lease_active||0)+' عقد ساري', col:'#F39C12', drKey:'leases_detail', alert:false },
+    { ic:'✅', val:fmt(leaseCol),    lbl:'محصّل فعلياً',          unit:'ج.م', sub:'نسبة التحصيل '+collPct+'%',    col:'#27AE60', drKey:null, alert:false },
+    { ic:'⚠️', val:(f.py_overdue||0), lbl:'دفعة إيجار متأخرة',  unit:'',    sub: leaseOut ? fmt(leaseOut)+' ج.م متبقي' : 'لا يوجد تأخر', col:(f.py_overdue||0)>0?'#E74C3C':'#27AE60', drKey:'overdue_detail', alert:(f.py_overdue||0)>0 },
+  ];
+
+  const fnKpis = scorecard.map(s=>`
+    <div class="kpi fn-kpi${s.alert?' fn-alert':''}" style="--kc:${s.col}" onclick="${s.drKey?`oD('${s.drKey}')`:''}" ${s.drKey?'':'style2=""'}>
+      ${s.alert?'<span class="kb">⚡ يحتاج انتباه</span>':''}
+      <div class="ki">${s.ic}</div>
+      <div class="kv">${s.val}</div>
+      <div class="kl">${s.lbl}${s.unit?' ('+s.unit+')':''}</div>
+      <div class="ks">${s.sub}</div>
+      ${s.drKey?'<div style="font-size:9px;color:var(--gold);margin-top:6px;opacity:.7">تفاصيل ◂</div>':''}
+    </div>`).join('');
+
+  /* ── شريط تقدم الاستهلاك ── */
+  const utilizBar=`
+    <div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px">
+        <span style="color:var(--muted)">نسبة استهلاك الارتباطات</span>
+        <span style="color:${utilizePct>80?'#E74C3C':utilizePct>60?'#F39C12':'#27AE60'};font-weight:700">${utilizePct}%</span>
+      </div>
+      <div style="height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden">
+        <div style="width:${utilizePct}%;height:100%;background:${utilizePct>80?'#E74C3C':utilizePct>60?'#F39C12':'#27AE60'};border-radius:4px;transition:width 1s ease"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-top:3px;color:var(--muted)">
+        <span>مستهلك: ${fmt(commAmt-availBal)} ج.م</span><span>متاح: ${fmt(availBal)} ج.م</span>
+      </div>
+    </div>`;
+
+  /* ── خريطة حرارة الدفعات المتأخرة ── */
+  const pyPct = (n)=> pyTotal ? Math.round(n/pyTotal*100) : 0;
+  const pyMap = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+      ${[['✅','مدفوع',f.py_paid||0,'#27AE60'],['⏳','قيد الانتظار',f.py_pending||0,'#9BAAB8'],
+         ['⚡','جزئي',f.py_partial||0,'#F39C12'],['🔴','متأخر',f.py_overdue||0,'#E74C3C']].map(([ic,lbl,n,c])=>`
+        <div style="background:${c}15;border:1px solid ${c}40;border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:16px">${ic}</div>
+          <div style="font-family:'Cairo',sans-serif;font-size:20px;font-weight:900;color:${c}">${n}</div>
+          <div style="font-size:10px;color:var(--muted)">${lbl}</div>
+          <div style="font-size:10px;color:${c};font-weight:700;margin-top:2px">${pyPct(n)}%</div>
+        </div>`).join('')}
+    </div>`;
+
+  return`<div class="pg on">
+  <div class="sec">💰 الحسابات والمالية — لوحة القيادة المالية</div>
+
+  <!-- مؤشرات الأداء الرئيسية -->
+  <div class="kgrid">${fnKpis}</div>
+
+  <!-- الصف الأول: مسار دفتر 55 + مسار الارتباطات + شريط الاستهلاك -->
+  <div class="row3" style="grid-template-columns:1fr 1fr 1fr">
+    <div class="pnl">
+      <div class="ptl">📑 مسار دفتر 55 <span style="font-size:10px;color:var(--muted);font-weight:400">(${d55Total} إذن)</span>
+        <span onclick="oD('d55_detail')" style="font-size:10px;color:var(--gold);cursor:pointer;font-weight:400">تفاصيل ◂</span>
+      </div>
+      ${sbars([
+        {l:'مسودة',     n:f.d55_draft||0,    c:'#9BAAB8'},
+        {l:'مستلم',     n:f.d55_received||0, c:'#5C7EA8'},
+        {l:'مراجعة',   n:f.d55_reviewed||0, c:'#F39C12'},
+        {l:'تسوية',    n:f.d55_cleared||0,  c:'#C9A84C'},
+        {l:'مرحّل',    n:f.d55_posted||0,   c:'#27AE60'},
+        {l:'مؤرشف',   n:f.d55_archived||0, c:'#2E4B6E'},
+      ])}
+    </div>
+    <div class="pnl">
+      <div class="ptl">📋 مسار الارتباطات <span style="font-size:10px;color:var(--muted);font-weight:400">(${f.commitments_total||0})</span>
+        <span onclick="oD('commitments_detail')" style="font-size:10px;color:var(--gold);cursor:pointer;font-weight:400">تفاصيل ◂</span>
+      </div>
+      ${sbars([
+        {l:'مسودة',  n:f.c_draft||0,     c:'#9BAAB8'},
+        {l:'مقدّم',  n:f.c_submitted||0, c:'#5C7EA8'},
+        {l:'معتمد',  n:f.c_approved||0,  c:'#C9A84C'},
+        {l:'محجوز',  n:f.c_reserved||0,  c:'#F39C12'},
+        {l:'مسوّى',  n:f.c_cleared||0,   c:'#27AE60'},
+        {l:'مدفوع',  n:f.c_paid||0,      c:'#2196F3'},
+      ])}
+    </div>
+    <div class="pnl">
+      <div class="ptl">📊 استهلاك الارتباطات</div>
+      ${utilizBar}
+      <div class="ptl" style="margin-top:10px">🧾 توزيع دفتر 55</div>
+      ${donut([
+        {c:'#27AE60',l:'مكتمل (مرحّل+مؤرشف)', v:(f.d55_posted||0)+(f.d55_archived||0)},
+        {c:'#C9A84C',l:'قيد المعالجة',          v:(f.d55_reviewed||0)+(f.d55_cleared||0)},
+        {c:'#9BAAB8',l:'مبكر (مسودة+مستلم)',    v:(f.d55_draft||0)+(f.d55_received||0)},
+      ])}
+    </div>
+  </div>
+
+  <!-- الصف الثاني: جدول الدفعات + الإيجارات -->
+  <div class="row">
+    <div class="pnl">
+      <div class="ptl">📆 وضع جدول دفعات الإيجار
+        <span onclick="oD('overdue_detail')" style="font-size:10px;color:${(f.py_overdue||0)>0?'#E74C3C':'var(--gold)'};cursor:pointer;font-weight:400">${(f.py_overdue||0)>0?'⚠️ '+f.py_overdue+' متأخرة ◂':'تفاصيل ◂'}</span>
+      </div>
+      ${pyMap}
+    </div>
+    <div class="pnl">
+      <div class="ptl">🏛️ وضع تحصيل عقود الإيجار
+        <span onclick="oD('leases_detail')" style="font-size:10px;color:var(--gold);cursor:pointer;font-weight:400">تفاصيل ◂</span>
+      </div>
+      ${sbars([
+        {l:'قيمة العقود', n:auctRev,  c:'#F39C12'},
+        {l:'محصّل',       n:leaseCol, c:'#27AE60'},
+        {l:'متبقي',       n:leaseOut, c:'#E74C3C'},
+      ])}
+      <div style="margin-top:12px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px">
+          <span style="color:var(--muted)">نسبة التحصيل</span>
+          <span style="color:${collPct>=80?'#27AE60':collPct>=50?'#F39C12':'#E74C3C'};font-weight:700">${collPct}%</span>
+        </div>
+        <div style="height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden">
+          <div style="width:${collPct}%;height:100%;background:${collPct>=80?'#27AE60':collPct>=50?'#F39C12':'#E74C3C'};border-radius:4px;transition:width 1s ease"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;margin-top:3px;color:var(--muted)">
+          <span>محصّل: ${fmt(leaseCol)} ج.م</span><span>متبقي: ${fmt(leaseOut)} ج.م</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- جدول أكبر المصروفات -->
+  <div class="full"><div class="pnl">
+    <div class="ptl">🏆 أكبر إذونات الصرف المنفّذة (دفتر 55)
+      <span style="font-size:10px;color:var(--muted);font-weight:400">الأعلى قيمةً</span>
+    </div>
+    <table class="tbl">${th(['#','الجهة / القسم','المبلغ الإجمالي (ج.م)','الحالة'])}
+    <tbody>${(f.top_payments||[]).length
+      ? (f.top_payments||[]).map((r,i)=>tr([
+          `<span style="color:#E8C87A;font-weight:700">${i+1}</span>`,
+          r.dept||'—',
+          `<span style="color:#27AE60;font-weight:700">${(r.amount||0).toLocaleString()} ج.م</span>`,
+          bdg(r.state||'—')
+        ])).join('')
+      : '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px">لا توجد بيانات مصروفات مرحّلة حتى الآن</td></tr>'
+    }</tbody>
+    </table>
+  </div></div>
+</div>`;
+}
+
+
+function pCt(){
+  const a=D.adjudication,c=D.committees;
+  const tl={public:'مناقصة عامة',local:'مناقصة محلية',limited:'مناقصة محدودة',negotiation:'ممارسة',direct_supply:'أمر مباشر',direct_private:'اتفاق مباشر'};
+  return`<div class="pg on"><div class="sec">التعاقدات والمناقصات</div>
+  <div class="kgrid">
+    ${kpi('📝',c.total,'إجمالي اللجان','#C9A84C',`${c.active} نشطة`,'committees')}
+    ${kpi('⚖️',a.total,'ملف بت','#27AE60',`${a.by_state.awarded} ترسية`,'adjudication')}
+    ${kpi('💰',fmt(a.total_estimated),'قيمة تقديرية (ج.م)','#2196F3','')}
+    ${kpi('📊',(a.saving_pct||0)+'%','نسبة التوفير','#F39C12','مقارنة بالتقديري')}
+  </div>
+  <div class="row">
+    <div class="pnl"><div class="ptl">حالة ملفات البت</div>
+      ${sbars([{l:'مسودة',n:a.by_state.draft,c:'#9BAAB8'},{l:'مظاريف فنية مفتوحة',n:a.by_state.technical_open,c:'#F39C12'},{l:'مظاريف مالية مفتوحة',n:a.by_state.financial_open,c:'#C9A84C'},{l:'تمت المقارنة',n:a.by_state.adjudicated,c:'#2196F3'},{l:'إخطار الترسية',n:a.by_state.awarded,c:'#27AE60'},{l:'أمر شراء صادر',n:a.by_state.po_created,c:'#1565C0'},{l:'ملغي',n:a.by_state.cancelled,c:'#E74C3C'}])}
+    </div>
+    <div class="pnl"><div class="ptl">توزيع وسائل الطرح</div>
+      ${bars(Object.entries(a.tender_types||{}).map(([k,v])=>({l:tl[k]||k,v,c:'#2196F3'})))}
+    </div>
+  </div>
+  <div class="full"><div class="pnl"><div class="ptl">آخر ملفات البت</div>
+    <table class="tbl">${th(['المرجع','العملية','وسيلة الطرح','الحالة','القيمة التقديرية','قيمة الترسية','المورد'])}
+    <tbody>${(a.detail||[]).map(r=>tr([`<span style="color:#E8C87A;font-weight:700">${r.ref}</span>`,r.name,r.tender,bdg(r.state),r.estimated?r.estimated.toLocaleString()+' ج.م':'—',r.awarded?`<span style="color:#27AE60">${r.awarded.toLocaleString()} ج.م</span>`:'—',r.supplier])).join('')}</tbody>
+    </table>
+  </div></div></div>`;
+}
+
+function pWh(){
+  const p=D.permits,s=D.stocktaking;
+  return`<div class="pg on"><div class="sec">المخازن والجرد</div>
+  <div class="kgrid">
+    ${kpi('📦',p.total,'إذن إضافة','#27A99A',`${p.posted} مرحّل`,'permits')}
+    ${kpi('✅',p.posted,'مرحّل بنجاح','#27AE60',Math.round(p.posted/(p.total||1)*100)+'% قبول')}
+    ${kpi('❌',p.cancelled,'مرفوض/ملغي','#E74C3C','يحتاج مراجعة')}
+    ${kpi('🔍',s.total,'جلسة جرد','#C9A84C',`${s.done} بانتظار الاعتماد`,'stocktaking')}
+  </div>
+  <div class="row">
+    <div class="pnl"><div class="ptl">نتائج محاضر الفحص</div>
+      ${sbars([{l:'مكتمل مطابق',n:p.inspection.done,c:'#27AE60'},{l:'قيد الفحص',n:p.inspection.draft,c:'#F39C12'},{l:'مرفوض',n:p.inspection.rejected,c:'#E74C3C'}])}
+    </div>
+    <div class="pnl"><div class="ptl">جلسات الجرد</div>
+      ${sbars([{l:'مسودة',n:s.draft,c:'#9BAAB8'},{l:'جاري الجرد',n:s.counting,c:'#F39C12'},{l:'منتهي',n:s.done,c:'#2196F3'},{l:'معتمد',n:s.validated,c:'#27AE60'}])}
+    </div>
+  </div>
+  <div class="row3">
+    ${gauge('نسبة الزيادة',s.surplus_pct+'%',s.surplus_pct,'#27AE60','أصناف زيادة')}
+    ${gauge('نسبة العجز',s.deficit_pct+'%',s.deficit_pct,'#E74C3C','أصناف عجز')}
+    <div class="pnl gw"><div class="ptl" style="justify-content:center">أذونات الإضافة</div>
+      ${donut([{c:'#27AE60',l:'مرحّل',v:p.posted},{c:'#F39C12',l:'مسودة',v:p.draft},{c:'#E74C3C',l:'ملغي',v:p.cancelled}])}
+    </div>
+  </div></div>`;
+}
+
+function pCu(){
+  const cu=D.custody;
+  return`<div class="pg on"><div class="sec">إدارة العهد</div>
+  <div class="kgrid">
+    ${kpi('🔑',cu.active,'عهدة نشطة','#2196F3','','custody')}
+    ${kpi('⚠️',cu.overdue,'متأخرة الاسترداد','#E74C3C','يجب المتابعة')}
+    ${kpi('↩️',cu.returned,'مُرتجعة','#27AE60','')}
+    ${kpi('💎',fmt(cu.total_value),'قيمة العهد (ج.م)','#C9A84C','')}
+  </div>
+  <div class="row">
+    <div class="pnl"><div class="ptl">توزيع العهد حسب الحالة</div>
+      ${sbars([{l:'نشطة',n:cu.active,c:'#27AE60'},{l:'محوّلة',n:cu.transferred,c:'#2196F3'},{l:'متأخرة',n:cu.overdue,c:'#E74C3C'},{l:'مُرتجعة',n:cu.returned,c:'#9BAAB8'}])}
+    </div>
+    <div class="pnl"><div class="ptl">نوع العهد</div>
+      ${sbars([{l:'شخصية',n:cu.by_type.personal,c:'#2196F3'},{l:'مشتركة',n:cu.by_type.shared,c:'#27A99A'},{l:'منقولة',n:cu.by_type.transferred,c:'#C9A84C'}])}
+    </div>
+  </div>
+  <div class="full"><div class="pnl"><div class="ptl" style="color:#E74C3C">⚠️ العهد المتأخرة</div>
+    <table class="tbl">${th(['المرجع','الموظف','القيمة','تاريخ الاسترداد','الحالة'])}
+    <tbody>${(cu.overdue_detail||[]).length?(cu.overdue_detail).map(r=>tr([`<span style="color:#90CAF9;font-weight:700">${r.ref}</span>`,r.employee,r.value?r.value.toLocaleString()+' ج.م':'—',`<span style="color:#E74C3C">${r.due}</span>`,bdg('متأخرة')])).join(''):'<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px">✅ لا توجد عهد متأخرة</td></tr>'}
+    </tbody></table>
+  </div></div></div>`;
+}
+
+function pAu(){
+  const au=D.auction;
+  return`<div class="pg on"><div class="sec">المزايدات والمزادات</div>
+  <div class="kgrid">
+    ${kpi('🏛️',(au.by_state.session_open||0)+(au.by_state.bidding||0),'مزاد نشط','#F39C12','','auctions')}
+    ${kpi('🏆',au.by_state.done,'مزاد مكتمل','#27AE60','')}
+    ${kpi('📃',au.lease.active,'عقد إيجار ساري','#2196F3',`${au.lease.expired} منتهي`)}
+    ${kpi('💸',au.payments.overdue,'دفعة متأخرة','#E74C3C','مطلوب تحصيل')}
+  </div>
+  <div class="row">
+    <div class="pnl"><div class="ptl">حالة طلبات المزاد</div>
+      ${sbars([{l:'مسودة',n:au.by_state.draft,c:'#9BAAB8'},{l:'الجلسة مفتوحة',n:au.by_state.session_open,c:'#F39C12'},{l:'تسجيل العروض',n:au.by_state.bidding,c:'#C9A84C'},{l:'تم الترسية',n:au.by_state.awarded,c:'#27AE60'},{l:'منتهي',n:au.by_state.done,c:'#2E4B6E'},{l:'ملغي',n:au.by_state.cancelled,c:'#E74C3C'}])}
+    </div>
+    <div class="pnl"><div class="ptl">جدول سداد العقود</div>
+      ${sbars([{l:'قيد الانتظار',n:au.payments.pending,c:'#9BAAB8'},{l:'مدفوع جزئياً',n:au.payments.partial,c:'#F39C12'},{l:'مدفوع',n:au.payments.paid,c:'#27AE60'},{l:'متأخر',n:au.payments.overdue,c:'#E74C3C'}])}
+    </div>
+  </div>
+  <div class="full"><div class="pnl"><div class="ptl">المزادات الجارية والمكتملة</div>
+    <table class="tbl">${th(['المرجع','الاسم','النوع','الحالة','القيمة التقديرية','مبلغ الترسية'])}
+    <tbody>${(au.detail||[]).map(r=>tr([`<span style="color:#FAC775;font-weight:700">${r.ref}</span>`,r.name,r.type,bdg(r.state),r.estimated?r.estimated.toLocaleString()+' ج.م':'—',r.awarded?`<span style="color:#27AE60">${r.awarded.toLocaleString()} ج.م</span>`:'—'])).join('')}
+    </tbody></table>
+  </div></div></div>`;
+}
+
+function pAl(){
+  const cl={danger:'#E74C3C',warning:'#F39C12',info:'#2196F3'},als=D.alerts||[];
+  return`<div class="pg on"><div class="sec">التنبيهات العاجلة (${als.length})</div>
+  ${als.length?als.map(a=>`<div class="alrt"><div class="ai">${a.icon}</div><div class="ab"><div class="at" style="color:${cl[a.type]||'#C9A84C'}">${a.title}</div><div class="ad">${a.desc}</div></div></div>`).join(''):'<div style="text-align:center;padding:40px;color:var(--muted)">✅ لا توجد تنبيهات عاجلة</div>'}
+  </div>`;
+}
+
+function ab(el){
+  el.querySelectorAll('.sf[data-w]').forEach(e=>{e.style.width=e.dataset.w+'%'});
+  el.querySelectorAll('.bf[data-h]').forEach(e=>{e.style.height=(parseInt(e.dataset.h)||4)+'px'});
+}
+
+const DR={
+  committees:()=>({title:'👥 تفاصيل اللجان',kpis:[{v:D.committees.total,l:'إجمالي'},{v:D.committees.active,l:'نشطة'},{v:D.committees.draft,l:'مسودة'}],headers:['المرجع','الاسم','النوع','الحالة','الأعضاء','التاريخ'],rows:(D.committees.detail||[]).map(r=>[`<span style="color:#E8C87A;font-weight:700">${r.ref}</span>`,r.name,r.type,bdg(r.state),r.members,r.date])}),
+  adjudication:()=>({title:'⚖️ تفاصيل ملفات البت',kpis:[{v:D.adjudication.total,l:'إجمالي'},{v:fmt(D.adjudication.total_estimated),l:'قيمة تقديرية'},{v:(D.adjudication.saving_pct||0)+'%',l:'توفير'}],headers:['المرجع','العملية','الحالة','التقديري','الترسية','المورد'],rows:(D.adjudication.detail||[]).map(r=>[`<span style="color:#E8C87A">${r.ref}</span>`,r.name,bdg(r.state),r.estimated?r.estimated.toLocaleString()+' ج.م':'—',r.awarded?r.awarded.toLocaleString()+' ج.م':'—',r.supplier])}),
+  permits:()=>({title:'📦 تفاصيل أذونات الإضافة',kpis:[{v:D.permits.total,l:'إجمالي'},{v:D.permits.posted,l:'مرحّل'},{v:D.permits.cancelled,l:'ملغي'}],headers:['المرجع','الصنف','الحالة','الكمية','المستودع','التاريخ'],rows:(D.permits.detail||[]).map(r=>[`<span style="color:#27A99A;font-weight:700">${r.ref}</span>`,r.name,bdg(r.state),r.qty,r.warehouse,r.date])}),
+  custody:()=>({title:'🔑 تفاصيل العهد',kpis:[{v:D.custody.active,l:'نشطة'},{v:D.custody.overdue,l:'متأخرة'},{v:fmt(D.custody.total_value),l:'القيمة'}],headers:['المرجع','الموظف','الحالة','القيمة','تاريخ الاسترداد'],rows:(D.custody.detail||[]).map(r=>[`<span style="color:#90CAF9;font-weight:700">${r.ref}</span>`,r.employee,bdg(r.state),r.value?r.value.toLocaleString()+' ج.م':'—',r.due])}),
+  stocktaking:()=>({title:'📊 تفاصيل جلسات الجرد',kpis:[{v:D.stocktaking.total,l:'إجمالي'},{v:D.stocktaking.done,l:'بانتظار اعتماد'},{v:D.stocktaking.validated,l:'معتمد'}],headers:['الجلسة','المستودع','السنة','الحالة','رئيس اللجنة'],rows:(D.stocktaking.detail||[]).map(r=>[`<span style="color:#C9A84C;font-weight:700">${r.name}</span>`,r.warehouse,r.year,bdg(r.state),r.chairman])}),
+  d55_detail:()=>({title:'💸 تفاصيل إذونات الصرف (دفتر 55)',kpis:[{v:D.finance.daftar55_count,l:'إجمالي الإذونات'},{v:fmt(D.finance.total_payments),l:'إجمالي المصروفات (ج.م)'},{v:D.finance.d55_posted||0,l:'مرحّل'}],headers:['#','الرتبة','الجهة / القسم','المبلغ (ج.م)','الحالة'],rows:(D.finance.top_payments||[]).map((r,i)=>[i+1,`<span style="color:#E8C87A;font-weight:700">${r.seq||'—'}</span>`,r.dept||'—',`<span style="color:#27AE60;font-weight:700">${(r.amount||0).toLocaleString()} ج.م</span>`,bdg(r.state||'—')])}),
+  commitments_detail:()=>({title:'📋 تفاصيل الارتباطات',kpis:[{v:D.finance.commitments_total,l:'إجمالي'},{v:D.finance.commitments_approved,l:'معتمد / محجوز'},{v:fmt(D.finance.commitments_amount),l:'إجمالي المبالغ (ج.م)'}],headers:['البيان','القيمة'],rows:[['إجمالي الارتباطات',D.finance.commitments_total],['معتمد',D.finance.c_approved||0],['محجوز',D.finance.c_reserved||0],['مسوّى',D.finance.c_cleared||0],['مدفوع',D.finance.c_paid||0],['مسودة',D.finance.c_draft||0],['مقدّم',D.finance.c_submitted||0],['قيمة الارتباطات (ج.م)',fmt(D.finance.commitments_amount||0)],['الرصيد المتاح تقريباً (ج.م)',fmt(D.finance.available_balance||0)]]}),
+  leases_detail:()=>({title:'🏛️ تفاصيل عقود الإيجار',kpis:[{v:D.finance.lease_active||0,l:'عقد ساري'},{v:fmt(D.finance.lease_collected||0),l:'محصّل (ج.م)'},{v:fmt(D.finance.lease_outstanding||0),l:'متبقي (ج.م)'}],headers:['البيان','القيمة'],rows:[['عقد إيجار ساري',D.finance.lease_active||0],['إجمالي قيمة العقود (ج.م)',fmt(D.finance.auction_revenue||0)],['إجمالي المحصّل (ج.م)',fmt(D.finance.lease_collected||0)],['إجمالي المتبقي (ج.م)',fmt(D.finance.lease_outstanding||0)],['دفعات متأخرة',D.finance.overdue_payments||0],['دفعات مدفوعة',D.auction?.payments?.paid||0],['دفعات جزئية',D.finance.py_partial||0],['دفعات قيد الانتظار',D.finance.py_pending||0]]}),
+  overdue_detail:()=>({title:'⚠️ تفاصيل الدفعات المتأخرة',kpis:[{v:D.finance.py_overdue||0,l:'دفعة متأخرة'},{v:D.finance.py_partial||0,l:'مدفوعة جزئياً'},{v:fmt(D.finance.lease_outstanding||0),l:'إجمالي المتبقي (ج.م)'}],headers:['البيان','العدد'],rows:[['دفعة متأخرة',D.finance.py_overdue||0],['مدفوع جزئياً',D.finance.py_partial||0],['قيد الانتظار',D.finance.py_pending||0],['مدفوع',D.finance.py_paid||0],['إجمالي متبقي (ج.م)',fmt(D.finance.lease_outstanding||0)]]}),
+  auctions:()=>({title:'🏛️ تفاصيل المزادات',kpis:[{v:(D.auction.by_state.session_open||0)+(D.auction.by_state.bidding||0),l:'نشط'},{v:D.auction.by_state.done,l:'مكتمل'},{v:D.auction.lease.active,l:'عقد إيجار'}],headers:['المرجع','الاسم','النوع','الحالة','التقديري','الترسية'],rows:(D.auction.detail||[]).map(r=>[`<span style="color:#FAC775;font-weight:700">${r.ref}</span>`,r.name,r.type,bdg(r.state),r.estimated?r.estimated.toLocaleString()+' ج.م':'—',r.awarded?r.awarded.toLocaleString()+' ج.م':'—'])}),
+};
+
+function oD(k){
+  const fn=DR[k];if(!fn)return;
+  const i=fn();
+  document.getElementById('dttl').innerHTML=i.title;
+  document.getElementById('dkps').innerHTML=i.kpis.map(k=>`<div class="dkpi"><div class="dkv">${k.v}</div><div class="dkl">${k.l}</div></div>`).join('');
+  const tb=i.rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('');
+  document.getElementById('dtbl').innerHTML=`<thead><tr>${i.headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${tb}</tbody>`;
+  document.getElementById('dov').classList.add('on');
+}
+function cDr(){document.getElementById('dov').classList.remove('on')}
+
+load();
+// Refresh data every 5 minutes via AJAX
+setInterval(async()=>{
+  try{
+    const r=await fetch('/portsaid/dashboard/data',{
+      method:'POST',credentials:'include',
+      headers:{'Content-Type':'application/json','X-Requested-With':'XMLHttpRequest'},
+      body:JSON.stringify({jsonrpc:'2.0',method:'call',id:1,params:{}})
+    });
+    const j=await r.json();
+    if(j.result){D=j.result;rp(document.querySelector('.nb.on')?.dataset?.pg||'ov');}
+  }catch(e){console.warn('Dashboard refresh failed:',e);}
+},300000);
+</script>
+</body>
+</html>
