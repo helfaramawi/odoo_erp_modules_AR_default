@@ -3,7 +3,7 @@
 
   <menuitem id="menu_ps_fixed_assets_root"
             name="الاصول الثابتة"
-            parent="general_ledger_ar.menu_general_ledger_accounts"
+            parent="port_said_menu.menu_ps_20_accts"
             sequence="50"/>
 
   <menuitem id="menu_ps_fa_list"
