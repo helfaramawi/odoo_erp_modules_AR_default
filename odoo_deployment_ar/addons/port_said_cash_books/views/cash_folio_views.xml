@@ -7,7 +7,7 @@
     <field name="arch" type="xml">
       <tree string="فوليوهات النقدية والبنك"
             decoration-info="state=='draft'"
-            decoration-warning="state=='reconciled' or abs(reconciliation_variance) > 0.01"
+            decoration-warning="state=='reconciled' or reconciliation_variance > 0.01 or reconciliation_variance &lt; -0.01"
             decoration-success="state=='audited'"
             decoration-muted="state=='archived'">
         <field name="folio_number"/>
@@ -78,9 +78,9 @@
             <field name="bank_statement_balance"
                    readonly="state not in ['draft', 'reconciled']"/>
             <field name="reconciliation_variance" readonly="1"
-                   decoration-danger="abs(reconciliation_variance) > 0.01"/>
+                   decoration-danger="reconciliation_variance > 0.01 or reconciliation_variance &lt; -0.01"/>
             <div colspan="1" class="alert alert-warning"
-                 invisible="abs(reconciliation_variance) &lt; 0.01 or state in ['audited','archived']">
+                 invisible="reconciliation_variance &gt; -0.01 and reconciliation_variance &lt; 0.01 or state in ['audited','archived']">
               فرق مطابقة غير صفري — لا يمكن الإقفال
             </div>
           </group>
