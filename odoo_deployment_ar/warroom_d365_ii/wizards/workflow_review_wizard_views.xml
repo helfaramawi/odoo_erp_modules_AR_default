@@ -2,12 +2,17 @@
 <odoo>
   <record id="view_x_warroom_d365_reverse_engineering_workflow_review_wizard" model="ir.ui.view">
     <field name="name">x_warroom_d365_reverse_engineering.workflow.review.wizard</field>
-    <field name="model">x_warroom_model_1</field>
+    <field name="model">workflow.review.wizard</field>
     <field name="arch" type="xml">
       <form string="Workflow Review">
         <group>
-          <label string="This wizard is a scaffold for review/approval commentary capture."/>
+          <field name="review_notes"/>
+          <field name="reviewer"/>
+          <field name="review_date"/>
         </group>
+        <footer>
+          <button string="Close" class="btn-secondary" special="cancel"/>
+        </footer>
       </form>
     </field>
   </record>
