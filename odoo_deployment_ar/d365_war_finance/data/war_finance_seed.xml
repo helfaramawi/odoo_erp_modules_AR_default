@@ -1,8 +1,0 @@
-<odoo noupdate="1">
-    <record id="war_finance_control_default" model="war.finance.control">
-        <field name="name">Default Journal Threshold</field>
-        <field name="company_id" ref="base.main_company"/>
-        <field name="journal_threshold">100000.0</field>
-        <field name="active">True</field>
-    </record>
-</odoo>
