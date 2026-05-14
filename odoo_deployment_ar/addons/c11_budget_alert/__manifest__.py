@@ -1,7 +1,7 @@
 {
     'name': 'Project Budget Alert / تنبيه ميزانية المشروع',
     'version': '17.0.1.0.0',
-    'category': 'Project',
+    'category': 'الديوان العام/المحاسبة',
     'summary': 'Nightly budget threshold alerts for projects',
     'author': 'ERP Migration Team',
     'depends': ['project', 'account', 'mail'],

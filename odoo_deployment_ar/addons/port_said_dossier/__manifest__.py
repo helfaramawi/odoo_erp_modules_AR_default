@@ -1,4 +1,5 @@
 {
+    'category': 'الديوان العام/المخازن',
     'name': 'الاضابير - نظام الأرشفة (استمارة 101 ساير)',
     'summary': 'C-FM-08: Dossier Archive System – Form 101 ساير with 9-attachment enforcement',
     'version': '17.0.1.0.0',

@@ -1,7 +1,7 @@
 {
     'name': 'Batch Journal Posting / ترحيل دفعي للقيود',
     'version': '17.0.1.0.0',
-    'category': 'Accounting',
+    'category': 'الديوان العام/المحاسبة',
     'summary': 'Scheduled nightly batch posting of draft journal entries',
     'author': 'ERP Migration Team',
     'depends': ['account'],

@@ -1,4 +1,5 @@
 {
+    'category': 'الديوان العام/المخازن',
     "name": "لجنة الفحص والمخازن",
     "summary": "C-SCM-03: Inspection Committee + Warehouse Forms (نموذج 12 + نموذج 1)",
     "version": "17.0.1.0.0",
