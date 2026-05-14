@@ -33,10 +33,4 @@
     <field name="target">new</field>
   </record>
 
-  <menuitem id="menu_revenue_print"
-            name="طباعة دفتر"
-            parent="menu_revenue_root"
-            action="action_revenue_print_wizard"
-            sequence="30"/>
-
 </odoo>

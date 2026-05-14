@@ -18,10 +18,6 @@
             (4, ref('base.group_system')),
             (4, ref('l10n_eg_custody.group_custody_manager')),
             (4, ref('procurement_committee.group_contract_director')),
-            (4, ref('stock_addition_permit.group_warehouse_manager')),
-            (4, ref('stock_stocktaking_eg.group_stocktaking_chairman')),
-            (4, ref('procurement_adjudication.group_adjudication_director')),
-            (4, ref('l10n_eg_auction.group_auction_manager')),
             (4, ref('purchase.group_purchase_manager')),
             (4, ref('stock.group_stock_manager')),
         ]"/>
@@ -36,8 +32,6 @@
         <field name="groups_id" eval="[
             (4, ref('base.group_user')),
             (4, ref('procurement_committee.group_contract_manager')),
-            (4, ref('procurement_adjudication.group_adjudication_director')),
-            (4, ref('l10n_eg_auction.group_auction_manager')),
             (4, ref('purchase.group_purchase_manager')),
             (4, ref('stock.group_stock_user')),
         ]"/>
@@ -52,8 +46,6 @@
         <field name="groups_id" eval="[
             (4, ref('base.group_user')),
             (4, ref('procurement_committee.group_contract_user')),
-            (4, ref('procurement_adjudication.group_adjudication_member')),
-            (4, ref('l10n_eg_auction.group_auction_user')),
             (4, ref('purchase.group_purchase_user')),
             (4, ref('stock.group_stock_user')),
         ]"/>
@@ -68,7 +60,6 @@
         <field name="groups_id" eval="[
             (4, ref('base.group_user')),
             (4, ref('procurement_committee.group_contract_user')),
-            (4, ref('procurement_adjudication.group_adjudication_chairman')),
             (4, ref('purchase.group_purchase_user')),
             (4, ref('stock.group_stock_user')),
         ]"/>
@@ -83,8 +74,6 @@
         <field name="groups_id" eval="[
             (4, ref('base.group_user')),
             (4, ref('l10n_eg_custody.group_custody_manager')),
-            (4, ref('stock_addition_permit.group_warehouse_manager')),
-            (4, ref('stock_stocktaking_eg.group_stocktaking_chairman')),
             (4, ref('stock.group_stock_manager')),
             (4, ref('purchase.group_purchase_user')),
         ]"/>
@@ -99,8 +88,6 @@
         <field name="groups_id" eval="[
             (4, ref('base.group_user')),
             (4, ref('l10n_eg_custody.group_custody_user')),
-            (4, ref('stock_addition_permit.group_storekeeper')),
-            (4, ref('stock_stocktaking_eg.group_stocktaking_user')),
             (4, ref('stock.group_stock_user')),
         ]"/>
     </record>
@@ -113,8 +100,6 @@
         <field name="password">Diwan@2024</field>
         <field name="groups_id" eval="[
             (4, ref('base.group_user')),
-            (4, ref('stock_addition_permit.group_inspector')),
-            (4, ref('stock_stocktaking_eg.group_stocktaking_user')),
             (4, ref('stock.group_stock_user')),
         ]"/>
     </record>

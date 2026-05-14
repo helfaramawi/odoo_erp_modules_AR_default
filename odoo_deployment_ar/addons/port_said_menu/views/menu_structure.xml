@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_ps_root" name="Port Said Governorate" sequence="1"/>
+</odoo>
