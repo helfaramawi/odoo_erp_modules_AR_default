@@ -1,7 +1,7 @@
 {
     'name': 'Vendor Payment Matching Override / تجاوز مطابقة مدفوعات الموردين',
     'version': '17.0.1.0.0',
-    'category': 'Accounting',
+    'category': 'الديوان العام/المحاسبة',
     'summary': 'Manual vendor payment matching with early-pay discount journal line',
     'author': 'ERP Migration Team',
     'depends': ['account', 'account_payment'],

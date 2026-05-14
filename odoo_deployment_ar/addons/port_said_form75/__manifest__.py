@@ -1,4 +1,5 @@
 {
+    'category': 'الديوان العام/المحاسبة',
     'name': 'استمارة 75 - الحسابات الشهرية والختامية',
     'summary': 'C-FM-04: Form 75 Monthly/Annual Closing with 3-Stage Sequential Approval',
     'version': '17.0.1.0.0',

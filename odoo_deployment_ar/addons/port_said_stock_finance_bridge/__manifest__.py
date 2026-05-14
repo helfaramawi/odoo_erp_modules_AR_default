@@ -2,7 +2,7 @@
     'name': 'ربط المخزون بالحسابات — محافظة بورسعيد',
     'summary': 'قيود محاسبية تلقائية + أبعاد مالية لكل حركة مخزنية',
     'version': '17.0.1.1.0',
-    'category': 'Accounting/Egypt Government',
+    'category': 'الديوان العام/المخازن',
     'author': 'Paradise Integrated Solutions',
     'license': 'LGPL-3',
     'depends': [

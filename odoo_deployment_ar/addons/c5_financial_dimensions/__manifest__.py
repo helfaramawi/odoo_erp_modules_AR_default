@@ -1,7 +1,7 @@
 {
     'name': 'Financial Dimensions Engine / محرك الأبعاد المالية',
     'version': '17.0.1.0.0',
-    'category': 'Accounting',
+    'category': 'الديوان العام/المحاسبة',
     'summary': 'Department / Project / Region dimensions on every journal entry line',
     'author': 'ERP Migration Team',
     'depends': ['account', 'analytic'],

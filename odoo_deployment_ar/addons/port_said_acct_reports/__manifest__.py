@@ -1,7 +1,7 @@
 {
     'name': 'التقارير المحاسبية — ميزان مراجعة وكشوف حسابات',
     'version': '17.0.1.0.0',
-    'category': 'Accounting/Egypt Government',
+    'category': 'الديوان العام/التقارير',
     'author': 'Paradise Integrated Solutions',
     'license': 'LGPL-3',
     'depends': ['base', 'account', 'port_said_daftar55'],

@@ -1,7 +1,7 @@
 {
     'name': 'لوحة القيادة التنفيذية — بورسعيد',
     'version': '17.0.2.0.0',
-    'category': 'Dashboard/Egypt Government',
+    'category': 'الديوان العام',
     'summary': 'Executive Dashboard for Port Said — Real-time KPIs with Financial & Accounting section',
     'author': 'Paradise AI Solutions',
     'license': 'LGPL-3',

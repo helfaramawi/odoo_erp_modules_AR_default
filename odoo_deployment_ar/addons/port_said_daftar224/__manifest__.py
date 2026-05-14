@@ -2,7 +2,7 @@
     'name': 'دفتر 224 ع.ح — السجل اليومي المزدوج',
     'summary': 'C-FM-02: Daftar 224 Dual Daily Register (صرفيات + تسويات)',
     'version': '17.0.1.0.0',
-    'category': 'Accounting',
+    'category': 'الديوان العام/المحاسبة',
     'author': 'Paradise Integrated Solutions',
     'license': 'LGPL-3',
     'depends': ['account', 'mail', 'port_said_daftar55'],

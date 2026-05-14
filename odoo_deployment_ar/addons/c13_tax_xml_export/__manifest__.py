@@ -1,7 +1,7 @@
 {
     'name': 'Tax Filing XML Export / تصدير ملف الضريبة XML',
     'version': '17.0.1.0.0',
-    'category': 'Accounting',
+    'category': 'الديوان العام/المحاسبة',
     'summary': 'Generate signed tax filing XML for government portal submission (schema v3.2)',
     'author': 'ERP Migration Team',
     'depends': ['account'],

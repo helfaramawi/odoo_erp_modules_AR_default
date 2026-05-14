@@ -1,4 +1,5 @@
 {
+    'category': 'الديوان العام',
     'name': 'الديوان العام - محافظة بورسعيد — تنظيم القوائم',
     'summary': 'Unified single-tab menu structure for Port Said Governorate',
     'version': '17.0.6.0.0',
