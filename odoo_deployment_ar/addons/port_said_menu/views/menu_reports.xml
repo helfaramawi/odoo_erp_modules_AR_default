@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         التقارير
+    ════════════════════════════════════════════════════════════════ -->
+
+    <!-- التقارير الحكومية الشاملة — يُعرِّف عنصره موديول port_said_reports -->
+    <!-- التقارير المحاسبية — يُعرِّف عنصره موديول port_said_gl_reports -->
+
+    <!-- التقارير المحاسبية (ميزان + كشف حساب) — port_said_acct_reports مفيهوش menu -->
+    <menuitem
+        id="menu_ps_acct_reports"
+        name="ميزان المراجعة وكشف الحساب"
+        parent="menu_ps_50_reports"
+        action="port_said_acct_reports.action_acct_report_wizard"
+        sequence="20"
+    />
+
+</odoo>

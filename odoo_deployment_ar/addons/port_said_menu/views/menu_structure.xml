@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         الجذر: الديوان العام  (menu_ps_root)
+    ════════════════════════════════════════════════════════════════ -->
+    <menuitem
+        id="menu_ps_root"
+        name="الديوان العام"
+        sequence="1"
+        web_icon="account,static/description/icon.png"
+    />
+
+    <!-- إخفاء الجذر القديم من general_ledger_ar -->
+    <record id="general_ledger_ar.menu_general_ledger_root" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         الأقسام الرئيسية (Level 1 — الشريط العلوي)
+    ════════════════════════════════════════════════════════════════ -->
+
+    <!-- الحسابات -->
+    <menuitem
+        id="menu_ps_20_accts"
+        name="الحسابات"
+        parent="menu_ps_root"
+        sequence="20"
+    />
+
+    <!-- المشتريات -->
+    <menuitem
+        id="menu_ps_30_purchase"
+        name="المشتريات"
+        parent="menu_ps_root"
+        sequence="30"
+    />
+
+    <!-- المخازن -->
+    <menuitem
+        id="menu_ps_40_inventory"
+        name="المخازن"
+        parent="menu_ps_root"
+        sequence="40"
+    />
+
+    <!-- التقارير -->
+    <menuitem
+        id="menu_ps_50_reports"
+        name="التقارير"
+        parent="menu_ps_root"
+        sequence="50"
+    />
+
+</odoo>

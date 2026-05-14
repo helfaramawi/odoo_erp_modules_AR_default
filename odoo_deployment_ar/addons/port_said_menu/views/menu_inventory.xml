@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         المخازن
+    ════════════════════════════════════════════════════════════════ -->
+
+    <!-- أذونات الصرف والارتجاع — موديول port_said_scm_issue له جذر خاص
+         نعيد ربطه تحت قسم المخازن -->
+    <record id="port_said_scm_issue.menu_scm_issue_root" model="ir.ui.menu">
+        <field name="parent_id" ref="menu_ps_40_inventory"/>
+        <field name="sequence">60</field>
+    </record>
+
+    <!-- باقي العناصر يُعرِّفها كل موديول بنفسه:
+         - port_said_scm_warehouse   → menu_ps_warehouse      (sequence 41)
+         - stock_addition_permit     → menu_ps_addition        (sequence 42)
+         - stock_stocktaking_eg      → menu_ps_stocktaking     (sequence 43)
+         - l10n_eg_custody           → menu_ps_custody_main    (sequence 44)
+         - port_said_fixed_assets    → menu_ps_fixed_assets_root (sequence 50)
+    -->
+
+</odoo>

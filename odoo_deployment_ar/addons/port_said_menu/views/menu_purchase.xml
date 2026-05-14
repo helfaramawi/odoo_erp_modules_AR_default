@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         المشتريات
+    ════════════════════════════════════════════════════════════════ -->
+
+    <!-- اللجان -->
+    <menuitem
+        id="menu_ps_committee"
+        name="اللجان"
+        parent="menu_ps_30_purchase"
+        action="procurement_committee.action_procurement_committee"
+        sequence="10"
+    />
+
+    <!-- طلبات الاحتياج — يُعرِّف عنصره موديول port_said_scm_requisition -->
+
+    <!-- البت الفني والمالي — يُعرِّف عنصره موديول procurement_adjudication -->
+
+</odoo>

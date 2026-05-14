@@ -336,15 +336,23 @@ class PortSaidReportWizard(models.TransientModel):
             [('company_id', '=', self.company_id.id)],
             order='code'
         )
-        result = []
-        for acc in accounts:
-            move_lines = self.env['account.move.line'].search([
-                ('account_id', '=', acc.id),
+        # Single aggregation query instead of N+1
+        totals_raw = self.env['account.move.line'].read_group(
+            [
+                ('account_id', 'in', accounts.ids),
                 ('parent_state', '=', 'posted'),
                 ('date', '<=', self.date_to),
-            ])
-            debit  = sum(move_lines.mapped('debit'))
-            credit = sum(move_lines.mapped('credit'))
+            ],
+            ['account_id', 'debit:sum', 'credit:sum'],
+            ['account_id'],
+        )
+        totals_map = {t['account_id'][0]: t for t in totals_raw}
+
+        result = []
+        for acc in accounts:
+            t = totals_map.get(acc.id, {})
+            debit  = t.get('debit', 0.0) or 0.0
+            credit = t.get('credit', 0.0) or 0.0
             result.append({
                 'code':         acc.code,
                 'name':         acc.name,

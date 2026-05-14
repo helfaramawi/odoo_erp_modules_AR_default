@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         المزايدات — تحت قسم المشتريات
+    ════════════════════════════════════════════════════════════════ -->
+
+    <!-- المزايدات والتأجير -->
+    <menuitem
+        id="menu_ps_auction_root"
+        name="المزايدات والتأجير"
+        parent="menu_ps_30_purchase"
+        sequence="50"
+    />
+
+    <menuitem
+        id="menu_ps_auction_requests"
+        name="طلبات المزايدة"
+        parent="menu_ps_auction_root"
+        action="l10n_eg_auction.action_auction_request"
+        sequence="10"
+    />
+
+    <menuitem
+        id="menu_ps_auction_leases"
+        name="عقود الإيجار والانتفاع"
+        parent="menu_ps_auction_root"
+        action="l10n_eg_auction.action_auction_lease_contract"
+        sequence="20"
+    />
+
+</odoo>

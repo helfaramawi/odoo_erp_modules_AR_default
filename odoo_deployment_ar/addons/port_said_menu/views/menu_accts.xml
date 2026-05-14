@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         الحسابات — إعادة توصيل عناصر general_ledger_ar
+    ════════════════════════════════════════════════════════════════ -->
+
+    <!-- الحسابات > الدفاتر المساعدة (من general_ledger_ar) -->
+    <record id="general_ledger_ar.menu_general_ledger_accounts" model="ir.ui.menu">
+        <field name="parent_id" ref="menu_ps_20_accts"/>
+        <field name="sequence">10</field>
+    </record>
+
+    <!-- الحسابات > دفتر 55 -->
+    <menuitem
+        id="menu_ps_daftar55"
+        name="دفتر 55"
+        parent="menu_ps_20_accts"
+        action="port_said_daftar55.action_daftar55"
+        sequence="20"
+    />
+
+    <!-- الحسابات > دفتر 224 -->
+    <menuitem
+        id="menu_ps_daftar224"
+        name="دفتر 224"
+        parent="menu_ps_20_accts"
+        action="port_said_daftar224.action_daftar224"
+        sequence="30"
+    />
+
+    <!-- الحسابات > الارتباطات -->
+    <menuitem
+        id="menu_ps_commitment"
+        name="الارتباطات"
+        parent="menu_ps_20_accts"
+        action="port_said_commitment.action_commitment"
+        sequence="40"
+    />
+
+    <!-- الحسابات > الاضابير -->
+    <menuitem
+        id="menu_ps_dossier"
+        name="الاضابير"
+        parent="menu_ps_20_accts"
+        action="port_said_dossier.action_dossier"
+        sequence="50"
+    />
+
+</odoo>
