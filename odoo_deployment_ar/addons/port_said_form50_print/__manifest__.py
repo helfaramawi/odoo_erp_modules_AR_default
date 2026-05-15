@@ -10,6 +10,7 @@
         'port_said_dossier',
     ],
     'data': [
+        'security/security_groups.xml',
         'security/ir.model.access.csv',
         'wizard/reprint_wizard_views.xml',
         'reports/form50_report_actions.xml',
