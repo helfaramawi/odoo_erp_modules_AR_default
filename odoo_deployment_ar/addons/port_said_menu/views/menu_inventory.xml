@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       قسم المخزون والمستودعات — menu_ps_40_inventory
+       (تضيف وحدات l10n_eg_custody, port_said_scm_warehouse,
+        stock_addition_permit, stock_stocktaking_eg قوائمها تلقائياً)
+       ══════════════════════════════════════════════════════════════════════ -->
+
+</odoo>

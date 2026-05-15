@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       قسم المشتريات — menu_ps_30_purchase
+       (تضيف وحدات port_said_scm_requisition و procurement_adjudication
+        قوائمها تلقائياً تحت هذا القسم بالتسلسلين 31 و 32)
+       ══════════════════════════════════════════════════════════════════════ -->
+
+  <!-- تشكيل اللجان — قانون 182/2018 -->
+  <menuitem id="menu_ps_procurement_committee"
+            name="تشكيل اللجان"
+            parent="menu_ps_30_purchase"
+            action="procurement_committee.action_procurement_committee"
+            sequence="33"/>
+
+</odoo>

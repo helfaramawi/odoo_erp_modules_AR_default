@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       الجذر الرئيسي للتطبيق — الديوان العام - محافظة بورسعيد
+       ══════════════════════════════════════════════════════════════════════ -->
+  <menuitem id="menu_ps_root"
+            name="الديوان العام - محافظة بورسعيد"
+            sequence="5"/>
+
+  <!-- ══ أقسام التطبيق الرئيسية ══════════════════════════════════════════ -->
+
+  <menuitem id="menu_ps_20_accts"
+            name="الحسابات"
+            parent="menu_ps_root"
+            sequence="20"/>
+
+  <menuitem id="menu_ps_30_purchase"
+            name="المشتريات"
+            parent="menu_ps_root"
+            sequence="30"/>
+
+  <menuitem id="menu_ps_40_inventory"
+            name="المخزون والمستودعات"
+            parent="menu_ps_root"
+            sequence="40"/>
+
+  <menuitem id="menu_ps_50_reports"
+            name="التقارير"
+            parent="menu_ps_root"
+            sequence="50"/>
+
+</odoo>

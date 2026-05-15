@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       قسم الحسابات — menu_ps_20_accts
+       ══════════════════════════════════════════════════════════════════════ -->
+
+  <!-- دفتر 55 ع.ح -->
+  <menuitem id="menu_ps_daftar55"
+            name="دفتر 55 ع.ح"
+            parent="menu_ps_20_accts"
+            action="port_said_daftar55.action_daftar55"
+            sequence="10"/>
+
+  <!-- دفتر 224 ع.ح -->
+  <menuitem id="menu_ps_daftar224"
+            name="دفتر 224 ع.ح"
+            parent="menu_ps_20_accts"
+            action="port_said_daftar224.action_daftar224"
+            sequence="15"/>
+
+  <!-- دفتر الارتباطات -->
+  <menuitem id="menu_ps_commitment"
+            name="دفتر الارتباطات"
+            parent="menu_ps_20_accts"
+            action="port_said_commitment.action_commitment"
+            sequence="20"/>
+
+  <!-- الاضابير -->
+  <menuitem id="menu_ps_dossier"
+            name="الاضابير"
+            parent="menu_ps_20_accts"
+            action="port_said_dossier.action_dossier"
+            sequence="25"/>
+
+  <!-- السلف الحكومية -->
+  <menuitem id="menu_ps_advances"
+            name="السلف الحكومية"
+            parent="menu_ps_20_accts"
+            action="port_said_advances.action_advances"
+            sequence="30"/>
+
+  <!-- خطابات الضمان -->
+  <menuitem id="menu_ps_bank_guarantees"
+            name="خطابات الضمان"
+            parent="menu_ps_20_accts"
+            action="port_said_advances.action_bank_guarantees"
+            sequence="35"/>
+
+  <!-- التقارير المحاسبية الحكومية -->
+  <menuitem id="menu_ps_acct_reports"
+            name="التقارير المحاسبية الحكومية"
+            parent="menu_ps_20_accts"
+            action="port_said_acct_reports.action_acct_report_wizard"
+            sequence="80"/>
+
+</odoo>
