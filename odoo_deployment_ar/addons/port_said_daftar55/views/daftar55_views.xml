@@ -143,7 +143,7 @@
         <field name="form50_ref"      string="رقم استمارة 50"/>
         <field name="vendor_id"       string="المورد"/>
         <field name="budget_line"     string="البند"/>
-        <filter name="this_year"      string="السنة الحالية" domain="[('fiscal_year','=','2026')]"/>
+        <filter name="this_year"      string="السنة الحالية" domain="[('fiscal_year','=', str(context_today().year))]"/>
         <filter name="state_posted"   string="مرحّلة"        domain="[('state','=','posted')]"/>
         <filter name="state_cleared"  string="مُسمَّحة"      domain="[('state','=','cleared')]"/>
         <group expand="0" string="تجميع حسب">
