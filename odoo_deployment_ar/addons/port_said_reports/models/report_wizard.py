@@ -419,4 +419,5 @@ class PortSaidReportWizard(models.TransientModel):
             'report_name': report_name,
             'report_type': 'qweb-pdf',
             'model': self._name,
+            'res_id': self.id,
         }

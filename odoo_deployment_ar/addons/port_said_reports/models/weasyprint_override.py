@@ -8,24 +8,44 @@ _logger = logging.getLogger(__name__)
 
 PORT_SAID_PREFIXES = ['port_said_reports']
 
+_FONT_SEARCH_PATHS = [
+    # Linux
+    ('/usr/share/fonts/opentype/fonts-hosny-amiri/Amiri-Regular.ttf',
+     '/usr/share/fonts/opentype/fonts-hosny-amiri/Amiri-Bold.ttf'),
+    ('/usr/share/fonts/truetype/fonts-hosny-amiri/Amiri-Regular.ttf',
+     '/usr/share/fonts/truetype/fonts-hosny-amiri/Amiri-Bold.ttf'),
+    # Windows — Amiri if manually installed
+    ('C:/Windows/Fonts/Amiri-Regular.ttf', 'C:/Windows/Fonts/Amiri-Bold.ttf'),
+]
+
 def _build_css():
-    try:
-        with open('/usr/share/fonts/opentype/fonts-hosny-amiri/Amiri-Regular.ttf', 'rb') as f:
-            regular = base64.b64encode(f.read()).decode()
-        with open('/usr/share/fonts/opentype/fonts-hosny-amiri/Amiri-Bold.ttf', 'rb') as f:
-            bold = base64.b64encode(f.read()).decode()
-        return (
-            "@font-face{font-family:'Amiri';src:url('data:font/truetype;base64," + regular + "');font-weight:normal;}"
-            "@font-face{font-family:'Amiri';src:url('data:font/truetype;base64," + bold + "');font-weight:bold;}"
-            "html,body,div,table,tr,td,th,p,span,h1,h2,h3,h4,h5,li,a{"
-            "font-family:'Amiri',serif!important;direction:rtl!important;unicode-bidi:embed!important;}"
-            "@font-face{font-family:'Lato';src:url('data:font/truetype;base64," + regular + "');}"
-            "@font-face{font-family:'Arial';src:url('data:font/truetype;base64," + regular + "');}"
-            "@page{size:A4;margin:15mm;}"
-        )
-    except Exception as e:
-        _logger.error('Font load error: %s', e)
-        return "body{font-family:serif;direction:rtl;}"
+    import os
+    for regular_path, bold_path in _FONT_SEARCH_PATHS:
+        if os.path.exists(regular_path) and os.path.exists(bold_path):
+            try:
+                with open(regular_path, 'rb') as f:
+                    regular = base64.b64encode(f.read()).decode()
+                with open(bold_path, 'rb') as f:
+                    bold = base64.b64encode(f.read()).decode()
+                return (
+                    "@font-face{font-family:'Amiri';src:url('data:font/truetype;base64," + regular + "');font-weight:normal;}"
+                    "@font-face{font-family:'Amiri';src:url('data:font/truetype;base64," + bold + "');font-weight:bold;}"
+                    "html,body,div,table,tr,td,th,p,span,h1,h2,h3,h4,h5,li,a{"
+                    "font-family:'Amiri',serif!important;direction:rtl!important;unicode-bidi:embed!important;}"
+                    "@font-face{font-family:'Lato';src:url('data:font/truetype;base64," + regular + "');}"
+                    "@font-face{font-family:'Arial';src:url('data:font/truetype;base64," + regular + "');}"
+                    "@page{size:A4;margin:15mm;}"
+                )
+            except Exception as e:
+                _logger.warning('Font load error (%s): %s', regular_path, e)
+    # Fallback — use system Arabic fonts available on Windows/Linux
+    _logger.warning('Amiri font not found — using system Arabic fonts for PDF')
+    return (
+        "body,*{font-family:'Arabic Typesetting','Traditional Arabic',"
+        "'Simplified Arabic',Arial,serif!important;"
+        "direction:rtl!important;unicode-bidi:embed!important;}"
+        "@page{size:A4;margin:15mm;}"
+    )
 
 ARABIC_CSS = _build_css()
 

@@ -15,30 +15,45 @@ PORT_SAID_PREFIXES = [
     'port_said_reports',
 ]
 
+_FONT_SEARCH_PATHS = [
+    ('/usr/share/fonts/opentype/fonts-hosny-amiri/Amiri-Regular.ttf',
+     '/usr/share/fonts/opentype/fonts-hosny-amiri/Amiri-Bold.ttf'),
+    ('/usr/share/fonts/truetype/fonts-hosny-amiri/Amiri-Regular.ttf',
+     '/usr/share/fonts/truetype/fonts-hosny-amiri/Amiri-Bold.ttf'),
+    ('C:/Windows/Fonts/Amiri-Regular.ttf', 'C:/Windows/Fonts/Amiri-Bold.ttf'),
+]
+
 def _build_css():
-    try:
-        with open('/usr/share/fonts/opentype/fonts-hosny-amiri/Amiri-Regular.ttf','rb') as f:
-            r = base64.b64encode(f.read()).decode()
-        with open('/usr/share/fonts/opentype/fonts-hosny-amiri/Amiri-Bold.ttf','rb') as f:
-            b = base64.b64encode(f.read()).decode()
-        return (
-            "@font-face{font-family:'Amiri';"
-            "src:url('data:font/truetype;base64," + r + "');font-weight:normal;}"
-            "@font-face{font-family:'Amiri';"
-            "src:url('data:font/truetype;base64," + b + "');font-weight:bold;}"
-            # Force Amiri everywhere with highest specificity
-            "html,body,div,table,tr,td,th,p,span,h1,h2,h3,h4,h5,li,a{"
-            "font-family:'Amiri',serif!important;"
-            "direction:rtl!important;"
-            "unicode-bidi:embed!important;}"
-            # Override any Lato/Arial from Odoo
-            "@font-face{font-family:'Lato';src:url('data:font/truetype;base64," + r + "');}"
-            "@font-face{font-family:'Arial';src:url('data:font/truetype;base64," + r + "');}"
-            "@page{size:A4;margin:15mm;}"
-        )
-    except Exception as e:
-        _logger.error("Font load error: %s", e)
-        return "body{font-family:serif;direction:rtl;}"
+    import os
+    for regular_path, bold_path in _FONT_SEARCH_PATHS:
+        if os.path.exists(regular_path) and os.path.exists(bold_path):
+            try:
+                with open(regular_path, 'rb') as f:
+                    r = base64.b64encode(f.read()).decode()
+                with open(bold_path, 'rb') as f:
+                    b = base64.b64encode(f.read()).decode()
+                return (
+                    "@font-face{font-family:'Amiri';"
+                    "src:url('data:font/truetype;base64," + r + "');font-weight:normal;}"
+                    "@font-face{font-family:'Amiri';"
+                    "src:url('data:font/truetype;base64," + b + "');font-weight:bold;}"
+                    "html,body,div,table,tr,td,th,p,span,h1,h2,h3,h4,h5,li,a{"
+                    "font-family:'Amiri',serif!important;"
+                    "direction:rtl!important;"
+                    "unicode-bidi:embed!important;}"
+                    "@font-face{font-family:'Lato';src:url('data:font/truetype;base64," + r + "');}"
+                    "@font-face{font-family:'Arial';src:url('data:font/truetype;base64," + r + "');}"
+                    "@page{size:A4;margin:15mm;}"
+                )
+            except Exception as e:
+                _logger.warning("Font load error (%s): %s", regular_path, e)
+    _logger.warning("Amiri font not found — using system Arabic fonts for PDF")
+    return (
+        "body,*{font-family:'Arabic Typesetting','Traditional Arabic',"
+        "'Simplified Arabic',Arial,serif!important;"
+        "direction:rtl!important;unicode-bidi:embed!important;}"
+        "@page{size:A4;margin:15mm;}"
+    )
 
 ARABIC_CSS = _build_css()
 
