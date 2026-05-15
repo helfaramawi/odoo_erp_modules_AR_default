@@ -5,12 +5,12 @@
     'summary': 'طباعة دفتر 55 على خلفية استمارة 50 ع.ح الرسمية مع تحديد مواضع الحقول بدقة',
     'author': 'Paradise Integrated Solutions',
     'license': 'LGPL-3',
-    'depends': ['port_said_daftar55'],
+    'depends': ['port_said_daftar55', 'port_said_dossier'],
     'data': [
+        'security/ir.model.access.csv',
         'reports/form50_report.xml',
         'reports/form50_template.xml',
     ],
     'installable': True,
     'application': False,
-    'post_migrate': 'odoo.addons.port_said_form50_print.models.form50_print.post_migrate',
 }
