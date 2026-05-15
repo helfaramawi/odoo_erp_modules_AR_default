@@ -1,6 +1,11 @@
 @echo off
 setlocal
 
+echo === Pulling latest code ===
+cd /d "C:\Users\SZ TECH\Downloads\odoo_erp_modules_AR_default"
+git pull origin claude/fix-module-55-visibility-oZHNF
+cd odoo_deployment_ar
+
 set BACKUP_DIR=C:\Users\SZ TECH\Downloads\odoo_backups
 set DB_NAME=odoo17_db
 set DB_USER=odoo
