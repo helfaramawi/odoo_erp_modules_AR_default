@@ -12,6 +12,8 @@
     'data': [
         'security/security_groups.xml',
         'security/ir.model.access.csv',
+        'data/paperformat.xml',
+        'data/sequence_data.xml',
         'wizard/reprint_wizard_views.xml',
         'reports/form50_report_actions.xml',
         'reports/form50_preview_template.xml',
