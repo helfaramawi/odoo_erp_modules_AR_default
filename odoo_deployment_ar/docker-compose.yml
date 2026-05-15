@@ -1,24 +1,7 @@
-version: '3.8'
-
 services:
-  odoo17_db:
-    image: postgres:15
-    container_name: odoo17_db
-    environment:
-      POSTGRES_USER: odoo
-      POSTGRES_PASSWORD: odoo
-      POSTGRES_DB: postgres
-    volumes:
-      - odoo_pg_data:/var/lib/postgresql/data
-    networks:
-      - odoo_net
-    restart: unless-stopped
-
   odoo17_app:
     image: odoo:17.0
     container_name: odoo17_app
-    depends_on:
-      - odoo17_db
     environment:
       HOST: odoo17_db
       USER: odoo
@@ -34,12 +17,11 @@ services:
     restart: unless-stopped
 
 volumes:
-  odoo_pg_data:
-    external: false
   odoo_web_data:
     name: odoo_deployment_ar_odoo_web_data
+    external: true
 
 networks:
   odoo_net:
     name: odoo_deployment_ar_odoo_net
-    driver: bridge
+    external: true
