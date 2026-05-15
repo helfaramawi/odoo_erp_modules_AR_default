@@ -1,3 +1,2 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_form50_invoice_line_user,form50.invoice.line user,model_port_said_form50_invoice_line,account.group_account_user,1,1,1,1
-access_form50_invoice_line_manager,form50.invoice.line manager,model_port_said_form50_invoice_line,account.group_account_manager,1,1,1,1
+access_form50_invoice_line_user,port_said.form50.invoice.line user,model_port_said_form50_invoice_line,base.group_user,1,1,1,1

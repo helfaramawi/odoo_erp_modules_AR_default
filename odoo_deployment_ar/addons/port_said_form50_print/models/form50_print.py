@@ -391,6 +391,20 @@ class Form50PrintLayer(models.Model):
         return out
 
 
+    def _form50_bg_base64(self):
+        """يعيد صورة الاستمارة الرسمية كـ data URI لاستخدامها في wkhtmltopdf."""
+        import base64, os
+        img_path = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)),
+            'static', 'img', 'form50_bg.png'
+        )
+        if not os.path.exists(img_path):
+            return ''
+        with open(img_path, 'rb') as f:
+            b64 = base64.b64encode(f.read()).decode()
+        return f'data:image/png;base64,{b64}'
+
+
 def post_migrate(env):
     """تأكد من إيقاف attachment_use بعد كل upgrade."""
     env['ir.actions.report'].sudo().search([
