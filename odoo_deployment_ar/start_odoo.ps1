@@ -1,30 +1,24 @@
-# ================================================================
-# start_odoo.ps1 — اشغّل هذا السكريبت لتشغيل Odoo بشكل صحيح
-# Usage: Right-click → Run with PowerShell
-# ================================================================
+# start_odoo.ps1 - Run this script to start Odoo correctly on Windows
+# Usage: .\odoo_deployment_ar\start_odoo.ps1
 
-$REPO = "C:\Users\SZ TECH\Downloads\odoo_erp_modules_AR_default"
-$ADDONS = "$REPO\odoo_deployment_ar\addons"
-$CONF_SRC = "$REPO\odoo_deployment_ar\odoo.conf"
-$CONF_DST = "C:\odoo_conf\odoo.conf"
+$REPO    = "C:\Users\SZ TECH\Downloads\odoo_erp_modules_AR_default"
+$ADDONS  = "$REPO\odoo_deployment_ar\addons"
+$CONF_SRC= "$REPO\odoo_deployment_ar\odoo.conf"
+$CONF_DST= "C:\odoo_conf\odoo.conf"
 $NETWORK = "odoo_deployment_ar_odoo_net"
-$VOLUME = "odoo_deployment_ar_odoo_web_data"
+$VOLUME  = "odoo_deployment_ar_odoo_web_data"
 
-Write-Host "=== 1. سحب أحدث التغييرات من GitHub ===" -ForegroundColor Cyan
-Set-Location $REPO
-git pull origin claude/fix-module-55-visibility-oZHNF
-
-Write-Host "=== 2. نسخ odoo.conf لمسار بدون مسافات ===" -ForegroundColor Cyan
+Write-Host "=== Step 1: Copy odoo.conf to path without spaces ===" -ForegroundColor Cyan
 if (!(Test-Path "C:\odoo_conf")) { New-Item -ItemType Directory -Path "C:\odoo_conf" | Out-Null }
 Copy-Item -Path $CONF_SRC -Destination $CONF_DST -Force
-Write-Host "تم نسخ odoo.conf إلى C:\odoo_conf\" -ForegroundColor Green
+Write-Host "Done: odoo.conf copied to C:\odoo_conf\" -ForegroundColor Green
 
-Write-Host "=== 3. إيقاف وحذف الـ container القديم ===" -ForegroundColor Cyan
+Write-Host "=== Step 2: Remove old container ===" -ForegroundColor Cyan
 docker stop odoo17_app 2>$null
-docker rm odoo17_app 2>$null
-Write-Host "تم حذف الـ container القديم" -ForegroundColor Green
+docker rm   odoo17_app 2>$null
+Write-Host "Done: old container removed" -ForegroundColor Green
 
-Write-Host "=== 4. تشغيل Odoo container جديد ===" -ForegroundColor Cyan
+Write-Host "=== Step 3: Start new Odoo container ===" -ForegroundColor Cyan
 docker run -d `
   --name odoo17_app `
   --network $NETWORK `
@@ -38,9 +32,9 @@ docker run -d `
 Start-Sleep -Seconds 5
 $status = docker ps --filter "name=odoo17_app" --format "{{.Status}}"
 if ($status) {
-    Write-Host "=== Odoo يعمل الآن! ===" -ForegroundColor Green
-    Write-Host "افتح: http://localhost:8069" -ForegroundColor Yellow
+    Write-Host "=== Odoo is running! ===" -ForegroundColor Green
+    Write-Host "Open: http://localhost:8069" -ForegroundColor Yellow
 } else {
-    Write-Host "=== خطأ في التشغيل — السجلات: ===" -ForegroundColor Red
+    Write-Host "=== Error - Logs: ===" -ForegroundColor Red
     docker logs odoo17_app --tail 20
 }
