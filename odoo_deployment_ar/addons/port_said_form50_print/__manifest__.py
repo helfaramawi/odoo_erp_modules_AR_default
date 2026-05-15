@@ -17,6 +17,7 @@
         'wizard/reprint_wizard_views.xml',
         'views/form50_print_views.xml',
         'views/form50_views.xml',
+        'views/form50_menu.xml',
         'reports/form50_report_actions.xml',
         'reports/form50_preview_template.xml',
         'reports/form50_final_template.xml',
