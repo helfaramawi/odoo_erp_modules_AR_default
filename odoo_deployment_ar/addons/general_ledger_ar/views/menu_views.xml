@@ -5,7 +5,7 @@
         id="menu_helper_notebooks_general_ledger"
         name="دفتر الأستاذ العام"
         parent="port_said_subsidiary_books.menu_subsidiary_root"
-        action="account.action_account_ledger"
+        action="account.action_account_moves_all"
         sequence="10"
     />
 
@@ -13,7 +13,7 @@
         id="menu_helper_notebooks_receivable"
         name="دفتر مديونيات العملاء"
         parent="port_said_subsidiary_books.menu_subsidiary_root"
-        action="account.action_account_receivable_from_account"
+        action="account.action_account_moves_ledger_partner"
         sequence="20"
     />
 
@@ -21,7 +21,7 @@
         id="menu_helper_notebooks_payable"
         name="دفتر دائنية الموردين"
         parent="port_said_subsidiary_books.menu_subsidiary_root"
-        action="account.action_account_payable_from_account"
+        action="account.action_account_payments_payable"
         sequence="30"
     />
 
