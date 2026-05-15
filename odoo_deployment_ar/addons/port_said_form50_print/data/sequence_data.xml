@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+  <record id="seq_form50_print" model="ir.sequence">
+    <field name="name">استمارة 50 — رقم طباعة</field>
+    <field name="code">port_said.form50.print</field>
+    <field name="prefix">F50/</field>
+    <field name="padding">4</field>
+    <field name="use_date_range">True</field>
+  </record>
+</odoo>

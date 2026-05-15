@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="action_report_form50_preview" model="ir.actions.report">
+    <field name="name">استمارة 50 — معاينة</field>
+    <field name="model">port_said.daftar55</field>
+    <field name="report_type">qweb-html</field>
+    <field name="report_name">port_said_form50_print.form50_preview_template</field>
+    <field name="report_file">port_said_form50_print.form50_preview_template</field>
+    <field name="binding_model_id" ref="port_said_daftar55.model_port_said_daftar55"/>
+    <field name="binding_type">report</field>
+    <field name="attachment_use">False</field>
+  </record>
+
+  <record id="action_report_form50_final" model="ir.actions.report">
+    <field name="name">استمارة 50 — طباعة نهائية</field>
+    <field name="model">port_said.daftar55</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_form50_print.form50_final_template</field>
+    <field name="report_file">port_said_form50_print.form50_final_template</field>
+    <field name="binding_model_id" ref="port_said_daftar55.model_port_said_daftar55"/>
+    <field name="binding_type">report</field>
+    <field name="attachment_use">False</field>
+  </record>
+</odoo>

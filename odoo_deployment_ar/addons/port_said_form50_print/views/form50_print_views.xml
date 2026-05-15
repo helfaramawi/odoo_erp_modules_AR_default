@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <!-- Extend daftar55 form to add form50 print fields -->
+  <record id="view_daftar55_form50_inherit" model="ir.ui.view">
+    <field name="name">port_said.daftar55.form50.inherit</field>
+    <field name="model">port_said.daftar55</field>
+    <field name="inherit_id" ref="port_said_daftar55.view_daftar55_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//button[@name='action_print_daftar55']" position="after">
+        <button name="action_print_preview"
+                string="معاينة استمارة 50"
+                type="object"
+                class="btn-secondary"/>
+        <button name="action_print_final"
+                string="طباعة نهائية استمارة 50"
+                type="object"
+                class="btn-primary"
+                invisible="state not in ('cleared','posted','archived')"/>
+      </xpath>
+      <xpath expr="//field[@name='notes']" position="before">
+        <group string="بيانات الفواتير — استمارة 50">
+          <field name="transaction_type"/>
+          <field name="invoice_line_ids">
+            <tree editable="bottom">
+              <field name="sequence" widget="handle"/>
+              <field name="invoice_ref"/>
+              <field name="invoice_date"/>
+              <field name="description"/>
+              <field name="amount_pounds"/>
+              <field name="amount_piasters"/>
+            </tree>
+          </field>
+          <field name="invoices_match_gross" readonly="1"/>
+          <field name="print_readiness_notes" readonly="1"/>
+        </group>
+      </xpath>
+    </field>
+  </record>
+</odoo>

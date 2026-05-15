@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <template id="form50_final_template">
+    <t t-call="web.html_container">
+      <t t-foreach="docs" t-as="doc">
+        <div style="position:relative;width:210mm;min-height:297mm;font-family:Amiri,'Noto Naskh Arabic',Arial,sans-serif;direction:rtl;">
+          <h2 style="text-align:center;">استمارة 50 ع.ح — طباعة نهائية</h2>
+          <p>رقم المسلسل: <strong><t t-esc="doc.sequence_number"/></strong></p>
+          <p>المصلحة: <t t-esc="doc.department_name"/></p>
+          <p>صاحب الحق: <t t-esc="doc.vendor_id.name"/></p>
+          <p>الإجمالي: <t t-esc="doc.amount_gross"/> جنيه</p>
+          <p>الصافي: <t t-esc="doc.amount_net"/> جنيه</p>
+          <p>التفقيط: <t t-esc="doc.amount_words"/></p>
+        </div>
+      </t>
+    </t>
+  </template>
+</odoo>
