@@ -36,6 +36,16 @@ with open('/tmp/gov_coa.csv', 'r', encoding='utf-8-sig') as f:
             errors += 1
             continue
 
+        # Only one equity_unaffected allowed; remap extras to equity
+        if atype == 'equity_unaffected':
+            existing_unaffected = env['account.account'].search([
+                ('account_type', '=', 'equity_unaffected'),
+                ('company_id', '=', 1),
+                ('code', '!=', code),
+            ], limit=1)
+            if existing_unaffected:
+                atype = 'equity'
+
         existing = env['account.account'].search([
             ('code', '=', code), ('company_id', '=', 1)
         ], limit=1)
