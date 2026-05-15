@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_ps_35_auctions" name="Auctions" parent="port_said_menu.menu_ps_root" sequence="35"/>
+</odoo>

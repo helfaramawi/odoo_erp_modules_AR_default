@@ -1,8 +1,0 @@
-<odoo>
-    <record id="seq_war_room_item" model="ir.sequence">
-        <field name="name">War Room Item</field>
-        <field name="code">war.room.item</field>
-        <field name="prefix">WRI-%(y)s-</field>
-        <field name="padding">4</field>
-    </record>
-</odoo>

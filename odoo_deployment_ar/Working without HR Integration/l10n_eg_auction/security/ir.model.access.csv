@@ -1,7 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_auction_request_manager,auction.request manager,model_auction_request,purchase.group_purchase_manager,1,1,1,1
-access_auction_request_user,auction.request user,model_auction_request,purchase.group_purchase_user,1,1,1,0
-access_auction_bid_user,auction.bid user,model_auction_bid,purchase.group_purchase_user,1,1,1,0
-access_auction_lease_contract_manager,auction.lease.contract manager,model_auction_lease_contract,purchase.group_purchase_manager,1,1,1,1
-access_auction_lease_contract_user,auction.lease.contract user,model_auction_lease_contract,purchase.group_purchase_user,1,1,0,0
-access_payment_schedule_line_user,payment.schedule.line user,model_payment_schedule_line,purchase.group_purchase_user,1,1,1,0

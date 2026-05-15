@@ -1,5 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_inspection_report_manager,stock.inspection.report manager,model_stock_inspection_report,stock.group_stock_manager,1,1,1,1
-access_inspection_report_user,stock.inspection.report user,model_stock_inspection_report,stock.group_stock_user,1,1,1,0
-access_addition_permit_manager,stock.addition.permit manager,model_stock_addition_permit,stock.group_stock_manager,1,1,1,1
-access_addition_permit_user,stock.addition.permit user,model_stock_addition_permit,stock.group_stock_user,1,1,1,0

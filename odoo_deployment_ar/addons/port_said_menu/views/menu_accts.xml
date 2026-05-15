@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_port_said_accounting" name="Accounting" parent="port_said_menu.menu_ps_root" sequence="20"/>
+    <menuitem id="menu_ps_20_accts" name="Finance" parent="port_said_menu.menu_port_said_accounting" sequence="1"/>
+</odoo>

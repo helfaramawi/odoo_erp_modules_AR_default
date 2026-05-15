@@ -1,5 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_adj_manager,procurement.adjudication manager,model_procurement_adjudication,purchase.group_purchase_manager,1,1,1,1
-access_adj_user,procurement.adjudication user,model_procurement_adjudication,purchase.group_purchase_user,1,1,1,0
-access_adj_line_manager,adjudication.supplier.line manager,model_adjudication_supplier_line,purchase.group_purchase_manager,1,1,1,1
-access_adj_line_user,adjudication.supplier.line user,model_adjudication_supplier_line,purchase.group_purchase_user,1,1,1,0

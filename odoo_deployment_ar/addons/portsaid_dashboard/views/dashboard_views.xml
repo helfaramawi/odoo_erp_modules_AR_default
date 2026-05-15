@@ -6,6 +6,6 @@
     <record id="action_portsaid_dashboard_url" model="ir.actions.act_url">
         <field name="name">لوحة القيادة التنفيذية</field>
         <field name="url">/portsaid/dashboard</field>
-        <field name="target">self</field>
+        <field name="target">new</field>
     </record>
 </odoo>
