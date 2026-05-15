@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- Root application menu — الديوان العام - محافظة بورسعيد -->
+  <menuitem id="menu_port_said_root"
+            name="الديوان العام - محافظة بورسعيد"
+            sequence="1"/>
+
+  <!-- Legacy alias used by older modules -->
+  <menuitem id="menu_port_said_accounting"
+            name="الديوان العام - محافظة بورسعيد"
+            sequence="1"/>
+
+  <!-- الحسابات — Accounting section (sequence 20) -->
+  <menuitem id="menu_ps_20_accts"
+            name="الحسابات"
+            parent="menu_port_said_root"
+            sequence="20"/>
+
+  <!-- المشتريات — Purchase section (sequence 30) -->
+  <menuitem id="menu_ps_30_purchase"
+            name="المشتريات"
+            parent="menu_port_said_root"
+            sequence="30"/>
+
+  <!-- المستودعات — Inventory section (sequence 40) -->
+  <menuitem id="menu_ps_40_inventory"
+            name="المستودعات والمخازن"
+            parent="menu_port_said_root"
+            sequence="40"/>
+
+  <!-- التقارير — Reports section (sequence 50) -->
+  <menuitem id="menu_ps_50_reports"
+            name="التقارير"
+            parent="menu_port_said_root"
+            sequence="50"/>
+
+</odoo>

@@ -164,7 +164,10 @@
     <field name="context">{'search_default_this_year': 1}</field>
   </record>
 
-  <!-- Root menus managed by port_said_menu module -->
-  <!-- دفتر 55 menu item managed by port_said_menu -->
+  <menuitem id="menu_ps_daftar55"
+            name="دفتر 55 ع.ح"
+            parent="port_said_menu.menu_ps_20_accts"
+            action="action_daftar55"
+            sequence="10"/>
 
 </odoo>

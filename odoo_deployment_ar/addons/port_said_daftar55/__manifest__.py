@@ -6,7 +6,7 @@
     'author': 'Paradise Integrated Solutions',
     'website': 'https://paradise.solutions.com',
     'license': 'LGPL-3',
-    'depends': ['account', 'base', 'mail'],
+    'depends': ['account', 'base', 'mail', 'port_said_menu'],
     'data': [
         'security/ir.model.access.csv',
         'data/sequence_data.xml',
