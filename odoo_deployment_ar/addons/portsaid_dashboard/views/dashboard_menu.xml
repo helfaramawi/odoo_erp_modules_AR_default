@@ -6,7 +6,7 @@
 
   <menuitem id="menu_ps_dashboard"
             name="لوحة القيادة"
-            parent="port_said_menu.menu_port_said_accounting"
+            parent="account.menu_finance"
             action="portsaid_dashboard.action_portsaid_dashboard_url"
             sequence="5"/>
 </odoo>
