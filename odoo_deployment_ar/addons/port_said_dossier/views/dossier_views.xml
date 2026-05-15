@@ -53,5 +53,10 @@
     <field name="res_model">port_said.dossier</field>
     <field name="view_mode">tree,form</field>
   </record>
-    <!-- Menu managed by port_said_menu -->
+  <menuitem id="menu_ps_dossier"
+            name="الاضابير - استمارة 101 ساير"
+            parent="port_said_menu.menu_ps_20_accts"
+            action="action_dossier"
+            sequence="24"/>
+
 </odoo>

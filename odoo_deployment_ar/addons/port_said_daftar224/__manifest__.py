@@ -5,7 +5,7 @@
     'category': 'Accounting',
     'author': 'Paradise Integrated Solutions',
     'license': 'LGPL-3',
-    'depends': ['account', 'mail', 'port_said_daftar55'],
+    'depends': ['account', 'mail', 'port_said_daftar55', 'port_said_menu'],
     'data': [
         'security/ir.model.access.csv',
         'data/sequence_data.xml',

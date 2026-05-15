@@ -164,5 +164,10 @@
     <field name="view_mode">tree,form,pivot</field>
   </record>
 
-  <!-- Menu managed by port_said_menu module -->
+  <menuitem id="menu_ps_daftar224"
+            name="دفتر 224 ع.ح"
+            parent="port_said_menu.menu_ps_20_accts"
+            action="action_daftar224"
+            sequence="11"/>
+
 </odoo>
