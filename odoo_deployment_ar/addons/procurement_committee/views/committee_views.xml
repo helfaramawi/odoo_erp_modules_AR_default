@@ -212,6 +212,23 @@
     </record>
 
     <!-- Menus -->
+    <menuitem id="menu_committee_root"
+              name="تشكيل اللجان"
+              parent="purchase.menu_purchase_root"
+              sequence="20"/>
+
+    <menuitem id="menu_committee_list"
+              name="اللجان"
+              parent="menu_committee_root"
+              action="action_procurement_committee"
+              sequence="10"
+              groups="procurement_committee.group_contract_user"/>
+
+    <menuitem id="menu_committee_config"
+              name="إعدادات اللجان"
+              parent="menu_committee_root"
+              sequence="90"
+              groups="procurement_committee.group_contract_manager"/>
 
 
     <!-- ══════════════════════════════════════════════════════════════════════
