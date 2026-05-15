@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="report_form50_template">
+<t t-foreach="docs" t-as="rec">
+<t t-call="web.html_container">
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+    body { margin: 0; padding: 0; }
+    .form50-page {
+      position: relative;
+      width: 210mm;
+      height: 297mm;
+      overflow: hidden;
+      page-break-after: always;
+    }
+    .form50-bg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 1;
+      display: block;
+    }
+    .form50-field {
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <div class="form50-page">
+
+    <!-- ══ خلفية الاستمارة الرسمية (data URI — تعمل مع wkhtmltopdf بدون network) ══ -->
+    <img class="form50-bg" t-att-src="rec._form50_bg_base64()"/>
+
+    <!-- ══ الحقول المحددة المواضع ══ -->
+    <t t-foreach="rec._form50_render_fields()" t-as="fld">
+      <span class="form50-field"
+            t-att-style="fld['style']"
+            t-att-title="'حقل ' + str(fld['n'])"
+            t-esc="fld['text']"/>
+    </t>
+
+  </div>
+</body>
+</html>
+</t>
+</t>
+</template>
+</odoo>
