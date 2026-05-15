@@ -23,7 +23,7 @@ created = 0
 updated = 0
 errors = 0
 
-with open('/tmp/gov_coa.csv', 'r', encoding='utf-8') as f:
+with open('/tmp/gov_coa.csv', 'r', encoding='utf-8-sig') as f:
     reader = csv.DictReader(f)
     for row in reader:
         code = row['code'].strip()
