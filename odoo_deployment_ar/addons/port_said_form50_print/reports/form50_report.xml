@@ -28,28 +28,5 @@
     <field name="binding_type">report</field>
   </record>
 
-  <!-- معاينة — نفس القالب بدون إلزام الطباعة النهائية -->
-  <record id="action_report_form50_preview" model="ir.actions.report">
-    <field name="name">معاينة استمارة 50 ع.ح</field>
-    <field name="model">port_said.daftar55</field>
-    <field name="report_type">qweb-pdf</field>
-    <field name="report_name">port_said_form50_print.report_form50_template</field>
-    <field name="report_file">port_said_form50_print.report_form50_template</field>
-    <field name="print_report_name">'معاينة-استمارة-50-' + (object.sequence_number or '')</field>
-    <field name="paperformat_id" ref="paperformat_form50_a4"/>
-    <field name="attachment_use">False</field>
-  </record>
-
-  <!-- طباعة نهائية رسمية -->
-  <record id="action_report_form50_final" model="ir.actions.report">
-    <field name="name">طباعة نهائية — استمارة 50 ع.ح</field>
-    <field name="model">port_said.daftar55</field>
-    <field name="report_type">qweb-pdf</field>
-    <field name="report_name">port_said_form50_print.report_form50_template</field>
-    <field name="report_file">port_said_form50_print.report_form50_template</field>
-    <field name="print_report_name">'نهائي-استمارة-50-' + (object.sequence_number or '')</field>
-    <field name="paperformat_id" ref="paperformat_form50_a4"/>
-    <field name="attachment_use">False</field>
-  </record>
 
 </odoo>
