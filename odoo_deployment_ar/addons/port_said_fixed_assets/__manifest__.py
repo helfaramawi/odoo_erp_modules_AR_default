@@ -2,7 +2,7 @@
     'name': 'الأصول الثابتة — محافظة بورسعيد',
     'summary': 'إدارة وإهلاك الأصول الثابتة الحكومية — EAS #10 — متكامل مع العهد والمالية',
     'version': '17.0.1.0.0',
-    'category': 'Accounting/Egypt Government',
+    'category': 'الديوان العام/المحاسبة',
     'author': 'Paradise Integrated Solutions',
     'license': 'LGPL-3',
     'depends': [

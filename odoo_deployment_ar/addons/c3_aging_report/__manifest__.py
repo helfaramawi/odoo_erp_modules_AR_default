@@ -1,7 +1,7 @@
 {
     'name': 'AR/AP Aging Report / تقرير أعمار المدينين والدائنين',
     'version': '17.0.1.0.0',
-    'category': 'Accounting',
+    'category': 'الديوان العام/المحاسبة',
     'summary': 'Detailed AR and AP aging report with configurable buckets',
     'author': 'ERP Migration Team',
     'depends': ['account'],

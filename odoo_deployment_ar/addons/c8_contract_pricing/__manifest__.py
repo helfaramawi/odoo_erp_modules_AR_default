@@ -1,7 +1,7 @@
 {
     'name': 'Contract Pricing Override / تجاوز تسعير العقود',
     'version': '17.0.1.0.0',
-    'category': 'Sales',
+    'category': 'الديوان العام/المشتريات',
     'summary': 'Contract-based price override on sale order lines with date validation',
     'author': 'ERP Migration Team',
     'depends': ['sale'],

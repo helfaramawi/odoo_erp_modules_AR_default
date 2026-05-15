@@ -1,7 +1,7 @@
 {
     'name': 'Credit Bureau API / واجهة برمجة مكتب الائتمان',
     'version': '17.0.1.0.0',
-    'category': 'Sales',
+    'category': 'الديوان العام/المشتريات',
     'summary': 'Credit check on sale orders via Credit Bureau API — Green/Amber/Red logic',
     'author': 'ERP Migration Team',
     'depends': ['sale'],

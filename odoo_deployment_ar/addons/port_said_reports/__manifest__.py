@@ -2,7 +2,7 @@
     'name': 'التقارير الحكومية — محافظة بورسعيد',
     'summary': 'مجموعة التقارير الحكومية الرسمية: مالية، محاسبية، إدارية',
     'version': '17.0.1.0.0',
-    'category': 'Accounting/Egypt Government',
+    'category': 'الديوان العام/التقارير',
     'author': 'Paradise Integrated Solutions',
     'license': 'LGPL-3',
     'depends': [

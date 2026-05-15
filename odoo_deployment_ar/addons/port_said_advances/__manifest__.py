@@ -2,7 +2,7 @@
     'name': 'السلف والضمانات البنكية — محافظة بورسعيد',
     'summary': 'FR-D-03: سلف مستديمة (62 ع.ح) + دفعات مقدمة + خطابات ضمان بنكية',
     'version': '17.0.2.0.0',
-    'category': 'Accounting/Egypt Government',
+    'category': 'الديوان العام/المحاسبة',
     'author': 'Paradise Integrated Solutions',
     'license': 'LGPL-3',
     'depends': [
