@@ -53,16 +53,8 @@ class IrActionsReport(models.Model):
     _inherit = 'ir.actions.report'
 
     def _render_qweb_pdf(self, report_ref, res_ids=None, data=None):
-        report = self._get_report(report_ref)
-        report_name = report.report_name or ''
-        is_port_said = any(report_name.startswith(p) for p in PORT_SAID_PREFIXES)
-        if is_port_said:
-            try:
-                result = self._render_with_weasyprint(report, res_ids, data)
-                if result:
-                    return result
-            except Exception as e:
-                _logger.error('WeasyPrint error for %s: %s', report_name, e)
+        # WeasyPrint disabled — use Odoo's built-in wkhtmltopdf renderer.
+        # QWeb templates already include Arabic RTL CSS via gov_page_style.
         return super()._render_qweb_pdf(report_ref, res_ids, data)
 
     def _render_with_weasyprint(self, report, res_ids, data):

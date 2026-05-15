@@ -67,13 +67,7 @@ class IrActionsReport(models.Model):
         report_name = report.report_name or ''
         is_port_said = any(report_name.startswith(p) for p in PORT_SAID_PREFIXES)
         is_form50 = 'form50' in report_name
-        if is_port_said and not is_form50:
-            try:
-                result = self._render_with_weasyprint(report, res_ids, data)
-                if result:
-                    return result
-            except Exception as e:
-                _logger.error("WeasyPrint error for %s: %s", report_name, e)
+        # WeasyPrint disabled — use Odoo's built-in wkhtmltopdf renderer.
         return super()._render_qweb_pdf(report_ref, res_ids, data)
 
     def _render_with_weasyprint(self, report, res_ids, data):
