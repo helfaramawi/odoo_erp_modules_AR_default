@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 import logging
-import os
 import re
 import subprocess
-import tempfile
 
 _logger = logging.getLogger(__name__)
 
 FORM50_PREFIXES = ['port_said_form50_print']
 
 from .amiri_font_css import AMIRI_CSS as FORM50_CSS
-from odoo import models, api, tools
+from odoo import models
 
 
 class IrActionsReportForm50(models.Model):
@@ -27,66 +25,37 @@ class IrActionsReportForm50(models.Model):
                     return result
             except Exception as e:
                 _logger.warning("Form50 WeasyPrint not available: %s", e)
-            try:
-                result = self._render_form50_wkhtmltopdf_utf8(report, res_ids, data)
-                if result:
-                    return result
-            except Exception as e:
-                _logger.warning("Form50 direct wkhtmltopdf failed: %s", e)
+            # Patch subprocess.Popen so Odoo's own wkhtmltopdf call gets --encoding utf-8
+            return self._render_form50_patched_wkhtmltopdf(report_ref, res_ids, data)
         return super()._render_qweb_pdf(report_ref, res_ids, data)
 
-    def _render_form50_wkhtmltopdf_utf8(self, report, res_ids, data):
-        """Call wkhtmltopdf directly with --encoding utf-8 to fix Arabic mojibake on Windows."""
-        from odoo.tools import config as odoo_config
+    def _render_form50_patched_wkhtmltopdf(self, report_ref, res_ids, data):
+        """
+        Run Odoo's standard wkhtmltopdf pipeline with --encoding utf-8 injected.
+        This fixes Arabic mojibake on Windows where wkhtmltopdf reads HTML as
+        Windows-1252 instead of UTF-8.
+        """
+        _orig_popen = subprocess.Popen
 
-        # Resolve binary — config key in odoo.conf is 'wkhtmltopdf_path'
-        wkhtmltopdf_bin = (
-            odoo_config.get('wkhtmltopdf_path')
-            or tools.find_in_path('wkhtmltopdf')
-            or r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
-        )
+        class _UTF8Popen(_orig_popen):
+            def __init__(self_inner, cmd, *a, **kw):
+                if (isinstance(cmd, (list, tuple)) and cmd
+                        and 'wkhtmltopdf' in str(cmd[0]).lower()
+                        and '--encoding' not in cmd):
+                    cmd = list(cmd)
+                    cmd.insert(1, 'utf-8')
+                    cmd.insert(1, '--encoding')
+                    _logger.info("Form50: injected --encoding utf-8 → %s", cmd[0])
+                _orig_popen.__init__(self_inner, cmd, *a, **kw)
 
-        html_content, _ = self._render_qweb_html(report.report_name, res_ids, data=data)
-        if isinstance(html_content, bytes):
-            html_content = html_content.decode('utf-8', errors='ignore')
-
-        html_fd, html_path = tempfile.mkstemp(suffix='.html')
-        pdf_path = html_path[:-5] + '.pdf'
+        subprocess.Popen = _UTF8Popen
         try:
-            with os.fdopen(html_fd, 'w', encoding='utf-8') as fh:
-                fh.write(html_content)
-
-            cmd = [
-                wkhtmltopdf_bin,
-                '--encoding', 'utf-8',
-                '--quiet',
-                '--disable-smart-shrinking',
-                html_path,
-                pdf_path,
-            ]
-            _logger.info("Form50 wkhtmltopdf: %s", cmd)
-            proc = subprocess.run(cmd, capture_output=True, timeout=120)
-            if proc.returncode != 0:
-                _logger.warning(
-                    "Form50 wkhtmltopdf stderr: %s",
-                    proc.stderr.decode('utf-8', errors='ignore'),
-                )
-
-            if os.path.exists(pdf_path) and os.path.getsize(pdf_path) > 0:
-                with open(pdf_path, 'rb') as fh:
-                    pdf_bytes = fh.read()
-                _logger.info("Form50 wkhtmltopdf OK: %d bytes", len(pdf_bytes))
-                return pdf_bytes, 'pdf'
+            _logger.info("Form50: rendering %s via patched wkhtmltopdf", report_ref)
+            return super(IrActionsReportForm50, self)._render_qweb_pdf(
+                report_ref, res_ids, data
+            )
         finally:
-            try:
-                os.unlink(html_path)
-            except Exception:
-                pass
-            try:
-                os.unlink(pdf_path)
-            except Exception:
-                pass
-        return None
+            subprocess.Popen = _orig_popen
 
     def _render_form50_weasyprint(self, report, res_ids, data):
         import weasyprint
