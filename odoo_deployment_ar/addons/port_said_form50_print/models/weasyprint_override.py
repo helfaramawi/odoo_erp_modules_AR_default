@@ -7,7 +7,7 @@ _logger = logging.getLogger(__name__)
 FORM50_PREFIXES = ['port_said_form50_print']
 
 from .amiri_font_css import AMIRI_CSS as FORM50_CSS
-from odoo import models
+from odoo import models, api
 
 
 class IrActionsReportForm50(models.Model):
@@ -23,8 +23,22 @@ class IrActionsReportForm50(models.Model):
                 if result:
                     return result
             except Exception as e:
-                _logger.error("Form50 WeasyPrint error for %s: %s", report_name, e)
+                _logger.warning("Form50 WeasyPrint not available (%s), falling back to wkhtmltopdf", e)
         return super()._render_qweb_pdf(report_ref, res_ids, data)
+
+    @api.model
+    def _build_wkhtmltopdf_args(
+            self, paperformat_id, landscape,
+            specific_paperformat_args=None, set_viewport_size=False):
+        """Force UTF-8 encoding so wkhtmltopdf reads Arabic HTML correctly on Windows."""
+        args = super()._build_wkhtmltopdf_args(
+            paperformat_id, landscape,
+            specific_paperformat_args=specific_paperformat_args,
+            set_viewport_size=set_viewport_size,
+        )
+        if '--encoding' not in args:
+            args = ['--encoding', 'utf-8'] + args
+        return args
 
     def _render_form50_weasyprint(self, report, res_ids, data):
         import weasyprint
