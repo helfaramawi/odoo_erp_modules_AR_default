@@ -20,7 +20,6 @@
             'port_said_form50_print/static/src/css/form50_print.css',
         ],
     },
-    'post_migrate': 'port_said_form50_print.models.form50_print.post_migrate',
     'installable': True,
     'application': False,
 }
