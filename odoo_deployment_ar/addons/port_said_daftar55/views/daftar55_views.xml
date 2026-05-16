@@ -165,5 +165,10 @@
 
   <!-- Root menus managed by port_said_menu module -->
   <!-- دفتر 55 menu item managed by port_said_menu -->
+  <menuitem id="menu_ps_daftar55"
+            name="دفتر 55 ع.ح"
+            parent="port_said_subsidiary_books.menu_subsidiary_root"
+            action="action_daftar55"
+            sequence="46"/>
 
 </odoo>
