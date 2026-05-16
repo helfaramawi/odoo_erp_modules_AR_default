@@ -2,7 +2,7 @@
 {
     'name': 'استمارة 50 ع.ح — طبقة الطباعة الرسمية',
     'summary': 'C-FM-03: Form 50 Official Print Layer — Port Said Governorate',
-    'version': '17.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'Accounting',
     'author': 'Paradise Integrated Solutions',
     'website': 'https://paradise.solutions.com',
