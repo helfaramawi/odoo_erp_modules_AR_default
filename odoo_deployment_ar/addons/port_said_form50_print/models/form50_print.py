@@ -402,25 +402,51 @@ class Form50PrintLayer(models.Model):
 def _build_amiri_css():
     """
     يقرأ ملفات خط Amiri ويُرجع CSS يحتوي على @font-face مُضمَّنة بترميز base64.
-    إذا لم تُوجد الملفات يُرجع سلسلة فارغة.
+    يدعم Windows وLinux. إذا لم تُوجد الملفات يُرجع سلسلة فارغة.
     """
-    import base64, os
-    candidates = [
-        '/usr/share/fonts/opentype/fonts-hosny-amiri',
-        '/usr/share/fonts/truetype/fonts-hosny-amiri',
-        '/usr/share/fonts/amiri',
-        '/usr/local/share/fonts/amiri',
-    ]
-    font_dir = next((d for d in candidates if os.path.isdir(d)), None)
-    if not font_dir:
-        # بحث عام عن الملف
-        import glob
-        results = glob.glob('/usr/share/fonts/**/Amiri-Regular.ttf', recursive=True)
-        if results:
-            font_dir = os.path.dirname(results[0])
-    if not font_dir:
+    import base64, os, sys, glob
+
+    # مسارات البحث — Windows أولاً ثم Linux
+    if sys.platform == 'win32':
+        win_fonts = os.path.join(os.environ.get('WINDIR', r'C:\Windows'), 'Fonts')
+        local_fonts = os.path.join(
+            os.environ.get('LOCALAPPDATA', ''),
+            r'Microsoft\Windows\Fonts'
+        )
+        candidates = [win_fonts, local_fonts]
+    else:
+        candidates = [
+            '/usr/share/fonts/opentype/fonts-hosny-amiri',
+            '/usr/share/fonts/truetype/fonts-hosny-amiri',
+            '/usr/share/fonts/amiri',
+            '/usr/local/share/fonts/amiri',
+        ]
+
+    # البحث المباشر في المجلدات
+    r_path = None
+    for d in candidates:
+        p = os.path.join(d, 'Amiri-Regular.ttf')
+        if os.path.exists(p):
+            r_path = p
+            break
+
+    # بحث احتياطي عام
+    if not r_path:
+        if sys.platform == 'win32':
+            patterns = [r'C:\Windows\Fonts\Amiri*.ttf']
+        else:
+            patterns = ['/usr/share/fonts/**/Amiri-Regular.ttf',
+                        '/usr/local/share/fonts/**/Amiri-Regular.ttf']
+        for pat in patterns:
+            results = glob.glob(pat, recursive=True)
+            if results:
+                r_path = results[0]
+                break
+
+    if not r_path:
         return ''
-    r_path = os.path.join(font_dir, 'Amiri-Regular.ttf')
+
+    font_dir = os.path.dirname(r_path)
     b_path = os.path.join(font_dir, 'Amiri-Bold.ttf')
     if not os.path.exists(r_path):
         return ''
