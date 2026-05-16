@@ -283,10 +283,7 @@ class Form50PrintLayer(models.Model):
 
     # ── CSS الخط العربي للتقارير ─────────────────────────────────────────
     def _get_amiri_font_css(self):
-        """يُرجع CSS يحتوي @font-face بترميز base64 لخط Amiri — مُخزَّن مؤقتاً."""
-        global _AMIRI_CSS_CACHE
-        if _AMIRI_CSS_CACHE is None:
-            _AMIRI_CSS_CACHE = _build_amiri_css()
+        """يُرجع CSS يحتوي @font-face بترميز base64 لخط Amiri مُضمَّن مسبقاً."""
         return _AMIRI_CSS_CACHE
 
     # ── helpers للـ QWeb ─────────────────────────────────────────────────
@@ -399,42 +396,7 @@ class Form50PrintLayer(models.Model):
         return out
 
 
-def _build_amiri_css():
-    """
-    يقرأ ملفات خط Amiri المُرفقة مع الوحدة ويُرجع CSS يحتوي على @font-face
-    مُضمَّنة بترميز base64. الخطوط مُضمَّنة في static/src/fonts/ فلا يلزم
-    تثبيتها على نظام التشغيل.
-    """
-    import base64, os
-    from odoo.modules import get_module_resource
-
-    r_path = get_module_resource('port_said_form50_print', 'static', 'src', 'fonts', 'Amiri-Regular.ttf')
-    b_path = get_module_resource('port_said_form50_print', 'static', 'src', 'fonts', 'Amiri-Bold.ttf')
-
-    if not r_path or not os.path.exists(r_path):
-        return ''
-    with open(r_path, 'rb') as f:
-        r_b64 = base64.b64encode(f.read()).decode()
-    b_b64 = r_b64  # fallback: use regular as bold if bold not found
-    if os.path.exists(b_path):
-        with open(b_path, 'rb') as f:
-            b_b64 = base64.b64encode(f.read()).decode()
-    return (
-        "@font-face{font-family:'Amiri';"
-        "src:url('data:font/truetype;base64," + r_b64 + "')format('truetype');"
-        "font-weight:normal;font-style:normal;}"
-        "@font-face{font-family:'Amiri';"
-        "src:url('data:font/truetype;base64," + b_b64 + "')format('truetype');"
-        "font-weight:bold;font-style:normal;}"
-        # تجاوز Lato الذي تُحقنه Odoo بخط Amiri
-        "@font-face{font-family:'Lato';"
-        "src:url('data:font/truetype;base64," + r_b64 + "')format('truetype');}"
-        "html,body{direction:rtl!important;}"
-        "html *{font-family:'Amiri',serif!important;}"
-    )
-
-
-_AMIRI_CSS_CACHE = None
+from .amiri_font_css import AMIRI_CSS as _AMIRI_CSS_CACHE
 
 
 def post_migrate(env):

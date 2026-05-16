@@ -1,333 +1,248 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-  <!-- ══════════════════════════════════════════════════════════════════════
-       استمارة 50 ع.ح — قالب مشترك للمعاينة والطباعة النهائية
-       ══════════════════════════════════════════════════════════════════════ -->
+  <!--
+    استمارة 50 ع.ح — قالب مشترك
+    • لا يستخدم web.external_layout تجنّباً لتشوّه النص العربي في ترويسة الشركة
+    • يُحقن خط Amiri كـ base64 مُدمج مسبقاً في كود Python → يضمن صحة التشفير
+      مع wkhtmltopdf على Windows وLinux
+    • يستخدم _form50_render_fields() لتراكب البيانات على الصفحة
+  -->
   <template id="report_form50_base">
-    <!-- حقن خط Amiri بترميز base64 مباشرةً — يعمل مع wkhtmltopdf وWeasyPrint -->
-    <t t-set="amiri_css" t-value="rec._get_amiri_font_css()"/>
-    <style t-if="amiri_css" type="text/css"><t t-out="amiri_css"/></style>
-
+    <t t-set="font_css" t-value="rec._get_amiri_font_css()"/>
+    <t t-set="logo_b64" t-value="rec.company_id.logo.decode('utf-8') if rec.company_id.logo and isinstance(rec.company_id.logo, bytes) else (rec.company_id.logo if rec.company_id.logo else '')"/>
     <t t-set="bp" t-value="rec._get_budget_parts()"/>
     <t t-set="gpounds" t-value="rec._get_amount_pounds_piasters(rec.amount_gross)[0]"/>
     <t t-set="gpiasters" t-value="rec._get_amount_pounds_piasters(rec.amount_gross)[1]"/>
     <t t-set="npounds" t-value="rec._get_amount_pounds_piasters(rec.amount_net)[0]"/>
     <t t-set="npiasters" t-value="rec._get_amount_pounds_piasters(rec.amount_net)[1]"/>
 
-    <div style="direction:rtl; font-family:'Amiri','Noto Naskh Arabic',Arial,sans-serif; font-size:10pt; color:#111; width:100%;">
+    <style type="text/css"><t t-out="font_css"/></style>
+
+    <div style="direction:rtl; font-family:'Amiri',serif; font-size:10pt; color:#111; width:100%; padding:4mm;">
 
       <!-- ══ رأس الاستمارة ══════════════════════════════════════════════ -->
-      <table style="width:100%; border-collapse:collapse; border-bottom:3px double #1F497D; margin-bottom:6px;">
+      <table style="width:100%; border-collapse:collapse; border-bottom:3px double #1F497D; margin-bottom:5px; padding-bottom:4px;">
         <tr>
-          <td style="width:15%; text-align:center; vertical-align:middle; padding:4px;">
-            <t t-if="rec.company_id.logo">
-              <img t-att-src="'data:image/png;base64,' + rec.company_id.logo.decode('utf-8')"
-                   style="max-height:60px; max-width:60px;" alt="شعار"/>
-            </t>
+          <td style="width:12%; text-align:center; vertical-align:middle;">
+            <img t-if="logo_b64"
+                 t-att-src="'data:image/png;base64,' + logo_b64"
+                 style="max-height:55px; max-width:55px;" alt=""/>
           </td>
-          <td style="text-align:center; vertical-align:middle; padding:4px;">
-            <div style="font-size:9pt; color:#666;">جمهورية مصر العربية — محافظة بورسعيد</div>
-            <div style="font-size:15pt; font-weight:bold; color:#1F497D;">الديوان العام لمحافظة بورسعيد</div>
-            <div style="font-size:13pt; font-weight:bold;">استمارة 50 ع.ح — أمر صرف وتسوية</div>
-            <div t-if="is_final" style="font-size:9pt; color:#c00; font-weight:bold;">نسخة نهائية رسمية — رقم الطباعة: <t t-esc="rec.final_print_count"/></div>
+          <td style="text-align:center; vertical-align:middle; padding:0 6px;">
+            <div style="font-size:8.5pt; color:#555;">جمهورية مصر العربية — محافظة بورسعيد</div>
+            <div style="font-size:14pt; font-weight:bold; color:#1F497D;">الديوان العام لمحافظة بورسعيد</div>
+            <div style="font-size:12pt; font-weight:bold;">استمارة 50 ع.ح — أمر صرف وتسوية</div>
+            <div t-if="is_final" style="font-size:8pt; color:#c00; font-weight:bold;">
+              نسخة نهائية رسمية — طبعة رقم <t t-esc="rec.final_print_count"/>
+            </div>
           </td>
-          <td style="width:18%; text-align:center; vertical-align:middle; padding:4px;">
-            <div style="border:2px solid #1F497D; border-radius:4px; padding:6px; background:#f0f4ff;">
-              <div style="font-size:8pt; color:#1F497D; font-weight:bold;">رقم المسلسل</div>
-              <div style="font-size:13pt; font-weight:bold;"><t t-esc="rec.sequence_number or ''"/></div>
-              <div style="font-size:8pt; color:#555; margin-top:2px;">السنة المالية</div>
-              <div style="font-size:10pt; font-weight:bold;"><t t-esc="rec.fiscal_year or ''"/></div>
+          <td style="width:17%; text-align:center; vertical-align:middle;">
+            <div style="border:2px solid #1F497D; border-radius:3px; padding:5px; background:#f0f4ff;">
+              <div style="font-size:7.5pt; color:#1F497D; font-weight:bold;">رقم المسلسل</div>
+              <div style="font-size:13pt; font-weight:bold;"><t t-esc="rec.sequence_number or '—'"/></div>
+              <div style="font-size:7.5pt; color:#555;">السنة المالية: <t t-esc="rec.fiscal_year or ''"/></div>
             </div>
           </td>
         </tr>
       </table>
 
       <!-- ══ قسم أ — بيانات الطلب ═══════════════════════════════════════ -->
-      <div style="border:1px solid #1F497D; margin-bottom:5px;">
-        <div style="background:#1F497D; color:white; padding:3px 8px; font-weight:bold; font-size:10pt;">
-          قسم أ — بيانات الطلب
-        </div>
-        <table style="width:100%; border-collapse:collapse; font-size:9.5pt; padding:4px;">
+      <div style="border:1px solid #1F497D; margin-bottom:4px;">
+        <div style="background:#1F497D; color:white; padding:2px 6px; font-weight:bold; font-size:9.5pt;">قسم أ — بيانات الطلب</div>
+        <table style="width:100%; border-collapse:collapse; font-size:9pt; padding:2px;">
           <tr>
-            <td style="width:18%; color:#444; padding:3px 6px; border-left:1px solid #ddd;">المصلحة:</td>
-            <td style="width:32%; padding:3px 6px; border-left:1px solid #ddd; border-bottom:1px solid #bbb;"><t t-esc="rec.department_name or ''"/></td>
-            <td style="width:18%; color:#444; padding:3px 6px; border-left:1px solid #ddd;">القسم / الإدارة:</td>
-            <td style="padding:3px 6px; border-bottom:1px solid #bbb;"><t t-esc="rec.division_name or ''"/></td>
+            <td style="width:18%; color:#444; padding:2px 5px; border-left:1px solid #ddd;">المصلحة:</td>
+            <td style="width:30%; padding:2px 5px; border-left:1px solid #ddd; border-bottom:1px solid #eee;"><t t-esc="rec.department_name or ''"/></td>
+            <td style="width:18%; color:#444; padding:2px 5px; border-left:1px solid #ddd;">القسم / الإدارة:</td>
+            <td style="padding:2px 5px; border-bottom:1px solid #eee;"><t t-esc="rec.division_name or ''"/></td>
           </tr>
           <tr>
-            <td style="color:#444; padding:3px 6px; border-left:1px solid #ddd;">تاريخ ورود الاستمارة:</td>
-            <td style="padding:3px 6px; border-left:1px solid #ddd; border-bottom:1px solid #bbb; color:#0033cc;"><t t-esc="rec.date_received or ''"/></td>
-            <td style="color:#444; padding:3px 6px; border-left:1px solid #ddd;">رقم مسلسل دفتر 55:</td>
-            <td style="padding:3px 6px; border-bottom:1px solid #bbb; font-weight:bold;"><t t-esc="rec.sequence_number or ''"/></td>
+            <td style="color:#444; padding:2px 5px; border-left:1px solid #ddd;">تاريخ ورود الاستمارة:</td>
+            <td style="padding:2px 5px; border-left:1px solid #ddd; border-bottom:1px solid #eee; color:#0033cc;"><t t-esc="rec.date_received or ''"/></td>
+            <td style="color:#444; padding:2px 5px; border-left:1px solid #ddd;">رقم الارتباط:</td>
+            <td style="padding:2px 5px; border-bottom:1px solid #eee;"><t t-esc="rec.commitment_ref or ''"/></td>
           </tr>
           <tr>
-            <td style="color:#444; padding:3px 6px; border-left:1px solid #ddd;">المبلغ المستحق إلى:</td>
-            <td colspan="3" style="padding:3px 6px; border-bottom:1px solid #bbb; font-weight:bold;"><t t-esc="rec.vendor_id.name or ''"/></td>
+            <td style="color:#444; padding:2px 5px; border-left:1px solid #ddd;">المبلغ المستحق إلى:</td>
+            <td colspan="3" style="padding:2px 5px; border-bottom:1px solid #eee; font-weight:bold;"><t t-esc="rec.vendor_id.name if rec.vendor_id else ''"/></td>
           </tr>
           <tr>
-            <td style="color:#444; padding:3px 6px; border-left:1px solid #ddd;">بموجب (رقم الارتباط):</td>
-            <td style="padding:3px 6px; border-left:1px solid #ddd; border-bottom:1px solid #bbb;"><t t-esc="rec.commitment_ref or ''"/></td>
-            <td style="color:#444; padding:3px 6px; border-left:1px solid #ddd;">نوع العملية:</td>
-            <td style="padding:3px 6px; border-bottom:1px solid #bbb;"><t t-esc="dict(rec._fields['transaction_type'].selection).get(rec.transaction_type, '')"/></td>
-          </tr>
-          <tr>
-            <td style="color:#444; padding:3px 6px; border-left:1px solid #ddd;">الكاتب المنوط:</td>
-            <td style="padding:3px 6px; border-left:1px solid #ddd; border-bottom:1px solid #bbb;"><t t-esc="rec.writer_assigned or ''"/></td>
-            <td style="color:#444; padding:3px 6px; border-left:1px solid #ddd;">تقييد في سجل "ز":</td>
-            <td style="padding:3px 6px; border-bottom:1px solid #bbb;"><t t-esc="rec.register_z_ref or ''"/></td>
-          </tr>
-          <tr>
-            <td style="color:#444; padding:3px 6px; border-left:1px solid #ddd;">عدد المرفقات الفعلية:</td>
-            <td style="padding:3px 6px; border-left:1px solid #ddd;"><t t-esc="rec.real_attachment_count or '0'"/></td>
-            <td style="color:#444; padding:3px 6px; border-left:1px solid #ddd;">رقم القومي / الحساب:</td>
-            <td style="padding:3px 6px;"><t t-esc="rec.national_id or ''"/></td>
+            <td style="color:#444; padding:2px 5px; border-left:1px solid #ddd;">الكاتب المنوط:</td>
+            <td style="padding:2px 5px; border-left:1px solid #ddd;"><t t-esc="rec.writer_assigned or ''"/></td>
+            <td style="color:#444; padding:2px 5px; border-left:1px solid #ddd;">تقييد سجل "ز":</td>
+            <td style="padding:2px 5px;"><t t-esc="rec.register_z_ref or ''"/></td>
           </tr>
         </table>
       </div>
 
-      <!-- ══ الموازنة ══════════════════════════════════════════════════════ -->
-      <div style="border:1px solid #375623; margin-bottom:5px;">
-        <div style="background:#375623; color:white; padding:3px 8px; font-weight:bold; font-size:10pt;">
-          بيانات الموازنة والتصنيف
-        </div>
-        <table style="width:100%; border-collapse:collapse; font-size:9.5pt;">
-          <tr>
-            <td style="width:15%; color:#444; padding:3px 6px; border-left:1px solid #ddd; border-bottom:1px solid #ddd;">بند</td>
-            <td style="width:20%; padding:3px 6px; border-left:1px solid #ddd; border-bottom:1px solid #ddd; font-weight:bold;"><t t-esc="bp.get('band','')"/></td>
-            <td style="width:15%; color:#444; padding:3px 6px; border-left:1px solid #ddd; border-bottom:1px solid #ddd;">فصل</td>
-            <td style="width:20%; padding:3px 6px; border-left:1px solid #ddd; border-bottom:1px solid #ddd; font-weight:bold;"><t t-esc="bp.get('fasle','')"/></td>
-            <td style="width:15%; color:#444; padding:3px 6px; border-left:1px solid #ddd; border-bottom:1px solid #ddd;">باب</td>
-            <td style="padding:3px 6px; border-bottom:1px solid #ddd; font-weight:bold;"><t t-esc="bp.get('bab','')"/></td>
-          </tr>
-          <tr>
-            <td style="color:#444; padding:3px 6px; border-left:1px solid #ddd;">فرع / نوع</td>
-            <td style="padding:3px 6px; border-left:1px solid #ddd; font-weight:bold;"><t t-esc="bp.get('noa','')"/></td>
-            <td colspan="4" style="color:#444; padding:3px 6px;">
-              بند الميزانية الكامل: <strong><t t-esc="rec.budget_line or ''"/></strong>
-            </td>
-          </tr>
-        </table>
-      </div>
-
-      <!-- ══ بيانات الفواتير ══════════════════════════════════════════════ -->
-      <div style="border:1px solid #C55A11; margin-bottom:5px;">
-        <div style="background:#C55A11; color:white; padding:3px 8px; font-weight:bold; font-size:10pt;">
-          بيانات الفواتير
-        </div>
+      <!-- ══ الموازنة ════════════════════════════════════════════════════ -->
+      <div style="border:1px solid #375623; margin-bottom:4px;">
+        <div style="background:#375623; color:white; padding:2px 6px; font-weight:bold; font-size:9.5pt;">بيانات الموازنة</div>
         <table style="width:100%; border-collapse:collapse; font-size:9pt;">
+          <tr>
+            <td style="width:12%; color:#444; padding:2px 5px; border-left:1px solid #ddd;">بند:</td>
+            <td style="width:20%; font-weight:bold; padding:2px 5px; border-left:1px solid #ddd;"><t t-esc="bp.get('band','')"/></td>
+            <td style="width:12%; color:#444; padding:2px 5px; border-left:1px solid #ddd;">فصل:</td>
+            <td style="width:20%; font-weight:bold; padding:2px 5px; border-left:1px solid #ddd;"><t t-esc="bp.get('fasle','')"/></td>
+            <td style="width:12%; color:#444; padding:2px 5px; border-left:1px solid #ddd;">باب:</td>
+            <td style="font-weight:bold; padding:2px 5px;"><t t-esc="bp.get('bab','')"/></td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- ══ بيانات الفواتير ════════════════════════════════════════════ -->
+      <div style="border:1px solid #C55A11; margin-bottom:4px;">
+        <div style="background:#C55A11; color:white; padding:2px 6px; font-weight:bold; font-size:9.5pt;">بيانات الفواتير</div>
+        <table style="width:100%; border-collapse:collapse; font-size:8.5pt;">
           <thead>
             <tr style="background:#FDE9D9;">
-              <th style="padding:3px 6px; border:1px solid #ddd; width:5%;">#</th>
-              <th style="padding:3px 6px; border:1px solid #ddd; width:25%;">رقم الفاتورة</th>
-              <th style="padding:3px 6px; border:1px solid #ddd; width:20%;">التاريخ</th>
-              <th style="padding:3px 6px; border:1px solid #ddd;">البيان</th>
-              <th style="padding:3px 6px; border:1px solid #ddd; width:10%;">جنيه</th>
-              <th style="padding:3px 6px; border:1px solid #ddd; width:8%;">قرش</th>
+              <th style="padding:2px 5px; border:1px solid #ddd; width:5%;">#</th>
+              <th style="padding:2px 5px; border:1px solid #ddd;">رقم الفاتورة</th>
+              <th style="padding:2px 5px; border:1px solid #ddd; width:18%;">التاريخ</th>
+              <th style="padding:2px 5px; border:1px solid #ddd;">البيان</th>
+              <th style="padding:2px 5px; border:1px solid #ddd; width:10%;">جنيه</th>
+              <th style="padding:2px 5px; border:1px solid #ddd; width:8%;">قرش</th>
             </tr>
           </thead>
           <tbody>
             <t t-foreach="rec.invoice_line_ids" t-as="line">
               <tr>
-                <td style="padding:3px 6px; border:1px solid #ddd; text-align:center;"><t t-esc="line_index + 1"/></td>
-                <td style="padding:3px 6px; border:1px solid #ddd;"><t t-esc="line.invoice_ref or ''"/></td>
-                <td style="padding:3px 6px; border:1px solid #ddd; color:#0033cc;"><t t-esc="line.invoice_date or ''"/></td>
-                <td style="padding:3px 6px; border:1px solid #ddd;"><t t-esc="line.description or ''"/></td>
-                <td style="padding:3px 6px; border:1px solid #ddd; text-align:center; font-weight:bold;"><t t-esc="line.amount_pounds"/></td>
-                <td style="padding:3px 6px; border:1px solid #ddd; text-align:center;"><t t-esc="line.amount_piasters"/></td>
+                <td style="padding:2px 5px; border:1px solid #ddd; text-align:center;"><t t-esc="line_index + 1"/></td>
+                <td style="padding:2px 5px; border:1px solid #ddd;"><t t-esc="line.invoice_ref or ''"/></td>
+                <td style="padding:2px 5px; border:1px solid #ddd; color:#0033cc;"><t t-esc="line.invoice_date or ''"/></td>
+                <td style="padding:2px 5px; border:1px solid #ddd;"><t t-esc="line.description or ''"/></td>
+                <td style="padding:2px 5px; border:1px solid #ddd; text-align:center; font-weight:bold;"><t t-esc="line.amount_pounds"/></td>
+                <td style="padding:2px 5px; border:1px solid #ddd; text-align:center;"><t t-esc="line.amount_piasters"/></td>
               </tr>
             </t>
             <t t-if="not rec.invoice_line_ids">
-              <tr>
-                <td colspan="6" style="padding:6px; text-align:center; color:#888;">لا توجد سطور فواتير</td>
-              </tr>
+              <tr><td colspan="6" style="padding:4px; text-align:center; color:#888;">—</td></tr>
             </t>
           </tbody>
           <tfoot>
             <tr style="background:#FFF2CC; font-weight:bold;">
-              <td colspan="4" style="padding:4px 6px; border:1px solid #ddd; text-align:left;">الجملة</td>
-              <td style="padding:4px 6px; border:1px solid #ddd; text-align:center; font-size:11pt;"><t t-esc="gpounds"/></td>
-              <td style="padding:4px 6px; border:1px solid #ddd; text-align:center;"><t t-esc="gpiasters"/></td>
+              <td colspan="4" style="padding:3px 5px; border:1px solid #ddd;">الجملة</td>
+              <td style="padding:3px 5px; border:1px solid #ddd; text-align:center;"><t t-esc="gpounds"/></td>
+              <td style="padding:3px 5px; border:1px solid #ddd; text-align:center;"><t t-esc="gpiasters"/></td>
             </tr>
           </tfoot>
         </table>
       </div>
 
-      <!-- ══ الاستقطاعات ════════════════════════════════════════════════ -->
-      <div style="border:1px solid #1F497D; margin-bottom:5px;">
-        <div style="background:#1F497D; color:white; padding:3px 8px; font-weight:bold; font-size:10pt;">
-          الاستقطاعات والصافي
-        </div>
-        <table style="width:100%; border-collapse:collapse; font-size:9pt;">
+      <!-- ══ الاستقطاعات والصافي ════════════════════════════════════════ -->
+      <div style="border:1px solid #1F497D; margin-bottom:4px;">
+        <div style="background:#1F497D; color:white; padding:2px 6px; font-weight:bold; font-size:9.5pt;">الاستقطاعات والصافي</div>
+        <table style="width:100%; border-collapse:collapse; font-size:8.5pt;">
           <thead>
             <tr style="background:#D9E1F2;">
-              <th style="padding:3px 6px; border:1px solid #aaa;">إجمالي الأصل</th>
-              <th style="padding:3px 6px; border:1px solid #aaa;">دمغة عادية 1%</th>
-              <th style="padding:3px 6px; border:1px solid #aaa;">دمغة إضافية 3×</th>
-              <th style="padding:3px 6px; border:1px solid #aaa;">دمغة نسبية 0.008</th>
-              <th style="padding:3px 6px; border:1px solid #aaa;">ضريبة أرباح 3%</th>
-              <th style="padding:3px 6px; border:1px solid #aaa; background:#FFF2CC;">إجمالي الخصم</th>
-              <th style="padding:3px 6px; border:1px solid #aaa; background:#E2EFDA; font-weight:bold;">صافي المبلغ</th>
+              <th style="padding:2px 4px; border:1px solid #aaa;">إجمالي الأصل</th>
+              <th style="padding:2px 4px; border:1px solid #aaa;">دمغة عادية 1%</th>
+              <th style="padding:2px 4px; border:1px solid #aaa;">دمغة إضافية</th>
+              <th style="padding:2px 4px; border:1px solid #aaa;">دمغة نسبية</th>
+              <th style="padding:2px 4px; border:1px solid #aaa;">ضريبة أرباح 3%</th>
+              <th style="padding:2px 4px; border:1px solid #aaa; background:#FFF2CC;">إجمالي الخصم</th>
+              <th style="padding:2px 4px; border:1px solid #aaa; background:#E2EFDA; font-weight:bold;">صافي المبلغ</th>
             </tr>
           </thead>
           <tbody>
             <tr style="text-align:center;">
-              <td style="border:1px solid #aaa; padding:5px; font-weight:bold;"><t t-esc="rec.amount_gross"/></td>
-              <td style="border:1px solid #aaa; padding:5px;"><t t-esc="rec.deductions_stamp_normal"/></td>
-              <td style="border:1px solid #aaa; padding:5px;"><t t-esc="rec.deductions_stamp_extra"/></td>
-              <td style="border:1px solid #aaa; padding:5px;"><t t-esc="rec.deductions_stamp_proportional"/></td>
-              <td style="border:1px solid #aaa; padding:5px;"><t t-esc="rec.deductions_commercial_tax"/></td>
-              <td style="border:1px solid #aaa; padding:5px; background:#FFF2CC; font-weight:bold;"><t t-esc="rec.total_deductions"/></td>
-              <td style="border:1px solid #aaa; padding:5px; background:#E2EFDA; font-weight:bold; font-size:12pt;">
-                <t t-esc="rec.amount_net"/>
-              </td>
+              <td style="border:1px solid #aaa; padding:4px; font-weight:bold;"><t t-esc="rec.amount_gross"/></td>
+              <td style="border:1px solid #aaa; padding:4px;"><t t-esc="rec.deductions_stamp_normal"/></td>
+              <td style="border:1px solid #aaa; padding:4px;"><t t-esc="rec.deductions_stamp_extra"/></td>
+              <td style="border:1px solid #aaa; padding:4px;"><t t-esc="rec.deductions_stamp_proportional"/></td>
+              <td style="border:1px solid #aaa; padding:4px;"><t t-esc="rec.deductions_commercial_tax"/></td>
+              <td style="border:1px solid #aaa; padding:4px; background:#FFF2CC; font-weight:bold;"><t t-esc="rec.total_deductions"/></td>
+              <td style="border:1px solid #aaa; padding:4px; background:#E2EFDA; font-weight:bold; font-size:11pt;"><t t-esc="rec.amount_net"/></td>
             </tr>
           </tbody>
         </table>
-        <!-- التفقيط -->
-        <div style="padding:5px 8px; background:#FFFBE6; border-top:1px solid #E0C84A; font-size:10pt;">
-          <strong>الصافي بالتفقيط: </strong>
-          <span style="font-weight:bold; font-size:11pt;"><t t-esc="rec.amount_words or ''"/></span>
+        <div style="padding:4px 6px; background:#FFFBE6; border-top:1px solid #E0C84A; font-size:9.5pt;">
+          <strong>الصافي بالتفقيط: </strong><t t-esc="rec.amount_words or ''"/>
         </div>
       </div>
 
-      <!-- ══ بيانات البنك وطريقة الصرف ═══════════════════════════════════ -->
-      <div style="border:1px solid #666; margin-bottom:5px;">
-        <div style="background:#555; color:white; padding:3px 8px; font-weight:bold; font-size:10pt;">
-          بيانات البنك وطريقة الصرف
-        </div>
-        <table style="width:100%; border-collapse:collapse; font-size:9.5pt;">
+      <!-- ══ البنك وطريقة الصرف ════════════════════════════════════════ -->
+      <div style="border:1px solid #666; margin-bottom:4px;">
+        <div style="background:#555; color:white; padding:2px 6px; font-weight:bold; font-size:9.5pt;">بيانات البنك وطريقة الصرف</div>
+        <table style="width:100%; border-collapse:collapse; font-size:9pt;">
           <tr>
-            <td style="width:18%; color:#444; padding:3px 6px; border-left:1px solid #ddd; border-bottom:1px solid #ddd;">البنك:</td>
-            <td style="width:32%; padding:3px 6px; border-left:1px solid #ddd; border-bottom:1px solid #ddd;"><t t-esc="rec.bank_name or ''"/></td>
-            <td style="width:18%; color:#444; padding:3px 6px; border-left:1px solid #ddd; border-bottom:1px solid #ddd;">الفرع:</td>
-            <td style="padding:3px 6px; border-bottom:1px solid #ddd;"><t t-esc="rec.bank_branch or ''"/></td>
+            <td style="width:18%; color:#444; padding:2px 5px; border-left:1px solid #ddd;">البنك:</td>
+            <td style="width:30%; padding:2px 5px; border-left:1px solid #ddd;"><t t-esc="rec.bank_name or ''"/></td>
+            <td style="width:18%; color:#444; padding:2px 5px; border-left:1px solid #ddd;">رقم الحساب:</td>
+            <td style="padding:2px 5px;"><t t-esc="rec.bank_account_no or ''"/></td>
           </tr>
           <tr>
-            <td style="color:#444; padding:3px 6px; border-left:1px solid #ddd; border-bottom:1px solid #ddd;">رقم الحساب:</td>
-            <td style="padding:3px 6px; border-left:1px solid #ddd; border-bottom:1px solid #ddd;"><t t-esc="rec.bank_account_no or ''"/></td>
-            <td style="color:#444; padding:3px 6px; border-left:1px solid #ddd; border-bottom:1px solid #ddd;">IBAN:</td>
-            <td style="padding:3px 6px; border-bottom:1px solid #ddd;"><t t-esc="rec.iban or ''"/></td>
-          </tr>
-          <tr>
-            <td style="color:#444; padding:3px 6px; border-left:1px solid #ddd;">طريقة الصرف:</td>
-            <td style="padding:3px 6px; border-left:1px solid #ddd;"><t t-esc="dict(rec._fields['payment_method'].selection).get(rec.payment_method, '')"/></td>
-            <td style="color:#444; padding:3px 6px; border-left:1px solid #ddd;">رقم أمر الدفع:</td>
-            <td style="padding:3px 6px;"><t t-esc="rec.payment_order_ref or ''"/></td>
+            <td style="color:#444; padding:2px 5px; border-left:1px solid #ddd;">طريقة الصرف:</td>
+            <td style="padding:2px 5px; border-left:1px solid #ddd;"><t t-esc="rec.payment_method or ''"/></td>
+            <td style="color:#444; padding:2px 5px; border-left:1px solid #ddd;">رقم أمر الدفع:</td>
+            <td style="padding:2px 5px;"><t t-esc="rec.payment_order_ref or ''"/></td>
           </tr>
         </table>
       </div>
 
-      <!-- ══ قسم ج — التوقيعات ══════════════════════════════════════════ -->
-      <div style="border:1px solid #375623; margin-bottom:5px;">
-        <div style="background:#375623; color:white; padding:3px 8px; font-weight:bold; font-size:10pt;">
-          قسم ج — المراجعة والتوقيعات
-        </div>
-        <table style="width:100%; font-size:9pt; margin-top:4px;">
+      <!-- ══ التوقيعات ══════════════════════════════════════════════════ -->
+      <div style="border:1px solid #375623; margin-bottom:4px;">
+        <div style="background:#375623; color:white; padding:2px 6px; font-weight:bold; font-size:9.5pt;">قسم ج — التوقيعات</div>
+        <table style="width:100%; font-size:8.5pt; margin:3px 0;">
           <tr>
-            <td style="width:25%; text-align:center; padding:6px; border-left:1px solid #ddd;">
-              <div style="border-bottom:1px solid #555; min-height:24px; padding-bottom:2px;">
-                <t t-esc="rec.auditor_id.name if rec.auditor_id else ''"/>
-              </div>
+            <td style="width:25%; text-align:center; padding:4px; border-left:1px solid #ddd;">
+              <div style="border-bottom:1px solid #555; min-height:20px;"><t t-esc="rec.auditor_id.name if rec.auditor_id else ''"/></div>
               <small style="color:#444;">مراقب الحسابات</small>
             </td>
-            <td style="width:25%; text-align:center; padding:6px; border-left:1px solid #ddd;">
-              <div style="border-bottom:1px solid #555; min-height:24px; padding-bottom:2px;">
-                <t t-esc="rec.accounts_head_id.name if rec.accounts_head_id else ''"/>
-              </div>
+            <td style="width:25%; text-align:center; padding:4px; border-left:1px solid #ddd;">
+              <div style="border-bottom:1px solid #555; min-height:20px;"><t t-esc="rec.accounts_head_id.name if rec.accounts_head_id else ''"/></div>
               <small style="color:#444;">رئيس الحسابات</small>
             </td>
-            <td style="width:25%; text-align:center; padding:6px; border-left:1px solid #ddd;">
-              <div style="border-bottom:1px solid #555; min-height:24px; padding-bottom:2px;">
-                <t t-esc="rec.section_head_id.name if rec.section_head_id else ''"/>
-              </div>
+            <td style="width:25%; text-align:center; padding:4px; border-left:1px solid #ddd;">
+              <div style="border-bottom:1px solid #555; min-height:20px;"><t t-esc="rec.section_head_id.name if rec.section_head_id else ''"/></div>
               <small style="color:#444;">رئيس المصلحة</small>
             </td>
-            <td style="width:25%; text-align:center; padding:6px;">
-              <div style="border-bottom:1px solid #555; min-height:24px; padding-bottom:2px;">
-                <span t-if="rec.reviewer_id" style="color:#0033cc;"><t t-esc="rec.reviewer_id.name"/></span>
-              </div>
-              <small style="color:#444;">المراجع</small>
-              <br/>
-              <small style="color:#888;">
-                ختم روجع:
-                <span style="color:#0033cc;"><t t-esc="rec.reviewer_stamp_date or '___________'"/></span>
-              </small>
+            <td style="width:25%; text-align:center; padding:4px;">
+              <div style="border-bottom:1px solid #555; min-height:20px;"><t t-esc="rec.reviewer_id.name if rec.reviewer_id else ''"/></div>
+              <small style="color:#444;">المراجع — <span style="color:#0033cc;"><t t-esc="rec.reviewer_stamp_date or ''"/></span></small>
             </td>
           </tr>
         </table>
       </div>
 
-      <!-- ══ قسم د — دفتر 224 ═══════════════════════════════════════════ -->
-      <div style="border:1px solid #C55A11; margin-bottom:5px;">
-        <div style="background:#C55A11; color:white; padding:3px 8px; font-weight:bold; font-size:10pt;">
-          قسم د — قيود دفتر 224 ع.ح
-        </div>
-        <table style="width:100%; border-collapse:collapse; font-size:9.5pt;">
-          <tr>
-            <td style="width:40%; color:#444; padding:3px 6px;">رقم مسلسل دفتر 224:</td>
-            <td style="font-weight:bold; padding:3px 6px; border-bottom:1px solid #bbb;">
-              <t t-esc="rec.daftar224_sequence or '___________'"/>
-            </td>
-          </tr>
-          <tr>
-            <td style="color:#444; padding:3px 6px;">رقم القيد في دفتر 224:</td>
-            <td style="padding:3px 6px; border-bottom:1px solid #bbb;">
-              <t t-esc="rec.daftar224_sequence or ''"/>
-            </td>
-          </tr>
-          <tr>
-            <td style="color:#444; padding:3px 6px;">موظف الشطب:</td>
-            <td style="padding:3px 6px;"><t t-esc="rec.crossout_signed_by or ''"/></td>
-          </tr>
-        </table>
-      </div>
+      <!-- ══ دفتر 224 والتذييل ══════════════════════════════════════════ -->
+      <table style="width:100%; font-size:8.5pt; border-top:1px solid #ddd; margin-top:3px; padding-top:3px;">
+        <tr>
+          <td style="color:#444;">رقم مسلسل دفتر 224: <strong><t t-esc="rec.daftar224_sequence or '—'"/></strong></td>
+          <td style="color:#444; text-align:center;">موظف الشطب: <t t-esc="rec.crossout_signed_by or ''"/></td>
+          <td style="color:#888; text-align:left; font-size:7.5pt;">
+            الإصدار: <t t-esc="rec.official_template_version or ''"/>
+            <t t-if="is_final"> | طُبعت: <t t-esc="rec.last_printed_at or ''"/></t>
+          </td>
+        </tr>
+      </table>
 
-      <!-- ══ تذييل الاستمارة ══════════════════════════════════════════════ -->
-      <div style="margin-top:8px; text-align:center; font-size:8.5pt; color:#666; border-top:1px solid #ddd; padding-top:4px;">
-        <span>رقم مسلسل: <strong><t t-esc="rec.sequence_number or ''"/></strong></span> |
-        <span>السنة المالية: <t t-esc="rec.fiscal_year or ''"/></span> |
-        <span>الإصدار: <t t-esc="rec.official_template_version or ''"/></span>
-        <t t-if="is_final">
-          <span> | طُبعت في: <t t-esc="rec.last_printed_at or ''"/> — بواسطة: <t t-esc="rec.last_printed_by.name if rec.last_printed_by else ''"/></span>
-          <t t-if="rec.reprint_reason">
-            <div style="color:#c00; margin-top:3px;">سبب إعادة الطباعة: <t t-esc="rec.reprint_reason"/></div>
-          </t>
-        </t>
-      </div>
     </div>
   </template>
 
 
-  <!-- ══════════════════════════════════════════════════════════════════════
-       قالب المعاينة
-       ══════════════════════════════════════════════════════════════════════ -->
+  <!-- ══ قالب المعاينة ════════════════════════════════════════════════ -->
   <template id="report_form50_template">
     <t t-call="web.html_container">
       <t t-foreach="docs" t-as="rec">
-        <t t-call="web.external_layout">
-          <div class="page">
-            <t t-set="is_final" t-value="False"/>
-            <t t-call="port_said_form50_print.report_form50_base"/>
-          </div>
-        </t>
+        <div class="page">
+          <t t-set="is_final" t-value="False"/>
+          <t t-call="port_said_form50_print.report_form50_base"/>
+        </div>
       </t>
     </t>
   </template>
 
 
-  <!-- ══════════════════════════════════════════════════════════════════════
-       قالب الطباعة النهائية (مع إشارة "نهائي رسمي")
-       ══════════════════════════════════════════════════════════════════════ -->
+  <!-- ══ قالب الطباعة النهائية ════════════════════════════════════════ -->
   <template id="report_form50_final_template">
     <t t-call="web.html_container">
       <t t-foreach="docs" t-as="rec">
-        <t t-call="web.external_layout">
-          <div class="page">
-            <t t-set="is_final" t-value="True"/>
-            <t t-call="port_said_form50_print.report_form50_base"/>
-          </div>
-        </t>
+        <div class="page">
+          <t t-set="is_final" t-value="True"/>
+          <t t-call="port_said_form50_print.report_form50_base"/>
+        </div>
       </t>
     </t>
   </template>

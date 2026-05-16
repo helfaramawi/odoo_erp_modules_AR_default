@@ -1,44 +1,12 @@
 # -*- coding: utf-8 -*-
 import logging
 import re
-import base64
 
 _logger = logging.getLogger(__name__)
 
 FORM50_PREFIXES = ['port_said_form50_print']
 
-
-def _build_form50_css():
-    import os
-    from odoo.modules import get_module_resource
-    try:
-        r_path = get_module_resource('port_said_form50_print', 'static', 'src', 'fonts', 'Amiri-Regular.ttf')
-        b_path = get_module_resource('port_said_form50_print', 'static', 'src', 'fonts', 'Amiri-Bold.ttf')
-        with open(r_path, 'rb') as f:
-            r = base64.b64encode(f.read()).decode()
-        with open(b_path, 'rb') as f:
-            b = base64.b64encode(f.read()).decode()
-        return (
-            "@font-face{font-family:'Amiri';"
-            "src:url('data:font/truetype;base64," + r + "');font-weight:normal;font-style:normal;}"
-            "@font-face{font-family:'Amiri';"
-            "src:url('data:font/truetype;base64," + b + "');font-weight:bold;font-style:normal;}"
-            "@font-face{font-family:'Lato';"
-            "src:url('data:font/truetype;base64," + r + "');}"
-            "html,body,div,table,tr,td,th,p,span,h1,h2,h3,h4,h5,li,a{"
-            "font-family:'Amiri',serif!important;"
-            "direction:rtl!important;"
-            "unicode-bidi:embed!important;}"
-            "@page{size:A4;margin:8mm 10mm;}"
-        )
-    except Exception as e:
-        _logger.error("Form50 font load error: %s", e)
-        return "body{font-family:serif;direction:rtl;}"
-
-
-FORM50_CSS = _build_form50_css()
-
-
+from .amiri_font_css import AMIRI_CSS as FORM50_CSS
 from odoo import models
 
 
