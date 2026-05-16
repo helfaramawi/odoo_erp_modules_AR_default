@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 import logging
+import os
 import re
+import shutil
 import subprocess
+import tempfile
 
 _logger = logging.getLogger(__name__)
+_logger.info("=== port_said_form50_print.weasyprint_override imported ===")
 
 FORM50_PREFIXES = ['port_said_form50_print']
 
@@ -14,48 +18,115 @@ from odoo import models
 class IrActionsReportForm50(models.Model):
     _inherit = 'ir.actions.report'
 
+    # ------------------------------------------------------------------ #
+    #  Override both _render_qweb_pdf (Odoo ≤17) and _render (Odoo 18+)  #
+    # ------------------------------------------------------------------ #
+
     def _render_qweb_pdf(self, report_ref, res_ids=None, data=None):
-        report = self._get_report(report_ref)
-        report_name = report.report_name or ''
-        is_form50 = any(report_name.startswith(p) for p in FORM50_PREFIXES)
-        if is_form50:
-            try:
-                result = self._render_form50_weasyprint(report, res_ids, data)
-                if result:
-                    return result
-            except Exception as e:
-                _logger.warning("Form50 WeasyPrint not available: %s", e)
-            # Patch subprocess.Popen so Odoo's own wkhtmltopdf call gets --encoding utf-8
-            return self._render_form50_patched_wkhtmltopdf(report_ref, res_ids, data)
-        return super()._render_qweb_pdf(report_ref, res_ids, data)
+        _logger.info("Form50 _render_qweb_pdf called for %s", report_ref)
+        return self._form50_dispatch(report_ref, res_ids, data,
+                                     super_fn=lambda: super(IrActionsReportForm50, self)
+                                     ._render_qweb_pdf(report_ref, res_ids, data))
 
-    def _render_form50_patched_wkhtmltopdf(self, report_ref, res_ids, data):
-        """
-        Run Odoo's standard wkhtmltopdf pipeline with --encoding utf-8 injected.
-        This fixes Arabic mojibake on Windows where wkhtmltopdf reads HTML as
-        Windows-1252 instead of UTF-8.
-        """
-        _orig_popen = subprocess.Popen
+    def _render(self, report_ref, res_ids=None, data=None):
+        _logger.info("Form50 _render called for %s", report_ref)
+        return self._form50_dispatch(report_ref, res_ids, data,
+                                     super_fn=lambda: super(IrActionsReportForm50, self)
+                                     ._render(report_ref, res_ids, data))
 
-        class _UTF8Popen(_orig_popen):
-            def __init__(self_inner, cmd, *a, **kw):
-                if (isinstance(cmd, (list, tuple)) and cmd
-                        and 'wkhtmltopdf' in str(cmd[0]).lower()
-                        and '--encoding' not in cmd):
-                    cmd = list(cmd)
-                    cmd.insert(1, 'utf-8')
-                    cmd.insert(1, '--encoding')
-                    _logger.info("Form50: injected --encoding utf-8 → %s", cmd[0])
-                _orig_popen.__init__(self_inner, cmd, *a, **kw)
+    # ------------------------------------------------------------------ #
 
-        subprocess.Popen = _UTF8Popen
+    def _form50_dispatch(self, report_ref, res_ids, data, super_fn):
         try:
-            _logger.info("Form50: rendering %s via patched wkhtmltopdf", report_ref)
-            return super(IrActionsReportForm50, self)._render_qweb_pdf(
-                report_ref, res_ids, data
-            )
+            report = self._get_report(report_ref)
+            report_name = report.report_name or ''
+        except Exception:
+            return super_fn()
+
+        if not any(report_name.startswith(p) for p in FORM50_PREFIXES):
+            return super_fn()
+
+        _logger.info("Form50: dispatching %s", report_name)
+
+        # 1) WeasyPrint (Linux / if installed)
+        try:
+            result = self._render_form50_weasyprint(report, res_ids, data)
+            if result:
+                return result
+        except Exception as e:
+            _logger.warning("Form50 WeasyPrint unavailable: %s", e)
+
+        # 2) Entity-encoded wkhtmltopdf (works regardless of OS locale)
+        try:
+            result = self._render_form50_entity_pdf(report, res_ids, data)
+            if result:
+                return result
+        except Exception as e:
+            _logger.warning("Form50 entity-PDF failed: %s", e)
+
+        # 3) Last resort: Odoo default (still garbled but at least doesn't crash)
+        _logger.warning("Form50: falling back to Odoo default renderer")
+        return super_fn()
+
+    # ------------------------------------------------------------------ #
+
+    def _render_form50_entity_pdf(self, report, res_ids, data):
+        """
+        Convert all non-ASCII characters to HTML entities so the HTML file is
+        pure ASCII and wkhtmltopdf reads it correctly regardless of the OS
+        default encoding.  Amiri font is already embedded as base64 in the CSS.
+        """
+        from odoo.tools import config as odoo_config
+
+        wk_bin = (
+            odoo_config.get('wkhtmltopdf_path')
+            or shutil.which('wkhtmltopdf')
+            or r'E:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
+            or r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
+        )
+        _logger.info("Form50 entity-PDF: wkhtmltopdf=%s", wk_bin)
+
+        if not wk_bin or not os.path.exists(str(wk_bin)):
+            _logger.warning("Form50: wkhtmltopdf binary not found at %s", wk_bin)
+            return None
+
+        html_content, _ = self._render_qweb_html(report.report_name, res_ids, data=data)
+        if isinstance(html_content, bytes):
+            html_content = html_content.decode('utf-8', errors='replace')
+
+        # Convert every non-ASCII character to &#NNN; entity — pure ASCII output
+        safe_html = ''.join(
+            '&#{};'.format(ord(c)) if ord(c) > 127 else c
+            for c in html_content
+        )
+
+        html_fd, html_path = tempfile.mkstemp(suffix='.html')
+        pdf_path = html_path[:-5] + '.pdf'
+        try:
+            with os.fdopen(html_fd, 'w', encoding='ascii') as fh:
+                fh.write(safe_html)
+
+            cmd = [wk_bin, '--quiet', '--disable-smart-shrinking', html_path, pdf_path]
+            _logger.info("Form50 entity-PDF cmd: %s", ' '.join(cmd))
+            proc = subprocess.run(cmd, capture_output=True, timeout=120)
+            if proc.returncode != 0:
+                _logger.warning("Form50 wkhtmltopdf stderr: %s",
+                                proc.stderr.decode('utf-8', 'ignore'))
+
+            if os.path.exists(pdf_path) and os.path.getsize(pdf_path) > 0:
+                with open(pdf_path, 'rb') as fh:
+                    pdf_bytes = fh.read()
+                _logger.info("Form50 entity-PDF OK: %d bytes", len(pdf_bytes))
+                return pdf_bytes, 'pdf'
         finally:
-            subprocess.Popen = _orig_popen
+            for p in (html_path, pdf_path):
+                try:
+                    os.unlink(p)
+                except Exception:
+                    pass
+        return None
+
+    # ------------------------------------------------------------------ #
 
     def _render_form50_weasyprint(self, report, res_ids, data):
         import weasyprint
