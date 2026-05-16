@@ -1,7 +1,7 @@
 {
     'name': 'دفتر 55 - سجل المدفوعات المتسلسل',
     'summary': 'C-FM-01: Daftar 55 Sequential Payment Register – Port Said Governorate',
-    'version': '19.0.1.0.0',
+    'version': '17.0.1.0.0',
     'category': 'Accounting',
     'author': 'Paradise Integrated Solutions',
     'website': 'https://paradise.solutions.com',
