@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- ══ امتداد نموذج دفتر 55 بحقول وأزرار استمارة 50 ══ -->
+  <record id="view_daftar55_form50_inherit" model="ir.ui.view">
+    <field name="name">port_said.daftar55.form50.inherit</field>
+    <field name="model">port_said.daftar55</field>
+    <field name="inherit_id" ref="port_said_daftar55.view_daftar55_form"/>
+    <field name="arch" type="xml">
+
+      <!-- أزرار الطباعة في رأس النموذج -->
+      <button name="action_print_daftar55" position="before">
+        <button name="action_print_preview"
+                string="معاينة استمارة 50"
+                type="object"
+                class="btn-secondary"
+                title="طباعة معاينة استمارة 50 — لا تُقيَّد"/>
+        <button name="action_print_final"
+                string="طباعة نهائية ★"
+                type="object"
+                class="btn-primary"
+                groups="account.group_account_manager"
+                invisible="not can_final_print"
+                title="طباعة رسمية نهائية — للمدير المالي فقط"/>
+        <button name="action_open_reprint_wizard"
+                string="إعادة طباعة"
+                type="object"
+                class="btn-warning"
+                groups="account.group_account_manager"
+                invisible="not is_final_printed"
+                title="إعادة الطباعة مع تسجيل السبب"/>
+        <button name="action_validate_for_print"
+                string="فحص جاهزية الطباعة"
+                type="object"
+                class="btn-secondary"/>
+      </button>
+
+      <!-- قسم نوع العملية + المرفقات بعد مجموعة الموازنة -->
+      <group string="الموازنة" position="after">
+        <group string="استمارة 50 — نوع العملية والمرفقات">
+          <group>
+            <field name="transaction_type"/>
+            <field name="attachments_complete" readonly="1"/>
+            <field name="missing_attachments_count" readonly="1" invisible="attachments_complete"/>
+          </group>
+          <group>
+            <field name="required_attachments_info" readonly="1" widget="text" nolabel="1"/>
+          </group>
+        </group>
+      </group>
+
+      <!-- جاهزية الطباعة بعد الموازنة -->
+      <group string="استمارة 50 — نوع العملية والمرفقات" position="after">
+        <group string="جاهزية الطباعة النهائية" invisible="can_final_print">
+          <field name="print_readiness_notes" readonly="1" widget="text" nolabel="1"/>
+        </group>
+      </group>
+
+      <!-- تبويب الفواتير — يُضاف قبل حقل الملاحظات -->
+      <field name="notes" position="before">
+        <separator string="بيانات الفواتير — استمارة 50"/>
+        <field name="invoice_line_ids" nolabel="1">
+          <tree editable="bottom">
+            <field name="sequence" widget="handle"/>
+            <field name="invoice_ref"/>
+            <field name="invoice_date"/>
+            <field name="description"/>
+            <field name="amount_pounds"/>
+            <field name="amount_piasters"/>
+          </tree>
+        </field>
+        <group>
+          <field name="invoices_total_pounds" readonly="1" string="مجموع الفواتير (جنيه)"/>
+          <field name="invoices_total_piasters" readonly="1" string="مجموع الفواتير (قرش)"/>
+          <field name="invoices_match_gross" readonly="1" string="الفواتير مطابقة للإجمالي"/>
+        </group>
+        <separator string="بيانات الطباعة النهائية"/>
+        <group>
+          <group>
+            <field name="preview_print_count" readonly="1"/>
+            <field name="last_preview_at" readonly="1"/>
+          </group>
+          <group>
+            <field name="final_print_count" readonly="1"/>
+            <field name="last_printed_at" readonly="1"/>
+            <field name="last_printed_by" readonly="1"/>
+            <field name="official_template_version" readonly="1"/>
+          </group>
+        </group>
+        <field name="reprint_reason" invisible="not is_final_printed"
+               placeholder="سبب إعادة الطباعة — مطلوب قبل الطباعة الثانية"/>
+      </field>
+
+    </field>
+  </record>
+
+
+  <!-- ══ امتداد قائمة دفتر 55 لإضافة نوع العملية ══ -->
+  <record id="view_daftar55_list_form50_inherit" model="ir.ui.view">
+    <field name="name">port_said.daftar55.list.form50.inherit</field>
+    <field name="model">port_said.daftar55</field>
+    <field name="inherit_id" ref="port_said_daftar55.view_daftar55_list"/>
+    <field name="arch" type="xml">
+      <field name="budget_line" position="after">
+        <field name="transaction_type" optional="show"/>
+        <field name="is_final_printed" optional="show"/>
+      </field>
+    </field>
+  </record>
+
+</odoo>

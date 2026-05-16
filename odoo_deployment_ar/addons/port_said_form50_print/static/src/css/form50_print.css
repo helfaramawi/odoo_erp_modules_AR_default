@@ -1,0 +1,16 @@
+/* استمارة 50 — تحسينات واجهة الطباعة */
+
+/* بطاقة جاهزية الطباعة */
+.o_field_widget[name="print_readiness_notes"] textarea {
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    border-radius: 4px;
+    color: #5d4037;
+    font-family: 'Amiri', 'Noto Naskh Arabic', Arial, sans-serif;
+    direction: rtl;
+}
+
+/* تمييز حالة المطابقة */
+.o_field_boolean[name="invoices_match_gross"] .o_checkbox input:checked + label {
+    color: green;
+}

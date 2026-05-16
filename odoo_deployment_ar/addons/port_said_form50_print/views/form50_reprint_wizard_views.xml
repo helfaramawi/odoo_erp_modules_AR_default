@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_form50_reprint_wizard" model="ir.ui.view">
+    <field name="name">form50.reprint.wizard.form</field>
+    <field name="model">form50.reprint.wizard</field>
+    <field name="arch" type="xml">
+      <form string="إعادة طباعة استمارة 50 ع.ح">
+        <group>
+          <field name="daftar55_id" readonly="1"/>
+          <field name="reason" required="1"
+                 placeholder="أدخل سبب إعادة الطباعة..."
+                 style="min-height:80px;"/>
+        </group>
+        <footer>
+          <button name="action_confirm_reprint"
+                  string="تأكيد وطباعة"
+                  type="object"
+                  class="btn-primary"/>
+          <button string="إلغاء" class="btn-secondary" special="cancel"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+
+</odoo>
