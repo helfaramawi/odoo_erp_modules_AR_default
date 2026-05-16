@@ -281,6 +281,14 @@ class Form50PrintLayer(models.Model):
             }
         raise UserError(_('الاستمارة غير جاهزة:\n\n%s') % self.print_readiness_notes)
 
+    # ── CSS الخط العربي للتقارير ─────────────────────────────────────────
+    def _get_amiri_font_css(self):
+        """يُرجع CSS يحتوي @font-face بترميز base64 لخط Amiri — مُخزَّن مؤقتاً."""
+        global _AMIRI_CSS_CACHE
+        if _AMIRI_CSS_CACHE is None:
+            _AMIRI_CSS_CACHE = _build_amiri_css()
+        return _AMIRI_CSS_CACHE
+
     # ── helpers للـ QWeb ─────────────────────────────────────────────────
     def _get_amount_pounds_piasters(self, amount):
         if not amount:
@@ -389,6 +397,55 @@ class Form50PrintLayer(models.Model):
             ])
             out.append({'n': int(n), 'x': x, 'y': y, 'text': txt, 'style': style})
         return out
+
+
+def _build_amiri_css():
+    """
+    يقرأ ملفات خط Amiri ويُرجع CSS يحتوي على @font-face مُضمَّنة بترميز base64.
+    إذا لم تُوجد الملفات يُرجع سلسلة فارغة.
+    """
+    import base64, os
+    candidates = [
+        '/usr/share/fonts/opentype/fonts-hosny-amiri',
+        '/usr/share/fonts/truetype/fonts-hosny-amiri',
+        '/usr/share/fonts/amiri',
+        '/usr/local/share/fonts/amiri',
+    ]
+    font_dir = next((d for d in candidates if os.path.isdir(d)), None)
+    if not font_dir:
+        # بحث عام عن الملف
+        import glob
+        results = glob.glob('/usr/share/fonts/**/Amiri-Regular.ttf', recursive=True)
+        if results:
+            font_dir = os.path.dirname(results[0])
+    if not font_dir:
+        return ''
+    r_path = os.path.join(font_dir, 'Amiri-Regular.ttf')
+    b_path = os.path.join(font_dir, 'Amiri-Bold.ttf')
+    if not os.path.exists(r_path):
+        return ''
+    with open(r_path, 'rb') as f:
+        r_b64 = base64.b64encode(f.read()).decode()
+    b_b64 = r_b64  # fallback: use regular as bold if bold not found
+    if os.path.exists(b_path):
+        with open(b_path, 'rb') as f:
+            b_b64 = base64.b64encode(f.read()).decode()
+    return (
+        "@font-face{font-family:'Amiri';"
+        "src:url('data:font/truetype;base64," + r_b64 + "')format('truetype');"
+        "font-weight:normal;font-style:normal;}"
+        "@font-face{font-family:'Amiri';"
+        "src:url('data:font/truetype;base64," + b_b64 + "')format('truetype');"
+        "font-weight:bold;font-style:normal;}"
+        # تجاوز Lato الذي تُحقنه Odoo بخط Amiri
+        "@font-face{font-family:'Lato';"
+        "src:url('data:font/truetype;base64," + r_b64 + "')format('truetype');}"
+        "html,body{direction:rtl!important;}"
+        "html *{font-family:'Amiri',serif!important;}"
+    )
+
+
+_AMIRI_CSS_CACHE = None
 
 
 def post_migrate(env):

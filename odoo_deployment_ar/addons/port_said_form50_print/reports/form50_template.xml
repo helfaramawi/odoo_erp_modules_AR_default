@@ -5,25 +5,9 @@
        استمارة 50 ع.ح — قالب مشترك للمعاينة والطباعة النهائية
        ══════════════════════════════════════════════════════════════════════ -->
   <template id="report_form50_base">
-    <!-- حقن خط عربي مضمَّن مباشرةً في HTML حتى يُقرأه wkhtmltopdf وWeasyPrint -->
-    <style type="text/css">
-      @font-face {
-        font-family: 'Amiri';
-        src: url('file:///usr/share/fonts/opentype/fonts-hosny-amiri/Amiri-Regular.ttf') format('truetype');
-        font-weight: normal;
-        font-style: normal;
-      }
-      @font-face {
-        font-family: 'Amiri';
-        src: url('file:///usr/share/fonts/opentype/fonts-hosny-amiri/Amiri-Bold.ttf') format('truetype');
-        font-weight: bold;
-        font-style: normal;
-      }
-      /* تجاوز Lato الذي تحقنه Odoo */
-      @font-face { font-family: 'Lato'; src: url('file:///usr/share/fonts/opentype/fonts-hosny-amiri/Amiri-Regular.ttf') format('truetype'); }
-      html, body { direction: rtl !important; font-family: 'Amiri', serif !important; }
-      * { font-family: 'Amiri', serif !important; }
-    </style>
+    <!-- حقن خط Amiri بترميز base64 مباشرةً — يعمل مع wkhtmltopdf وWeasyPrint -->
+    <t t-set="amiri_css" t-value="rec._get_amiri_font_css()"/>
+    <style t-if="amiri_css" type="text/css"><t t-out="amiri_css"/></style>
 
     <t t-set="bp" t-value="rec._get_budget_parts()"/>
     <t t-set="gpounds" t-value="rec._get_amount_pounds_piasters(rec.amount_gross)[0]"/>
