@@ -117,7 +117,7 @@ class IrActionsReportForm50(models.Model):
                 '--margin-left',   '0',
                 '--margin-right',  '0',
                 '--disable-external-links',
-                '--no-background',
+                '--background',
                 html_path, pdf_path,
             ]
             _logger.info("Form50 entity-PDF cmd: %s", ' '.join(cmd))
