@@ -146,12 +146,11 @@
         <filter name="this_year"      string="السنة الحالية" domain="[('fiscal_year','=','2026')]"/>
         <filter name="state_posted"   string="مرحّلة"        domain="[('state','=','posted')]"/>
         <filter name="state_cleared"  string="مُسمَّحة"      domain="[('state','=','cleared')]"/>
-        <group expand="0" string="تجميع حسب">
-          <filter name="group_year"   string="السنة المالية" context="{'group_by':'fiscal_year'}"/>
-          <filter name="group_dept"   string="المصلحة"       context="{'group_by':'department_name'}"/>
-          <filter name="group_budget" string="البند"         context="{'group_by':'budget_line'}"/>
-          <filter name="group_state"  string="الحالة"        context="{'group_by':'state'}"/>
-        </group>
+        <separator/>
+        <filter name="group_year"   string="السنة المالية" context="{'group_by':'fiscal_year'}"/>
+        <filter name="group_dept"   string="المصلحة"       context="{'group_by':'department_name'}"/>
+        <filter name="group_budget" string="البند"         context="{'group_by':'budget_line'}"/>
+        <filter name="group_state"  string="الحالة"        context="{'group_by':'state'}"/>
       </search>
     </field>
   </record>
