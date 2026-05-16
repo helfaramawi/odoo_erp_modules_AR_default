@@ -286,6 +286,21 @@ class Form50PrintLayer(models.Model):
         """يُرجع CSS يحتوي @font-face بترميز base64 لخط Amiri مُضمَّن مسبقاً."""
         return _AMIRI_CSS_CACHE
 
+    # ── صورة خلفية الاستمارة الرسمية ────────────────────────────────────
+    def _get_form50_bg_b64(self):
+        """يُرجع صورة خلفية الاستمارة 50 كـ base64، أو '' إن لم تُوجَد."""
+        import os, base64
+        module_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        for fname in ('form50_bg.png', 'form50_bg.jpg', 'form50_bg.jpeg'):
+            img_path = os.path.join(module_path, 'static', 'img', fname)
+            if os.path.exists(img_path):
+                with open(img_path, 'rb') as f:
+                    data = base64.b64encode(f.read()).decode('ascii')
+                ext = fname.rsplit('.', 1)[-1].lower()
+                mime = 'image/jpeg' if ext in ('jpg', 'jpeg') else 'image/png'
+                return f'data:{mime};base64,{data}'
+        return ''
+
     # ── helpers للـ QWeb ─────────────────────────────────────────────────
     def _get_amount_pounds_piasters(self, amount):
         if not amount:
