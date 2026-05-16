@@ -5,8 +5,11 @@ port_said_form50_print — طبقة الطباعة الرسمية لاستمار
 يُوسِّع port_said.daftar55 بطبقة طباعة فقط.
 لا يُعدِّل أي منطق محاسبي.
 """
+import logging
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError
+
+_logger = logging.getLogger(__name__)
 
 # حقول التاريخ تُعرَض باللون الأزرق
 DATE_FIELDS_F50 = {2, 13, 17, 21, 25, 32, 54, 58, 60, 63, 70}
@@ -290,15 +293,21 @@ class Form50PrintLayer(models.Model):
     def _get_form50_bg_b64(self):
         """يُرجع صورة خلفية الاستمارة 50 كـ base64، أو '' إن لم تُوجَد."""
         import os, base64
-        module_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        from odoo.modules.module import get_module_resource
         for fname in ('form50_bg.png', 'form50_bg.jpg', 'form50_bg.jpeg'):
-            img_path = os.path.join(module_path, 'static', 'img', fname)
-            if os.path.exists(img_path):
+            img_path = get_module_resource('port_said_form50_print', 'static', 'img', fname)
+            _logger.info("Form50 bg: get_module_resource(%s) => %s  exists=%s",
+                         fname, img_path, bool(img_path and os.path.exists(img_path)))
+            if img_path and os.path.exists(img_path):
                 with open(img_path, 'rb') as f:
-                    data = base64.b64encode(f.read()).decode('ascii')
+                    raw = f.read()
+                data = base64.b64encode(raw).decode('ascii')
                 ext = fname.rsplit('.', 1)[-1].lower()
                 mime = 'image/jpeg' if ext in ('jpg', 'jpeg') else 'image/png'
+                _logger.info("Form50 bg: loaded %s (%d bytes raw, %d chars b64)",
+                             fname, len(raw), len(data))
                 return f'data:{mime};base64,{data}'
+        _logger.warning("Form50 bg: no background image found in static/img/")
         return ''
 
     # ── helpers للـ QWeb ─────────────────────────────────────────────────
