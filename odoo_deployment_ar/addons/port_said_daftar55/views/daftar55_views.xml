@@ -111,7 +111,7 @@
     <field name="name">port_said.daftar55.list</field>
     <field name="model">port_said.daftar55</field>
     <field name="arch" type="xml">
-      <list string="دفتر 55 ع.ح"
+      <tree string="دفتر 55 ع.ح"
             decoration-success="state in ('archived','posted')"
             decoration-warning="state == 'cleared'"
             decoration-muted="state == 'draft'">
@@ -130,7 +130,7 @@
                decoration-success="state in ('archived','posted')"
                decoration-warning="state == 'cleared'"
                decoration-info="state == 'reviewed'"/>
-      </list>
+      </tree>
     </field>
   </record>
 
@@ -158,7 +158,7 @@
   <record id="action_daftar55" model="ir.actions.act_window">
     <field name="name">دفتر 55 ع.ح</field>
     <field name="res_model">port_said.daftar55</field>
-    <field name="view_mode">list,form</field>
+    <field name="view_mode">tree,form</field>
     <field name="search_view_id" ref="view_daftar55_search"/>
     <field name="context">{'search_default_this_year': 1}</field>
   </record>
