@@ -56,8 +56,10 @@
         </group>
       </group>
 
-      <!-- تبويب الفواتير — يُضاف قبل حقل الملاحظات -->
+      <!-- حقول مخفية مطلوبة للـ modifiers في Odoo 17 -->
       <field name="notes" position="before">
+        <field name="can_final_print" invisible="1"/>
+        <field name="is_final_printed" invisible="1"/>
         <separator string="بيانات الفواتير — استمارة 50"/>
         <field name="invoice_line_ids" nolabel="1">
           <tree editable="bottom">
