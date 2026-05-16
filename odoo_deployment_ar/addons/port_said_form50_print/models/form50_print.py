@@ -379,9 +379,9 @@ class Form50PrintLayer(models.Model):
             44: (68.44, 53.64),  45: (75.03, 53.64),  # دمغة إضافية
             46: (68.44, 55.59),  47: (75.03, 55.59),  # دمغة نسبية
             48: (68.44, 57.63),  49: (75.04, 57.63),  # ضريبة الأرباح
-            50: (68.44, 61.06),  51: (75.02, 61.07),  # صافي القيمة
+            50: (68.44, 60.30),  51: (75.02, 60.30),  # صافي القيمة
             # ══ التفقيط ═════════════════════════════════════════════════
-            52: (14.90, 61.50),  # الصافي بالكلام
+            52: (14.90, 62.50),  # الصافي بالكلام
             # ══ سنة الإقرار ══════════════════════════════════════════════
             53: (35.91, 67.10),  # في سنة
             # ══ توقيعات قسم ب ════════════════════════════════════════════
@@ -475,9 +475,10 @@ class Form50PrintLayer(models.Model):
             font_size = 7.5 if n in small_fields else 9.0 if n in wide_fields else 8.0
             text_align = 'right' if n in right_align else 'center'
             font_weight = '700' if n in bold_fields else '400'
-            # تفقيط: 51% من العرض (يقف قبل أعمدة الأرقام) / حقول واسعة: 28% / حقول صغيرة: 12%
-            max_width = '51%' if n == 52 else ('28%' if n in wide_fields else '12%')
-            style = ';'.join([
+            # تفقيط: عرض ثابت (لا max-width) لإجبار wkhtmltopdf على سطر واحد / حقول واسعة: 28% / حقول صغيرة: 12%
+            is_tafqeet = (n == 52)
+            max_width = '51%' if is_tafqeet else ('28%' if n in wide_fields else '12%')
+            style_parts = [
                 'position:absolute',
                 f'left:{x}%',
                 f'top:{y}%',
@@ -494,7 +495,12 @@ class Form50PrintLayer(models.Model):
                 f'font-weight:{font_weight}',
                 f'text-align:{text_align}',
                 f'max-width:{max_width}',
-            ])
+            ]
+            if is_tafqeet:
+                # wkhtmltopdf ignores max-width for RTL absolute elements — set explicit width
+                # and cap height to one line so wrapped overflow is clipped
+                style_parts += ['width:51%', 'height:1.5em']
+            style = ';'.join(style_parts)
             out.append({'n': int(n), 'x': x, 'y': y, 'text': txt, 'style': style})
         return out
 
