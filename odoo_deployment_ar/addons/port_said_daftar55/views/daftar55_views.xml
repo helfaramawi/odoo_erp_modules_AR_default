@@ -50,7 +50,7 @@
             </group>
           </group>
 
-          <group string="الموازنة">
+          <group name="group_budget" string="الموازنة">
             <group>
               <field name="budget_line"/>
               <field name="budget_bab"/>

@@ -36,8 +36,8 @@
       </button>
 
       <!-- قسم نوع العملية + المرفقات بعد مجموعة الموازنة -->
-      <group string="الموازنة" position="after">
-        <group string="استمارة 50 — نوع العملية والمرفقات">
+      <group name="group_budget" position="after">
+        <group name="group_form50_type" string="استمارة 50 — نوع العملية والمرفقات">
           <group>
             <field name="transaction_type"/>
             <field name="attachments_complete" readonly="1"/>
@@ -50,7 +50,7 @@
       </group>
 
       <!-- جاهزية الطباعة بعد الموازنة -->
-      <group string="استمارة 50 — نوع العملية والمرفقات" position="after">
+      <group name="group_form50_type" position="after">
         <group string="جاهزية الطباعة النهائية" invisible="can_final_print">
           <field name="print_readiness_notes" readonly="1" widget="text" nolabel="1"/>
         </group>
