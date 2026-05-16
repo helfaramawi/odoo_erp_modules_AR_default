@@ -311,4 +311,39 @@
     </t>
   </template>
 
+
+  <!-- ══ قالب معايرة المواضع (أرقام حمراء على الخلفية) ════════════════ -->
+  <template id="report_form50_calibration_template">
+    <t t-call="web.html_container">
+      <t t-foreach="docs" t-as="rec">
+        <t t-set="font_css"  t-value="rec._get_amiri_font_css()"/>
+        <t t-set="bg_src"    t-value="rec._get_form50_bg_b64()"/>
+        <t t-set="cal_fields" t-value="rec._form50_render_fields_calibration()"/>
+        <div class="page">
+          <style type="text/css">
+            <t t-out="font_css"/>
+            @page { size:A4 portrait; margin:0; }
+            body  { margin:0; padding:0; }
+            .cal-page { position:relative; width:210mm; height:297mm; overflow:hidden; }
+            .cal-bg    { position:absolute; top:0; left:0; width:100%; height:100%; }
+          </style>
+          <div class="cal-page">
+            <img t-if="bg_src" class="cal-bg" t-att-src="bg_src" alt=""/>
+            <!-- أرقام الحقول الحمراء -->
+            <t t-foreach="cal_fields" t-as="f">
+              <div t-att-style="f['style']"><t t-esc="f['text']"/></div>
+            </t>
+            <!-- شبكة النسب المئوية (أسطر رأسية وأفقية كل 10%) -->
+            <t t-foreach="[10,20,30,40,50,60,70,80,90]" t-as="pct">
+              <div t-att-style="'position:absolute;left:' + str(pct) + '%;top:0;width:0;height:100%;border-left:1px dashed rgba(0,100,200,0.25);z-index:5;'"/>
+              <div t-att-style="'position:absolute;top:' + str(pct) + '%;left:0;width:100%;height:0;border-top:1px dashed rgba(0,100,200,0.25);z-index:5;'"/>
+              <div t-att-style="'position:absolute;left:' + str(pct) + '%;top:1%;font-size:5pt;color:rgba(0,100,200,0.5);z-index:6;'"><t t-esc="str(pct) + '%'"/></div>
+            </t>
+          </div>
+        </div>
+      </t>
+    </t>
+  </template>
+
 </odoo>
+

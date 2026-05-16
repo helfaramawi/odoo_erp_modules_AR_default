@@ -33,6 +33,12 @@
                 string="فحص جاهزية الطباعة"
                 type="object"
                 class="btn-secondary"/>
+        <button name="action_print_calibration"
+                string="معايرة المواضع"
+                type="object"
+                class="btn-secondary"
+                groups="base.group_system"
+                title="طباعة ورقة معايرة مواضع الحقول — للمطوّر فقط"/>
       </button>
 
       <!-- قسم نوع العملية + المرفقات بعد مجموعة الموازنة -->

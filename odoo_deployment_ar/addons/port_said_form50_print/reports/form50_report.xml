@@ -25,4 +25,16 @@
     <field name="print_report_name">'نهائي-استمارة-' + (object.sequence_number or '') + '_' + (object.fiscal_year or '') + '-50'</field>
   </record>
 
+  <!-- معايرة مواضع الحقول — للمطوّر فقط -->
+  <record id="action_report_form50_calibration" model="ir.actions.report">
+    <field name="name">معايرة مواضع استمارة 50</field>
+    <field name="model">port_said.daftar55</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">port_said_form50_print.report_form50_calibration_template</field>
+    <field name="report_file">port_said_form50_print.report_form50_calibration_template</field>
+    <field name="attachment_use" eval="False"/>
+    <field name="attachment"/>
+    <field name="print_report_name">'معايرة-مواضع-استمارة-50'</field>
+  </record>
+
 </odoo>

@@ -495,6 +495,39 @@ class Form50PrintLayer(models.Model):
             out.append({'n': int(n), 'x': x, 'y': y, 'text': txt, 'style': style})
         return out
 
+    def _form50_render_fields_calibration(self):
+        """يُرجع دوائر مرقّمة على كل موضع — لمعايرة الإحداثيات فقط."""
+        positions = self._form50_positions()
+        out = []
+        for n in sorted(positions.keys(), key=lambda x: int(x)):
+            x, y = positions[n]
+            style = (
+                'position:absolute'
+                f';left:{x}%'
+                f';top:{y}%'
+                ';transform:translate(-50%,-50%)'
+                ';background:#e00'
+                ';color:#fff'
+                ';font-size:6.5pt'
+                ';font-weight:bold'
+                ';font-family:Arial,sans-serif'
+                ';padding:1px 3px'
+                ';border-radius:3px'
+                ';z-index:20'
+                ';white-space:nowrap'
+                ';line-height:1.1'
+                ';min-width:14px'
+                ';text-align:center'
+            )
+            out.append({'n': int(n), 'style': style, 'text': str(n)})
+        return out
+
+    def action_print_calibration(self):
+        self.ensure_one()
+        return self.env.ref(
+            'port_said_form50_print.action_report_form50_calibration'
+        ).report_action(self)
+
 
 from .amiri_font_css import AMIRI_CSS as _AMIRI_CSS_CACHE
 
