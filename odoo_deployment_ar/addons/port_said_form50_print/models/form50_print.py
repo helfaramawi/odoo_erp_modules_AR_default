@@ -392,17 +392,16 @@ class Form50PrintLayer(models.Model):
 
 
     def _form50_bg_base64(self):
-        """يعيد صورة الاستمارة الرسمية كـ data URI لاستخدامها في wkhtmltopdf."""
+        """يعيد صورة الاستمارة — data URI من JPG (أصغر) أو PNG."""
         import base64, os
-        img_path = os.path.join(
-            os.path.dirname(os.path.dirname(__file__)),
-            'static', 'img', 'form50_bg.png'
-        )
-        if not os.path.exists(img_path):
-            return ''
-        with open(img_path, 'rb') as f:
-            b64 = base64.b64encode(f.read()).decode()
-        return f'data:image/png;base64,{b64}'
+        base_dir = os.path.dirname(os.path.dirname(__file__))
+        for fname, mime in (('form50_bg.jpg', 'image/jpeg'), ('form50_bg.png', 'image/png')):
+            img_path = os.path.join(base_dir, 'static', 'img', fname)
+            if os.path.exists(img_path):
+                with open(img_path, 'rb') as f:
+                    b64 = base64.b64encode(f.read()).decode()
+                return f'data:{mime};base64,{b64}'
+        return ''
 
 
 def post_migrate(env):
