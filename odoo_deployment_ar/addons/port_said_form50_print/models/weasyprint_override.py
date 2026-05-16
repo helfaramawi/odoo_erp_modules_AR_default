@@ -106,7 +106,20 @@ class IrActionsReportForm50(models.Model):
             with os.fdopen(html_fd, 'w', encoding='ascii') as fh:
                 fh.write(safe_html)
 
-            cmd = [wk_bin, '--quiet', '--disable-smart-shrinking', html_path, pdf_path]
+            cmd = [
+                wk_bin,
+                '--quiet',
+                '--disable-smart-shrinking',
+                '--page-width',  '210mm',
+                '--page-height', '297mm',
+                '--margin-top',    '0',
+                '--margin-bottom', '0',
+                '--margin-left',   '0',
+                '--margin-right',  '0',
+                '--disable-external-links',
+                '--no-background',
+                html_path, pdf_path,
+            ]
             _logger.info("Form50 entity-PDF cmd: %s", ' '.join(cmd))
             proc = subprocess.run(cmd, capture_output=True, timeout=120)
             if proc.returncode != 0:
