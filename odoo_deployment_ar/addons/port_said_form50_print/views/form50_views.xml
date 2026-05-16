@@ -60,14 +60,14 @@
       <field name="notes" position="before">
         <separator string="بيانات الفواتير — استمارة 50"/>
         <field name="invoice_line_ids" nolabel="1">
-          <tree editable="bottom">
+          <list editable="bottom">
             <field name="sequence" widget="handle"/>
             <field name="invoice_ref"/>
             <field name="invoice_date"/>
             <field name="description"/>
             <field name="amount_pounds"/>
             <field name="amount_piasters"/>
-          </tree>
+          </list>
         </field>
         <group>
           <field name="invoices_total_pounds" readonly="1" string="مجموع الفواتير (جنيه)"/>
