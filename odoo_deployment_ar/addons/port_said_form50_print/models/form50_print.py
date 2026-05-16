@@ -401,54 +401,17 @@ class Form50PrintLayer(models.Model):
 
 def _build_amiri_css():
     """
-    يقرأ ملفات خط Amiri ويُرجع CSS يحتوي على @font-face مُضمَّنة بترميز base64.
-    يدعم Windows وLinux. إذا لم تُوجد الملفات يُرجع سلسلة فارغة.
+    يقرأ ملفات خط Amiri المُرفقة مع الوحدة ويُرجع CSS يحتوي على @font-face
+    مُضمَّنة بترميز base64. الخطوط مُضمَّنة في static/src/fonts/ فلا يلزم
+    تثبيتها على نظام التشغيل.
     """
-    import base64, os, sys, glob
+    import base64, os
+    from odoo.modules import get_module_resource
 
-    # مسارات البحث — Windows أولاً ثم Linux
-    if sys.platform == 'win32':
-        win_fonts = os.path.join(os.environ.get('WINDIR', r'C:\Windows'), 'Fonts')
-        local_fonts = os.path.join(
-            os.environ.get('LOCALAPPDATA', ''),
-            r'Microsoft\Windows\Fonts'
-        )
-        candidates = [win_fonts, local_fonts]
-    else:
-        candidates = [
-            '/usr/share/fonts/opentype/fonts-hosny-amiri',
-            '/usr/share/fonts/truetype/fonts-hosny-amiri',
-            '/usr/share/fonts/amiri',
-            '/usr/local/share/fonts/amiri',
-        ]
+    r_path = get_module_resource('port_said_form50_print', 'static', 'src', 'fonts', 'Amiri-Regular.ttf')
+    b_path = get_module_resource('port_said_form50_print', 'static', 'src', 'fonts', 'Amiri-Bold.ttf')
 
-    # البحث المباشر في المجلدات
-    r_path = None
-    for d in candidates:
-        p = os.path.join(d, 'Amiri-Regular.ttf')
-        if os.path.exists(p):
-            r_path = p
-            break
-
-    # بحث احتياطي عام
-    if not r_path:
-        if sys.platform == 'win32':
-            patterns = [r'C:\Windows\Fonts\Amiri*.ttf']
-        else:
-            patterns = ['/usr/share/fonts/**/Amiri-Regular.ttf',
-                        '/usr/local/share/fonts/**/Amiri-Regular.ttf']
-        for pat in patterns:
-            results = glob.glob(pat, recursive=True)
-            if results:
-                r_path = results[0]
-                break
-
-    if not r_path:
-        return ''
-
-    font_dir = os.path.dirname(r_path)
-    b_path = os.path.join(font_dir, 'Amiri-Bold.ttf')
-    if not os.path.exists(r_path):
+    if not r_path or not os.path.exists(r_path):
         return ''
     with open(r_path, 'rb') as f:
         r_b64 = base64.b64encode(f.read()).decode()

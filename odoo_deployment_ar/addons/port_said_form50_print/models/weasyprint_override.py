@@ -9,10 +9,14 @@ FORM50_PREFIXES = ['port_said_form50_print']
 
 
 def _build_form50_css():
+    import os
+    from odoo.modules import get_module_resource
     try:
-        with open('/usr/share/fonts/opentype/fonts-hosny-amiri/Amiri-Regular.ttf', 'rb') as f:
+        r_path = get_module_resource('port_said_form50_print', 'static', 'src', 'fonts', 'Amiri-Regular.ttf')
+        b_path = get_module_resource('port_said_form50_print', 'static', 'src', 'fonts', 'Amiri-Bold.ttf')
+        with open(r_path, 'rb') as f:
             r = base64.b64encode(f.read()).decode()
-        with open('/usr/share/fonts/opentype/fonts-hosny-amiri/Amiri-Bold.ttf', 'rb') as f:
+        with open(b_path, 'rb') as f:
             b = base64.b64encode(f.read()).decode()
         return (
             "@font-face{font-family:'Amiri';"
