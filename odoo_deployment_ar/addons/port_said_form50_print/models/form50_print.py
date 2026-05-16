@@ -347,7 +347,7 @@ class Form50PrintLayer(models.Model):
             5:  (23.84, 15.24),  # المبلغ المستحق إلى
             6:  (23.84, 18.76),  # رقم الارتباط / بموجب
             # ══ طريقة الصرف ═════════════════════════════════════════════
-            7:  ( 3.85, 21.39),  # صار مراجعته
+            7:  ( 5.85, 21.39),  # صار مراجعته
             8:  (18.87, 23.89),  # إذن صرف — البنك
             9:  (18.87, 27.41),  # شيك على الشارج
             10: (18.88, 29.95),  # يسحب باسم
@@ -475,8 +475,8 @@ class Form50PrintLayer(models.Model):
             font_size = 7.5 if n in small_fields else 9.0 if n in wide_fields else 8.0
             text_align = 'right' if n in right_align else 'center'
             font_weight = '700' if n in bold_fields else '400'
-            # تفقيط: 60% من العرض / حقول واسعة: 28% / حقول صغيرة: 12%
-            max_width = '60%' if n == 52 else ('28%' if n in wide_fields else '12%')
+            # تفقيط: 51% من العرض (يقف قبل أعمدة الأرقام) / حقول واسعة: 28% / حقول صغيرة: 12%
+            max_width = '51%' if n == 52 else ('28%' if n in wide_fields else '12%')
             style = ';'.join([
                 'position:absolute',
                 f'left:{x}%',
