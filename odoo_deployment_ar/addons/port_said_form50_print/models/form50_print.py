@@ -461,8 +461,10 @@ class Form50PrintLayer(models.Model):
         if field_no in (12, 16, 20, 24) and val:
             val = val[-5:]
         if field_no == 53 and val:
+            _ar = str.maketrans('0123456789', '٠١٢٣٤٥٦٧٨٩')
             digits = ''.join(c for c in val if c.isdigit())
-            val = digits[3] if len(digits) >= 4 else digits
+            d = digits[3] if len(digits) >= 4 else digits
+            val = d.translate(_ar)
         return val
 
     def _form50_render_fields(self):
