@@ -12,7 +12,7 @@ REM ── CONFIGURATION (must match your BACKUP_ODOO.bat settings) ────
 set ODOO_CONTAINER=odoo17_app
 set DB_CONTAINER=odoo17_db
 set DB_USER=odoo
-set DB_NAME=odoo
+set DB_NAME=odoo17_db
 set BACKUP_ROOT=C:\OdooBackups
 set FILESTORE_CONTAINER_PATH=/var/lib/odoo/.local/share/Odoo/filestore
 set ADDONS_CONTAINER_PATH=/mnt/extra-addons
