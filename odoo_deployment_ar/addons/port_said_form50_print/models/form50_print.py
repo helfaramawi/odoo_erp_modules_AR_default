@@ -457,7 +457,10 @@ class Form50PrintLayer(models.Model):
     def _form50_field_text(self, field_no):
         self.ensure_one()
         expr = self._form50_field_models().get(field_no, {}).get('model', '')
-        return self._form50_resolve_expr(expr)
+        val = self._form50_resolve_expr(expr)
+        if field_no in (12, 16, 20, 24) and val:
+            val = val[-5:]
+        return val
 
     def _form50_render_fields(self):
         self.ensure_one()
