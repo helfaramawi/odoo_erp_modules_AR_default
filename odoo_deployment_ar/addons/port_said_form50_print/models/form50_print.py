@@ -461,10 +461,10 @@ class Form50PrintLayer(models.Model):
         val = self._form50_resolve_expr(expr)
         if field_no in (12, 16, 20, 24) and val:
             val = val[-5:]
-        if field_no == 76 and val:
+        if field_no in (76, 63) and val:
             parts = val.split('-')
             val = f"{parts[2]}-{parts[1]}" if len(parts) >= 3 else val
-        if field_no == 53 and val:
+        if field_no in (53, 62) and val:
             _ar = str.maketrans('0123456789', '٠١٢٣٤٥٦٧٨٩')
             digits = ''.join(c for c in val if c.isdigit())
             d = digits[3] if len(digits) >= 4 else digits
