@@ -383,7 +383,7 @@ class Form50PrintLayer(models.Model):
             # ══ التفقيط ═════════════════════════════════════════════════
             52: ( 9.19, 57.29),# الصافي بالكلام
             # ══ سنة الإقرار ══════════════════════════════════════════════
-            53: (35.91, 67.10),  # في سنة
+            53: (36.39, 59.69),  # في سنة
             # ══ توقيعات قسم ب ════════════════════════════════════════════
             54: (86.59, 64.59),  # تاريخ الختم ب
             55: ( 6.83, 66.62),  # مراقب الحسابات
@@ -460,6 +460,9 @@ class Form50PrintLayer(models.Model):
         val = self._form50_resolve_expr(expr)
         if field_no in (12, 16, 20, 24) and val:
             val = val[-5:]
+        if field_no == 53 and val:
+            digits = ''.join(c for c in val if c.isdigit())
+            val = digits[3] if len(digits) >= 4 else digits
         return val
 
     def _form50_render_fields(self):
