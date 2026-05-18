@@ -63,7 +63,7 @@ The following functional modules are **mandatory** unless marked *(Optional)*:
 | **General Ledger** | Multi-level chart of accounts, Arabic journal entries, fiscal year July–June |
 | **Daftar 55 (دفتر 55 ع.ح)** | Government daily accounting register — Ministry of Finance format |
 | **Daily Journal 224 (يومية 224)** | Government payment journal — Ministry of Finance format |
-| **Subsidiary Books Engine** | 8 government subsidiary books: Forms 29/39/71 (debit/credit, current/statutory accounts) with legal sequential numbering and monthly carry-forward |
+| **Subsidiary Books Engine** | 29 government subsidiary books: Forms 29/39/71/78 (debit/credit, current/statutory accounts, treasury, assets, penalties, auctions) with legal sequential numbering and monthly carry-forward |
 | **Budget Planning & Control** | Budget by Chapter/Section/Line-item; real-time commitment tracking; over-budget alerts |
 | **Commitments** | Pre-expenditure commitment registration linked to budget |
 | **Treasury & Cash Books** | Multi-fund cash management; government cash book formats |
@@ -434,7 +434,7 @@ Working Hours    : Sunday–Thursday, 09:00–15:00
 | Module | Mandatory | Optional |
 |--------|-----------|---------|
 | General Ledger (Daftar 55 / Journal 224) | ✓ | |
-| Subsidiary Books (8 government books) | ✓ | |
+| Subsidiary Books (29 government books) | ✓ | |
 | Budget Planning & Commitments | ✓ | |
 | Payment Order — Form 50 | ✓ | |
 | Treasury & Cash Books | ✓ | |
