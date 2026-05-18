@@ -15,7 +15,6 @@
         'l10n_eg_auction',
         'port_said_daftar55',
         'port_said_commitment',
-        'general_ledger_ar',
     ],
     'data': [
         'security/ir.model.access.csv',
