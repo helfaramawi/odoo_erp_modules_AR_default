@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Root menu item — appears in taskbar -->
+    <!-- Root menu item — appears in top navigation bar -->
+    <menuitem id="menu_ps_dashboard_root"
+              name="القائمة التنفيذية"
+              sequence="1"
+              web_icon="portsaid_dashboard,static/src/img/icon.png"/>
 
-    <!-- Main dashboard action -->
-
-  <menuitem id="menu_ps_dashboard"
-            name="لوحة القيادة"
-            parent="general_ledger_ar.menu_general_ledger_root"
-            action="portsaid_dashboard.action_portsaid_dashboard_url"
-            sequence="10"/>
+    <!-- Main dashboard action under root -->
+    <menuitem id="menu_ps_dashboard"
+              name="لوحة القيادة التنفيذية"
+              parent="portsaid_dashboard.menu_ps_dashboard_root"
+              action="portsaid_dashboard.action_portsaid_dashboard_url"
+              sequence="10"/>
 </odoo>
