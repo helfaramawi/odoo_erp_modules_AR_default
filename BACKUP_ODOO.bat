@@ -78,7 +78,7 @@ echo  [OK] Database backup >> "%LOG_FILE%"
 
 REM ── STEP 2: FILESTORE ───────────────────────────────────────────────
 echo  [2/4] Backing up filestore (attachments)...
-docker cp %ODOO_CONTAINER%:%FILESTORE_CONTAINER_PATH% "%BACKUP_DIR%\filestore\" >> "%LOG_FILE%" 2>&1
+docker cp %ODOO_CONTAINER%:%FILESTORE_CONTAINER_PATH% "%BACKUP_DIR%\filestore" >> "%LOG_FILE%" 2>&1
 if errorlevel 1 (
     echo  [WARNING] Filestore backup had issues. Check log.
     echo  [WARNING] Filestore backup >> "%LOG_FILE%"
@@ -89,7 +89,7 @@ if errorlevel 1 (
 
 REM ── STEP 3: CUSTOM ADDONS ───────────────────────────────────────────
 echo  [3/4] Backing up custom addons...
-docker cp %ODOO_CONTAINER%:%ADDONS_CONTAINER_PATH% "%BACKUP_DIR%\addons\" >> "%LOG_FILE%" 2>&1
+docker cp %ODOO_CONTAINER%:%ADDONS_CONTAINER_PATH% "%BACKUP_DIR%\addons" >> "%LOG_FILE%" 2>&1
 if errorlevel 1 (
     echo  [WARNING] Addons backup had issues. Check log.
     echo  [WARNING] Addons backup >> "%LOG_FILE%"

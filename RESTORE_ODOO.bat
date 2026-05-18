@@ -191,7 +191,7 @@ if exist "%FILESTORE_LOCAL%" (
     timeout /t 3 /nobreak >nul
     docker exec %ODOO_CONTAINER% rm -rf %FILESTORE_CONTAINER_PATH% >> "%LOG_FILE%" 2>&1
     docker stop %ODOO_CONTAINER% >nul 2>&1
-    docker cp "%FILESTORE_LOCAL%\." %ODOO_CONTAINER%:%FILESTORE_CONTAINER_PATH% >> "%LOG_FILE%" 2>&1
+    docker cp "%FILESTORE_LOCAL%" %ODOO_CONTAINER%:%FILESTORE_CONTAINER_PATH% >> "%LOG_FILE%" 2>&1
     if errorlevel 1 (
         echo  [WARNING] Filestore restore had issues. Check log: %LOG_FILE%
         echo  [WARNING] Filestore restore >> "%LOG_FILE%"
@@ -208,7 +208,7 @@ REM ── STEP 6: RESTORE CUSTOM ADDONS ─────────────
 echo  [6/6] Restoring custom addons...
 set ADDONS_LOCAL=%RESTORE_WORK_DIR%\addons
 if exist "%ADDONS_LOCAL%" (
-    docker cp "%ADDONS_LOCAL%\." %ODOO_CONTAINER%:%ADDONS_CONTAINER_PATH% >> "%LOG_FILE%" 2>&1
+    docker cp "%ADDONS_LOCAL%" %ODOO_CONTAINER%:%ADDONS_CONTAINER_PATH% >> "%LOG_FILE%" 2>&1
     if errorlevel 1 (
         echo  [WARNING] Addons restore had issues. Check log: %LOG_FILE%
         echo  [WARNING] Addons restore >> "%LOG_FILE%"
