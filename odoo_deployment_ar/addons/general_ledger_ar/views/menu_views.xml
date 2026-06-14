@@ -5,31 +5,15 @@
         id="menu_helper_notebooks_general_ledger"
         name="دفتر الأستاذ العام"
         parent="port_said_subsidiary_books.menu_subsidiary_root"
-        action="account.action_account_ledger"
+        action="account.action_move_journal_line"
         sequence="10"
-    />
-
-    <menuitem
-        id="menu_helper_notebooks_receivable"
-        name="دفتر مديونيات العملاء"
-        parent="port_said_subsidiary_books.menu_subsidiary_root"
-        action="account.action_account_receivable_from_account"
-        sequence="20"
-    />
-
-    <menuitem
-        id="menu_helper_notebooks_payable"
-        name="دفتر دائنية الموردين"
-        parent="port_said_subsidiary_books.menu_subsidiary_root"
-        action="account.action_account_payable_from_account"
-        sequence="30"
     />
 
     <menuitem
         id="menu_helper_notebooks_journal_entries"
         name="قيود اليومية"
         parent="port_said_subsidiary_books.menu_subsidiary_root"
-        action="account.action_move_journal_line"
+        action="account.action_account_moves_all"
         sequence="40"
     />
 
