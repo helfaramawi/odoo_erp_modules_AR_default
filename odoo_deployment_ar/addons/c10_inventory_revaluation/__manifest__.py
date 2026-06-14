@@ -4,7 +4,7 @@
     'category': 'Inventory',
     'summary': 'QWeb inventory revaluation report with prior month variance column',
     'author': 'ERP Migration Team',
-    'depends': ['stock_account'],
+    'depends': ['stock_account', 'port_said_menu'],
     'data': ['security/ir.model.access.csv','views/revaluation_views.xml','report/revaluation_report.xml'],
     'installable': True,
     'license': 'LGPL-3',

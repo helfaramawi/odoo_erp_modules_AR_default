@@ -4,7 +4,7 @@
     'category': 'Accounting',
     'summary': 'Scheduled nightly batch posting of draft journal entries',
     'author': 'ERP Migration Team',
-    'depends': ['account'],
+    'depends': ['account', 'port_said_menu'],
     'data': [
         'security/ir.model.access.csv',
         'data/cron.xml',

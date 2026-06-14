@@ -4,7 +4,7 @@
     'category': 'Accounting',
     'summary': 'Department / Project / Region dimensions on every journal entry line',
     'author': 'ERP Migration Team',
-    'depends': ['account', 'analytic'],
+    'depends': ['account', 'analytic', 'port_said_menu'],
     'data': [
         'security/ir.model.access.csv',
         'data/dimension_data.xml',

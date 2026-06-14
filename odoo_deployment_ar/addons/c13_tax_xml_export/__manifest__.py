@@ -4,7 +4,7 @@
     'category': 'Accounting',
     'summary': 'Generate signed tax filing XML for government portal submission (schema v3.2)',
     'author': 'ERP Migration Team',
-    'depends': ['account'],
+    'depends': ['account', 'port_said_menu'],
     'data': [
         'security/ir.model.access.csv',
         'views/tax_xml_views.xml',

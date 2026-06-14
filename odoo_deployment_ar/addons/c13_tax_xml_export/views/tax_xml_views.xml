@@ -40,5 +40,5 @@
     <field name="target">new</field>
   </record>
   <menuitem id="menu_tax_xml_export" name="Tax Filing XML / ملف XML الضريبي"
-    parent="account.menu_finance_reports" action="action_tax_xml_wizard" sequence="90"/>
+    parent="port_said_menu.menu_ps_60_custom" action="action_tax_xml_wizard" sequence="90"/>
 </odoo>
