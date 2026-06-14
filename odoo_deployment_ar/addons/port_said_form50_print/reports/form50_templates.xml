@@ -85,14 +85,20 @@
         <t t-set="fields" t-value="o._form50_render_fields()"/>
         <div class="article o_report_layout_standard" style="padding:0; margin:0;">
           <style>
-            @page { size: A4 portrait; margin: 0; }
-            body, .article { margin: 0 !important; padding: 0 !important; }
+            @page { size: A4 portrait; margin: 0 !important; }
+            html, body, #wrapwrap, .o_report_layout, .article,
+            .o_report_layout_standard, div.article {
+              margin: 0 !important; padding: 0 !important;
+              border: none !important; box-shadow: none !important;
+            }
             .form50-page {
               position: relative;
               width: 210mm;
               height: 297mm;
               overflow: hidden;
               page-break-after: always;
+              margin: 0 !important;
+              padding: 0 !important;
             }
             .form50-bg {
               position: absolute;
