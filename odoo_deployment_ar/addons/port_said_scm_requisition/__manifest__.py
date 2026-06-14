@@ -5,7 +5,7 @@
     'author': 'Paradise Integrated Solutions',
     'license': 'LGPL-3',
     'depends': ['purchase', 'port_said_commitment', 'mail',
-        'uom'],
+        'uom', 'port_said_menu'],
     'data': [
         'security/ir.model.access.csv',
         'data/sequence_data.xml',

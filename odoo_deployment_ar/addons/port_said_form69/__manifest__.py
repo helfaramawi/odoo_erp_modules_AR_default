@@ -6,6 +6,7 @@
     'license': 'LGPL-3',
     'depends': [
         'port_said_daftar224',
+        'port_said_menu',
         # port_said_scm_issue dependency removed:
         # استمارة 69 هي حسبة مالية يومية تقرأ من دفتر 55 ودفتر 224 — ليست مرتبطة بسجل الصرف المخزوني
     ],

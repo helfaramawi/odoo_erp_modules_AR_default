@@ -11,6 +11,7 @@
         'port_said_daftar224',
         'port_said_commitment',
         'l10n_eg_auction',
+        'port_said_menu',
     ],
     'data': [
         'security/ir.model.access.csv',

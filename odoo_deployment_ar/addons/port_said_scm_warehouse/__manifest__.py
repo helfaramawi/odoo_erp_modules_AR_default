@@ -4,7 +4,7 @@
     "version": "17.0.1.0.0",
     "author": "Paradise Integrated Solutions",
     "license": "LGPL-3",
-    "depends": ["stock","purchase","uom","port_said_scm_purchase_bridge","port_said_dossier"],
+    "depends": ["stock","purchase","uom","port_said_scm_purchase_bridge","port_said_dossier","port_said_menu"],
     "data": [
         "security/ir.model.access.csv",
         "data/sequence_data.xml",

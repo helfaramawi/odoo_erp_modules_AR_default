@@ -12,6 +12,7 @@
         'port_said_commitment',
         'l10n_eg_auction',
         'general_ledger_ar',
+        'port_said_menu',
     ],
     'data': [
         'security/ir.model.access.csv',
