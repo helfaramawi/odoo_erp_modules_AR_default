@@ -330,17 +330,20 @@ class UATDataGenerator(models.AbstractModel):
             ('cleared',    'ارتباط منتهي - صيانة تكييف',              40_000),
         ]
 
+        dept = self.env['res.partner'].search([('supplier_rank', '>', 0)], limit=1)
         for state, desc, amount in scenarios:
-            name = f'{UAT_BATCH} - {desc}'
-            if self._already_exists('port_said.commitment', [('name', '=', name)]):
+            if self._already_exists('port_said.commitment', [('description', 'ilike', desc[:30])]):
                 continue
 
             vals = {
-                'name': name,
-                'amount': amount,
-                'date': TODAY - timedelta(days=30),
-                'notes': f'بيانات اختبار القبول - {UAT_BATCH}',
+                'description': f'{UAT_BATCH} - {desc}',
+                'amount_requested': amount,
+                'fiscal_year': TODAY.year,
+                'budget_line_code': f'UAT-{count+1:03d}',
+                'date_requested': TODAY - timedelta(days=30),
             }
+            if dept and 'department_id' in Commitment._fields:
+                vals['department_id'] = dept.id
 
             # Attach vendor if field exists
             vendor_name = VENDORS[count % len(VENDORS)]
@@ -388,19 +391,21 @@ class UATDataGenerator(models.AbstractModel):
             ('draft',      'طلب احتياج بدون بند موازنة - مستلزمات طارئة',    12_000),
         ]
 
+        dept = self.env['res.partner'].search([('supplier_rank', '>', 0)], limit=1)
         for state, desc, amount in requisition_scenarios:
-            name = f'{UAT_BATCH} - {desc}'
-            if self._already_exists('port_said.requisition', [('name', '=', name)]):
+            if self._already_exists('port_said.requisition', [('description', 'ilike', desc[:30])]):
                 continue
 
             vendor_name = VENDORS[count % len(VENDORS)]
             vendor = self._get_or_create_vendor(vendor_name)
 
             vals = {
-                'name': name,
-                'date': TODAY - timedelta(days=20),
-                'notes': f'بيانات اختبار القبول - {UAT_BATCH}',
+                'description': f'{UAT_BATCH} - {desc}',
+                'date_request': TODAY - timedelta(days=20),
+                'budget_line': f'UAT-{count+1:03d}',
             }
+            if dept and 'department_id' in Req._fields:
+                vals['department_id'] = dept.id
             if 'partner_id' in Req._fields:
                 vals['partner_id'] = vendor.id
             if 'amount_total' in Req._fields:
@@ -416,7 +421,7 @@ class UATDataGenerator(models.AbstractModel):
                     'product_id': product.id,
                     'qty': 1,
                     'price_unit': amount,
-                    'name': desc[:60],
+                    'description': desc[:60],
                 }
                 if 'uom_id' in self.env['port_said.requisition.line']._fields:
                     line_vals['uom_id'] = product.uom_id.id
@@ -455,17 +460,16 @@ class UATDataGenerator(models.AbstractModel):
         ]
 
         for state, desc, complete in dossier_scenarios:
-            name = f'{UAT_BATCH} - {desc}'
-            if self._already_exists('port_said.dossier', [('name', '=', name)]):
-                continue
-
             vals = {
-                'name': name,
-                'state': state,
-                'notes': f'بيانات اختبار القبول - {UAT_BATCH}',
+                'budget_line': f'UAT-DOS-{count+1:03d}',
+                'fiscal_year': TODAY.year,
             }
+            if 'state' in Dossier._fields:
+                vals['state'] = state
             if 'is_complete' in Dossier._fields:
                 vals['is_complete'] = complete
+            if 'notes' in Dossier._fields:
+                vals['notes'] = f'{UAT_BATCH} - {desc}'
 
             try:
                 dossier = Dossier.create(vals)
@@ -495,19 +499,16 @@ class UATDataGenerator(models.AbstractModel):
         vendor = self._get_or_create_vendor(VENDORS[0])
 
         for state, desc, amount in disbursement_scenarios:
-            name = f'{UAT_BATCH} - {desc}'
-            if self._already_exists('port_said.daftar55', [('name', '=', name)]):
-                continue
-
             vals = {
-                'name': name,
-                'date': TODAY - timedelta(days=10),
-                'notes': f'بيانات اختبار القبول - {UAT_BATCH}',
+                'department_name': f'إدارة الاختبار - {UAT_BATCH}',
+                'date_received': TODAY - timedelta(days=10),
+                'form50_ref': f'UAT-F50-{count+1:03d}',
+                'vendor_id': vendor.id,
+                'budget_line': f'UAT-D55-{count+1:03d}',
+                'amount_gross': amount,
             }
-            if 'amount' in D55._fields:
-                vals['amount'] = amount
-            if 'partner_id' in D55._fields:
-                vals['partner_id'] = vendor.id
+            if 'notes' in D55._fields:
+                vals['notes'] = f'{UAT_BATCH} - {desc}'
             if 'journal_id' in D55._fields and journal:
                 vals['journal_id'] = journal.id
 
