@@ -179,10 +179,7 @@ class UATCleanupWizard(models.TransientModel):
             'state': 'done',
         })
 
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'reload',
-        }
+        return {'type': 'ir.actions.act_window_close'}
 
     def _build_domain(self, model_name, ref_field):
         """Build search domain based on cleanup scope."""

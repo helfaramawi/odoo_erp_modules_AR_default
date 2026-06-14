@@ -74,7 +74,5 @@ class UATGenerateWizard(models.TransientModel):
             self.env.cr.commit()
             raise UserError(f'فشل توليد بيانات الاختبار:\n{exc}') from exc
 
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'reload',
-        }
+        # Close wizard silently — no navigation to avoid stale res_id in URL history
+        return {'type': 'ir.actions.act_window_close'}
