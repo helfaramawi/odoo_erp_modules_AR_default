@@ -53,10 +53,8 @@ CLEANUP_MODELS_ORDERED = [
     # Purchase orders
     ('purchase.order.line',           'بند أمر شراء',                  None),
     ('purchase.order',                'أمر شراء',                       'name'),
-    # UAT internal records
+    # UAT internal records (keep generation logs — they are navigation anchors)
     ('arabic.government.uat.scenario','سيناريو اختبار',                'name'),
-    ('arabic.government.uat.generation.log.line', 'بند سجل التوليد',  None),
-    ('arabic.government.uat.generation.log',      'سجل التوليد',       'name'),
 ]
 
 
@@ -182,12 +180,21 @@ class UATCleanupWizard(models.TransientModel):
         })
 
         return {
-            'type': 'ir.actions.act_window',
-            'name': 'نتيجة التنظيف',
-            'res_model': 'arabic.government.uat.cleanup.log',
-            'res_id': log.id,
-            'view_mode': 'form',
-            'target': 'current',
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'اكتمل التنظيف',
+                'message': f'تم حذف {total_deleted} سجل — وضع: {"تجربة جافة" if self.dry_run else "حذف فعلي"}',
+                'type': 'success' if not self.dry_run else 'info',
+                'sticky': True,
+                'next': {
+                    'type': 'ir.actions.act_window',
+                    'name': 'سيناريوهات اختبار القبول',
+                    'res_model': 'arabic.government.uat.scenario',
+                    'view_mode': 'list,form',
+                    'target': 'current',
+                },
+            },
         }
 
     def _build_domain(self, model_name, ref_field):
