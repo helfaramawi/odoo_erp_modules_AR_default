@@ -18,8 +18,8 @@
                             <field name="dry_run" widget="boolean_toggle"/>
                             <field name="cleanup_scope"/>
                             <field name="confirm_cleanup"
-                                   attrs="{'invisible': [('dry_run', '=', True)],
-                                           'required': [('dry_run', '=', False)]}"/>
+                                   invisible="dry_run == True"
+                                   required="dry_run == False"/>
                         </group>
                         <group string="خيارات إضافية">
                             <field name="reset_sequences"/>
@@ -30,7 +30,7 @@
                     <group>
                         <field name="warning_message" nolabel="1"
                                widget="html"
-                               class="alert alert-warning"/>
+                               class="alert alert-warning" role="alert"/>
                     </group>
                     <group>
                         <field name="notes" placeholder="ملاحظات اختيارية..."/>
