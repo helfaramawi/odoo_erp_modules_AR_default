@@ -572,26 +572,27 @@ class UATDataGenerator(models.AbstractModel):
         ]
 
         for ref, amount, state in bill_scenarios:
-            if self._already_exists('account.move', [('ref', '=', ref), ('move_type', '=', 'in_invoice')]):
-                continue
             try:
-                move_vals = {
-                    'move_type': 'in_invoice',
-                    'ref': ref,
-                    'partner_id': vendor.id,
-                    'invoice_date': TODAY - timedelta(days=15),
-                    'journal_id': journal.id if journal else False,
-                    'invoice_line_ids': [(0, 0, {
-                        'name': ref,
-                        'quantity': 1,
-                        'price_unit': amount,
-                        'account_id': expense_account.id if expense_account else False,
-                    })],
-                }
-                move = Move.create(move_vals)
-                if state == 'posted':
-                    move.action_post()
-                count += 1
+                with self.env.cr.savepoint():
+                    if self._already_exists('account.move', [('ref', '=', ref), ('move_type', '=', 'in_invoice')]):
+                        continue
+                    move_vals = {
+                        'move_type': 'in_invoice',
+                        'ref': ref,
+                        'partner_id': vendor.id,
+                        'invoice_date': TODAY - timedelta(days=15),
+                        'journal_id': journal.id if journal else False,
+                        'invoice_line_ids': [(0, 0, {
+                            'name': ref,
+                            'quantity': 1,
+                            'price_unit': amount,
+                            'account_id': expense_account.id if expense_account else False,
+                        })],
+                    }
+                    move = Move.create(move_vals)
+                    if state == 'posted':
+                        move.action_post()
+                    count += 1
             except Exception as e:
                 _logger.warning('Account move creation failed: %s', e)
 
@@ -606,33 +607,34 @@ class UATDataGenerator(models.AbstractModel):
             ('cancelled', 'أمر دفع ملغي',                   30_000),
         ]
         for state, desc, amount in po_scenarios:
-            if self._already_exists('port_said.payment_order', [('purpose', 'ilike', desc[:20])]):
-                continue
             try:
-                vals = {
-                    'po_reference': f'UAT-PO-{count+1:03d}',
-                    'issuing_entity_name': f'إدارة الاختبار - {UAT_BATCH}',
-                    'amount': amount,
-                    'issue_date': TODAY - timedelta(days=15),
-                    'purpose': f'{UAT_BATCH} - {desc}',
-                }
-                if 'partner_id' in PayOrder._fields:
-                    vals['partner_id'] = vendor.id
-                po = PayOrder.create(vals)
-                try:
-                    if state in ('received', 'registered', 'cleared', 'posted', 'cancelled'):
-                        po.action_receive()
-                    if state in ('registered', 'cleared', 'posted'):
-                        po.action_register()
-                    if state in ('cleared', 'posted'):
-                        po.action_clear()
-                    if state == 'posted':
-                        po.action_post()
-                    if state == 'cancelled':
-                        po.action_cancel()
-                except Exception:
-                    po.write({'state': state})
-                count += 1
+                with self.env.cr.savepoint():
+                    if self._already_exists('port_said.payment_order', [('purpose', 'ilike', desc[:20])]):
+                        continue
+                    vals = {
+                        'po_reference': f'UAT-PO-{count+1:03d}',
+                        'issuing_entity_name': f'إدارة الاختبار - {UAT_BATCH}',
+                        'amount': amount,
+                        'issue_date': TODAY - timedelta(days=15),
+                        'purpose': f'{UAT_BATCH} - {desc}',
+                    }
+                    if 'partner_id' in PayOrder._fields:
+                        vals['partner_id'] = vendor.id
+                    po = PayOrder.create(vals)
+                    try:
+                        if state in ('received', 'registered', 'cleared', 'posted', 'cancelled'):
+                            po.action_receive()
+                        if state in ('registered', 'cleared', 'posted'):
+                            po.action_register()
+                        if state in ('cleared', 'posted'):
+                            po.action_clear()
+                        if state == 'posted':
+                            po.action_post()
+                        if state == 'cancelled':
+                            po.action_cancel()
+                    except Exception:
+                        po.write({'state': state})
+                    count += 1
             except Exception as e:
                 _logger.warning('Payment order creation failed: %s', e)
 
@@ -726,34 +728,37 @@ class UATDataGenerator(models.AbstractModel):
             ('cancelled',  'سلفة ملغاة - طلب لم يستوفِ الشروط',        6_000),
         ]
 
+        employee = self.env['hr.employee'].search([], limit=1)
         for state, desc, amount in advance_scenarios:
             name = f'{UAT_BATCH} - {desc}'
-            if self._already_exists('port_said.advance', [('name', '=', name)]):
-                continue
             try:
-                employee = self.env['hr.employee'].search([], limit=1)
-                vals = {
-                    'name': name,
-                    'amount': amount,
-                    'notes': f'بيانات اختبار القبول - {UAT_BATCH}',
-                }
-                if 'employee_id' in Advance._fields and employee:
-                    vals['employee_id'] = employee.id
-                adv = Advance.create(vals)
-                try:
-                    if state in ('submitted', 'approved', 'disbursed', 'settled', 'cancelled'):
-                        adv.action_submit()
-                    if state in ('approved', 'disbursed', 'settled'):
-                        adv.action_approve()
-                    if state in ('disbursed', 'settled') and hasattr(adv, 'action_disburse'):
-                        adv.action_disburse()
-                    if state == 'settled' and hasattr(adv, 'action_settle'):
-                        adv.action_settle()
-                    if state == 'cancelled':
-                        adv.action_cancel()
-                except Exception:
-                    adv.write({'state': state})
-                count += 1
+                with self.env.cr.savepoint():
+                    if self._already_exists('port_said.advance', [('name', '=', name)]):
+                        continue
+                    vals = {
+                        'name': name,
+                        'amount': amount,
+                        'advance_date': TODAY - timedelta(days=5),
+                        'due_date': TODAY + timedelta(days=90),
+                        'purpose': f'بيانات اختبار القبول - {UAT_BATCH}',
+                    }
+                    if 'employee_id' in Advance._fields and employee:
+                        vals['employee_id'] = employee.id
+                    adv = Advance.create(vals)
+                    try:
+                        if state in ('submitted', 'approved', 'disbursed', 'settled', 'cancelled'):
+                            adv.action_submit()
+                        if state in ('approved', 'disbursed', 'settled'):
+                            adv.action_approve()
+                        if state in ('disbursed', 'settled') and hasattr(adv, 'action_disburse'):
+                            adv.action_disburse()
+                        if state == 'settled' and hasattr(adv, 'action_settle'):
+                            adv.action_settle()
+                        if state == 'cancelled':
+                            adv.action_cancel()
+                    except Exception:
+                        adv.write({'state': state})
+                    count += 1
             except Exception as e:
                 _logger.warning('Advance creation failed: %s', e)
 
