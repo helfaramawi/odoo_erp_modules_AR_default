@@ -80,51 +80,48 @@
 
   <!-- قالب الطباعة النهائية — يطبع النص فوق صورة الاستمارة الأصلية -->
   <template id="report_form50_final_template">
-    <t t-call="web.html_container">
-      <style>
-        @page {
-          size: A4 portrait;
-          margin: 0;
-        }
-        body {
-          margin: 0;
-          padding: 0;
-        }
-        .form50-page {
-          position: relative;
-          width: 210mm;
-          height: 297mm;
-          overflow: hidden;
-          page-break-after: always;
-        }
-        .form50-bg {
-          position: absolute;
-          top: 0; left: 0;
-          width: 100%; height: 100%;
-          z-index: 1;
-        }
-        .form50-field {
-          position: absolute;
-          z-index: 10;
-          font-family: 'DejaVu Sans', Arial, sans-serif;
-          direction: rtl;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: clip;
-          line-height: 1.25;
-        }
-      </style>
-      <t t-foreach="docs" t-as="o">
-        <t t-set="fields" t-value="o._form50_render_fields()"/>
-        <div class="form50-page">
-          <img class="form50-bg"
-               t-att-src="'http://127.0.0.1:8069/port_said_form50_print/static/img/form50_bg.png'"
-               alt="form50"/>
-          <t t-foreach="fields" t-as="fld">
-            <span class="form50-field" t-att-style="fld['style']"><t t-esc="fld['text']"/></span>
-          </t>
-        </div>
-      </t>
-    </t>
+    <html>
+      <head>
+        <meta charset="UTF-8"/>
+        <style>
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          html, body { width: 210mm; height: 297mm; overflow: hidden; }
+          @page { size: A4 portrait; margin: 0; }
+          .form50-page {
+            position: relative;
+            width: 210mm;
+            height: 297mm;
+            overflow: hidden;
+          }
+          .form50-bg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 210mm; height: 297mm;
+            z-index: 1;
+          }
+          .form50-field {
+            position: absolute;
+            z-index: 10;
+            font-family: 'Noto Sans Arabic', 'DejaVu Sans', 'FreeSerif', Arial, sans-serif;
+            direction: rtl;
+            white-space: nowrap;
+            overflow: hidden;
+          }
+        </style>
+      </head>
+      <body>
+        <t t-foreach="docs" t-as="o">
+          <t t-set="fields" t-value="o._form50_render_fields()"/>
+          <div class="form50-page">
+            <img class="form50-bg"
+                 src="http://127.0.0.1:8069/port_said_form50_print/static/img/form50_bg.png"
+                 alt=""/>
+            <t t-foreach="fields" t-as="fld">
+              <span class="form50-field" t-att-style="fld['style']"><t t-esc="fld['text']"/></span>
+            </t>
+          </div>
+        </t>
+      </body>
+    </html>
   </template>
 </odoo>
