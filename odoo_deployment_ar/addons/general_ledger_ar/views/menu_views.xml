@@ -2,9 +2,16 @@
 <odoo>
 
     <menuitem
+        id="menu_general_ledger_root"
+        name="الأستاذ العام"
+        parent="port_said_subsidiary_books.menu_subsidiary_root"
+        sequence="5"
+    />
+
+    <menuitem
         id="menu_helper_notebooks_general_ledger"
         name="دفتر الأستاذ العام"
-        parent="port_said_subsidiary_books.menu_subsidiary_root"
+        parent="menu_general_ledger_root"
         action="account.action_move_journal_line"
         sequence="10"
     />
@@ -12,7 +19,7 @@
     <menuitem
         id="menu_helper_notebooks_journal_entries"
         name="قيود اليومية"
-        parent="port_said_subsidiary_books.menu_subsidiary_root"
+        parent="menu_general_ledger_root"
         action="account.action_account_moves_all"
         sequence="40"
     />
