@@ -14,6 +14,7 @@
         'port_said_fixed_assets',
         'port_said_commitment',
         'port_said_daftar55',  # مؤقت: لازم علشان الـ daftar55_id field لسه موجود
+        'port_said_menu',
         # port_said_daftar55 dependency removed:
         # دفتر 55 ع.ح هو سجل مدفوعات للموردين وليس له علاقة بأذونات الصرف المخزونية.
         # سجل حركات الصرف المخزوني (stock.issue.register.line) مُعرَّف في هذه الوحدة.

@@ -22,7 +22,8 @@
     </record>
 
     <menuitem id="menu_scm_issue_root" name="أذونات الصرف والارتجاع"
-              sequence="50" web_icon="stock,static/description/icon.png"/>
+              parent="port_said_menu.menu_ps_40_inventory"
+              sequence="10"/>
     <menuitem id="menu_issue_permits" name="أذونات الصرف"
               parent="menu_scm_issue_root" action="action_issue_permits2" sequence="10"/>
     <menuitem id="menu_return_permits" name="أذونات الارتجاع"
