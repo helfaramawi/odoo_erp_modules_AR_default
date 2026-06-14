@@ -86,11 +86,10 @@
         <div class="article o_report_layout_standard" style="padding:0; margin:0;">
           <style>
             @page { size: A4 portrait; margin: 0 !important; }
-            html, body, #wrapwrap, .o_report_layout, .article,
-            .o_report_layout_standard, div.article {
-              margin: 0 !important; padding: 0 !important;
-              border: none !important; box-shadow: none !important;
-            }
+            html, body, main,
+            #wrapwrap, .o_web_client,
+            .article, .o_report_layout_standard,
+            div.article { margin: 0 !important; padding: 0 !important; border: none !important; }
             .form50-page {
               position: relative;
               width: 210mm;
