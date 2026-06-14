@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Root menu — under Settings / Technical -->
+    <menuitem id="menu_uat_root"
+              name="أدوات الاختبار والقبول (UAT)"
+              parent="base.menu_administration"
+              sequence="99"
+              groups="base.group_system"/>
+
+    <!-- Cleanup -->
+    <menuitem id="menu_uat_cleanup_wizard"
+              name="تنظيف بيانات الحركات"
+              parent="menu_uat_root"
+              action="action_uat_cleanup_wizard"
+              sequence="10"
+              groups="base.group_system"/>
+
+    <menuitem id="menu_uat_cleanup_log"
+              name="سجل عمليات التنظيف"
+              parent="menu_uat_root"
+              action="action_uat_cleanup_log"
+              sequence="20"
+              groups="base.group_system"/>
+
+    <!-- Data Generation -->
+    <menuitem id="menu_uat_generate_wizard"
+              name="توليد بيانات اختبار حكومية"
+              parent="menu_uat_root"
+              action="action_uat_generate_wizard"
+              sequence="30"
+              groups="base.group_system"/>
+
+    <menuitem id="menu_uat_gen_log"
+              name="سجل توليد بيانات الاختبار"
+              parent="menu_uat_root"
+              action="action_uat_gen_log"
+              sequence="40"
+              groups="base.group_system"/>
+
+    <!-- Scenarios -->
+    <menuitem id="menu_uat_scenarios"
+              name="سيناريوهات اختبار القبول"
+              parent="menu_uat_root"
+              action="action_uat_scenarios"
+              sequence="50"
+              groups="base.group_system"/>
+</odoo>

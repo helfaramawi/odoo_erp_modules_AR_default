@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Generation Wizard Form -->
+    <record id="view_uat_generate_wizard_form" model="ir.ui.view">
+        <field name="name">arabic.government.uat.generate.wizard.form</field>
+        <field name="model">arabic.government.uat.generate.wizard</field>
+        <field name="arch" type="xml">
+            <form string="توليد بيانات الاختبار الحكومي">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>🏛 توليد بيانات اختبار حكومية عربية</h1>
+                        <p class="text-muted">
+                            يولّد هذا المعالج بيانات اختبار واقعية لمحافظة بورسعيد
+                            بمرجع الدفعة: <strong>UAT-AR-GOV-2026</strong>
+                        </p>
+                    </div>
+                    <group>
+                        <group string="إعدادات الدفعة">
+                            <field name="batch_reference"/>
+                            <field name="reset_existing_uat_data"/>
+                        </group>
+                    </group>
+                    <separator string="البيانات المراد توليدها"/>
+                    <group>
+                        <group string="البيانات المالية والإدارية">
+                            <field name="generate_budget_cases" widget="boolean_toggle"/>
+                            <field name="generate_commitment_cases" widget="boolean_toggle"/>
+                            <field name="generate_disbursement_cases" widget="boolean_toggle"/>
+                            <field name="generate_accounting_cases" widget="boolean_toggle"/>
+                        </group>
+                        <group string="المشتريات والمخازن">
+                            <field name="generate_procurement_cases" widget="boolean_toggle"/>
+                            <field name="generate_dossier_cases" widget="boolean_toggle"/>
+                            <field name="generate_inventory_cases" widget="boolean_toggle"/>
+                            <field name="generate_project_cases" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="الموارد البشرية والأنظمة">
+                            <field name="generate_hr_cases" widget="boolean_toggle"/>
+                            <field name="generate_ai_agent_cases" widget="boolean_toggle"/>
+                            <field name="generate_report_cases" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="notes" placeholder="ملاحظات اختيارية..."/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_generate" type="object"
+                            string="توليد البيانات" class="btn-primary"/>
+                    <button string="إلغاء" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Generation Log List -->
+    <record id="view_uat_gen_log_list" model="ir.ui.view">
+        <field name="name">arabic.government.uat.generation.log.list</field>
+        <field name="model">arabic.government.uat.generation.log</field>
+        <field name="arch" type="xml">
+            <list string="سجلات التوليد"
+                  decoration-success="state == 'done'"
+                  decoration-danger="state == 'failed'">
+                <field name="name"/>
+                <field name="create_date"/>
+                <field name="batch_reference"/>
+                <field name="total_created"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'done'"
+                       decoration-danger="state == 'failed'"
+                       decoration-info="state == 'draft'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Generation Log Form -->
+    <record id="view_uat_gen_log_form" model="ir.ui.view">
+        <field name="name">arabic.government.uat.generation.log.form</field>
+        <field name="model">arabic.government.uat.generation.log</field>
+        <field name="arch" type="xml">
+            <form string="سجل التوليد" create="false" edit="false">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="batch_reference"/>
+                            <field name="total_created"/>
+                            <field name="state" widget="badge"/>
+                        </group>
+                        <group>
+                            <field name="create_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="ملخص النتائج">
+                            <field name="result_summary"/>
+                        </page>
+                        <page string="التفاصيل">
+                            <field name="line_ids">
+                                <list>
+                                    <field name="category"/>
+                                    <field name="description"/>
+                                    <field name="record_count"/>
+                                    <field name="status" widget="badge"
+                                           decoration-success="status == 'ok'"
+                                           decoration-warning="status == 'skipped'"
+                                           decoration-danger="status == 'error'"/>
+                                    <field name="message"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="ملاحظات">
+                            <field name="notes"/>
+                            <field name="error_message" string="رسالة الخطأ"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Generation Log Action -->
+    <record id="action_uat_gen_log" model="ir.actions.act_window">
+        <field name="name">سجل توليد البيانات</field>
+        <field name="res_model">arabic.government.uat.generation.log</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Generation Wizard Action -->
+    <record id="action_uat_generate_wizard" model="ir.actions.act_window">
+        <field name="name">توليد بيانات اختبار حكومية</field>
+        <field name="res_model">arabic.government.uat.generate.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Cleanup Wizard Form -->
+    <record id="view_uat_cleanup_wizard_form" model="ir.ui.view">
+        <field name="name">arabic.government.uat.cleanup.wizard.form</field>
+        <field name="model">arabic.government.uat.cleanup.wizard</field>
+        <field name="arch" type="xml">
+            <form string="تنظيف بيانات الحركات">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>🧹 تنظيف بيانات الحركات</h1>
+                        <p class="text-muted">
+                            هذه الأداة تتيح حذف بيانات الحركات بأمان مع الحفاظ على البيانات الأساسية.
+                        </p>
+                    </div>
+                    <group>
+                        <group string="إعدادات التنظيف">
+                            <field name="dry_run" widget="boolean_toggle"/>
+                            <field name="cleanup_scope"/>
+                            <field name="confirm_cleanup"
+                                   attrs="{'invisible': [('dry_run', '=', True)],
+                                           'required': [('dry_run', '=', False)]}"/>
+                        </group>
+                        <group string="خيارات إضافية">
+                            <field name="reset_sequences"/>
+                            <field name="cleanup_attachments"/>
+                            <field name="cleanup_ai_logs"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="warning_message" nolabel="1"
+                               widget="html"
+                               class="alert alert-warning"/>
+                    </group>
+                    <group>
+                        <field name="notes" placeholder="ملاحظات اختيارية..."/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_run_cleanup" type="object"
+                            string="تشغيل التنظيف" class="btn-primary"/>
+                    <button string="إلغاء" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Cleanup Log List -->
+    <record id="view_uat_cleanup_log_list" model="ir.ui.view">
+        <field name="name">arabic.government.uat.cleanup.log.list</field>
+        <field name="model">arabic.government.uat.cleanup.log</field>
+        <field name="arch" type="xml">
+            <list string="سجلات التنظيف" decoration-success="state == 'done'"
+                  decoration-danger="state == 'failed'">
+                <field name="name"/>
+                <field name="create_date"/>
+                <field name="create_uid"/>
+                <field name="dry_run"/>
+                <field name="cleanup_scope"/>
+                <field name="total_deleted"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'done'"
+                       decoration-danger="state == 'failed'"
+                       decoration-info="state == 'draft'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Cleanup Log Form -->
+    <record id="view_uat_cleanup_log_form" model="ir.ui.view">
+        <field name="name">arabic.government.uat.cleanup.log.form</field>
+        <field name="model">arabic.government.uat.cleanup.log</field>
+        <field name="arch" type="xml">
+            <form string="سجل التنظيف" create="false" edit="false">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="dry_run"/>
+                            <field name="cleanup_scope"/>
+                            <field name="total_deleted"/>
+                            <field name="state" widget="badge"/>
+                        </group>
+                        <group>
+                            <field name="create_uid"/>
+                            <field name="create_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="ملخص النتائج">
+                            <field name="result_summary"/>
+                        </page>
+                        <page string="تفاصيل النماذج">
+                            <field name="line_ids">
+                                <list>
+                                    <field name="arabic_name"/>
+                                    <field name="model_name"/>
+                                    <field name="record_count"/>
+                                    <field name="status" widget="badge"
+                                           decoration-success="status == 'ok'"
+                                           decoration-warning="status == 'skipped'"
+                                           decoration-danger="status == 'error'"/>
+                                    <field name="message"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="ملاحظات">
+                            <field name="notes"/>
+                            <field name="error_message" string="رسالة الخطأ"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Cleanup Log Action -->
+    <record id="action_uat_cleanup_log" model="ir.actions.act_window">
+        <field name="name">سجل عمليات التنظيف</field>
+        <field name="res_model">arabic.government.uat.cleanup.log</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                لا توجد سجلات تنظيف بعد
+            </p>
+            <p>استخدم معالج التنظيف لبدء عملية تنظيف آمنة لبيانات الحركات.</p>
+        </field>
+    </record>
+
+    <!-- Cleanup Wizard Action -->
+    <record id="action_uat_cleanup_wizard" model="ir.actions.act_window">
+        <field name="name">تنظيف بيانات الحركات</field>
+        <field name="res_model">arabic.government.uat.cleanup.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>
