@@ -5,7 +5,7 @@
         <field name="name">arabic.government.uat.scenario.list</field>
         <field name="model">arabic.government.uat.scenario</field>
         <field name="arch" type="xml">
-            <list string="سيناريوهات اختبار القبول"
+            <tree string="سيناريوهات اختبار القبول"
                   decoration-success="status == 'pass'"
                   decoration-danger="status == 'fail'"
                   decoration-warning="status == 'blocked'">
@@ -21,7 +21,7 @@
                        decoration-warning="status == 'blocked'"
                        decoration-muted="status == 'pending'"/>
                 <field name="batch_reference"/>
-            </list>
+            </tree>
         </field>
     </record>
 

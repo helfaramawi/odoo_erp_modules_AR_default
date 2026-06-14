@@ -50,7 +50,7 @@
         <field name="name">arabic.government.uat.cleanup.log.list</field>
         <field name="model">arabic.government.uat.cleanup.log</field>
         <field name="arch" type="xml">
-            <list string="سجلات التنظيف" decoration-success="state == 'done'"
+            <tree string="سجلات التنظيف" decoration-success="state == 'done'"
                   decoration-danger="state == 'failed'">
                 <field name="name"/>
                 <field name="create_date"/>
@@ -62,7 +62,7 @@
                        decoration-success="state == 'done'"
                        decoration-danger="state == 'failed'"
                        decoration-info="state == 'draft'"/>
-            </list>
+            </tree>
         </field>
     </record>
 
@@ -94,7 +94,7 @@
                         </page>
                         <page string="تفاصيل النماذج">
                             <field name="line_ids">
-                                <list>
+                                <tree>
                                     <field name="arabic_name"/>
                                     <field name="model_name"/>
                                     <field name="record_count"/>
@@ -103,7 +103,7 @@
                                            decoration-warning="status == 'skipped'"
                                            decoration-danger="status == 'error'"/>
                                     <field name="message"/>
-                                </list>
+                                </tree>
                             </field>
                         </page>
                         <page string="ملاحظات">

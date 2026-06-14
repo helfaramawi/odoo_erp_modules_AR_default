@@ -60,7 +60,7 @@
         <field name="name">arabic.government.uat.generation.log.list</field>
         <field name="model">arabic.government.uat.generation.log</field>
         <field name="arch" type="xml">
-            <list string="سجلات التوليد"
+            <tree string="سجلات التوليد"
                   decoration-success="state == 'done'"
                   decoration-danger="state == 'failed'">
                 <field name="name"/>
@@ -71,7 +71,7 @@
                        decoration-success="state == 'done'"
                        decoration-danger="state == 'failed'"
                        decoration-info="state == 'draft'"/>
-            </list>
+            </tree>
         </field>
     </record>
 
@@ -101,7 +101,7 @@
                         </page>
                         <page string="التفاصيل">
                             <field name="line_ids">
-                                <list>
+                                <tree>
                                     <field name="category"/>
                                     <field name="description"/>
                                     <field name="record_count"/>
@@ -110,7 +110,7 @@
                                            decoration-warning="status == 'skipped'"
                                            decoration-danger="status == 'error'"/>
                                     <field name="message"/>
-                                </list>
+                                </tree>
                             </field>
                         </page>
                         <page string="ملاحظات">
