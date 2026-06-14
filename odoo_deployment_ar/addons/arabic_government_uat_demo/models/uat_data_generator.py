@@ -746,18 +746,19 @@ class UATDataGenerator(models.AbstractModel):
                         vals['employee_id'] = employee.id
                     adv = Advance.create(vals)
                     try:
-                        if state in ('submitted', 'approved', 'disbursed', 'settled', 'cancelled'):
-                            adv.action_submit()
-                        if state in ('approved', 'disbursed', 'settled'):
-                            adv.action_approve()
-                        if state in ('disbursed', 'settled') and hasattr(adv, 'action_disburse'):
-                            adv.action_disburse()
-                        if state == 'settled' and hasattr(adv, 'action_settle'):
-                            adv.action_settle()
-                        if state == 'cancelled':
-                            adv.action_cancel()
+                        with self.env.cr.savepoint():
+                            if state in ('submitted', 'approved', 'disbursed', 'settled', 'cancelled'):
+                                adv.action_submit()
+                            if state in ('approved', 'disbursed', 'settled'):
+                                adv.action_approve()
+                            if state in ('disbursed', 'settled') and hasattr(adv, 'action_disburse'):
+                                adv.action_disburse()
+                            if state == 'settled' and hasattr(adv, 'action_settle'):
+                                adv.action_settle()
+                            if state == 'cancelled':
+                                adv.action_cancel()
                     except Exception:
-                        adv.write({'state': state})
+                        pass
                     count += 1
             except Exception as e:
                 _logger.warning('Advance creation failed: %s', e)
@@ -771,31 +772,36 @@ class UATDataGenerator(models.AbstractModel):
             ('released',  'ضمان بنكي محرر - عقد منتهي',             300_000,  0),
             ('forfeited', 'ضمان بنكي مصادر - عقد مخالف',           750_000,  0),
         ]
+        bank = self.env['res.bank'].search([], limit=1)
         for state, desc, amount, days in guarantee_scenarios:
             name = f'{UAT_BATCH} - {desc}'
-            if self._already_exists('port_said.bank.guarantee', [('name', '=', name)]):
-                continue
             try:
-                vals = {
-                    'name': name,
-                    'amount': amount,
-                    'notes': f'بيانات اختبار القبول - {UAT_BATCH}',
-                }
-                if 'expiry_date' in Guarantee._fields and days:
-                    vals['expiry_date'] = TODAY + timedelta(days=days)
-                guar = Guarantee.create(vals)
-                try:
-                    if state in ('active', 'extended', 'released', 'forfeited'):
-                        guar.action_activate()
-                    if state in ('extended',) and hasattr(guar, 'action_extend'):
-                        guar.action_extend()
-                    if state == 'released' and hasattr(guar, 'action_release'):
-                        guar.action_release()
-                    if state == 'forfeited' and hasattr(guar, 'action_forfeit'):
-                        guar.action_forfeit()
-                except Exception:
-                    guar.write({'state': state})
-                count += 1
+                with self.env.cr.savepoint():
+                    if self._already_exists('port_said.bank.guarantee', [('name', '=', name)]):
+                        continue
+                    vals = {
+                        'name': name,
+                        'amount': amount,
+                        'issue_date': TODAY - timedelta(days=10),
+                        'expiry_date': TODAY + timedelta(days=days if days else 30),
+                        'issuing_bank': bank.name if bank else 'بنك الاستثمار القومي',
+                    }
+                    if 'notes' in Guarantee._fields:
+                        vals['notes'] = f'بيانات اختبار القبول - {UAT_BATCH}'
+                    guar = Guarantee.create(vals)
+                    try:
+                        with self.env.cr.savepoint():
+                            if state in ('active', 'extended', 'released', 'forfeited'):
+                                guar.action_activate()
+                            if state in ('extended',) and hasattr(guar, 'action_extend'):
+                                guar.action_extend()
+                            if state == 'released' and hasattr(guar, 'action_release'):
+                                guar.action_release()
+                            if state == 'forfeited' and hasattr(guar, 'action_forfeit'):
+                                guar.action_forfeit()
+                    except Exception:
+                        pass
+                    count += 1
             except Exception as e:
                 _logger.warning('Bank guarantee creation failed: %s', e)
 
