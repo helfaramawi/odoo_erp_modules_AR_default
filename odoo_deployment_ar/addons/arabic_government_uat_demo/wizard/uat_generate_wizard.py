@@ -79,6 +79,6 @@ class UATGenerateWizard(models.TransientModel):
             'name': 'نتيجة التوليد',
             'res_model': 'arabic.government.uat.generation.log',
             'res_id': log.id,
-            'view_mode': 'form',
-            'target': 'current',
+            'view_mode': 'form,list',
+            'target': 'main',
         }
