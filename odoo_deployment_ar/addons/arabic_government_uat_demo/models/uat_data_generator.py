@@ -75,7 +75,8 @@ class UATDataGenerator(models.AbstractModel):
         def run(label, fn):
             nonlocal total
             try:
-                count = fn()
+                with self.env.cr.savepoint():
+                    count = fn()
                 results.append((label, count, 'ok', ''))
                 total += count
             except Exception as exc:

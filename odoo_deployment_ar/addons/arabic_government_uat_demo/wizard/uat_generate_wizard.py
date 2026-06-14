@@ -69,7 +69,9 @@ class UATGenerateWizard(models.TransientModel):
             total = self.env['arabic.government.uat.generator'].generate_all(options, log)
         except Exception as exc:
             _logger.exception('UAT generation failed')
+            self.env.cr.rollback()
             log.write({'state': 'failed', 'error_message': str(exc)[:500]})
+            self.env.cr.commit()
             raise UserError(f'فشل توليد بيانات الاختبار:\n{exc}') from exc
 
         return {
