@@ -1,1 +1,40 @@
-<?xml version="1.0" encoding="utf-8"?><odoo/>
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ROOT — يظهر كتبويب رئيسي في شريط التطبيقات -->
+    <menuitem
+        id="menu_port_said_root"
+        name="الديوان العام — محافظة بورسعيد"
+        sequence="10"
+    />
+
+    <!-- المستوى الأول — الأقسام الرئيسية -->
+    <menuitem
+        id="menu_ps_20_accts"
+        name="الحسابات"
+        parent="menu_port_said_root"
+        sequence="20"
+    />
+
+    <menuitem
+        id="menu_ps_30_purchase"
+        name="المشتريات"
+        parent="menu_port_said_root"
+        sequence="30"
+    />
+
+    <menuitem
+        id="menu_ps_40_inventory"
+        name="المخازن والمستودعات"
+        parent="menu_port_said_root"
+        sequence="40"
+    />
+
+    <menuitem
+        id="menu_ps_50_reports"
+        name="التقارير"
+        parent="menu_port_said_root"
+        sequence="50"
+    />
+
+</odoo>
