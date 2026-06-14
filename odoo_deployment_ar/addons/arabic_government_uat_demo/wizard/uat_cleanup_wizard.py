@@ -181,20 +181,7 @@ class UATCleanupWizard(models.TransientModel):
 
         return {
             'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': 'اكتمل التنظيف',
-                'message': f'تم حذف {total_deleted} سجل — وضع: {"تجربة جافة" if self.dry_run else "حذف فعلي"}',
-                'type': 'success' if not self.dry_run else 'info',
-                'sticky': True,
-                'next': {
-                    'type': 'ir.actions.act_window',
-                    'name': 'سيناريوهات اختبار القبول',
-                    'res_model': 'arabic.government.uat.scenario',
-                    'view_mode': 'list,form',
-                    'target': 'current',
-                },
-            },
+            'tag': 'reload',
         }
 
     def _build_domain(self, model_name, ref_field):

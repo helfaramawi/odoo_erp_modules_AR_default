@@ -76,18 +76,5 @@ class UATGenerateWizard(models.TransientModel):
 
         return {
             'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': 'اكتمل التوليد',
-                'message': f'تم إنشاء {total} سجل بنجاح — مرجع الدفعة: {self.batch_reference}',
-                'type': 'success',
-                'sticky': True,
-                'next': {
-                    'type': 'ir.actions.act_window',
-                    'name': 'سجلات التوليد',
-                    'res_model': 'arabic.government.uat.generation.log',
-                    'view_mode': 'list,form',
-                    'target': 'current',
-                },
-            },
+            'tag': 'reload',
         }
