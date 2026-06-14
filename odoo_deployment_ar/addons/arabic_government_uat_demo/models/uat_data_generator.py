@@ -538,16 +538,17 @@ class UATDataGenerator(models.AbstractModel):
             ('تسويات', 'قيد تسويات - ضرائب'),
         ]):
             reg_type, desc = desc_pair
-            name = f'{UAT_BATCH} - دفتر 224 - {desc}'
-            if not self._already_exists('port_said.daftar224', [('name', '=', name)]):
-                try:
-                    vals = {'name': name, 'notes': f'{UAT_BATCH}'}
-                    if 'register_type' in D224._fields:
-                        vals['register_type'] = 'sarfiyat' if 'صرفيات' in reg_type else 'taswiyat'
-                    D224.create(vals)
-                    count += 1
-                except Exception as e:
-                    _logger.warning('Daftar224 creation failed: %s', e)
+            try:
+                vals = {
+                    'entry_date': TODAY - timedelta(days=i + 1),
+                    'notes': f'{UAT_BATCH} - دفتر 224 - {desc}',
+                }
+                if 'register_type' in D224._fields:
+                    vals['register_type'] = 'sarfiyat' if 'صرفيات' in reg_type else 'taswiyat'
+                D224.create(vals)
+                count += 1
+            except Exception as e:
+                _logger.warning('Daftar224 creation failed: %s', e)
 
         return count
 
@@ -605,13 +606,16 @@ class UATDataGenerator(models.AbstractModel):
             ('cancelled', 'أمر دفع ملغي',                   30_000),
         ]
         for state, desc, amount in po_scenarios:
-            name = f'{UAT_BATCH} - {desc}'
-            if self._already_exists('port_said.payment_order', [('name', '=', name)]):
+            if self._already_exists('port_said.payment_order', [('purpose', 'ilike', desc[:20])]):
                 continue
             try:
-                vals = {'name': name, 'notes': f'{UAT_BATCH}'}
-                if 'amount' in PayOrder._fields:
-                    vals['amount'] = amount
+                vals = {
+                    'po_reference': f'UAT-PO-{count+1:03d}',
+                    'issuing_entity_name': f'إدارة الاختبار - {UAT_BATCH}',
+                    'amount': amount,
+                    'issue_date': TODAY - timedelta(days=15),
+                    'purpose': f'{UAT_BATCH} - {desc}',
+                }
                 if 'partner_id' in PayOrder._fields:
                     vals['partner_id'] = vendor.id
                 po = PayOrder.create(vals)
