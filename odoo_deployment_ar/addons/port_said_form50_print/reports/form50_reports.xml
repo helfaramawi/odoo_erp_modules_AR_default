@@ -20,6 +20,5 @@
     <field name="binding_model_id" ref="port_said_daftar55.model_port_said_daftar55"/>
     <field name="binding_type">report</field>
     <field name="attachment_use">False</field>
-    <field name="paperformat_id" ref="base.paperformat_a4"/>
   </record>
 </odoo>
