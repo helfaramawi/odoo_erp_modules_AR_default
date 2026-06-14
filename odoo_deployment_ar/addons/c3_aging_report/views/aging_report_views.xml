@@ -24,5 +24,5 @@
     <field name="view_mode">form</field><field name="target">new</field>
   </record>
   <menuitem id="menu_aging_report" name="Aging Report / تقرير الأعمار"
-    parent="port_said_menu.menu_ps_60_custom" action="action_aging_report_wizard" sequence="30"/>
+    parent="account.menu_finance_reports" action="action_aging_report_wizard" sequence="30"/>
 </odoo>

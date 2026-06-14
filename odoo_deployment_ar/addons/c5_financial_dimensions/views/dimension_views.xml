@@ -19,6 +19,6 @@
   </record>
   <menuitem id="menu_financial_dimensions"
     name="Financial Dimensions / الأبعاد المالية"
-    parent="port_said_menu.menu_ps_60_custom"
+    parent="account.menu_finance_configuration"
     action="action_financial_dimensions" sequence="50"/>
 </odoo>

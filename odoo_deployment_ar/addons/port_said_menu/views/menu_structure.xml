@@ -37,18 +37,4 @@
         sequence="50"
     />
 
-    <menuitem
-        id="menu_ps_60_custom"
-        name="مجموعة البرامج المخصصة"
-        parent="menu_port_said_root"
-        sequence="60"
-    />
-
-    <menuitem
-        id="menu_ps_70_agents"
-        name="مجموعة وكلاء AI"
-        parent="menu_port_said_root"
-        sequence="70"
-    />
-
 </odoo>

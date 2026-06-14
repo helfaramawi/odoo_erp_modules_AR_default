@@ -39,7 +39,7 @@
     <field name="view_mode">tree,form</field>
   </record>
   <menuitem id="menu_ic_recharge" name="IC Recharge / إعادة التوزيع"
-    parent="port_said_menu.menu_ps_60_custom" action="action_ic_recharge_wizard" sequence="80"/>
+    parent="account.menu_finance" action="action_ic_recharge_wizard" sequence="80"/>
   <menuitem id="menu_ic_recharge_rules" name="IC Recharge Rules / قواعد إعادة التوزيع"
-    parent="port_said_menu.menu_ps_60_custom" action="action_ic_recharge_rules" sequence="81"/>
+    parent="account.menu_finance_configuration" action="action_ic_recharge_rules" sequence="80"/>
 </odoo>

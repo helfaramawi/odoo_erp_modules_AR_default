@@ -4,7 +4,7 @@
     'category': 'Accounting',
     'summary': 'Automated inter-company recharge journal creation',
     'author': 'ERP Migration Team',
-    'depends': ['account', 'port_said_menu'],
+    'depends': ['account'],
     'data': ['security/ir.model.access.csv','views/recharge_views.xml'],
     'installable': True,
     'license': 'LGPL-3',

@@ -53,7 +53,7 @@
 
     <menuitem id="menu_batch_posting"
         name="Batch Posting / الترحيل الدفعي"
-        parent="port_said_menu.menu_ps_60_custom"
+        parent="account.menu_finance_configuration"
         action="action_batch_posting_config"
         sequence="99"/>
 </odoo>

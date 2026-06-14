@@ -26,5 +26,5 @@
     <field name="view_mode">form</field><field name="target">new</field>
   </record>
   <menuitem id="menu_inventory_revaluation" name="Revaluation Report / تقرير إعادة التقييم"
-    parent="port_said_menu.menu_ps_60_custom" action="action_inventory_revaluation_wizard" sequence="50"/>
+    parent="stock.menu_stock_root" action="action_inventory_revaluation_wizard" sequence="50"/>
 </odoo>
