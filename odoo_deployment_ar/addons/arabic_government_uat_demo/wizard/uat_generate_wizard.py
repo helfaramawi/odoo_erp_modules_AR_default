@@ -76,9 +76,9 @@ class UATGenerateWizard(models.TransientModel):
 
         return {
             'type': 'ir.actions.act_window',
-            'name': 'نتيجة التوليد',
+            'name': 'سجلات التوليد',
             'res_model': 'arabic.government.uat.generation.log',
-            'res_id': log.id,
-            'view_mode': 'form,list',
+            'view_mode': 'list,form',
+            'domain': [('id', '=', log.id)],
             'target': 'main',
         }
