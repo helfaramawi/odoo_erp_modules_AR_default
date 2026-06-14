@@ -16,6 +16,7 @@
         'port_said_daftar55',
         'port_said_commitment',
         'general_ledger_ar',
+        'port_said_menu',
     ],
     'data': [
         'security/ir.model.access.csv',

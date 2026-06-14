@@ -1,1 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?><odoo/>
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem
+        id="menu_ps_10_dashboard"
+        name="القائمة التنفيذية"
+        parent="menu_port_said_root"
+        sequence="10"
+    />
+</odoo>
