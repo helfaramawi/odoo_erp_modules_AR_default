@@ -1491,21 +1491,30 @@ class UATDataGenerator(models.AbstractModel):
              'مسؤول نظام', 'pending'),
         ]
 
+        # Valid category values for the Selection field
+        _valid_cats = {
+            'budget', 'commitment', 'procurement', 'dossier', 'disbursement',
+            'payment', 'cheques', 'accounting', 'project', 'inventory',
+            'hr', 'advances', 'bank_guarantee', 'ai', 'security', 'system', 'report',
+        }
+
         for tc_id, name, cat, arabic_module, pre, steps, expected, ref, role, status in scenarios:
-            Scenario.create({
+            vals = {
                 'test_case_id': tc_id,
                 'name': name,
                 'batch_reference': UAT_BATCH,
                 'module': cat,
                 'arabic_module_name': arabic_module,
-                'category': cat,
                 'precondition': pre,
                 'steps': steps,
                 'expected_result': expected,
                 'record_ref': ref,
                 'user_role': role,
                 'status': status,
-            })
+            }
+            if cat in _valid_cats:
+                vals['category'] = cat
+            Scenario.create(vals)
             count += 1
 
         return count
