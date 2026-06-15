@@ -46,6 +46,7 @@ class UATScenario(models.Model):
         ('bank_guarantee', 'الضمانات البنكية'),
         ('ai', 'الذكاء الاصطناعي'),
         ('security', 'الأمان'),
+        ('system', 'النظام العام'),
         ('report', 'التقارير'),
     ], string='التصنيف')
 
