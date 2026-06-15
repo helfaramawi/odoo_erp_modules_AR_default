@@ -106,28 +106,33 @@ class UATDataGenerator(models.AbstractModel):
         if options.get('generate_report_cases'):
             run('سيناريوهات التقارير', self._generate_report_scenarios)
 
-        # Always generate UAT scenario records
-        scenario_count = self._generate_uat_scenarios()
-        results.append(('سيناريوهات الاختبار', scenario_count, 'ok', ''))
-        total += scenario_count
+        # Always generate UAT scenario records (wrapped in savepoint like other generators)
+        run('سيناريوهات الاختبار', self._generate_uat_scenarios)
 
-        # Write log lines
+        # Write log lines — each in its own savepoint to avoid aborting the transaction
         seq = 10
         for label, count, status, msg in results:
-            self.env['arabic.government.uat.generation.log.line'].create({
-                'log_id': log_record.id,
-                'sequence': seq,
-                'category': label,
-                'description': f'توليد بيانات: {label}',
-                'record_count': count,
-                'status': status,
-                'message': msg,
-            })
+            try:
+                with self.env.cr.savepoint():
+                    self.env['arabic.government.uat.generation.log.line'].create({
+                        'log_id': log_record.id,
+                        'sequence': seq,
+                        'category': label,
+                        'description': f'توليد بيانات: {label}',
+                        'record_count': count,
+                        'status': status,
+                        'message': msg,
+                    })
+            except Exception as exc:
+                _logger.warning('Could not write log line for %s: %s', label, exc)
             seq += 10
 
         summary_lines = [f'• {r[0]}: {r[1]} سجل ({r[2]})' for r in results]
         summary = f'إجمالي السجلات المنشأة: {total}\n' + '\n'.join(summary_lines)
-        log_record.write({'result_summary': summary, 'total_created': total, 'state': 'done'})
+        try:
+            log_record.write({'result_summary': summary, 'total_created': total, 'state': 'done'})
+        except Exception as exc:
+            _logger.warning('Could not finalize generation log: %s', exc)
         return total
 
     # ------------------------------------------------------------------ #
