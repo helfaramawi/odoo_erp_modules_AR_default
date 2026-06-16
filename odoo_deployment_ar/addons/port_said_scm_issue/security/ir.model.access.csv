@@ -1,4 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_issue_permit_internal,stock.issue.permit internal,model_stock_issue_permit,base.group_user,1,0,0,0
 access_issue_permit_user,stock.issue.permit user,model_stock_issue_permit,stock.group_stock_user,1,1,1,0
 access_issue_permit_manager,stock.issue.permit manager,model_stock_issue_permit,stock.group_stock_manager,1,1,1,1
 access_issue_permit_line_user,stock.issue.permit.line user,model_stock_issue_permit_line,stock.group_stock_user,1,1,1,0
