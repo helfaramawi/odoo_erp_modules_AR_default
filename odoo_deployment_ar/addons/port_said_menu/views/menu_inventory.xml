@@ -1,1 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?><odoo/>
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_scm_issue_root_ps" name="أذونات الصرف والارتجاع"
+              parent="menu_ps_40_inventory"
+              sequence="10"/>
+    <menuitem id="menu_issue_permits_ps" name="أذونات الصرف"
+              parent="menu_scm_issue_root_ps"
+              action="port_said_scm_issue.action_issue_permits2"
+              sequence="10"/>
+    <menuitem id="menu_return_permits_ps" name="أذونات الارتجاع"
+              parent="menu_scm_issue_root_ps"
+              action="port_said_scm_issue.action_return_permits2"
+              sequence="20"/>
+    <menuitem id="menu_transfer_permits_ps" name="أذونات التحويل"
+              parent="menu_scm_issue_root_ps"
+              action="port_said_scm_issue.action_transfer_permits2"
+              sequence="30"/>
+    <menuitem id="menu_issue_register_lines_ps" name="سجل حركات الصرف"
+              parent="menu_scm_issue_root_ps"
+              action="port_said_scm_issue.action_issue_register_lines2"
+              sequence="40"/>
+</odoo>
