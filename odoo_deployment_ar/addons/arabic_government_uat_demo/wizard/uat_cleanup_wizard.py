@@ -128,7 +128,7 @@ class UATCleanupWizard(models.TransientModel):
                 continue
 
             try:
-                with self.env.cr.savepoint():
+                with self.env.cr.savepoint(flush=False):
                     domain = self._build_domain(model_name, ref_field)
                     records = Model.search(domain)
                     count = len(records)
@@ -146,6 +146,7 @@ class UATCleanupWizard(models.TransientModel):
 
             except Exception as exc:
                 _logger.exception('Cleanup error for %s', model_name)
+                self.env.invalidate_all()  # clear ORM cache after savepoint rollback
                 lines.append((seq, model_name, arabic_name, 0, 'error', str(exc)[:200]))
 
             seq += 10
@@ -223,16 +224,17 @@ class UATCleanupWizard(models.TransientModel):
             for rec in records:
                 if rec.state not in ('draft', 'cancelled'):
                     try:
-                        rec.write({'state': 'cancelled'})
+                        with self.env.cr.savepoint(flush=False):
+                            rec.write({'state': 'cancelled'})
                     except Exception:
-                        pass
+                        pass  # savepoint rolled back, transaction still valid
 
         try:
-            records.unlink()
+            with self.env.cr.savepoint(flush=False):
+                records.unlink()
         except Exception:
-            # Last resort: SQL bypass
+            # Last resort: SQL bypass — transaction valid after savepoint rollback
             table = self.env[model_name]._table
-            ids = tuple(records.ids) if len(records.ids) > 1 else (records.ids[0],)
             self.env.cr.execute(f'DELETE FROM "{table}" WHERE id = ANY(%s)', (list(records.ids),))
 
         return count
