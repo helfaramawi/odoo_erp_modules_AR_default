@@ -128,18 +128,19 @@ class UATCleanupWizard(models.TransientModel):
                 continue
 
             try:
-                domain = self._build_domain(model_name, ref_field)
-                records = Model.search(domain)
-                count = len(records)
+                with self.env.cr.savepoint():
+                    domain = self._build_domain(model_name, ref_field)
+                    records = Model.search(domain)
+                    count = len(records)
 
-                if not self.dry_run and count:
-                    deleted = self._force_delete(model_name, records)
-                    total_deleted += deleted
-                    status = 'ok'
-                    msg = f'تم حذف {deleted} سجل'
-                else:
-                    status = 'ok'
-                    msg = f'{count} سجل (تجربة جافة)' if self.dry_run else 'لا توجد سجلات'
+                    if not self.dry_run and count:
+                        deleted = self._force_delete(model_name, records)
+                        total_deleted += deleted
+                        status = 'ok'
+                        msg = f'تم حذف {deleted} سجل'
+                    else:
+                        status = 'ok'
+                        msg = f'{count} سجل (تجربة جافة)' if self.dry_run else 'لا توجد سجلات'
 
                 lines.append((seq, model_name, arabic_name, count, status, msg))
 
