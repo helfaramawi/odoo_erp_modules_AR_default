@@ -83,7 +83,7 @@
     <t t-call="web.html_container">
       <t t-foreach="docs" t-as="o">
         <t t-set="fields" t-value="o._form50_render_fields()"/>
-        <div class="article o_report_layout_standard" style="padding:0; margin:0;">
+        <div style="margin:0; padding:0; border:none;">
           <style>
             @page { size: A4 portrait; margin: 0 !important; }
             html, body, main,
