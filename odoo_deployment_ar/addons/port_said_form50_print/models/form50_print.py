@@ -6,69 +6,68 @@ port_said_form50_print — طبقة الطباعة الرسمية لاستمار
 لا يُعدِّل أي منطق محاسبي.
 """
 import logging
-import base64
-import re
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError
 
 _logger = logging.getLogger(__name__)
 
 
-def _build_form50_css():
-    """Embed Amiri font + zero-margin page for absolute-positioned form overlay."""
-    try:
-        with open('/usr/share/fonts/opentype/fonts-hosny-amiri/Amiri-Regular.ttf', 'rb') as f:
-            regular = base64.b64encode(f.read()).decode()
-        with open('/usr/share/fonts/opentype/fonts-hosny-amiri/Amiri-Bold.ttf', 'rb') as f:
-            bold = base64.b64encode(f.read()).decode()
-        font_css = (
-            "@font-face{font-family:'Amiri';"
-            "src:url('data:font/truetype;base64," + regular + "');"
-            "font-weight:normal;font-style:normal;}"
-            "@font-face{font-family:'Amiri';"
-            "src:url('data:font/truetype;base64," + bold + "');"
-            "font-weight:bold;font-style:normal;}"
-        )
-    except Exception as e:
-        _logger.error('Form50 font load error: %s', e)
-        font_css = ""
-    return font_css + "@page{size:A4 portrait;margin:0!important;}"
 
-
-FORM50_CSS = _build_form50_css()
-
-
-class IrActionsReportForm50WeasyPrint(models.Model):
-    """Render form50 reports via WeasyPrint for correct Arabic support."""
+class IrActionsReportForm50Direct(models.Model):
+    """Call wkhtmltopdf directly for form50 to control --encoding utf-8."""
     _inherit = 'ir.actions.report'
 
     def _render_qweb_pdf(self, report_ref, res_ids=None, data=None):
         report = self._get_report(report_ref)
         if 'form50' in (report.report_name or ''):
             try:
-                return self._form50_render_weasyprint(report, res_ids, data)
+                return self._form50_render_direct(report, res_ids, data)
             except Exception as e:
-                _logger.error('Form50 WeasyPrint error: %s', e, exc_info=True)
+                _logger.error('Form50 direct render error: %s', e, exc_info=True)
         return super()._render_qweb_pdf(report_ref, res_ids, data)
 
-    def _form50_render_weasyprint(self, report, res_ids, data):
-        import weasyprint
-        from weasyprint.text.fonts import FontConfiguration
+    def _form50_render_direct(self, report, res_ids, data):
+        import subprocess
+        import tempfile
+        import os
+        from odoo.tools import find_in_path
 
         html_bytes, _ = self._render_qweb_html(report.report_name, res_ids, data=data)
-        html = html_bytes.decode('utf-8', errors='replace') if isinstance(html_bytes, bytes) else html_bytes
+        if not isinstance(html_bytes, bytes):
+            html_bytes = html_bytes.encode('utf-8')
 
-        # Strip broken external links that WeasyPrint can't load
-        html = re.sub(r'<link[^>]*>', '', html)
-        html = re.sub(r'<script[^>]*>.*?</script>', '', html, flags=re.DOTALL)
+        wk = find_in_path('wkhtmltopdf')
 
-        font_config = FontConfiguration()
-        css = weasyprint.CSS(string=FORM50_CSS, font_config=font_config)
-        pdf = weasyprint.HTML(
-            string=html,
-            base_url='http://127.0.0.1:8069/',
-        ).write_pdf(stylesheets=[css], font_config=font_config)
-        return pdf, 'pdf'
+        with tempfile.NamedTemporaryFile(suffix='.html', delete=False) as fh:
+            fh.write(html_bytes)
+            html_path = fh.name
+
+        pdf_fd, pdf_path = tempfile.mkstemp(suffix='.pdf')
+        os.close(pdf_fd)
+
+        try:
+            subprocess.run([
+                wk,
+                '--encoding', 'utf-8',
+                '--page-size', 'A4',
+                '--orientation', 'Portrait',
+                '--margin-top', '0mm',
+                '--margin-bottom', '0mm',
+                '--margin-left', '0mm',
+                '--margin-right', '0mm',
+                '--quiet',
+                '--enable-local-file-access',
+                html_path, pdf_path,
+            ], check=True, capture_output=True)
+
+            with open(pdf_path, 'rb') as f:
+                return f.read(), 'pdf'
+        finally:
+            for p in (html_path, pdf_path):
+                try:
+                    os.unlink(p)
+                except Exception:
+                    pass
 
 # حقول التاريخ تُعرَض باللون الأزرق
 DATE_FIELDS_F50 = {2, 13, 17, 21, 25, 32, 54, 58, 60, 63, 70}
