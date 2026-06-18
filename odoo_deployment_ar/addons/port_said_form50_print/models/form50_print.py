@@ -36,15 +36,21 @@ class IrActionsReportForm50Direct(models.Model):
         if not isinstance(html_bytes, bytes):
             html_bytes = html_bytes.encode('utf-8')
 
-        # Replace HTTP URL for background image with local file:// path
-        # so wkhtmltopdf doesn't need network access to Odoo server
         import re as _re
         html_str = html_bytes.decode('utf-8', errors='replace')
+
+        # Strip external Odoo CSS/JS assets — wkhtmltopdf can't auth to load them
+        html_str = _re.sub(r'<link[^>]*>', '', html_str)
+        html_str = _re.sub(r'<script[^>]*>.*?</script>', '', html_str, flags=_re.DOTALL)
+        html_str = _re.sub(r'<script[^>]*/>', '', html_str)
+
+        # Replace HTTP URL for background image with local file:// path
         html_str = _re.sub(
-            r'http://127\.0\.0\.1:\d+/port_said_form50_print/static/',
+            r'http://[^"\']+/port_said_form50_print/static/',
             'file:///mnt/extra-addons/port_said_form50_print/static/',
             html_str,
         )
+
         html_bytes = html_str.encode('utf-8')
 
         wk = find_in_path('wkhtmltopdf')
