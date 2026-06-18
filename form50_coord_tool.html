@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>Form 50 — Coordinate Tool</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #1a1a2e; color: #eee; }
+  #controls {
+    position: fixed; top: 0; right: 0; width: 320px; height: 100vh;
+    background: #16213e; padding: 12px; overflow-y: auto; z-index: 100;
+    border-left: 2px solid #0f3460;
+  }
+  #controls h2 { font-size: 14px; color: #e94560; margin-bottom: 8px; }
+  #last-click {
+    background: #0f3460; padding: 8px; border-radius: 4px;
+    font-size: 13px; margin-bottom: 8px; min-height: 60px;
+  }
+  #field-select { width: 100%; padding: 6px; margin-bottom: 8px;
+    background: #0f3460; color: #eee; border: 1px solid #e94560; font-size: 12px; }
+  #assign-btn {
+    width: 100%; padding: 8px; background: #e94560; color: white;
+    border: none; cursor: pointer; font-size: 13px; border-radius: 4px; margin-bottom: 8px;
+  }
+  #assign-btn:hover { background: #c73652; }
+  #output {
+    background: #0a0a1a; padding: 8px; border-radius: 4px;
+    font-size: 11px; font-family: monospace; white-space: pre-wrap;
+    max-height: 400px; overflow-y: auto;
+  }
+  #copy-btn {
+    width: 100%; padding: 6px; background: #533483; color: white;
+    border: none; cursor: pointer; font-size: 12px; border-radius: 4px; margin-top: 6px;
+  }
+  #canvas-wrap {
+    margin-right: 320px;
+    position: relative; display: inline-block;
+  }
+  #form-img { display: block; }
+  #crosshair {
+    position: absolute; pointer-events: none;
+    width: 20px; height: 20px;
+    border: 2px solid red;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+  }
+  .dot {
+    position: absolute;
+    width: 8px; height: 8px;
+    background: #e94560;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .dot-label {
+    position: absolute;
+    background: rgba(233,69,96,0.85);
+    color: white; font-size: 9px; padding: 1px 3px;
+    border-radius: 2px; pointer-events: none;
+    transform: translate(-50%, -110%);
+    white-space: nowrap;
+  }
+  #clear-btn {
+    width: 100%; padding: 6px; background: #333; color: #ccc;
+    border: none; cursor: pointer; font-size: 12px; border-radius: 4px; margin-top: 4px;
+  }
+</style>
+</head>
+<body>
+<div id="controls">
+  <h2>Form 50 — Coordinate Tool</h2>
+  <div id="last-click">Click on the image to get coordinates</div>
+
+  <select id="field-select">
+    <option value="">— Select Field —</option>
+    <optgroup label="قسم أ">
+      <option value="1">1 — رقم المسلسل</option>
+      <option value="2">2 — تاريخ الورود</option>
+    </optgroup>
+    <optgroup label="يسار — بيانات المصلحة">
+      <option value="3">3 — مصلحة</option>
+      <option value="4">4 — قسم</option>
+      <option value="5">5 — المبلغ المستحق</option>
+      <option value="6">6 — بموجب</option>
+      <option value="7">7 — صار مراجعته</option>
+      <option value="8">8 — إذن صرف</option>
+      <option value="9">9 — شيك</option>
+      <option value="10">10 — يسحب باسم</option>
+      <option value="11">11 — ويرسل</option>
+    </optgroup>
+    <optgroup label="جدول الفواتير">
+      <option value="12">12 — رقم فاتورة 1</option>
+      <option value="13">13 — تاريخ فاتورة 1</option>
+      <option value="14">14 — جنيه فاتورة 1</option>
+      <option value="15">15 — قرش فاتورة 1</option>
+      <option value="16">16 — رقم فاتورة 2</option>
+      <option value="17">17 — تاريخ فاتورة 2</option>
+      <option value="18">18 — جنيه فاتورة 2</option>
+      <option value="19">19 — قرش فاتورة 2</option>
+      <option value="20">20 — رقم فاتورة 3</option>
+      <option value="21">21 — تاريخ فاتورة 3</option>
+      <option value="22">22 — جنيه فاتورة 3</option>
+      <option value="23">23 — قرش فاتورة 3</option>
+      <option value="24">24 — رقم فاتورة 4</option>
+      <option value="25">25 — تاريخ فاتورة 4</option>
+      <option value="26">26 — جنيه فاتورة 4</option>
+      <option value="27">27 — قرش فاتورة 4</option>
+      <option value="28">28 — جنيه إجمالي</option>
+      <option value="29">29 — قرش إجمالي</option>
+    </optgroup>
+    <optgroup label="قسم ب">
+      <option value="30">30 — تقيد في السجل</option>
+      <option value="31">31 — رقم السجل</option>
+      <option value="32">32 — تاريخ قسم ب</option>
+    </optgroup>
+    <optgroup label="الاعتماد الإداري">
+      <option value="33">33 — عدد المرفقات</option>
+      <option value="34">34 — بند</option>
+      <option value="35">35 — فصل</option>
+      <option value="36">36 — فرع</option>
+      <option value="37">37 — قسم</option>
+      <option value="38">38 — جنيه اعتماد</option>
+      <option value="39">39 — قرش اعتماد</option>
+      <option value="40">40 — جنيه نوع النحص</option>
+      <option value="41">41 — قرش نوع النحص</option>
+    </optgroup>
+    <optgroup label="الاستقطاعات">
+      <option value="42">42 — استقطاع 1 قرش</option>
+      <option value="43">43 — استقطاع 1 جنيه</option>
+      <option value="44">44 — استقطاع 2 قرش</option>
+      <option value="45">45 — استقطاع 2 جنيه</option>
+      <option value="46">46 — استقطاع 3 قرش</option>
+      <option value="47">47 — استقطاع 3 جنيه</option>
+      <option value="48">48 — إضافي</option>
+      <option value="49">49 — دمغة توقيع</option>
+    </optgroup>
+    <optgroup label="صافي القيمة">
+      <option value="50">50 — صافي جنيه</option>
+      <option value="51">51 — صافي قرش</option>
+      <option value="52">52 — التفقيط</option>
+    </optgroup>
+    <optgroup label="الإقرار">
+      <option value="53">53 — سنة الإقرار</option>
+      <option value="54">54 — تاريخ الإقرار</option>
+    </optgroup>
+    <optgroup label="توقيعات قسم ج">
+      <option value="55">55 — توقيع 1</option>
+      <option value="56">56 — توقيع 2</option>
+      <option value="57">57 — توقيع 3</option>
+      <option value="58">58 — توقيع 4</option>
+      <option value="59">59 — توقيع 5</option>
+      <option value="60">60 — توقيع 6</option>
+    </optgroup>
+    <optgroup label="قسم ج">
+      <option value="61">61 — قيد في سجل رقم 55</option>
+      <option value="62">62 — سنة ج</option>
+      <option value="63">63 — روجع في</option>
+      <option value="64">64 — شيك</option>
+      <option value="65">65 — سنة شيك</option>
+      <option value="66">66 — تاريخ شيك</option>
+      <option value="67">67 — بمعتمد سبب</option>
+      <option value="68">68 — إذن صرف</option>
+      <option value="69">69 — تاريخ إذن صرف</option>
+    </optgroup>
+    <optgroup label="قسم د">
+      <option value="70">70 — تاريخ د</option>
+      <option value="71">71 — قيد في دفاتر</option>
+      <option value="72">72 — إمضاء الكاتب المنوب</option>
+      <option value="73">73 — إمضاء موظفي الشطب</option>
+      <option value="74">74 — سبب</option>
+      <option value="75">75 — رقم المستند</option>
+    </optgroup>
+  </select>
+
+  <button id="assign-btn">Assign Coordinate to Field</button>
+
+  <div id="output"># Field coordinates
+# Copy this into _form50_positions()
+</div>
+  <button id="copy-btn">Copy All to Clipboard</button>
+  <button id="clear-btn">Clear Dots</button>
+</div>
+
+<div id="canvas-wrap">
+  <img id="form-img" src="odoo_deployment_ar/addons/port_said_form50_print/static/img/form50_bg.png" alt="Form 50">
+  <div id="crosshair"></div>
+</div>
+
+<script>
+const img = document.getElementById('form-img');
+const wrap = document.getElementById('canvas-wrap');
+const crosshair = document.getElementById('crosshair');
+const lastClick = document.getElementById('last-click');
+const output = document.getElementById('output');
+const fieldSelect = document.getElementById('field-select');
+
+let lastX = null, lastY = null;
+const assigned = {};
+
+// Existing calibrated positions (fields 1-11)
+const existing = {
+  1: [90.44, 9.66], 2: [90.44, 16.26],
+  3: [20.56, 9.90], 4: [20.56, 11.63], 5: [20.56, 13.51],
+  6: [20.56, 16.89], 7: [3.56, 18.62], 8: [20.56, 20.35],
+  9: [20.56, 22.00], 10: [20.56, 25.45], 11: [20.56, 28.83],
+};
+Object.assign(assigned, existing);
+
+wrap.addEventListener('mousemove', (e) => {
+  const rect = img.getBoundingClientRect();
+  const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(2);
+  const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(2);
+  crosshair.style.left = (e.clientX - rect.left) + 'px';
+  crosshair.style.top = (e.clientY - rect.top) + 'px';
+  crosshair.style.display = 'block';
+  lastClick.innerHTML = `<b>Current position:</b><br>left: ${x}%<br>top: ${y}%`;
+});
+
+wrap.addEventListener('click', (e) => {
+  const rect = img.getBoundingClientRect();
+  lastX = parseFloat(((e.clientX - rect.left) / rect.width * 100).toFixed(2));
+  lastY = parseFloat(((e.clientY - rect.top) / rect.height * 100).toFixed(2));
+  lastClick.innerHTML = `<b>Clicked:</b><br>left: ${lastX}%<br>top: ${lastY}%<br><small>Now select field & click Assign</small>`;
+});
+
+document.getElementById('assign-btn').addEventListener('click', () => {
+  const fno = fieldSelect.value;
+  if (!fno || lastX === null) { alert('Click on image first, then select field'); return; }
+  assigned[fno] = [lastX, lastY];
+  addDot(lastX, lastY, fno);
+  updateOutput();
+  // Auto-advance to next field
+  const opts = [...fieldSelect.options];
+  const idx = opts.findIndex(o => o.value === fno);
+  if (idx >= 0 && idx < opts.length - 1) fieldSelect.selectedIndex = idx + 1;
+});
+
+function addDot(x, y, label) {
+  const dot = document.createElement('div');
+  dot.className = 'dot';
+  dot.style.left = x + '%';
+  dot.style.top = y + '%';
+  dot.dataset.field = label;
+  const lbl = document.createElement('div');
+  lbl.className = 'dot-label';
+  lbl.style.left = x + '%';
+  lbl.style.top = y + '%';
+  lbl.textContent = label;
+  wrap.appendChild(dot);
+  wrap.appendChild(lbl);
+}
+
+function updateOutput() {
+  const sorted = Object.keys(assigned).map(Number).sort((a,b)=>a-b);
+  let txt = 'return {\n';
+  for (const n of sorted) {
+    const [x, y] = assigned[n];
+    txt += `    ${n}: (${x.toFixed(2)}, ${y.toFixed(2)}),\n`;
+  }
+  txt += '}';
+  output.textContent = txt;
+}
+
+document.getElementById('copy-btn').addEventListener('click', () => {
+  navigator.clipboard.writeText(output.textContent).then(() => alert('Copied!'));
+});
+
+document.getElementById('clear-btn').addEventListener('click', () => {
+  wrap.querySelectorAll('.dot,.dot-label').forEach(el => el.remove());
+});
+
+// Draw existing dots
+for (const [n, [x, y]] of Object.entries(existing)) {
+  addDot(x, y, n);
+}
+updateOutput();
+
+img.addEventListener('load', () => {
+  for (const [n, [x, y]] of Object.entries(existing)) addDot(x, y, n);
+});
+</script>
+</body>
+</html>
