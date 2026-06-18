@@ -119,7 +119,7 @@
                  src="http://127.0.0.1:8069/port_said_form50_print/static/img/form50_bg.png"
                  alt=""/>
             <t t-foreach="fields" t-as="fld">
-              <span class="form50-field" t-att-style="fld['style']"><t t-esc="fld['text']"/></span>
+              <span class="form50-field" t-att-style="fld['style']"><t t-raw="fld['text']"/></span>
             </t>
           </div>
         </div>
