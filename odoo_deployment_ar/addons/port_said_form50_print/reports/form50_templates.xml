@@ -115,7 +115,6 @@
             }
           </style>
           <div class="form50-page">
-            <div style="position:absolute;top:1%;left:1%;z-index:999;background:yellow;font-size:14pt;color:red;">TEST:&#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577;</div>
             <img class="form50-bg"
                  src="http://127.0.0.1:8069/port_said_form50_print/static/img/form50_bg.png"
                  alt=""/>

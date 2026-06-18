@@ -5,8 +5,36 @@ port_said_form50_print — طبقة الطباعة الرسمية لاستمار
 يُوسِّع port_said.daftar55 بطبقة طباعة فقط.
 لا يُعدِّل أي منطق محاسبي.
 """
+import subprocess as _subprocess
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError
+
+
+class IrActionsReportArabicEncoding(models.Model):
+    """Force --encoding utf-8 on every wkhtmltopdf call so Arabic renders correctly."""
+    _inherit = 'ir.actions.report'
+
+    @api.model
+    def _run_wkhtmltopdf(self, bodies, report=None, header=None, footer=None,
+                          landscape=False, specific_paperformat_args=None,
+                          set_viewport_size=False):
+        _orig_run = _subprocess.run
+
+        def _utf8_run(cmd, **kw):
+            if isinstance(cmd, list) and cmd and 'wkhtmltopdf' in str(cmd[0]):
+                if '--encoding' not in cmd:
+                    cmd = [cmd[0], '--encoding', 'utf-8'] + cmd[1:]
+            return _orig_run(cmd, **kw)
+
+        _subprocess.run = _utf8_run
+        try:
+            return super()._run_wkhtmltopdf(
+                bodies, report=report, header=header, footer=footer,
+                landscape=landscape,
+                specific_paperformat_args=specific_paperformat_args,
+                set_viewport_size=set_viewport_size)
+        finally:
+            _subprocess.run = _orig_run
 
 # حقول التاريخ تُعرَض باللون الأزرق
 DATE_FIELDS_F50 = {2, 13, 17, 21, 25, 32, 54, 58, 60, 63, 70}
@@ -499,9 +527,7 @@ class Form50PrintLayer(models.Model):
         from markupsafe import Markup
 
         def to_safe(text):
-            # Convert non-ASCII (Arabic) to HTML entities so wkhtmltopdf renders
-            # correctly regardless of its charset/encoding setting
-            return Markup(str(text).encode('ascii', 'xmlcharrefreplace').decode('ascii'))
+            return Markup(str(text))
 
         if not expr:
             return Markup('')
