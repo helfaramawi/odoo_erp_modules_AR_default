@@ -46,7 +46,7 @@ class IrActionsReportForm50Direct(models.Model):
         os.close(pdf_fd)
 
         try:
-            subprocess.run([
+            result = subprocess.run([
                 wk,
                 '--encoding', 'utf-8',
                 '--page-size', 'A4',
@@ -58,7 +58,11 @@ class IrActionsReportForm50Direct(models.Model):
                 '--quiet',
                 '--enable-local-file-access',
                 html_path, pdf_path,
-            ], check=True, capture_output=True)
+            ], capture_output=True)
+            if result.returncode != 0:
+                _logger.error('wkhtmltopdf stderr: %s', result.stderr.decode('utf-8', errors='replace'))
+                _logger.error('wkhtmltopdf stdout: %s', result.stdout.decode('utf-8', errors='replace'))
+                raise RuntimeError(f'wkhtmltopdf failed with code {result.returncode}')
 
             with open(pdf_path, 'rb') as f:
                 return f.read(), 'pdf'
