@@ -496,19 +496,25 @@ class Form50PrintLayer(models.Model):
         self.ensure_one()
         import re
         from datetime import date, datetime
+        from markupsafe import Markup
+
+        def to_safe(text):
+            # Convert non-ASCII (Arabic) to HTML entities so wkhtmltopdf renders
+            # correctly regardless of its charset/encoding setting
+            return Markup(str(text).encode('ascii', 'xmlcharrefreplace').decode('ascii'))
 
         if not expr:
-            return ''
+            return Markup('')
 
         m = re.match(r'^(?P<field>[\w_]+) \((?P<part>pounds|piasters)\)$', expr)
         if m:
             val = getattr(self, m.group('field'), 0) or 0
             pounds, piasters = self._get_amount_pounds_piasters(val)
-            return str(pounds if m.group('part') == 'pounds' else piasters)
+            return to_safe(pounds if m.group('part') == 'pounds' else piasters)
 
         m = re.match(r"^_get_budget_parts\(\)\['(?P<key>\w+)'\]$", expr)
         if m:
-            return str((self._get_budget_parts() or {}).get(m.group('key'), '') or '')
+            return to_safe((self._get_budget_parts() or {}).get(m.group('key'), '') or '')
 
         cur = self
         for token in expr.split('.'):
@@ -520,16 +526,16 @@ class Form50PrintLayer(models.Model):
             else:
                 cur = getattr(cur, token, False)
             if cur in (False, None):
-                return ''
+                return Markup('')
 
         if hasattr(cur, 'name') and not isinstance(cur, (str, bytes)):
             try:
-                return str(cur.name or '')
+                return to_safe(cur.name or '')
             except Exception:
                 pass
         if isinstance(cur, (date, datetime)):
-            return str(cur)
-        return str(cur or '')
+            return to_safe(cur)
+        return to_safe(cur or '')
 
     def _form50_field_text(self, field_no):
         self.ensure_one()
