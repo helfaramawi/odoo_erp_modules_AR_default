@@ -5,30 +5,70 @@ port_said_form50_print — طبقة الطباعة الرسمية لاستمار
 يُوسِّع port_said.daftar55 بطبقة طباعة فقط.
 لا يُعدِّل أي منطق محاسبي.
 """
-import subprocess as _subprocess
+import logging
+import base64
+import re
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError
 
+_logger = logging.getLogger(__name__)
 
-class IrActionsReportArabicEncoding(models.Model):
-    """Force --encoding utf-8 on every wkhtmltopdf call so Arabic renders correctly."""
+
+def _build_form50_css():
+    """Embed Amiri font + zero-margin page for absolute-positioned form overlay."""
+    try:
+        with open('/usr/share/fonts/opentype/fonts-hosny-amiri/Amiri-Regular.ttf', 'rb') as f:
+            regular = base64.b64encode(f.read()).decode()
+        with open('/usr/share/fonts/opentype/fonts-hosny-amiri/Amiri-Bold.ttf', 'rb') as f:
+            bold = base64.b64encode(f.read()).decode()
+        font_css = (
+            "@font-face{font-family:'Amiri';"
+            "src:url('data:font/truetype;base64," + regular + "');"
+            "font-weight:normal;font-style:normal;}"
+            "@font-face{font-family:'Amiri';"
+            "src:url('data:font/truetype;base64," + bold + "');"
+            "font-weight:bold;font-style:normal;}"
+        )
+    except Exception as e:
+        _logger.error('Form50 font load error: %s', e)
+        font_css = ""
+    return font_css + "@page{size:A4 portrait;margin:0!important;}"
+
+
+FORM50_CSS = _build_form50_css()
+
+
+class IrActionsReportForm50WeasyPrint(models.Model):
+    """Render form50 reports via WeasyPrint for correct Arabic support."""
     _inherit = 'ir.actions.report'
 
-    @api.model
-    def _run_wkhtmltopdf(self, *args, **kwargs):
-        _orig_run = _subprocess.run
+    def _render_qweb_pdf(self, report_ref, res_ids=None, data=None):
+        report = self._get_report(report_ref)
+        if 'form50' in (report.report_name or ''):
+            try:
+                return self._form50_render_weasyprint(report, res_ids, data)
+            except Exception as e:
+                _logger.error('Form50 WeasyPrint error: %s', e, exc_info=True)
+        return super()._render_qweb_pdf(report_ref, res_ids, data)
 
-        def _utf8_run(cmd, **kw):
-            if isinstance(cmd, list) and cmd and 'wkhtmltopdf' in str(cmd[0]):
-                if '--encoding' not in cmd:
-                    cmd = [cmd[0], '--encoding', 'utf-8'] + cmd[1:]
-            return _orig_run(cmd, **kw)
+    def _form50_render_weasyprint(self, report, res_ids, data):
+        import weasyprint
+        from weasyprint.text.fonts import FontConfiguration
 
-        _subprocess.run = _utf8_run
-        try:
-            return super()._run_wkhtmltopdf(*args, **kwargs)
-        finally:
-            _subprocess.run = _orig_run
+        html_bytes, _ = self._render_qweb_html(report.report_name, res_ids, data=data)
+        html = html_bytes.decode('utf-8', errors='replace') if isinstance(html_bytes, bytes) else html_bytes
+
+        # Strip broken external links that WeasyPrint can't load
+        html = re.sub(r'<link[^>]*>', '', html)
+        html = re.sub(r'<script[^>]*>.*?</script>', '', html, flags=re.DOTALL)
+
+        font_config = FontConfiguration()
+        css = weasyprint.CSS(string=FORM50_CSS, font_config=font_config)
+        pdf = weasyprint.HTML(
+            string=html,
+            base_url='http://127.0.0.1:8069/',
+        ).write_pdf(stylesheets=[css], font_config=font_config)
+        return pdf, 'pdf'
 
 # حقول التاريخ تُعرَض باللون الأزرق
 DATE_FIELDS_F50 = {2, 13, 17, 21, 25, 32, 54, 58, 60, 63, 70}
