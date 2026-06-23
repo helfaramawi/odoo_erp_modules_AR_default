@@ -232,8 +232,8 @@ export class GovAISidebar extends Component {
     }
 }
 
-// تسجيل المكوّن كـ systray item ليظهر دائماً في واجهة Odoo
+// تسجيل المكوّن كـ systray item
 registry.category("systray").add("gov_ai_sidebar", {
     Component: GovAISidebar,
-    sequence: 1,  // يظهر في أقصى اليسار من الـ systray (أقصى اليمين في RTL)
+    sequence: 1,
 });
