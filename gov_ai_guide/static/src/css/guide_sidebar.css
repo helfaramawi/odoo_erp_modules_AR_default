@@ -51,12 +51,7 @@
     width: var(--gov-collapsed);
 }
 
-/* دفع محتوى Odoo الرئيسي لليسار عند توسيع الشريط */
-body:has(.gov-ai-sidebar.expanded) .o_action_manager,
-body:has(.gov-ai-sidebar.expanded) .o_main_navbar {
-    margin-right: var(--gov-width);
-    transition: margin-right var(--gov-transition);
-}
+
 
 /* ─── الرأسية ────────────────────────────────────────────────────────────── */
 .gov-sidebar-header {
