@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         قوائم المرشد الحكومي الذكي
+         ═══════════════════════════════════════════════════════════════════ -->
+
+    <!-- القائمة الرئيسية -->
+    <menuitem id="menu_gov_ai_root"
+              name="المرشد الحكومي"
+              sequence="100"
+              web_icon="gov_ai_guide,static/description/icon.png"
+              groups="base.group_user"/>
+
+    <!-- قاعدة المعرفة -->
+    <menuitem id="menu_gov_ai_kb"
+              name="قاعدة المعرفة"
+              parent="menu_gov_ai_root"
+              sequence="10"
+              groups="base.group_system"/>
+
+    <menuitem id="menu_kb_documents"
+              name="الوثائق والقوانين"
+              parent="menu_gov_ai_kb"
+              action="action_kb_documents"
+              sequence="10"
+              groups="base.group_system"/>
+
+    <!-- التدقيق والسجلات -->
+    <menuitem id="menu_gov_ai_audit"
+              name="التدقيق والسجلات"
+              parent="menu_gov_ai_root"
+              sequence="20"
+              groups="base.group_system"/>
+
+    <menuitem id="menu_agent_logs"
+              name="سجل التلميحات"
+              parent="menu_gov_ai_audit"
+              action="action_agent_logs"
+              sequence="10"
+              groups="base.group_system"/>
+
+    <menuitem id="menu_agent_sessions"
+              name="الجلسات النشطة"
+              parent="menu_gov_ai_audit"
+              action="action_agent_sessions"
+              sequence="20"
+              groups="base.group_system"/>
+
+</odoo>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!--
+            مهمة مجدولة لإعادة فهرسة قاعدة المعرفة يومياً
+            تُنفَّذ في الساعة 2 صباحاً لتجنب إبطاء النظام أثناء ساعات العمل
+        -->
+        <record id="cron_kb_reindex" model="ir.cron">
+            <field name="name">المرشد الحكومي — إعادة فهرسة قاعدة المعرفة</field>
+            <field name="model_id" ref="gov_ai_guide.model_gov_kb_indexer"/>
+            <field name="state">code</field>
+            <field name="code">model.reindex_all_addons_cron()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="True"/>
+            <field name="priority">100</field>
+            <field name="user_id" ref="base.user_root"/>
+        </record>
+
+        <!-- مهمة تنظيف الجلسات الخاملة — يومياً -->
+        <record id="cron_cleanup_sessions" model="ir.cron">
+            <field name="name">المرشد الحكومي — تنظيف الجلسات الخاملة</field>
+            <field name="model_id" ref="gov_ai_guide.model_gov_agent_session"/>
+            <field name="state">code</field>
+            <field name="code">model.cleanup_idle_sessions()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="True"/>
+            <field name="priority">50</field>
+            <field name="user_id" ref="base.user_root"/>
+        </record>
+    </data>
+</odoo>

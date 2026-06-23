@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!--
+            بيانات التهيئة الأولية لقاعدة المعرفة
+            noupdate="1" يضمن عدم الكتابة فوق التعديلات اليدوية عند التحديث
+            البيانات القانونية التفصيلية تُحمَّل عبر post_init_hook (load_seed_legal_kb)
+        -->
+
+        <!-- إعداد معلمة API Key (فارغة — يجب أن يُعيّنها المسؤول) -->
+        <record id="gov_ai_api_key_param" model="ir.config_parameter">
+            <field name="key">gov_ai_guide.api_key</field>
+            <field name="value"/>
+        </record>
+
+        <!-- معلمة تحديد نموذج Anthropic المستخدم -->
+        <record id="gov_ai_model_param" model="ir.config_parameter">
+            <field name="key">gov_ai_guide.anthropic_model</field>
+            <field name="value">claude-sonnet-4-6</field>
+        </record>
+
+        <!-- معلمة حد التلميحات (max_tokens) -->
+        <record id="gov_ai_max_tokens_param" model="ir.config_parameter">
+            <field name="key">gov_ai_guide.max_tokens</field>
+            <field name="value">1024</field>
+        </record>
+
+        <!-- معلمة حجم الذاكرة المؤقتة -->
+        <record id="gov_ai_cache_size_param" model="ir.config_parameter">
+            <field name="key">gov_ai_guide.cache_size</field>
+            <field name="value">50</field>
+        </record>
+
+        <!-- إدخالات قاعدة المعرفة الأساسية — تُستخدم كمراجع سريعة -->
+        <record id="kb_law_tenders" model="gov.kb.document">
+            <field name="name">قانون تنظيم المناقصات والمزايدات — نظرة عامة</field>
+            <field name="source_type">legal_pdf</field>
+            <field name="module_name">purchase</field>
+            <field name="model_name">purchase.order</field>
+            <field name="law_number">89/1998</field>
+            <field name="authority">الجهاز المركزي للمحاسبات</field>
+            <field name="content">
+قانون رقم 89 لسنة 1998 بتنظيم المناقصات والمزايدات:
+- أقل من 5,000 جنيه: ممارسة مباشرة (طلب عروض من مورد واحد)
+- من 5,000 إلى 100,000 جنيه: أمانات (الحصول على 3 عروض أسعار على الأقل)
+- أكثر من 100,000 جنيه: مناقصة عامة إلزامية مع نشر الإعلان
+لا يجوز تجزئة الصفقات للتحايل على هذه الحدود.
+            </field>
+            <field name="chunk_index">0</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="kb_law_finance" model="gov.kb.document">
+            <field name="name">قانون المحاسبة الحكومية — المبادئ الأساسية</field>
+            <field name="source_type">legal_pdf</field>
+            <field name="module_name">account</field>
+            <field name="model_name">account.move</field>
+            <field name="law_number">127/1981</field>
+            <field name="authority">وزارة المالية — الجهاز المركزي للمحاسبات</field>
+            <field name="content">
+قانون رقم 127 لسنة 1981 بالمحاسبة الحكومية:
+المادة 8: شروط القيد المحاسبي الصحيح:
+1. وجود مستند مؤيد (فاتورة / أمر صرف / إيصال)
+2. اعتماد من الجهة المختصة (المدير المالي أو رئيس الجهة)
+3. الانتماء للفترة المالية الصحيحة (السنة المالية 1 يوليو — 30 يونيو)
+المادة 19: لا يجوز تعديل القيود المعتمدة إلا بقيد تسوية.
+المادة 24: حفظ المستندات 5 سنوات على الأقل.
+            </field>
+            <field name="chunk_index">0</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="kb_law_civil_service" model="gov.kb.document">
+            <field name="name">قانون الخدمة المدنية — المبادئ الأساسية</field>
+            <field name="source_type">legal_pdf</field>
+            <field name="module_name">hr</field>
+            <field name="model_name">hr.employee</field>
+            <field name="law_number">81/2016</field>
+            <field name="authority">وزارة التخطيط والإصلاح الإداري</field>
+            <field name="content">
+قانون رقم 81 لسنة 2016 بإصدار قانون الخدمة المدنية:
+المادة 14: ساعات العمل 7 ساعات يومياً / 35 ساعة أسبوعياً.
+المادة 47: الإجازة السنوية لا تتجاوز 45 يوماً بالراتب الكامل.
+المادة 92: الترقية تستلزم قضاء المدة المحددة والحصول على تقدير "جيد".
+يجب أن تكون جميع الوظائف مُدرجة في كادر التوظيف المعتمد.
+            </field>
+            <field name="chunk_index">0</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="kb_law_vat" model="gov.kb.document">
+            <field name="name">قانون ضريبة القيمة المضافة</field>
+            <field name="source_type">legal_pdf</field>
+            <field name="module_name">account</field>
+            <field name="model_name">account.move</field>
+            <field name="law_number">67/2016</field>
+            <field name="authority">مصلحة الضرائب المصرية</field>
+            <field name="content">
+قانون رقم 67 لسنة 2016 بإصدار قانون القيمة المضافة:
+المادة 3: نسبة الضريبة العامة 14% على جميع السلع والخدمات الخاضعة.
+المادة 7: إصدار فاتورة ضريبية إلزامي لكل عملية بيع أو تقديم خدمة.
+المادة 28: تقديم الإقرار الشهري خلال الشهر التالي.
+المادة 38: غرامة التهرب لا تقل عن 100% من قيمة الضريبة.
+رقم التسجيل الضريبي يجب أن يظهر على جميع الفواتير.
+            </field>
+            <field name="chunk_index">0</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="kb_budget_law" model="gov.kb.document">
+            <field name="name">قانون الموازنة العامة للدولة</field>
+            <field name="source_type">legal_pdf</field>
+            <field name="module_name">account</field>
+            <field name="law_number">53/1973</field>
+            <field name="authority">وزارة المالية</field>
+            <field name="content">
+قانون رقم 53 لسنة 1973 بشأن الموازنة العامة للدولة:
+السنة المالية: من 1 يوليو إلى 30 يونيو.
+لا يجوز الصرف دون اعتماد في الموازنة.
+لا يجوز تجاوز الاعتمادات إلا بقرار مجلس الوزراء.
+الموازنة البرامجية مطبَّقة اعتباراً من 2018/2019.
+            </field>
+            <field name="chunk_index">0</field>
+            <field name="active" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

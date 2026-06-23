@@ -1,0 +1,12 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+# ─── gov.kb.document ───────────────────────────────────────────────────────
+access_kb_document_user,gov.kb.document user,model_gov_kb_document,base.group_user,1,0,0,0
+access_kb_document_system,gov.kb.document system,model_gov_kb_document,base.group_system,1,1,1,1
+# ─── gov.kb.indexer (AbstractModel — لا يحتاج صلاحيات مباشرة لكن نُعرّفها) ─
+access_kb_indexer_system,gov.kb.indexer system,model_gov_kb_indexer,base.group_system,1,1,1,1
+# ─── gov.agent.session ─────────────────────────────────────────────────────
+access_agent_session_user,gov.agent.session user,model_gov_agent_session,base.group_user,1,1,1,0
+access_agent_session_system,gov.agent.session system,model_gov_agent_session,base.group_system,1,1,1,1
+# ─── gov.agent.log ─────────────────────────────────────────────────────────
+access_agent_log_user,gov.agent.log user,model_gov_agent_log,base.group_user,1,0,1,0
+access_agent_log_system,gov.agent.log system,model_gov_agent_log,base.group_system,1,1,1,1
