@@ -7,8 +7,6 @@
 
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
-import { patch } from "@web/core/utils/patch";
-import { FormController } from "@web/views/form/form_controller";
 import { agentState } from "./agent_connector";
 
 // وقت الانتظار قبل إرسال الطلب (بعد توقف المستخدم عن الكتابة)
@@ -40,49 +38,6 @@ function requestHint(connector, payload) {
     }, DEBOUNCE_MS);
 }
 
-/**
- * استخراج اسم النموذج من المتحكم أو العنصر DOM
- */
-function extractModel(formController) {
-    try {
-        return (
-            formController?.model?.config?.resModel ||
-            formController?.props?.resModel ||
-            ""
-        );
-    } catch {
-        return "";
-    }
-}
-
-/**
- * استخراج معرّف السجل الحالي
- */
-function extractRecordId(formController) {
-    try {
-        return formController?.model?.root?.resId || null;
-    } catch {
-        return null;
-    }
-}
-
-/**
- * استخراج قيمة حقل من سجل Odoo
- */
-function extractFieldValue(record, fieldName) {
-    if (!record || !fieldName) return "";
-    try {
-        const val = record.data?.[fieldName];
-        if (val === null || val === undefined) return "";
-        if (typeof val === "object") {
-            // Many2one يُعيد [id, name]
-            return val.display_name || val[1] || String(val.id || "");
-        }
-        return String(val);
-    } catch {
-        return "";
-    }
-}
 
 /**
  * خدمة تتبع الحقل — تُهيَّأ مرة واحدة عند تحميل التطبيق
@@ -205,59 +160,6 @@ class FieldTrackerService {
     }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Patch على FormController لتتبع تغييرات الخطوات والتبويبات وشريط الحالة
-// ─────────────────────────────────────────────────────────────────────────────
-
-patch(FormController.prototype, {
-    setup() {
-        super.setup();
-        // نحاول الوصول للـ connector عبر service registry
-        try {
-            this._govAiConnector = useService("gov_ai_agent_connector");
-        } catch {
-            this._govAiConnector = null;
-        }
-    },
-
-    /**
-     * مراقبة تغيير حقل الحالة (status bar) في workflow
-     */
-    async saveRecord() {
-        const result = await super.saveRecord(...arguments);
-        if (this._govAiConnector && this.model?.root) {
-            const model = extractModel(this);
-            const statusField = this._getStatusField();
-            if (statusField) {
-                const value = extractFieldValue(this.model.root, statusField);
-                requestHint(this._govAiConnector, {
-                    model,
-                    field: statusField,
-                    value,
-                    view_type: "form",
-                    record_id: extractRecordId(this),
-                });
-            }
-        }
-        return result;
-    },
-
-    /**
-     * الحصول على اسم حقل الحالة من تعريف العرض
-     */
-    _getStatusField() {
-        try {
-            const statusBarEl = document.querySelector(".o_statusbar_status");
-            if (!statusBarEl) return null;
-            const activeBtn = statusBarEl.querySelector(
-                "button.btn-primary, button[aria-checked='true']"
-            );
-            return activeBtn?.dataset?.field || null;
-        } catch {
-            return null;
-        }
-    },
-});
 
 // ─────────────────────────────────────────────────────────────────────────────
 // تتبع تغيير صفحة Notebook

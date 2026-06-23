@@ -5,8 +5,9 @@
  * يعرض التلميحات بشكل تدريجي مع تمييز المراجع القانونية والتحذيرات
  */
 
-import { Component, useState, useEffect, useService, onWillStart, markup } from "@odoo/owl";
+import { Component, useState, useEffect, markup } from "@odoo/owl";
 import { registry } from "@web/core/registry";
+import { useService } from "@web/core/utils/hooks";
 import { agentState } from "./agent_connector";
 
 /**
