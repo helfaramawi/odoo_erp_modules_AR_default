@@ -1,6 +1,5 @@
 /** @odoo-module **/
 
-import { Component, useState, useEffect, markup, onMounted, onWillUnmount } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { agentState } from "./agent_connector";
 
@@ -33,200 +32,196 @@ function parseHintText(text) {
     return { html, lawRefs };
 }
 
-// ─── الشريط الجانبي — يُعرض مباشرة على document.body ────────────────────────
-// هذا المكوّن لا يُستخدم كـ OWL component؛ يُعالَج يدوياً في DOM
+// ─── DOM Sidebar (pure JS, no OWL) ──────────────────────────────────────────
 
-function buildSidebarDOM() {
-    const sidebar = document.createElement("div");
-    sidebar.id = "gov-ai-sidebar-container";
-    sidebar.dir = "rtl";
-    sidebar.style.cssText = [
-        "position:fixed", "top:0", "right:0", "height:100vh",
-        "width:320px", "background:#1a2744", "z-index:99999",
-        "display:flex", "flex-direction:column",
-        "font-family:Cairo,Arial,sans-serif", "color:#f0f4ff",
-        "border-left:1px solid #243460", "border-top:3px solid #c8a84b",
-        "box-shadow:-4px 0 20px rgba(0,0,0,.4)", "overflow:hidden",
-        "transition:width .25s ease",
-    ].join(";");
-    document.body.appendChild(sidebar);
-    return sidebar;
-}
-
-function renderSidebar(container, state) {
-    const { expanded, parsed, copyOk, followupText } = state;
-
-    if (!expanded) {
-        container.style.width = "48px";
-        container.innerHTML = `
-            <div id="gov-collapsed-btn" style="
-                display:flex;align-items:center;justify-content:center;
-                height:100%;cursor:pointer;font-size:22px;color:#c8a84b;
-                writing-mode:vertical-rl;
-            " title="المرشد الحكومي">&#x1F3DB;</div>`;
-        return;
+class GovSidebar {
+    constructor(connector) {
+        this._connector = connector;
+        this._expanded = true;
+        this._copyOk = false;
+        this._followup = "";
+        this._parsed = { html: "", lawRefs: [] };
+        this._el = null;
+        this._intervalId = null;
     }
 
-    container.style.width = "320px";
-    const loaderHtml = (agentState.isLoading || agentState.isStreaming) ? `
-        <div style="padding:12px;text-align:center;color:#9bacc8;font-size:13px">
-            جارٍ تحليل الحقل...
-        </div>` : "";
-    const hintHtml = agentState.currentHint ? `
-        ${parsed.lawRefs.map(r => `<span style="background:#c8a84b;color:#1a2744;
-            padding:2px 7px;border-radius:3px;font-size:11px;margin:2px;
-            display:inline-block">${escapeHtml(r)}</span>`).join("")}
-        <div style="padding:10px;font-size:13px;line-height:1.7">${parsed.html}</div>
-        <div style="padding:0 10px 8px">
-            <button id="gov-copy-btn" style="
-                background:transparent;border:1px solid #c8a84b;color:#c8a84b;
-                padding:4px 12px;border-radius:3px;cursor:pointer;font-size:12px;
-                font-family:inherit
-            ">${copyOk ? "✓ تم النسخ" : "نسخ النص"}</button>
-        </div>` : `
-        <div style="padding:20px;text-align:center;color:#9bacc8;font-size:13px;line-height:1.8">
-            انقر على أي حقل في النموذج لتلقي الإرشاد الحكومي المناسب
-        </div>`;
-    const followupHtml = agentState.currentHint && !agentState.isLoading ? `
-        <div style="padding:8px;border-top:1px solid #243460;display:flex;gap:6px">
-            <input id="gov-followup-inp" type="text" value="${escapeHtml(followupText)}"
-                placeholder="سؤال متابعة..." dir="rtl"
-                style="flex:1;background:#243460;border:1px solid #355080;color:#f0f4ff;
-                    padding:6px 8px;border-radius:3px;font-family:inherit;font-size:12px"/>
-            <button id="gov-followup-btn" style="
-                background:#c8a84b;color:#1a2744;border:none;padding:6px 10px;
-                border-radius:3px;cursor:pointer;font-family:inherit;font-size:12px
-            ">إرسال</button>
-        </div>` : "";
-    const connDot = agentState.isConnected
-        ? `<span style="width:7px;height:7px;border-radius:50%;background:#43a047;display:inline-block;margin-right:4px"></span>`
-        : `<span style="width:7px;height:7px;border-radius:50%;background:#e53935;display:inline-block;margin-right:4px"></span>`;
-    const fieldName = (agentState.currentField || "انتظر تركيز أي حقل...").replace(/_/g, " ");
+    mount() {
+        this._el = document.createElement("div");
+        this._el.id = "gov-ai-sidebar-root";
+        Object.assign(this._el.style, {
+            position: "fixed", top: "0", right: "0",
+            height: "100vh", width: "320px",
+            background: "#1a2744", zIndex: "10000",
+            display: "flex", flexDirection: "column",
+            fontFamily: "Cairo,Arial,sans-serif", color: "#f0f4ff",
+            borderLeft: "1px solid #243460", borderTop: "3px solid #c8a84b",
+            boxShadow: "-4px 0 20px rgba(0,0,0,.4)", overflow: "hidden",
+            direction: "rtl", transition: "width .25s ease",
+        });
+        document.body.appendChild(this._el);
 
-    container.innerHTML = `
-        <!-- header -->
-        <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;
-            background:#1a2744;border-bottom:1px solid #243460;flex-shrink:0;min-height:52px">
-            <svg viewBox="0 0 40 40" width="32" height="32" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0">
-                <circle cx="20" cy="20" r="18" fill="#c8a84b" stroke="#1a2744" stroke-width="2"/>
-                <text x="50%" y="55%" text-anchor="middle" dominant-baseline="middle"
-                    font-size="16" fill="#1a2744" font-weight="bold">م</text>
-            </svg>
-            <div style="flex:1;display:flex;align-items:center;gap:4px">
-                ${connDot}
-                <span style="font-size:13px;font-weight:700;color:#c8a84b">المرشد الحكومي</span>
-            </div>
-            <button id="gov-toggle-btn" style="
-                background:transparent;border:none;color:#c8a84b;cursor:pointer;
-                font-size:16px;padding:4px 8px
-            ">&#x25C4;</button>
-        </div>
-        <!-- field info -->
-        <div style="padding:6px 12px;background:#243460;font-size:11px;color:#9bacc8;flex-shrink:0">
-            الحقل: <span style="color:#f0f4ff">${escapeHtml(fieldName)}</span>
-        </div>
-        <!-- hint area -->
-        <div style="flex:1;overflow-y:auto;padding:4px">
-            ${loaderHtml || hintHtml}
-        </div>
-        ${followupHtml}
-        <!-- footer -->
-        <div style="padding:6px 12px;border-top:1px solid #243460;font-size:10px;
-            color:#9bacc8;text-align:center;flex-shrink:0">
-            المرشد الحكومي الذكي
-        </div>
-    `;
-}
-
-// ─── Systray icon — المكوّن الوحيد المسجَّل في systray (أيقونة بسيطة فقط) ──
-
-export class GovAITrayIcon extends Component {
-    static template = "gov_ai_guide.GovAITrayIcon";
-    static props = {};
-
-    setup() {
-        this._container = null;
-        this._state = { expanded: true, parsed: { html: "", lawRefs: [] }, copyOk: false, followupText: "" };
-        this._connector = null;
-        this._interval = null;
-
-        onMounted(() => {
-            // بناء الـ sidebar على document.body
-            this._container = buildSidebarDOM();
-            this._rerender();
-
-            // مراقبة agentState بـ polling خفيف
-            this._interval = setInterval(() => this._rerender(), 300);
-
-            // try get connector
-            try {
-                this._connector = this.__owl__?.app?.env?.services?.gov_ai_agent_connector || null;
-            } catch (_e) {}
-
-            // event delegation على الـ container
-            this._container.addEventListener("click", (e) => this._onClick(e));
-            this._container.addEventListener("input", (e) => {
-                if (e.target.id === "gov-followup-inp") {
-                    this._state.followupText = e.target.value;
-                }
-            });
-            this._container.addEventListener("keydown", (e) => {
-                if (e.target.id === "gov-followup-inp" && e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    this._sendFollowup();
-                }
-            });
+        this._el.addEventListener("click", (e) => this._handleClick(e));
+        this._el.addEventListener("input", (e) => {
+            if (e.target.dataset.role === "followup") {
+                this._followup = e.target.value;
+            }
+        });
+        this._el.addEventListener("keydown", (e) => {
+            if (e.target.dataset.role === "followup" && e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                this._sendFollowup();
+            }
         });
 
-        onWillUnmount(() => {
-            clearInterval(this._interval);
-            if (this._container) this._container.remove();
-        });
+        this._render();
+        this._intervalId = setInterval(() => this._render(), 400);
     }
 
-    _rerender() {
-        if (!this._container) return;
+    _render() {
+        if (!this._el) return;
         try {
-            renderSidebar(this._container, this._state);
+            if (agentState.currentHint && !agentState.isStreaming) {
+                this._parsed = parseHintText(agentState.currentHint);
+            }
+            this._el.style.width = this._expanded ? "320px" : "48px";
+            this._el.innerHTML = this._expanded ? this._expandedHTML() : this._collapsedHTML();
         } catch (_e) {}
     }
 
-    _onClick(e) {
-        const id = e.target.closest("[id]")?.id;
-        if (id === "gov-toggle-btn" || id === "gov-collapsed-btn") {
-            this._state.expanded = !this._state.expanded;
-            this._rerender();
-        } else if (id === "gov-copy-btn") {
+    _collapsedHTML() {
+        return `<div data-action="toggle" style="
+            height:100%;display:flex;align-items:center;justify-content:center;
+            cursor:pointer;color:#c8a84b;font-size:20px;writing-mode:vertical-rl;
+            user-select:none" title="المرشد الحكومي">م</div>`;
+    }
+
+    _expandedHTML() {
+        const field = (agentState.currentField || "انتظر تركيز أي حقل...").replace(/_/g, " ");
+        const dot = agentState.isConnected
+            ? `<span style="width:7px;height:7px;border-radius:50%;background:#43a047;display:inline-block;margin-left:4px;flex-shrink:0"></span>`
+            : `<span style="width:7px;height:7px;border-radius:50%;background:#e53935;display:inline-block;margin-left:4px;flex-shrink:0"></span>`;
+
+        let hintArea = "";
+        if (agentState.isLoading || agentState.isStreaming) {
+            hintArea = `<div style="padding:16px;text-align:center;color:#9bacc8;font-size:13px">جارٍ تحليل الحقل...</div>`;
+        } else if (agentState.lastError) {
+            hintArea = `<div style="padding:12px;color:#e53935;font-size:13px">${escapeHtml(agentState.lastError)}</div>`;
+        } else if (agentState.currentHint) {
+            const refs = this._parsed.lawRefs.map(r =>
+                `<span style="background:#c8a84b;color:#1a2744;padding:2px 7px;border-radius:3px;font-size:11px;margin:2px;display:inline-block">${escapeHtml(r)}</span>`
+            ).join("");
+            hintArea = `
+                ${refs ? `<div style="padding:8px 10px 4px">${refs}</div>` : ""}
+                <div style="padding:8px 12px;font-size:13px;line-height:1.8">${this._parsed.html}</div>
+                <div style="padding:0 12px 8px">
+                    <button data-action="copy" style="
+                        background:transparent;border:1px solid #c8a84b;color:#c8a84b;
+                        padding:4px 14px;border-radius:3px;cursor:pointer;
+                        font-size:12px;font-family:inherit">
+                        ${this._copyOk ? "✓ تم النسخ" : "نسخ النص"}
+                    </button>
+                </div>`;
+        } else {
+            hintArea = `<div style="padding:24px 16px;text-align:center;color:#9bacc8;font-size:13px;line-height:1.9">
+                انقر على أي حقل في النموذج لتلقي الإرشاد الحكومي المناسب</div>`;
+        }
+
+        const followup = agentState.currentHint && !agentState.isLoading ? `
+            <div style="padding:8px;border-top:1px solid #243460;display:flex;gap:6px;flex-shrink:0">
+                <input type="text" data-role="followup"
+                    value="${escapeHtml(this._followup)}"
+                    placeholder="سؤال متابعة..." dir="rtl"
+                    style="flex:1;background:#243460;border:1px solid #355080;color:#f0f4ff;
+                        padding:6px 8px;border-radius:3px;font-family:inherit;font-size:12px;outline:none"/>
+                <button data-action="send" style="
+                    background:#c8a84b;color:#1a2744;border:none;padding:6px 12px;
+                    border-radius:3px;cursor:pointer;font-family:inherit;font-size:12px;
+                    font-weight:600">إرسال</button>
+            </div>` : "";
+
+        return `
+            <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;
+                background:#1a2744;border-bottom:1px solid #243460;flex-shrink:0;min-height:50px">
+                <svg viewBox="0 0 40 40" width="30" height="30" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0">
+                    <circle cx="20" cy="20" r="18" fill="#c8a84b" stroke="#1a2744" stroke-width="2"/>
+                    <text x="50%" y="55%" text-anchor="middle" dominant-baseline="middle"
+                        font-size="16" fill="#1a2744" font-weight="bold">م</text>
+                </svg>
+                <div style="flex:1;display:flex;align-items:center">
+                    ${dot}
+                    <span style="font-size:13px;font-weight:700;color:#c8a84b">المرشد الحكومي</span>
+                </div>
+                <button data-action="toggle" style="
+                    background:transparent;border:none;color:#c8a84b;
+                    cursor:pointer;font-size:16px;padding:4px 8px;line-height:1">&#x25C4;</button>
+            </div>
+            <div style="padding:5px 12px;background:#243460;font-size:11px;color:#9bacc8;flex-shrink:0">
+                الحقل: <span style="color:#f0f4ff">${escapeHtml(field)}</span>
+            </div>
+            <div style="flex:1;overflow-y:auto">${hintArea}</div>
+            ${followup}
+            <div style="padding:5px 12px;border-top:1px solid #243460;font-size:10px;
+                color:#9bacc8;text-align:center;flex-shrink:0">المرشد الحكومي الذكي</div>`;
+    }
+
+    _handleClick(e) {
+        const action = e.target.closest("[data-action]")?.dataset?.action;
+        if (action === "toggle") {
+            this._expanded = !this._expanded;
+            this._render();
+        } else if (action === "copy") {
             const text = agentState.currentHint;
             if (!text) return;
             navigator.clipboard?.writeText(text).catch(() => {
                 const ta = document.createElement("textarea");
-                ta.value = text;
-                document.body.appendChild(ta);
-                ta.select();
-                document.execCommand("copy");
+                ta.value = text; document.body.appendChild(ta);
+                ta.select(); document.execCommand("copy");
                 document.body.removeChild(ta);
             });
-            this._state.copyOk = true;
-            this._rerender();
-            setTimeout(() => { this._state.copyOk = false; this._rerender(); }, 2000);
-        } else if (id === "gov-followup-btn") {
+            this._copyOk = true; this._render();
+            setTimeout(() => { this._copyOk = false; this._render(); }, 2000);
+        } else if (action === "send") {
             this._sendFollowup();
         }
     }
 
     async _sendFollowup() {
-        const q = this._state.followupText.trim();
+        const q = this._followup.trim();
         if (!q) return;
-        this._state.followupText = "";
+        this._followup = "";
         if (this._connector) {
             try { await this._connector.sendFollowup(q); } catch (_e) {}
         }
     }
+
+    destroy() {
+        clearInterval(this._intervalId);
+        this._el?.remove();
+    }
 }
 
-// القالب البسيط للأيقونة في الـ systray — لا يحتوي position:fixed
-registry.category("systray").add("gov_ai_sidebar", {
-    Component: GovAITrayIcon,
-    sequence: 1,
-});
+// ─── Service — لا systray، لا OWL component ──────────────────────────────────
+
+const govSidebarService = {
+    name: "gov_ai_sidebar_ui",
+    dependencies: [],
+    start(env, services) {
+        // ننتظر اكتمال تحميل الصفحة قبل الحقن
+        const init = () => {
+            if (document.getElementById("gov-ai-sidebar-root")) return;
+            try {
+                const connector = env.services?.gov_ai_agent_connector || null;
+                const sidebar = new GovSidebar(connector);
+                sidebar.mount();
+            } catch (_e) {}
+        };
+
+        if (document.readyState === "complete") {
+            setTimeout(init, 500);
+        } else {
+            window.addEventListener("load", () => setTimeout(init, 500));
+        }
+    },
+};
+
+registry.category("services").add("gov_ai_sidebar_ui", govSidebarService);

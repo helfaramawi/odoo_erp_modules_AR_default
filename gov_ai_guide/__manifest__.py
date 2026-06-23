@@ -38,7 +38,6 @@
     'assets': {
         'web.assets_backend': [
             'gov_ai_guide/static/src/css/guide_sidebar.css',
-            'gov_ai_guide/static/src/xml/guide_sidebar.xml',
             'gov_ai_guide/static/src/js/agent_connector.js',
             'gov_ai_guide/static/src/js/field_tracker.js',
             'gov_ai_guide/static/src/js/guide_sidebar.js',
