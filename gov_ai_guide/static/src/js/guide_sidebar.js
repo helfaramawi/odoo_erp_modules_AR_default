@@ -1,238 +1,127 @@
 /** @odoo-module **/
-/**
- * guide_sidebar.js — مكون الشريط الجانبي للمرشد الحكومي
- * مكوّن OWL ثابت يُحمَّل مرة واحدة ولا يُدمَّر طوال جلسة المتصفح
- * يعرض التلميحات بشكل تدريجي مع تمييز المراجع القانونية والتحذيرات
- */
 
-import { Component, useState, useEffect, markup, onMounted } from "@odoo/owl";
+import { Component, useState, useEffect, markup, onMounted, onWillUnmount } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { agentState } from "./agent_connector";
 
-/**
- * تحليل نص التلميح واستخراج المراجع القانونية والتحذيرات
- * يُعيد: { html, lawRefs, warnings }
- */
-function parseHintText(text) {
-    if (!text) return { html: "", lawRefs: [], warnings: [] };
-
-    const lawRefs = [];
-    const warnings = [];
-
-    // استخراج أرقام القوانين (مثال: قانون 89/1998، قرار وزاري 250/2019)
-    const lawPattern =
-        /(?:قانون|لائحة|قرار|معيار|مرسوم)\s+(?:رقم\s+)?(?:وزاري\s+)?[\d٠-٩]+\/[\d٠-٩]+/g;
-    let match;
-    while ((match = lawPattern.exec(text)) !== null) {
-        if (!lawRefs.includes(match[0])) {
-            lawRefs.push(match[0]);
-        }
-    }
-
-    // معالجة النص سطراً سطراً
-    const lines = text.split("\n");
-    const processedLines = lines.map((line) => {
-        let processed = line;
-
-        // تمييز التحذيرات (⚠ أو أسطر تبدأ بـ "تنبيه" أو "⚠")
-        if (processed.includes("⚠") || /^تنبيه/i.test(processed.trim())) {
-            warnings.push(processed.replace(/^[⚠\s]+/, "").trim());
-            processed = `<span class="gov-warning">${escapeHtml(processed)}</span>`;
-        } else {
-            // تمييز النصوص الغامقة **...**
-            processed = escapeHtml(processed).replace(
-                /\*\*(.+?)\*\*/g,
-                '<strong class="gov-bold">$1</strong>'
-            );
-
-            // تمييز أرقام القوانين بشارة ذهبية
-            processed = processed.replace(
-                /((?:قانون|لائحة|قرار|معيار|مرسوم)\s+(?:رقم\s+)?(?:وزاري\s+)?[\d٠-٩]+\/[\d٠-٩]+)/g,
-                '<span class="gov-law-badge">$1</span>'
-            );
-        }
-        return processed;
-    });
-
-    const html = processedLines.join("<br/>");
-    return { html, lawRefs, warnings };
-}
-
 function escapeHtml(text) {
-    return text
+    if (!text) return "";
+    return String(text)
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;");
 }
 
-/**
- * الشريط الجانبي الرئيسي — المكوّن الأساسي
- */
+function parseHintText(text) {
+    if (!text) return { html: "", lawRefs: [], warnings: [] };
+    const lawRefs = [];
+    const lawPattern = /(?:قانون|لائحة|قرار|معيار|مرسوم)\s+(?:رقم\s+)?(?:وزاري\s+)?[\d٠-٩]+\/[\d٠-٩]+/g;
+    let match;
+    while ((match = lawPattern.exec(text)) !== null) {
+        if (!lawRefs.includes(match[0])) lawRefs.push(match[0]);
+    }
+    const lines = text.split("\n");
+    const html = lines.map((line) => {
+        if (line.includes("⚠") || /^تنبيه/i.test(line.trim())) {
+            return `<span style="color:#e53935">${escapeHtml(line)}</span>`;
+        }
+        return escapeHtml(line)
+            .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+            .replace(
+                /((?:قانون|لائحة|قرار|معيار|مرسوم)\s+(?:رقم\s+)?(?:وزاري\s+)?[\d٠-٩]+\/[\d٠-٩]+)/g,
+                '<span style="background:#c8a84b;color:#1a2744;padding:1px 5px;border-radius:3px;font-size:11px">$1</span>'
+            );
+    }).join("<br/>");
+    return { html, lawRefs, warnings: [] };
+}
+
 export class GovAISidebar extends Component {
     static template = "gov_ai_guide.GovAISidebar";
     static props = {};
 
     setup() {
-        this.agentState = agentState;
-        // نصل للـ connector عبر registry مباشرة بدلاً من useService
+        this.state = useState({
+            expanded: true,
+            followupText: "",
+            copyOk: false,
+            parsed: { html: "", lawRefs: [] },
+        });
+
+        this._connector = null;
+
         onMounted(() => {
             try {
-                this.connector = owl.__apps__?.[0]?.env?.services?.gov_ai_agent_connector
-                    || registry.category("services").get("gov_ai_agent_connector");
-            } catch (e) {
-                this.connector = null;
+                this._connector =
+                    this.__owl__.app?.env?.services?.gov_ai_agent_connector || null;
+            } catch (_e) {
+                this._connector = null;
             }
         });
 
-        this.state = useState({
-            isExpanded: true,
-            followupText: "",
-            hintHistory: [],  // آخر 5 تلميحات
-            currentParsed: { html: "", lawRefs: [], warnings: [] },
-            showHistory: false,
-            copySuccess: false,
-        });
-
-        // مراقبة تغيير التلميح لتحديث التحليل
         useEffect(
             () => {
-                if (agentState.currentHint && !agentState.isStreaming) {
-                    const parsed = parseHintText(agentState.currentHint);
-                    this.state.currentParsed = parsed;
-                    // حفظ في السجل
-                    if (agentState.currentHint.trim()) {
-                        this._addToHistory({
-                            field: agentState.currentField,
-                            model: agentState.currentModel,
-                            text: agentState.currentHint,
-                            timestamp: new Date().toLocaleTimeString("ar-EG"),
-                        });
-                    }
-                } else if (agentState.isStreaming) {
-                    // تحديث مستمر أثناء البث
-                    this.state.currentParsed = parseHintText(agentState.currentHint);
-                }
+                try {
+                    this.state.parsed = parseHintText(agentState.currentHint || "");
+                } catch (_e) {}
             },
             () => [agentState.currentHint, agentState.isStreaming]
         );
     }
 
-    /**
-     * إضافة تلميح لسجل المحادثة (آخر 5)
-     */
-    _addToHistory(entry) {
-        const history = this.state.hintHistory;
-        // تجنب تكرار نفس التلميح
-        if (history.length > 0 && history[0].text === entry.text) return;
-        history.unshift(entry);
-        if (history.length > 5) history.pop();
+    get agentState() { return agentState; }
+
+    get renderedHint() {
+        try { return markup(this.state.parsed.html || ""); }
+        catch (_e) { return markup(""); }
     }
 
-    /**
-     * تبديل حالة الشريط (موسّع / مطوي)
-     */
+    get fieldLabel() {
+        const f = agentState.currentField;
+        if (!f) return "انتظر تركيز أي حقل...";
+        return f.replace(/_/g, " ");
+    }
+
+    get showLoader() {
+        return agentState.isLoading || agentState.isStreaming;
+    }
+
     toggleSidebar() {
-        this.state.isExpanded = !this.state.isExpanded;
+        this.state.expanded = !this.state.expanded;
     }
 
-    /**
-     * نسخ نص التلميح للحافظة
-     */
     async copyHint() {
         const text = agentState.currentHint;
         if (!text) return;
         try {
             await navigator.clipboard.writeText(text);
-            this.state.copySuccess = true;
-            setTimeout(() => { this.state.copySuccess = false; }, 2000);
-        } catch (e) {
-            // fallback لاستخدام execCommand في المتصفحات القديمة
+        } catch (_e) {
             const ta = document.createElement("textarea");
             ta.value = text;
             document.body.appendChild(ta);
             ta.select();
             document.execCommand("copy");
             document.body.removeChild(ta);
-            this.state.copySuccess = true;
-            setTimeout(() => { this.state.copySuccess = false; }, 2000);
         }
+        this.state.copyOk = true;
+        setTimeout(() => { this.state.copyOk = false; }, 2000);
     }
 
-    /**
-     * إرسال سؤال متابعة
-     */
     async sendFollowup() {
-        const question = this.state.followupText.trim();
-        if (!question) return;
+        const q = this.state.followupText.trim();
+        if (!q || !this._connector) return;
         this.state.followupText = "";
-        await this.connector.sendFollowup(question);
+        try { await this._connector.sendFollowup(q); } catch (_e) {}
     }
 
-    /**
-     * معالجة Enter في حقل السؤال
-     */
-    onFollowupKeydown(event) {
-        if (event.key === "Enter" && !event.shiftKey) {
-            event.preventDefault();
+    onFollowupKey(ev) {
+        if (ev.key === "Enter" && !ev.shiftKey) {
+            ev.preventDefault();
             this.sendFollowup();
         }
     }
-
-    /**
-     * تمييل عرض السجل
-     */
-    toggleHistory() {
-        this.state.showHistory = !this.state.showHistory;
-    }
-
-    /**
-     * HTML المعالَج للتلميح الحالي كـ markup آمن
-     */
-    get renderedHint() {
-        return markup(this.state.currentParsed.html || "");
-    }
-
-    /**
-     * HTML معالَج لأي تلميح في السجل
-     */
-    renderedHistoryHint(text) {
-        const { html } = parseHintText(text);
-        return markup(html);
-    }
-
-    /**
-     * الشارة الحكومية — عنوان الشريط
-     */
-    get headerTitle() {
-        return "المرشد الحكومي";
-    }
-
-    /**
-     * اسم الحقل الحالي بصيغة مقروءة
-     */
-    get currentFieldDisplay() {
-        const field = agentState.currentField;
-        if (!field) return "انتظر تركيز أي حقل...";
-        return field.replace(/_/g, " ");
-    }
-
-    /**
-     * هل نعرض مؤشر التحميل؟
-     */
-    get showLoader() {
-        return agentState.isLoading || agentState.isStreaming;
-    }
-
-    /**
-     * رسالة الحالة لشارة الاتصال
-     */
-    get connectionStatus() {
-        return agentState.isConnected ? "متصل" : "غير متصل";
-    }
 }
 
-// تسجيل المكوّن كـ systray item
 registry.category("systray").add("gov_ai_sidebar", {
     Component: GovAISidebar,
     sequence: 1,

@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
 
-    <!-- ═══════════════════════════════════════════════════════════════════ -->
-    <!-- القالب الرئيسي للشريط الجانبي — يُعرض دائماً في الواجهة           -->
-    <!-- ═══════════════════════════════════════════════════════════════════ -->
     <t t-name="gov_ai_guide.GovAISidebar">
-        <div t-att-class="'gov-ai-sidebar ' + (state.isExpanded ? 'expanded' : 'collapsed')"
+        <div t-att-class="'gov-ai-sidebar ' + (state.expanded ? 'expanded' : 'collapsed')"
              dir="rtl">
 
-            <!-- ─── الرأسية ─────────────────────────────────────────── -->
+            <!-- رأسية الشريط -->
             <div class="gov-sidebar-header">
-                <!-- شعار الجمهورية (SVG مبسّط) -->
                 <div class="gov-logo">
                     <svg viewBox="0 0 40 40" width="36" height="36" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="20" cy="20" r="18" fill="#c8a84b" stroke="#1a2744" stroke-width="2"/>
@@ -20,169 +16,103 @@
                     </svg>
                 </div>
 
-                <!-- العنوان — يظهر فقط في وضع التوسع -->
-                <t t-if="state.isExpanded">
-                    <div class="gov-header-text">
-                        <span class="gov-title">المرشد الحكومي</span>
-                        <span t-att-class="'gov-connection-dot ' + (agentState.isConnected ? 'connected' : 'disconnected')"
-                              t-att-title="connectionStatus"/>
-                    </div>
+                <t t-if="state.expanded">
+                    <span class="gov-title">المرشد الحكومي</span>
+                    <span t-att-class="'gov-dot ' + (agentState.isConnected ? 'connected' : 'disconnected')"/>
                 </t>
 
-                <!-- زر الطي/التوسع -->
-                <button class="gov-toggle-btn"
-                        t-on-click="toggleSidebar"
-                        t-att-title="state.isExpanded ? 'طيّ الشريط' : 'توسيع الشريط'">
-                    <t t-if="state.isExpanded">◀</t>
-                    <t t-else="">▶</t>
+                <button class="gov-toggle-btn" t-on-click="toggleSidebar">
+                    <t t-if="state.expanded">&#x25C4;</t>
+                    <t t-else="">&#x25BA;</t>
                 </button>
             </div>
 
-            <!-- ─── المحتوى الرئيسي (مرئي فقط عند التوسع) ──────────── -->
-            <t t-if="state.isExpanded">
+            <!-- محتوى الشريط — مرئي فقط عند التوسع -->
+            <t t-if="state.expanded">
 
-                <!-- معلومات الحقل الحالي -->
+                <!-- الحقل الحالي -->
                 <div class="gov-field-info">
-                    <span class="gov-field-label">الحقل الحالي:</span>
-                    <span class="gov-field-name" t-esc="currentFieldDisplay"/>
+                    <span class="gov-field-label">الحقل: </span>
+                    <span class="gov-field-name" t-esc="fieldLabel"/>
                 </div>
 
-                <!-- منطقة التلميح الرئيسية -->
+                <!-- منطقة التلميح -->
                 <div class="gov-hint-area">
 
-                    <!-- مؤشر التحميل / البث -->
                     <t t-if="showLoader">
                         <div class="gov-loading">
                             <div class="gov-loading-dots">
-                                <span/>
-                                <span/>
-                                <span/>
+                                <span/><span/><span/>
                             </div>
-                            <span class="gov-loading-text">
-                                <t t-if="agentState.isStreaming">جارٍ كتابة الإرشاد...</t>
-                                <t t-else="">جارٍ تحليل الحقل...</t>
-                            </span>
+                            <span class="gov-loading-text">جارٍ تحليل الحقل...</span>
                         </div>
                     </t>
 
-                    <!-- رسالة الخطأ -->
                     <t t-elif="agentState.lastError">
-                        <div class="gov-error-msg">
-                            <span class="gov-error-icon">⚠</span>
-                            <span t-esc="agentState.lastError"/>
-                        </div>
+                        <div class="gov-error-msg" t-esc="agentState.lastError"/>
                     </t>
 
-                    <!-- نص التلميح -->
                     <t t-elif="agentState.currentHint">
-                        <!-- المراجع القانونية كشارات ذهبية -->
-                        <t t-if="state.currentParsed.lawRefs.length">
+                        <!-- مراجع قانونية -->
+                        <t t-if="state.parsed.lawRefs.length">
                             <div class="gov-law-refs">
-                                <t t-foreach="state.currentParsed.lawRefs" t-as="ref" t-key="ref">
+                                <t t-foreach="state.parsed.lawRefs" t-as="ref" t-key="ref">
                                     <span class="gov-law-badge-header" t-esc="ref"/>
                                 </t>
                             </div>
                         </t>
 
-                        <!-- نص الإرشاد المنسَّق -->
+                        <!-- نص الإرشاد -->
                         <div class="gov-hint-text">
                             <t t-out="renderedHint"/>
-                            <!-- مؤشر البث الوميض -->
                             <t t-if="agentState.isStreaming">
                                 <span class="gov-cursor-blink">|</span>
                             </t>
                         </div>
 
-                        <!-- التحذيرات المُستخرجة -->
-                        <t t-if="state.currentParsed.warnings.length and !agentState.isStreaming">
-                            <div class="gov-warnings-box">
-                                <div class="gov-warnings-title">⚠ تحذيرات قانونية</div>
-                                <t t-foreach="state.currentParsed.warnings" t-as="w" t-key="w">
-                                    <div class="gov-warning-item" t-esc="w"/>
-                                </t>
+                        <!-- زر النسخ -->
+                        <t t-if="!agentState.isStreaming">
+                            <div class="gov-actions">
+                                <button class="gov-btn-copy" t-on-click="copyHint">
+                                    <t t-if="state.copyOk">تم النسخ</t>
+                                    <t t-else="">نسخ النص</t>
+                                </button>
                             </div>
                         </t>
-
-                        <!-- أزرار الإجراءات -->
-                        <div class="gov-actions" t-if="!agentState.isStreaming">
-                            <button class="gov-btn gov-btn-copy"
-                                    t-on-click="copyHint"
-                                    t-att-title="state.copySuccess ? 'تم النسخ!' : 'نسخ النص'">
-                                <t t-if="state.copySuccess">✓ تم النسخ</t>
-                                <t t-else="">نسخ النص</t>
-                            </button>
-                        </div>
                     </t>
 
-                    <!-- رسالة الترحيب عند عدم وجود تلميح بعد -->
                     <t t-else="">
                         <div class="gov-welcome">
-                            <div class="gov-welcome-icon">🏛</div>
                             <p>انقر على أي حقل في النموذج لتلقي الإرشاد الحكومي المناسب</p>
                         </div>
                     </t>
                 </div>
 
-                <!-- ─── سؤال متابعة ──────────────────────────────────── -->
+                <!-- سؤال متابعة -->
                 <t t-if="agentState.currentHint and !agentState.isLoading">
                     <div class="gov-followup">
                         <input type="text"
                                class="gov-followup-input"
                                placeholder="سؤال متابعة..."
                                t-model="state.followupText"
-                               t-on-keydown="onFollowupKeydown"
+                               t-on-keydown="onFollowupKey"
                                dir="rtl"/>
                         <button class="gov-followup-btn"
-                                t-on-click="sendFollowup"
-                                t-att-disabled="!state.followupText.trim()">
-                            إرسال
-                        </button>
+                                t-on-click="sendFollowup">إرسال</button>
                     </div>
                 </t>
 
-                <!-- ─── سجل التلميحات الأخيرة ───────────────────────── -->
-                <t t-if="state.hintHistory.length > 1">
-                    <div class="gov-history">
-                        <button class="gov-history-toggle"
-                                t-on-click="toggleHistory">
-                            <t t-if="state.showHistory">▲ إخفاء السجل</t>
-                            <t t-else="">▼ السجل (آخر <t t-esc="state.hintHistory.length - 1"/> تلميح)</t>
-                        </button>
-
-                        <t t-if="state.showHistory">
-                            <div class="gov-history-list">
-                                <t t-foreach="state.hintHistory.slice(1)" t-as="entry" t-key="entry_index">
-                                    <div class="gov-history-item">
-                                        <div class="gov-history-meta">
-                                            <span class="gov-history-field" t-esc="entry.field"/>
-                                            <span class="gov-history-time" t-esc="entry.timestamp"/>
-                                        </div>
-                                        <div class="gov-history-text">
-                                            <t t-out="renderedHistoryHint(entry.text)"/>
-                                        </div>
-                                    </div>
-                                </t>
-                            </div>
-                        </t>
-                    </div>
-                </t>
-
-                <!-- ─── التذييل ──────────────────────────────────────── -->
+                <!-- تذييل -->
                 <div class="gov-footer">
-                    <span class="gov-footer-text">المرشد الحكومي الذكي</span>
-                    <span class="gov-footer-count">
-                        <t t-if="agentState.totalHints">
-                            <t t-esc="agentState.totalHints"/> تلميح في هذه الجلسة
-                        </t>
-                    </span>
+                    <span>المرشد الحكومي الذكي</span>
                 </div>
 
-            </t><!-- end isExpanded -->
+            </t>
 
             <!-- أيقونة في وضع الطي -->
             <t t-else="">
                 <div class="gov-collapsed-icon" t-on-click="toggleSidebar" title="المرشد الحكومي">
-                    🏛
+                    &#x1F3DB;
                 </div>
             </t>
 
