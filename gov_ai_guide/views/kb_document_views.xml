@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- ═══════════════════════════════════════════════════════════════════
-         عرض قائمة وثائق قاعدة المعرفة
-         ═══════════════════════════════════════════════════════════════════ -->
     <record id="view_kb_document_list" model="ir.ui.view">
         <field name="name">gov.kb.document.list</field>
         <field name="model">gov.kb.document</field>
@@ -27,35 +24,24 @@
         </field>
     </record>
 
-    <!-- ═══════════════════════════════════════════════════════════════════
-         عرض نموذج وثيقة قاعدة المعرفة
-         ═══════════════════════════════════════════════════════════════════ -->
     <record id="view_kb_document_form" model="ir.ui.view">
         <field name="name">gov.kb.document.form</field>
         <field name="model">gov.kb.document</field>
         <field name="arch" type="xml">
             <form string="وثيقة قاعدة المعرفة">
                 <header>
-                    <!-- زر الفهرسة الفورية -->
                     <button name="action_index_now"
                             string="فهرسة الآن"
                             type="object"
                             class="btn-primary"
-                            attrs="{'invisible': [('source_type', '=', 'addon_source')]}"
-                            icon="fa-database"/>
+                            invisible="source_type == 'addon_source'"/>
                     <button name="action_reindex_all_addons"
                             string="إعادة فهرسة جميع الـ Addons"
                             type="object"
                             class="btn-secondary"
                             groups="base.group_system"
-                            confirm="ستتم إعادة فهرسة جميع الـ addons المثبتة. قد تستغرق هذه العملية بعض الوقت. هل تريد المتابعة؟"/>
-                    <field name="active" widget="boolean_button"
-                           options="{'terminology': {
-                               'string_true': 'نشط',
-                               'string_false': 'معطّل',
-                               'hover_true': 'تعطيل',
-                               'hover_false': 'تفعيل'
-                           }}"/>
+                            confirm="ستتم إعادة فهرسة جميع الـ addons المثبتة. هل تريد المتابعة؟"/>
+                    <field name="active" widget="boolean_button"/>
                 </header>
                 <sheet>
                     <div class="oe_title">
@@ -66,8 +52,9 @@
                     <group>
                         <group string="معلومات المصدر">
                             <field name="source_type" widget="radio"/>
-                            <field name="source_file" readonly="1"
-                                   attrs="{'invisible': [('source_type', '!=', 'addon_source')]}"/>
+                            <field name="source_file"
+                                   readonly="1"
+                                   invisible="source_type != 'addon_source'"/>
                         </group>
                         <group string="معلومات قانونية">
                             <field name="law_number"/>
@@ -88,29 +75,24 @@
                         </group>
                     </group>
 
-                    <!-- رفع ملف PDF -->
                     <group string="ملف الوثيقة"
-                           attrs="{'invisible': [('source_type', '=', 'addon_source')]}">
+                           invisible="source_type == 'addon_source'">
                         <field name="pdf_file" widget="binary" filename="pdf_filename"/>
                         <field name="pdf_filename" invisible="1"/>
                     </group>
 
-                    <!-- محتوى الوثيقة المستخرج -->
                     <notebook>
                         <page string="المحتوى المستخرج">
                             <field name="content"
                                    widget="text"
-                                   attrs="{'readonly': [('source_type', '=', 'addon_source')]}"
-                                   placeholder="سيُملأ هذا الحقل تلقائياً عند الفهرسة..."
-                                   style="font-family: Cairo, Arial, sans-serif; font-size: 14px; direction: rtl; min-height: 300px;"/>
+                                   readonly="source_type == 'addon_source'"
+                                   placeholder="سيُملأ هذا الحقل تلقائياً عند الفهرسة..."/>
                         </page>
                         <page string="المتجه الدلالي" groups="base.group_system">
                             <div class="alert alert-info" role="alert">
-                                المتجه الدلالي (Embedding) يُحسَب تلقائياً ويُخزَّن بصيغة JSON.
-                                طوله يُشير لدقة نموذج التضمين المستخدم.
+                                المتجه الدلالي يُحسَب تلقائياً ويُخزَّن بصيغة JSON.
                             </div>
-                            <field name="embedding" readonly="1" widget="text"
-                                   style="font-family: monospace; font-size: 11px; max-height: 200px; overflow: auto;"/>
+                            <field name="embedding" readonly="1" widget="text"/>
                         </page>
                     </notebook>
                 </sheet>
@@ -118,9 +100,6 @@
         </field>
     </record>
 
-    <!-- ═══════════════════════════════════════════════════════════════════
-         عرض بحث مع فلاتر
-         ═══════════════════════════════════════════════════════════════════ -->
     <record id="view_kb_document_search" model="ir.ui.view">
         <field name="name">gov.kb.document.search</field>
         <field name="model">gov.kb.document</field>
@@ -131,8 +110,6 @@
                 <field name="authority" string="الجهة المصدِرة"/>
                 <field name="module_name" string="الوحدة"/>
                 <field name="content" string="المحتوى"/>
-
-                <!-- فلاتر النوع -->
                 <filter string="كود المصدر" name="addon_source"
                         domain="[('source_type','=','addon_source')]"/>
                 <filter string="وثائق قانونية" name="legal_pdf"
@@ -144,8 +121,6 @@
                 <separator/>
                 <filter string="نشط" name="active" domain="[('active','=',True)]"/>
                 <filter string="معطّل" name="inactive" domain="[('active','=',False)]"/>
-
-                <!-- تجميع -->
                 <group expand="0" string="تجميع حسب">
                     <filter string="الوحدة" name="by_module"
                             context="{'group_by': 'module_name'}"/>
@@ -158,9 +133,6 @@
         </field>
     </record>
 
-    <!-- ═══════════════════════════════════════════════════════════════════
-         عرض قائمة سجل التلميحات
-         ═══════════════════════════════════════════════════════════════════ -->
     <record id="view_agent_log_list" model="ir.ui.view">
         <field name="name">gov.agent.log.list</field>
         <field name="model">gov.agent.log</field>
@@ -178,12 +150,11 @@
         </field>
     </record>
 
-    <!-- عرض نموذج سجل التلميحات -->
     <record id="view_agent_log_form" model="ir.ui.view">
         <field name="name">gov.agent.log.form</field>
         <field name="model">gov.agent.log</field>
         <field name="arch" type="xml">
-            <form string="سجل التلميح" create="false" edit="false">
+            <form string="سجل التلميح" create="false">
                 <sheet>
                     <group>
                         <group string="معلومات الجلسة">
@@ -206,32 +177,23 @@
                         </group>
                     </group>
                     <group string="نص التلميح">
-                        <field name="hint_text" nolabel="1" readonly="1"
-                               style="font-family: Cairo, Arial; direction: rtl; line-height: 1.8;"/>
+                        <field name="hint_text" nolabel="1" readonly="1"/>
                     </group>
                 </sheet>
             </form>
         </field>
     </record>
 
-    <!-- ═══════════════════════════════════════════════════════════════════
-         إجراء خادم: إعادة فهرسة جميع الـ Addons
-         ═══════════════════════════════════════════════════════════════════ -->
     <record id="action_reindex_all" model="ir.actions.server">
         <field name="name">إعادة فهرسة جميع الـ Addons</field>
         <field name="model_id" ref="gov_ai_guide.model_gov_kb_document"/>
         <field name="binding_model_id" ref="gov_ai_guide.model_gov_kb_document"/>
         <field name="binding_view_types">tree</field>
         <field name="state">code</field>
-        <field name="code">
-env['gov.kb.document'].action_reindex_all_addons()
-        </field>
+        <field name="code">env['gov.kb.document'].action_reindex_all_addons()</field>
         <field name="groups_id" eval="[(4, ref('base.group_system'))]"/>
     </record>
 
-    <!-- ═══════════════════════════════════════════════════════════════════
-         Actions لفتح العروض
-         ═══════════════════════════════════════════════════════════════════ -->
     <record id="action_kb_documents" model="ir.actions.act_window">
         <field name="name">قاعدة المعرفة</field>
         <field name="res_model">gov.kb.document</field>
@@ -239,13 +201,8 @@ env['gov.kb.document'].action_reindex_all_addons()
         <field name="search_view_id" ref="view_kb_document_search"/>
         <field name="context">{'search_default_active': 1}</field>
         <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                قاعدة المعرفة فارغة
-            </p>
-            <p>
-                أضف وثائق قانونية أو قم بتشغيل "إعادة فهرسة جميع الـ Addons"
-                لملء قاعدة المعرفة تلقائياً.
-            </p>
+            <p class="o_view_nocontent_smiling_face">قاعدة المعرفة فارغة</p>
+            <p>أضف وثائق قانونية أو شغّل "إعادة فهرسة جميع الـ Addons".</p>
         </field>
     </record>
 
@@ -253,11 +210,6 @@ env['gov.kb.document'].action_reindex_all_addons()
         <field name="name">سجل التلميحات</field>
         <field name="res_model">gov.agent.log</field>
         <field name="view_mode">tree,form</field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                لا توجد تلميحات مسجّلة بعد
-            </p>
-        </field>
     </record>
 
     <record id="action_agent_sessions" model="ir.actions.act_window">
