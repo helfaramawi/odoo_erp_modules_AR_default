@@ -8,7 +8,7 @@
         <field name="name">gov.kb.document.list</field>
         <field name="model">gov.kb.document</field>
         <field name="arch" type="xml">
-            <list string="وثائق قاعدة المعرفة"
+            <tree string="وثائق قاعدة المعرفة"
                   decoration-muted="not active"
                   default_order="create_date desc">
                 <field name="name" string="اسم الوثيقة"/>
@@ -23,7 +23,7 @@
                 <field name="chunk_index" string="رقم القطعة"/>
                 <field name="tokens_count" string="الكلمات (تقريباً)"/>
                 <field name="active" widget="boolean_toggle"/>
-            </list>
+            </tree>
         </field>
     </record>
 
@@ -165,7 +165,7 @@
         <field name="name">gov.agent.log.list</field>
         <field name="model">gov.agent.log</field>
         <field name="arch" type="xml">
-            <list string="سجل التلميحات" default_order="timestamp desc" create="false">
+            <tree string="سجل التلميحات" default_order="timestamp desc" create="false">
                 <field name="timestamp" string="الوقت"/>
                 <field name="user_id" string="المستخدم"/>
                 <field name="model_name" string="النموذج"/>
@@ -174,7 +174,7 @@
                 <field name="response_ms" string="زمن الاستجابة (ms)"/>
                 <field name="was_cached" string="من الـ Cache" widget="boolean"/>
                 <field name="fallback_used" string="استُخدم الاحتياطي" widget="boolean"/>
-            </list>
+            </tree>
         </field>
     </record>
 
@@ -221,7 +221,7 @@
         <field name="name">إعادة فهرسة جميع الـ Addons</field>
         <field name="model_id" ref="gov_ai_guide.model_gov_kb_document"/>
         <field name="binding_model_id" ref="gov_ai_guide.model_gov_kb_document"/>
-        <field name="binding_view_types">list</field>
+        <field name="binding_view_types">tree</field>
         <field name="state">code</field>
         <field name="code">
 env['gov.kb.document'].action_reindex_all_addons()
@@ -235,7 +235,7 @@ env['gov.kb.document'].action_reindex_all_addons()
     <record id="action_kb_documents" model="ir.actions.act_window">
         <field name="name">قاعدة المعرفة</field>
         <field name="res_model">gov.kb.document</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">tree,form</field>
         <field name="search_view_id" ref="view_kb_document_search"/>
         <field name="context">{'search_default_active': 1}</field>
         <field name="help" type="html">
@@ -252,7 +252,7 @@ env['gov.kb.document'].action_reindex_all_addons()
     <record id="action_agent_logs" model="ir.actions.act_window">
         <field name="name">سجل التلميحات</field>
         <field name="res_model">gov.agent.log</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">tree,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 لا توجد تلميحات مسجّلة بعد
@@ -263,7 +263,7 @@ env['gov.kb.document'].action_reindex_all_addons()
     <record id="action_agent_sessions" model="ir.actions.act_window">
         <field name="name">جلسات المرشد</field>
         <field name="res_model">gov.agent.session</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">tree,form</field>
     </record>
 
 </odoo>
