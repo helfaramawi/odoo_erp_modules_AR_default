@@ -6,7 +6,6 @@
  */
 
 import { registry } from "@web/core/registry";
-import { useService } from "@web/core/utils/hooks";
 import { agentState } from "./agent_connector";
 
 // وقت الانتظار قبل إرسال الطلب (بعد توقف المستخدم عن الكتابة)
