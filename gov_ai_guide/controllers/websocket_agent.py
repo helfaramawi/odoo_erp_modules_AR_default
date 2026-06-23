@@ -193,8 +193,8 @@ class GovAIWebSocketController(http.Controller):
                 headers=[('Content-Type', 'text/event-stream')]
             )
 
-        env = request.env.sudo()
-        session = env['gov.agent.session'].search([
+        env = request.env
+        session = env['gov.agent.session'].sudo().search([
             ('session_token', '=', session_token),
             ('user_id', '=', request.env.uid),
         ], limit=1)
@@ -220,7 +220,7 @@ class GovAIWebSocketController(http.Controller):
 
             try:
                 system_prompt, user_message, history = session.process(payload)
-                api_key = env['ir.config_parameter'].get_param('gov_ai_guide.api_key')
+                api_key = env['ir.config_parameter'].sudo().get_param('gov_ai_guide.api_key')
 
                 if not api_key:
                     yield 'data: {"type":"hint_error","message":"لم يتم تعيين Anthropic API Key"}\n\n'
@@ -277,7 +277,7 @@ class GovAIWebSocketController(http.Controller):
 
             # تسجيل في قاعدة البيانات
             try:
-                log = env['gov.agent.log'].create_hint_log(
+                log = env['gov.agent.log'].sudo().create_hint_log(
                     session=session,
                     payload=payload,
                     hint_text=complete_text,
