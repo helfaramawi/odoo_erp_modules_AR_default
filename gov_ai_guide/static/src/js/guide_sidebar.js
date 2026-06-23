@@ -48,9 +48,12 @@ class GovSidebar {
     mount() {
         this._el = document.createElement("div");
         this._el.id = "gov-ai-sidebar-root";
+        // نحسب ارتفاع الـ navbar لنبدأ الشريط من تحته
+        const navbar = document.querySelector(".o_main_navbar");
+        const navH = navbar ? navbar.offsetHeight : 46;
         Object.assign(this._el.style, {
-            position: "fixed", top: "0", right: "0",
-            height: "100vh", width: "320px",
+            position: "fixed", top: navH + "px", right: "0",
+            height: `calc(100vh - ${navH}px)`, width: "320px",
             background: "#1a2744", zIndex: "10000",
             display: "flex", flexDirection: "column",
             fontFamily: "Cairo,Arial,sans-serif", color: "#f0f4ff",
