@@ -52,7 +52,7 @@ class GovSidebar {
         const navbar = document.querySelector(".o_main_navbar");
         const navH = navbar ? navbar.offsetHeight : 46;
         Object.assign(this._el.style, {
-            position: "fixed", top: navH + "px", right: "0",
+            position: "fixed", top: navH + "px", left: "0",
             height: `calc(100vh - ${navH}px)`, width: "320px",
             background: "#1a2744", zIndex: "10000",
             display: "flex", flexDirection: "column",
@@ -156,7 +156,7 @@ class GovSidebar {
                 </div>
                 <button data-action="toggle" style="
                     background:transparent;border:none;color:#c8a84b;
-                    cursor:pointer;font-size:16px;padding:4px 8px;line-height:1">&#x25C4;</button>
+                    cursor:pointer;font-size:16px;padding:4px 8px;line-height:1">&#x25BA;</button>
             </div>
             <div style="padding:5px 12px;background:#243460;font-size:11px;color:#9bacc8;flex-shrink:0">
                 الحقل: <span style="color:#f0f4ff">${escapeHtml(field)}</span>
