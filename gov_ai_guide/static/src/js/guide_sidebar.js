@@ -5,9 +5,8 @@
  * يعرض التلميحات بشكل تدريجي مع تمييز المراجع القانونية والتحذيرات
  */
 
-import { Component, useState, useEffect, markup } from "@odoo/owl";
+import { Component, useState, useEffect, markup, onMounted } from "@odoo/owl";
 import { registry } from "@web/core/registry";
-import { useService } from "@web/core/utils/hooks";
 import { agentState } from "./agent_connector";
 
 /**
@@ -76,7 +75,15 @@ export class GovAISidebar extends Component {
 
     setup() {
         this.agentState = agentState;
-        this.connector = useService("gov_ai_agent_connector");
+        // نصل للـ connector عبر registry مباشرة بدلاً من useService
+        onMounted(() => {
+            try {
+                this.connector = owl.__apps__?.[0]?.env?.services?.gov_ai_agent_connector
+                    || registry.category("services").get("gov_ai_agent_connector");
+            } catch (e) {
+                this.connector = null;
+            }
+        });
 
         this.state = useState({
             isExpanded: true,
