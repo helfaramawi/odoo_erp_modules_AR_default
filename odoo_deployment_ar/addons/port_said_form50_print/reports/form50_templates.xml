@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-  <!-- قالب المعاينة -->
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       قالب المعاينة — جدول HTML بسيط (بدون صورة خلفية)
+       ═══════════════════════════════════════════════════════════════════════ -->
   <template id="report_form50_preview_template">
     <t t-call="web.html_container">
       <t t-foreach="docs" t-as="o">
@@ -71,25 +73,45 @@
           </t>
           <p style="margin-top:20px; font-size:8pt; color:#888;">
             *** نسخة معاينة — غير رسمية ***
-            طُبعت بتاريخ: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/>
           </p>
         </div>
       </t>
     </t>
   </template>
 
-  <!-- قالب الطباعة النهائية — WeasyPrint compatible -->
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       قالب الطباعة النهائية
+       ═══════════════════════════════════════════════════════════════════════
+       نظام الإحداثيات:
+         • الصورة: 1240×1754px (A4 @ 150dpi)
+         • CSS left% = image_x_px / 1240 * 100
+         • CSS top%  = image_y_px / 1754 * 100
+         • إصلاح جذري: CSS reset في _form50_render_direct يزيل margin الـOdoo
+           مما يجعل CSS% = image% مباشرة بدون تعويض
+
+       وضع المعايرة (Calibration Mode):
+         • فعّله بإضافة context={'form50_calibration': True} عند الاستدعاء
+         • يُظهر: نقاط ملوّنة + تسميات + حدود لكل حقل
+         • الألوان مُرمَّزة حسب القسم (انظر form50_layout.py)
+       ═══════════════════════════════════════════════════════════════════════ -->
   <template id="report_form50_final_template">
     <t t-call="web.html_container">
       <t t-foreach="docs" t-as="o">
         <t t-set="fields" t-value="o._form50_render_fields()"/>
-        <div style="margin:0; padding:0; border:none;">
+        <t t-set="is_calibration" t-value="request.env.context.get('form50_calibration', False) if request else False"/>
+        <div style="margin:0;padding:0;border:none;">
           <style>
+            /* ── Reset إجباري: يُكمل ما تفعله Python في _form50_render_direct ── */
             @page { size: A4 portrait; margin: 0 !important; }
-            html, body, main,
-            #wrapwrap, .o_web_client,
-            .article, .o_report_layout_standard,
-            div.article { margin: 0 !important; padding: 0 !important; border: none !important; }
+            html, body { margin: 0 !important; padding: 0 !important; }
+            #wrapwrap, .o_web_client, main,
+            .article, .o_report_layout_standard, div.article {
+              margin: 0 !important; padding: 0 !important; border: none !important;
+            }
+
+            /* ── Canvas الرئيسي ─────────────────────────────────────────────── */
+            /* المرجع: 1240×1754px → A4 210×297mm */
+            /* aspect-ratio يحافظ على نسبة الأبعاد تلقائياً */
             .form50-page {
               position: relative;
               width: 210mm;
@@ -99,29 +121,111 @@
               margin: 0 !important;
               padding: 0 !important;
             }
+
+            /* ── صورة الخلفية ───────────────────────────────────────────────── */
+            /* تملأ الـCanvas كاملاً بدون قص ولا تمدد — نفس نسبة أبعاد الصورة */
             .form50-bg {
               position: absolute;
               top: 0; left: 0;
-              width: 210mm; height: 297mm;
+              width: 100%; height: 100%;
               z-index: 1;
             }
+
+            /* ── طبقة الـOverlay: تطابق الصورة تماماً ──────────────────────── */
+            .form50-overlay {
+              position: absolute;
+              top: 0; left: 0;
+              width: 100%; height: 100%;
+              z-index: 5;
+            }
+
+            /* ── حقول البيانات ──────────────────────────────────────────────── */
+            /* الإحداثيات: left% = image_x%, top% = image_y% */
+            /* transform: translateY(-50%) يضع مركز الحقل على النقطة المحددة */
             .form50-field {
               position: absolute;
               z-index: 10;
-              font-family: 'Noto Sans Arabic', 'Noto Naskh Arabic', 'DejaVu Sans', Arial, sans-serif;
+              font-family: Amiri, 'Noto Naskh Arabic', 'DejaVu Sans', Arial, sans-serif;
               direction: rtl;
               white-space: nowrap;
               overflow: hidden;
+              text-overflow: clip;
             }
+
+            /* ── وضع المعايرة ────────────────────────────────────────────────── */
+            .f50-calib-grid {
+              position: absolute; top: 0; left: 0;
+              width: 100%; height: 100%;
+              z-index: 15; pointer-events: none;
+            }
+            .f50-calib-dot   { position: absolute; z-index: 20; }
+            .f50-calib-label { position: absolute; z-index: 21; }
+            .f50-calib-box   { position: absolute; z-index: 19; }
           </style>
+
           <div class="form50-page">
+            <!-- ── صورة الخلفية ──────────────────────────────────────────── -->
             <img class="form50-bg"
                  src="http://127.0.0.1:8069/port_said_form50_print/static/img/form50_bg.png"
-                 alt=""/>
-            <t t-foreach="fields" t-as="fld">
-              <span class="form50-field" t-att-style="fld['style']"><t t-out="fld['text']"/></span>
-            </t>
+                 alt="form50-background"/>
+
+            <!-- ── طبقة الحقول ────────────────────────────────────────────── -->
+            <div class="form50-overlay">
+              <t t-foreach="fields" t-as="fld">
+                <!-- الحقل الأساسي -->
+                <span class="form50-field" t-att-style="fld['style']">
+                  <t t-out="fld['text']"/>
+                </span>
+
+                <!-- ── وضع المعايرة: نقطة + تسمية + حدود ────────────────── -->
+                <t t-if="fld.get('calibration')">
+                  <!-- حدود الحقل -->
+                  <div class="f50-calib-box" t-att-style="fld['calib_box_style']"/>
+                  <!-- نقطة المرجع (الإحداثيات الفعلية) -->
+                  <div class="f50-calib-dot" t-att-style="fld['calib_dot_style']"/>
+                  <!-- تسمية الحقل (رقم + اسم + إحداثيات) -->
+                  <div class="f50-calib-label" t-att-style="fld['calib_label_style']">
+                    <t t-esc="fld['calib_label']"/>
+                    (<t t-esc="'%.1f' % fld['x']"/>,<t t-esc="'%.1f' % fld['y']"/>)
+                  </div>
+                </t>
+              </t>
+
+              <!-- ── Grid المعايرة — خطوط أفقية ورأسية كل 10% ──────────────
+                   تظهر فقط في وضع المعايرة عبر قيمة فلاج مُحقنة في الـfields list
+                   نستخدم أول عنصر للتحقق من الفلاج
+               ── -->
+              <t t-if="fields and fields[0].get('calibration')">
+                <div class="f50-calib-grid">
+                  <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"
+                       style="position:absolute;top:0;left:0;opacity:0.18;">
+                    <!-- خطوط رأسية كل 10% -->
+                    <t t-foreach="[10,20,30,40,50,60,70,80,90]" t-as="xv">
+                      <line t-att-x1="'%d%%' % xv" y1="0"
+                            t-att-x2="'%d%%' % xv" y2="100%"
+                            stroke="#0066cc" stroke-width="0.3"/>
+                      <text t-att-x="'%d%%' % xv" y="12"
+                            font-size="5" fill="#0066cc" text-anchor="middle">
+                        <t t-esc="xv"/>%
+                      </text>
+                    </t>
+                    <!-- خطوط أفقية كل 5% -->
+                    <t t-foreach="[5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95]" t-as="yv">
+                      <line x1="0" t-att-y1="'%d%%' % yv"
+                            x2="100%" t-att-y2="'%d%%' % yv"
+                            stroke="#cc3300" stroke-width="0.3"/>
+                      <text x="2" t-att-y="'%d%%' % yv"
+                            font-size="4" fill="#cc3300">
+                        <t t-esc="yv"/>%
+                      </text>
+                    </t>
+                  </svg>
+                </div>
+              </t>
+            </div>
+            <!-- /form50-overlay -->
           </div>
+          <!-- /form50-page -->
         </div>
       </t>
     </t>

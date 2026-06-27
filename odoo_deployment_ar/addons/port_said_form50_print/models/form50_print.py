@@ -8,6 +8,7 @@ port_said_form50_print — طبقة الطباعة الرسمية لاستمار
 import logging
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError
+from . import form50_layout as layout
 
 _logger = logging.getLogger(__name__)
 
@@ -43,6 +44,21 @@ class IrActionsReportForm50Direct(models.Model):
         html_str = _re.sub(r'<link[^>]*>', '', html_str)
         html_str = _re.sub(r'<script[^>]*>.*?</script>', '', html_str, flags=_re.DOTALL)
         html_str = _re.sub(r'<script[^>]*/>', '', html_str)
+
+        # ── إصلاح جذري: إزالة margins الـOdoo wrapper ─────────────────────────
+        # web.html_container يضيف margin يسار ≈41.9mm يسبب انضغاط الصورة لـ79.9%
+        # هذا يجعل CSS_left% = image_x% يعمل بشكل صحيح ومباشر
+        css_root_reset = (
+            '<style type="text/css">'
+            'html,body{margin:0!important;padding:0!important;}'
+            'div.article,.o_report_layout_standard,#wrapwrap,.o_web_client,'
+            'main,.report{margin:0!important;padding:0!important;}'
+            '</style>'
+        )
+        if '</head>' in html_str:
+            html_str = html_str.replace('</head>', css_root_reset + '</head>', 1)
+        else:
+            html_str = css_root_reset + html_str
 
         # Replace HTTP URL for background image with local file:// path
         html_str = _re.sub(
@@ -383,10 +399,16 @@ class Form50PrintLayer(models.Model):
 
     # ── محرك الطباعة الديناميكي من ملف المواضع ─────────────────────────────
     def _form50_positions(self):
+        """
+        إرجاع مواضع الحقول كـ {id: (left%, top%)}.
+        القيم مستوردة من form50_layout.py — المرجع الوحيد للإحداثيات.
+        """
         self.ensure_one()
-        # مواضع الحقول — (left%, top%) نسبة لأبعاد الصورة 1240×1754px
-        # left% = image_x_px / 1240 * 100  |  top% = image_y_px / 1754 * 100
-        # محسوبة بتحليل pixel لمناطق التعبئة والحدود العمودية الفعلية في الخلفية
+        return layout.get_all_positions()
+
+    def _form50_positions_legacy(self):
+        """نسخة احتياطية — للمرجع فقط، لا تُستخدم في الإنتاج."""
+        self.ensure_one()
         return {
             # ── قسم أ — رقم مسلسل وتاريخ ────────────────────────────────────
             # blank y=9.29% x=58.5-84.4%: right-align seq (13ch*0.65=8.4%) → 84.4-8.4=76.0
@@ -667,22 +689,28 @@ class Form50PrintLayer(models.Model):
         return self._form50_resolve_expr(expr)
 
     def _form50_render_fields(self):
+        """
+        إرجاع قائمة حقول جاهزة للعرض في الـQWeb template.
+        إذا كان context يحتوي form50_calibration=True يُضاف overlay المعايرة.
+        """
         self.ensure_one()
+        calibration = self.env.context.get('form50_calibration', False)
         positions = self._form50_positions()
         right_align = {3,4,5,6,7,8,9,10,11,52,55,56,57,58,59,64,65,66,67,72,73,74,75}
         bold_fields = {1,5,14,18,22,26,28,29,38,39,40,41,50,51,65,69,71}
         small_fields = {12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,42,43,44,45,46,47,48,49}
-        wide_fields = {3,4,5,6,7,8,9,10,11,52,57,59,64,65,66,67,71,72,73,75}
+        wide_fields  = {3,4,5,6,7,8,9,10,11,52,57,59,64,65,66,67,71,72,73,75}
         out = []
         for n in sorted(positions.keys(), key=lambda x: int(x)):
             x, y = positions[n]
             txt = self._form50_field_text(int(n))
-            if not txt:
+            # وضع المعايرة: أظهر كل الحقول حتى الفارغة
+            if not txt and not calibration:
                 continue
-            font_size = 7.5 if n in small_fields else 9.0 if n in wide_fields else 8.0
+            font_size  = 7.5 if n in small_fields else 9.0 if n in wide_fields else 8.0
             text_align = 'right' if n in right_align else 'center'
             font_weight = '700' if n in bold_fields else '400'
-            max_width = '70%' if n == 52 else ('34%' if n in wide_fields else '14%')
+            max_width  = '70%' if n == 52 else ('34%' if n in wide_fields else '14%')
             style = ';'.join([
                 'position:absolute',
                 f'left:{x}%',
@@ -701,7 +729,40 @@ class Form50PrintLayer(models.Model):
                 f'text-align:{text_align}',
                 f'max-width:{max_width}',
             ])
-            out.append({'n': int(n), 'x': x, 'y': y, 'text': txt, 'style': style})
+            entry = {'n': int(n), 'x': x, 'y': y, 'text': txt, 'style': style,
+                     'calibration': calibration}
+            if calibration:
+                # نقطة المرجع ومعلومات الحقل
+                cfg = layout.FIELD_POSITIONS.get(n, (x, y, 'A', ''))
+                sec = cfg[2] if len(cfg) > 2 else 'A'
+                lbl = cfg[3] if len(cfg) > 3 else str(n)
+                dot_color = layout.SECTION_COLORS.get(sec, '#e53935')
+                entry['calib_id'] = int(n)
+                entry['calib_label'] = f"#{n} {lbl}"
+                entry['calib_color'] = dot_color
+                entry['calib_dot_style'] = (
+                    f'position:absolute;left:{x}%;top:{y}%;'
+                    f'width:5px;height:5px;border-radius:50%;'
+                    f'background:{dot_color};z-index:20;'
+                    'transform:translate(-50%,-50%);'
+                )
+                entry['calib_label_style'] = (
+                    f'position:absolute;left:{x}%;top:{y}%;'
+                    f'color:{dot_color};font-size:5pt;font-weight:bold;'
+                    f'z-index:21;white-space:nowrap;'
+                    'transform:translate(3px,-100%);'
+                    'background:rgba(255,255,255,0.75);padding:0 1px;'
+                    'font-family:monospace;'
+                )
+                entry['calib_box_style'] = (
+                    f'position:absolute;left:{x}%;top:{y}%;'
+                    f'border:1px solid {dot_color};z-index:19;'
+                    f'max-width:{max_width};'
+                    'transform:translateY(-50%);'
+                    'min-width:20px;min-height:8pt;'
+                    'background:rgba(255,255,255,0.25);'
+                )
+            out.append(entry)
         return out
 
 
