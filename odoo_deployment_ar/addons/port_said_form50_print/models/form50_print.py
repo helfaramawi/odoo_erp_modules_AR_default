@@ -45,14 +45,31 @@ class IrActionsReportForm50Direct(models.Model):
         html_str = _re.sub(r'<script[^>]*>.*?</script>', '', html_str, flags=_re.DOTALL)
         html_str = _re.sub(r'<script[^>]*/>', '', html_str)
 
-        # ── إصلاح جذري: إزالة margins الـOdoo wrapper ─────────────────────────
-        # web.html_container يضيف margin يسار ≈41.9mm يسبب انضغاط الصورة لـ79.9%
-        # هذا يجعل CSS_left% = image_x% يعمل بشكل صحيح ومباشر
+        # ── إصلاح جذري: إزالة margins من الـInline Style مباشرة ───────────────
+        # web.html_container يضع style="margin:Xmm Ymm" على div.article كـinline style
+        # الـ!important في CSS لا يستطيع تجاوز الـinline style — يجب حذفه مباشرة
+        # الأثر: form50-page يملأ A4 كاملاً بدلاً من 79.9% منه
+
+        # 1) استبدال inline style على div.article بصفر
+        html_str = _re.sub(
+            r'(<div\b[^>]*\bclass="[^"]*\barticle\b[^"]*"\s+)style="[^"]*"',
+            r'\1style="margin:0;padding:0;border:none;"',
+            html_str,
+        )
+        # 2) نفس الشيء لـ o_report_layout_standard
+        html_str = _re.sub(
+            r'(<div\b[^>]*\bclass="[^"]*\bo_report_layout_standard\b[^"]*"\s+)style="[^"]*"',
+            r'\1style="margin:0;padding:0;border:none;"',
+            html_str,
+        )
+
+        # 3) CSS fallback لأي wrapper لم يُعالَج بالـregex
         css_root_reset = (
             '<style type="text/css">'
-            'html,body{margin:0!important;padding:0!important;}'
+            '@page{size:A4 portrait;margin:0!important;}'
+            'html,body{margin:0!important;padding:0!important;width:210mm;}'
             'div.article,.o_report_layout_standard,#wrapwrap,.o_web_client,'
-            'main,.report{margin:0!important;padding:0!important;}'
+            'main,.report{margin:0!important;padding:0!important;border:none!important;}'
             '</style>'
         )
         if '</head>' in html_str:
