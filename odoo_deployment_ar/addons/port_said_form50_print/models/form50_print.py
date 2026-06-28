@@ -45,13 +45,13 @@ class IrActionsReportForm50Direct(models.Model):
         html_str = _re.sub(r'<script[^>]*>.*?</script>', '', html_str, flags=_re.DOTALL)
         html_str = _re.sub(r'<script[^>]*/>', '', html_str)
 
-        # ── إصلاح جذري: حذف margin/padding من كل inline styles ──────────────────
-        # web.html_container يضع style="margin:Xmm Ymm" على div.article
-        # style attribute order varies — regex targeting class+style fails when
-        # style comes first. Nuclear approach: strip margin/padding from ALL
-        # inline style="..." attributes in the document.
-        # Safe because our form50 spans never use margin/padding properties.
+        # Strip ALL embedded <style> blocks — Odoo injects margin rules via CSS classes
+        # (e.g. .article { margin: 21mm; }) that cannot be overridden by !important
+        # on individual properties. Removing every <style> block then injecting our
+        # own reset is the only reliable way to get zero margins.
+        html_str = _re.sub(r'<style\b[^>]*>.*?</style>', '', html_str, flags=_re.DOTALL)
 
+        # Also strip margin/padding from any surviving inline style="..." attributes
         def _strip_margin_padding(m):
             s = m.group(1)
             s = _re.sub(r'\bmargin\s*:[^;]*;?\s*', '', s, flags=_re.I)
@@ -60,12 +60,12 @@ class IrActionsReportForm50Direct(models.Model):
 
         html_str = _re.sub(r'style="([^"]*)"', _strip_margin_padding, html_str)
 
-        # CSS fallback
+        # Inject our own CSS reset (only stylesheet in the document now)
         css_root_reset = (
             '<style type="text/css">'
             '@page{size:A4 portrait;margin:0!important;}'
-            'html,body{margin:0!important;padding:0!important;}'
-            'div,section,article,main{margin:0!important;padding:0!important;}'
+            'html,body{margin:0!important;padding:0!important;width:210mm;height:297mm;}'
+            '*{margin:0!important;padding:0!important;box-sizing:border-box;}'
             '</style>'
         )
         if '</head>' in html_str:
@@ -101,6 +101,7 @@ class IrActionsReportForm50Direct(models.Model):
                 '--margin-bottom', '0mm',
                 '--margin-left', '0mm',
                 '--margin-right', '0mm',
+                '--disable-smart-shrinking',
                 '--quiet',
                 '--enable-local-file-access',
                 html_path, pdf_path,
