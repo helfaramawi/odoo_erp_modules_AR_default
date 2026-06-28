@@ -60,12 +60,45 @@ class IrActionsReportForm50Direct(models.Model):
 
         html_str = _re.sub(r'style="([^"]*)"', _strip_margin_padding, html_str)
 
-        # Inject our own CSS reset (only stylesheet in the document now)
+        # Inject our complete CSS — only stylesheet remaining in the document.
+        # Must include ALL form50 layout rules because we stripped the template's
+        # own <style> block along with Odoo's wrapper styles.
         css_root_reset = (
             '<style type="text/css">'
             '@page{size:A4 portrait;margin:0!important;}'
-            'html,body{margin:0!important;padding:0!important;width:210mm;height:297mm;}'
-            '*{margin:0!important;padding:0!important;box-sizing:border-box;}'
+            'html,body{margin:0!important;padding:0!important;}'
+            # Zero-out every element's margin/padding so Odoo wrapper divs can't push content
+            'html *{margin:0!important;padding:0!important;box-sizing:border-box;}'
+            # Form page canvas — must be exactly A4
+            '.form50-page{'
+              'position:relative;'
+              'width:210mm;height:297mm;'
+              'overflow:hidden;'
+              'page-break-after:always;'
+            '}'
+            # Background PNG — fill the canvas completely, no distortion
+            '.form50-bg{'
+              'position:absolute;top:0;left:0;'
+              'width:100%;height:100%;'
+              'z-index:1;'
+            '}'
+            # Overlay container that holds all field spans
+            '.form50-overlay{'
+              'position:absolute;top:0;left:0;'
+              'width:100%;height:100%;'
+              'z-index:5;'
+            '}'
+            # Individual data field spans
+            '.form50-field{'
+              'position:absolute;z-index:10;'
+              'font-family:Amiri,"Noto Naskh Arabic","DejaVu Sans",Arial,sans-serif;'
+              'direction:rtl;white-space:nowrap;overflow:hidden;text-overflow:clip;'
+            '}'
+            # Calibration helpers (unused in production but harmless)
+            '.f50-calib-grid{position:absolute;top:0;left:0;width:100%;height:100%;z-index:15;pointer-events:none;}'
+            '.f50-calib-dot{position:absolute;z-index:20;}'
+            '.f50-calib-label{position:absolute;z-index:21;}'
+            '.f50-calib-box{position:absolute;z-index:19;}'
             '</style>'
         )
         if '</head>' in html_str:
