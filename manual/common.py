@@ -558,6 +558,55 @@ class ManualBuilder:
             else:
                 self.para(value)
 
+    # ---- reverse-engineering config-page template (Setup & Config Handbook) --
+    CONFIG_SECTION_LABELS = {
+        "purpose": "الغرض (Purpose)",
+        "business_need": "الحاجة الاستشارية (Business Need)",
+        "navigation": "مسار التنقل (Navigation)",
+        "configuration_steps": "خطوات الإعداد (Configuration Steps)",
+        "fields": "الحقول (Fields)",
+        "field_description": "وصف الحقول (Field Description)",
+        "allowed_values": "القيم المسموح بها (Allowed Values)",
+        "mandatory_fields": "الحقول الإلزامية (Mandatory Fields)",
+        "dependencies": "الاعتماديات (Dependencies)",
+        "validation_rules": "قواعد التحقق (Validation Rules)",
+        "business_rules": "قواعد العمل (Business Rules)",
+        "impact": "الأثر (Impact)",
+        "related_configuration": "إعدادات ذات صلة (Related Configuration)",
+        "technical_reference": "المرجع التقني (Technical Reference)",
+        "related_models": "النماذج ذات الصلة (Related Models)",
+        "related_xml": "ملفات XML ذات الصلة (Related XML)",
+        "related_python": "ملفات Python ذات الصلة (Related Python Files)",
+        "related_security": "الأمان ذو الصلة (Related Security)",
+        "related_reports": "التقارير ذات الصلة (Related Reports)",
+        "related_workflow": "سير العمل ذو الصلة (Related Workflow)",
+        "common_mistakes": "الأخطاء الشائعة (Common Mistakes)",
+        "troubleshooting": "استكشاف الأخطاء وإصلاحها (Troubleshooting)",
+        "best_practices": "أفضل الممارسات (Best Practices)",
+    }
+    CONFIG_SECTION_ORDER = list(CONFIG_SECTION_LABELS.keys())
+
+    def config_doc(self, title, sections, screenshot_desc=None, level="h3"):
+        """Render one configuration-page write-up per the Setup & Configuration
+        Handbook's required template. `level` picks whether the page title is
+        an h2 or h3 (h3 used when nested under an h2 config-area heading)."""
+        heading_fn = self.h2 if level == "h2" else self.h3
+        heading_fn(title)
+        for key in self.CONFIG_SECTION_ORDER:
+            if key not in sections:
+                continue
+            value = sections[key]
+            self.h4(self.CONFIG_SECTION_LABELS[key])
+            if isinstance(value, tuple) and value and value[0] == "table":
+                _, headers, rows, caption = value
+                self.table(headers, rows, caption=caption)
+            elif isinstance(value, list):
+                self.bullets(value)
+            else:
+                self.para(value)
+        if screenshot_desc:
+            self.screenshot(screenshot_desc)
+
 
 # --------------------------------------------------------------------------
 # Document scaffolding: styles, page setup, header/footer, cover, TOC
