@@ -276,7 +276,9 @@ class ManualBuilder:
 
     def h3(self, text):
         n = self.num.h3()
-        return self.heading(3, text, number=n)
+        self.page_break()
+        p = self.heading(3, text, number=n)
+        return p
 
     def h4(self, text):
         n = self.num.h4()
@@ -371,11 +373,11 @@ class ManualBuilder:
         cap = self.doc.add_paragraph(style="Caption")
         set_para_rtl(cap)
         r1 = cap.add_run("جدول ")
-        style_run(r1, size=10, bold=True)
+        style_run(r1, size=8, bold=True)
         r2 = cap.add_run(f"{self.num.chapter_no}-{n}")
-        style_run(r2, size=10, bold=True)
+        style_run(r2, size=8, bold=True)
         r3 = cap.add_run(f": {description}")
-        style_run(r3, size=10)
+        style_run(r3, size=8)
         add_bookmark(cap, f"tbl_{self.num.chapter_no}_{n}")
         return f"{self.num.chapter_no}-{n}"
 
@@ -393,7 +395,7 @@ class ManualBuilder:
             set_para_rtl(p)
             p.alignment = WD_ALIGN_PARAGRAPH.CENTER
             r = p.add_run(h)
-            style_run(r, size=10, bold=True, color=(0xFF, 0xFF, 0xFF))
+            style_run(r, size=8, bold=True, color=(0xFF, 0xFF, 0xFF))
             shade_cell(hdr[i], "0B2E4E")
             hdr[i].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
             set_cell_margins(hdr[i])
@@ -404,7 +406,7 @@ class ManualBuilder:
                 p = cells[i].paragraphs[0]
                 set_para_rtl(p)
                 r = p.add_run("" if val is None else str(val))
-                style_run(r, size=10)
+                style_run(r, size=8)
                 if ridx % 2 == 1:
                     shade_cell(cells[i], "F2F5F8")
                 set_cell_margins(cells[i])
@@ -699,7 +701,7 @@ def add_cover_page(doc, meta):
         set_para_rtl(p0)
         p0.alignment = WD_ALIGN_PARAGRAPH.RIGHT
         rr = p0.add_run(label)
-        style_run(rr, size=10, bold=True, color=(0xFF, 0xFF, 0xFF))
+        style_run(rr, size=8, bold=True, color=(0xFF, 0xFF, 0xFF))
         shade_cell(cells[0], "0B2E4E")
         set_cell_margins(cells[0])
         cells[1].text = ""
@@ -707,7 +709,7 @@ def add_cover_page(doc, meta):
         set_para_rtl(p1)
         p1.alignment = WD_ALIGN_PARAGRAPH.RIGHT
         rr2 = p1.add_run(str(value))
-        style_run(rr2, size=10)
+        style_run(rr2, size=8)
         set_cell_margins(cells[1])
         cells[0].width = Cm(6)
         cells[1].width = Cm(9)
