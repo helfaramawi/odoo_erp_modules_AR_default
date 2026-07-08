@@ -121,6 +121,7 @@ def extract_models_from_file(path):
                         comodel = None
                         selection = None
                         help_text = None
+                        index_flag = False
                         for kw in stmt.value.keywords or []:
                             if kw.arg == "string":
                                 fstring = literal_or_none(kw.value)
@@ -132,7 +133,10 @@ def extract_models_from_file(path):
                                 selection = literal_or_none(kw.value)
                             elif kw.arg == "help":
                                 help_text = literal_or_none(kw.value)
-                        if comodel is None and stmt.value.args:
+                            elif kw.arg == "index":
+                                index_flag = literal_or_none(kw.value)
+                        if comodel is None and stmt.value.args and ftype in (
+                                "Many2one", "One2many", "Many2many"):
                             comodel = literal_or_none(stmt.value.args[0])
                         if selection is None and ftype == "Selection" and stmt.value.args:
                             selection = literal_or_none(stmt.value.args[0])
@@ -143,6 +147,7 @@ def extract_models_from_file(path):
                             "required": bool(required),
                             "comodel": comodel,
                             "selection": selection,
+                            "index": bool(index_flag),
                             "help": help_text,
                         })
             elif isinstance(stmt, ast.FunctionDef):

@@ -388,6 +388,8 @@ class ManualBuilder:
         t.style = "Table Grid"
         t.alignment = WD_TABLE_ALIGNMENT.CENTER
         set_rtl_table(t)
+        trPr = t.rows[0]._tr.get_or_add_trPr()
+        trPr.append(OxmlElement('w:tblHeader'))
         hdr = t.rows[0].cells
         for i, h in enumerate(headers):
             hdr[i].text = ""
