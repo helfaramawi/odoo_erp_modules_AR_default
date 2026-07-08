@@ -151,6 +151,13 @@ def add_cross_reference(paragraph, bookmark_name, display_text):
     add_field(paragraph, f'REF {bookmark_name} \\h', display_text)
 
 
+def add_index_entry(paragraph, term):
+    """Insert a hidden XE (index-entry) field into `paragraph` so Word's
+    native INDEX field (see add_index_section) picks it up on refresh."""
+    safe_term = term.replace('"', "'")
+    add_field(paragraph, f'XE "{safe_term}"')
+
+
 def set_update_fields_on_open(document):
     settings = document.settings.element
     el = OxmlElement('w:updateFields')
@@ -232,6 +239,16 @@ class ManualBuilder:
     def __init__(self, document, numbering):
         self.doc = document
         self.num = numbering
+
+    def index_entry(self, *terms):
+        """Mark one or more terms for the alphabetical Index (Ch.15/appendix
+        INDEX field) without adding any visible text."""
+        p = self.doc.add_paragraph()
+        p.paragraph_format.space_after = Pt(0)
+        p.paragraph_format.space_before = Pt(0)
+        for term in terms:
+            add_index_entry(p, term)
+        return p
 
     # ---- basic text -----------------------------------------------------
     def para(self, text="", size=12, bold=False, italic=False, color=None,
@@ -609,6 +626,39 @@ class ManualBuilder:
         if screenshot_desc:
             self.screenshot(screenshot_desc)
 
+    # ---- BPMN-style workflow template (Setup & Config Handbook Ch.9) ------
+    WORKFLOW_SECTION_LABELS = {
+        "actors": "الأطراف الفاعلة (Actors)",
+        "inputs": "المدخلات (Inputs)",
+        "outputs": "المخرجات (Outputs)",
+        "steps": "الخطوات (Steps)",
+        "decision_points": "نقاط القرار (Decision Points)",
+        "approvals": "الموافقات (Approvals)",
+        "exception_handling": "معالجة الاستثناءات (Exception Handling)",
+        "related_configuration": "الإعدادات ذات الصلة (Related Configuration)",
+        "related_models": "النماذج ذات الصلة (Related Models)",
+        "related_reports": "التقارير ذات الصلة (Related Reports)",
+        "related_security": "الأمان ذو الصلة (Related Security)",
+    }
+    WORKFLOW_SECTION_ORDER = list(WORKFLOW_SECTION_LABELS.keys())
+
+    def workflow_doc(self, title, sections, screenshot_desc=None):
+        self.h2(title)
+        for key in self.WORKFLOW_SECTION_ORDER:
+            if key not in sections:
+                continue
+            value = sections[key]
+            self.h3(self.WORKFLOW_SECTION_LABELS[key])
+            if isinstance(value, tuple) and value and value[0] == "table":
+                _, headers, rows, caption = value
+                self.table(headers, rows, caption=caption)
+            elif isinstance(value, list):
+                self.bullets(value)
+            else:
+                self.para(value)
+        if screenshot_desc:
+            self.screenshot(screenshot_desc)
+
 
 # --------------------------------------------------------------------------
 # Document scaffolding: styles, page setup, header/footer, cover, TOC
@@ -815,4 +865,15 @@ def add_toc_section(doc, mb: ManualBuilder):
     p3 = doc.add_paragraph()
     set_para_rtl(p3)
     add_field(p3, 'TOC \\h \\z \\c "Table"', "قائمة الجداول — تُحدَّث تلقائياً")
+    doc.add_page_break()
+
+
+def add_index_section(doc, mb: ManualBuilder):
+    """Real Word alphabetical Index field, built from every add_index_entry()
+    (XE field) inserted throughout the document — refreshes like the TOC."""
+    mb.heading(1, "الفهرس الأبجدي (Index)")
+    p = doc.add_paragraph()
+    set_para_rtl(p)
+    add_field(p, 'INDEX \\e "  " \\h "A" \\c "2" \\z 1025',
+              "اضغط F9 أو ⌘/Ctrl لتحديث الفهرس الأبجدي بعد فتح المستند في Word")
     doc.add_page_break()

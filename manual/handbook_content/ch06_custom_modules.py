@@ -68,6 +68,10 @@ def _build_module(mb, key, data):
     all_models = models + wizards
 
     mb.h3(f"{name_ar}  ({key})")
+    mb.index_entry(name_ar, key)
+    for m in all_models:
+        if m.get("_name"):
+            mb.index_entry(m["_name"])
 
     mb.h4("الغرض (Purpose)")
     mb.para(narrative["purpose"])

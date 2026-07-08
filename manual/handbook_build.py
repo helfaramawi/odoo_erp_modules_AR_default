@@ -16,8 +16,8 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from common import (new_document, add_header_footer, add_cover_page,
-                     add_document_control, add_toc_section, ManualBuilder,
-                     Numbering)
+                     add_document_control, add_toc_section, add_index_section,
+                     ManualBuilder, Numbering)
 from handbook_meta import META, REVISIONS, APPROVALS, DISTRIBUTION
 
 from handbook_content import ch01_introduction
@@ -59,6 +59,8 @@ def main():
 
     for chapter in CHAPTERS:
         chapter.build(mb)
+
+    add_index_section(doc, mb)
 
     add_header_footer(doc, doc_title=f"{META['system_name']} — {META['client']}",
                        classification=META['classification'])
