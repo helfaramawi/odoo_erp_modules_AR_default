@@ -371,11 +371,11 @@ class ManualBuilder:
         cap = self.doc.add_paragraph(style="Caption")
         set_para_rtl(cap)
         r1 = cap.add_run("جدول ")
-        style_run(r1, size=11, bold=True)
+        style_run(r1, size=10, bold=True)
         r2 = cap.add_run(f"{self.num.chapter_no}-{n}")
-        style_run(r2, size=11, bold=True)
+        style_run(r2, size=10, bold=True)
         r3 = cap.add_run(f": {description}")
-        style_run(r3, size=11)
+        style_run(r3, size=10)
         add_bookmark(cap, f"tbl_{self.num.chapter_no}_{n}")
         return f"{self.num.chapter_no}-{n}"
 
