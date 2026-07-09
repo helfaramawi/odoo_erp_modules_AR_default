@@ -696,7 +696,7 @@ def _configure_styles(doc):
     except KeyError:
         cap = styles.add_style("Caption", WD_STYLE_TYPE.PARAGRAPH)
     cap.font.name = LATIN_FONT
-    cap.font.size = Pt(11)
+    cap.font.size = Pt(8)
     cap.font.italic = True
     cap.font.color.rgb = RGBColor(*GREY)
 
