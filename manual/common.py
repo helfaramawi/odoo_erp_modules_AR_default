@@ -108,6 +108,46 @@ def style_run(run, size=12, bold=False, italic=False, color=None, font=None):
     rPr.append(lang)
 
 
+def set_para_mark_font(paragraph, size=12, bold=False, color=None, font=None):
+    """Set the formatting of the paragraph MARK itself (w:pPr/w:rPr) — a
+    distinct element from any visible run's w:r/w:rPr. Word uses this as the
+    'formatting for the next character typed' whenever the cursor sits at
+    the end of the paragraph (e.g. an empty table cell, or right after the
+    last character), falling back to it in the Font Size box even when every
+    visible run is correctly sized. Without this, table cells can show the
+    document's docDefaults size (11pt) in the ribbon despite every run
+    reading 8pt."""
+    f = font or LATIN_FONT
+    pPr = paragraph._p.get_or_add_pPr()
+    rPr = OxmlElement('w:rPr')
+    insert_ordered(pPr, rPr, 'w:rPr', PPR_ORDER)
+    b = OxmlElement('w:b') if bold else None
+    if b is not None:
+        rPr.append(b)
+    rFonts = OxmlElement('w:rFonts')
+    rFonts.set(qn('w:ascii'), f)
+    rFonts.set(qn('w:hAnsi'), f)
+    rFonts.set(qn('w:cs'), ARABIC_FONT)
+    rFonts.set(qn('w:eastAsia'), ARABIC_FONT)
+    rPr.append(rFonts)
+    if color:
+        c = OxmlElement('w:color')
+        c.set(qn('w:val'), '%02X%02X%02X' % color)
+        rPr.append(c)
+    sz = OxmlElement('w:sz')
+    sz.set(qn('w:val'), str(int(size * 2)))
+    rPr.append(sz)
+    szCs = OxmlElement('w:szCs')
+    szCs.set(qn('w:val'), str(int(size * 2)))
+    rPr.append(szCs)
+    rtl = OxmlElement('w:rtl')
+    rPr.append(rtl)
+    lang = OxmlElement('w:lang')
+    lang.set(qn('w:val'), 'ar-EG')
+    lang.set(qn('w:bidi'), 'ar-EG')
+    rPr.append(lang)
+
+
 def add_field(paragraph, field_code, result_text=""):
     """Insert a real Word field (TOC, SEQ, REF, PAGE ...)."""
     run = paragraph.add_run()
@@ -395,6 +435,7 @@ class ManualBuilder:
         style_run(r2, size=8, bold=True)
         r3 = cap.add_run(f": {description}")
         style_run(r3, size=8)
+        set_para_mark_font(cap, size=8, bold=True)
         add_bookmark(cap, f"tbl_{self.num.chapter_no}_{n}")
         return f"{self.num.chapter_no}-{n}"
 
@@ -415,6 +456,7 @@ class ManualBuilder:
             p.alignment = WD_ALIGN_PARAGRAPH.CENTER
             r = p.add_run(h)
             style_run(r, size=8, bold=True, color=(0xFF, 0xFF, 0xFF))
+            set_para_mark_font(p, size=8, bold=True, color=(0xFF, 0xFF, 0xFF))
             shade_cell(hdr[i], "0B2E4E")
             hdr[i].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
             set_cell_margins(hdr[i])
@@ -426,6 +468,7 @@ class ManualBuilder:
                 set_para_rtl(p)
                 r = p.add_run("" if val is None else str(val))
                 style_run(r, size=8)
+                set_para_mark_font(p, size=8)
                 if ridx % 2 == 1:
                     shade_cell(cells[i], "F2F5F8")
                 set_cell_margins(cells[i])
@@ -803,6 +846,7 @@ def add_cover_page(doc, meta):
         p0.alignment = WD_ALIGN_PARAGRAPH.RIGHT
         rr = p0.add_run(label)
         style_run(rr, size=8, bold=True, color=(0xFF, 0xFF, 0xFF))
+        set_para_mark_font(p0, size=8, bold=True, color=(0xFF, 0xFF, 0xFF))
         shade_cell(cells[0], "0B2E4E")
         set_cell_margins(cells[0])
         cells[1].text = ""
@@ -811,6 +855,7 @@ def add_cover_page(doc, meta):
         p1.alignment = WD_ALIGN_PARAGRAPH.RIGHT
         rr2 = p1.add_run(str(value))
         style_run(rr2, size=8)
+        set_para_mark_font(p1, size=8)
         set_cell_margins(cells[1])
         cells[0].width = Cm(6)
         cells[1].width = Cm(9)
