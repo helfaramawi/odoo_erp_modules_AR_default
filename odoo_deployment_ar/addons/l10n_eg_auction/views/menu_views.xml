@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Root menu -->
+    <menuitem id="menu_auction_root"
+              name="المزايدات"
+              sequence="55"
+              web_icon="l10n_eg_auction,static/description/icon.png"
+              groups="base.group_user"/>
+
+    <!-- Auction Requests -->
+    <menuitem id="menu_auction_request"
+              name="طلبات المزاد"
+              parent="menu_auction_root"
+              action="action_auction_request"
+              sequence="10"
+              groups="base.group_user"/>
+
+    <!-- Lease Contracts -->
+    <menuitem id="menu_auction_lease_contract"
+              name="عقود الإيجار"
+              parent="menu_auction_root"
+              action="action_auction_lease_contract"
+              sequence="20"
+              groups="base.group_user"/>
+</odoo>
