@@ -127,7 +127,7 @@
         <filter string="مؤرشفة" name="f_archived" domain="[('state','=','archived')]"/>
         <separator/>
         <filter string="السنة الحالية" name="f_current_fy"
-                domain="[('fiscal_year','=', context_today().year if context_today().month &lt; 7 else (str(context_today().year)+'/'+str(context_today().year+1)))]"/>
+                domain="[('fiscal_year','=', '%s' % context_today().year if context_today().month &lt; 7 else '%s/%s' % (context_today().year, context_today().year+1))]"/>
         <group expand="1" string="تجميع حسب">
           <filter string="الدفتر" name="g_book" context="{'group_by':'book_id'}"/>
           <filter string="السنة المالية" name="g_fy" context="{'group_by':'fiscal_year'}"/>
