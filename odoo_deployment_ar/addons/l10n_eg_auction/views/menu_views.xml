@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Root menu -->
+    <!-- Root menu under Purchase -->
     <menuitem id="menu_auction_root"
               name="المزايدات"
+              parent="purchase.menu_purchase_root"
               sequence="55"
-              web_icon="l10n_eg_auction,static/description/icon.png"
               groups="base.group_user"/>
 
     <!-- Auction Requests -->
