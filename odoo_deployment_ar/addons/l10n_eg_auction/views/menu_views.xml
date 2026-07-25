@@ -3,7 +3,7 @@
     <!-- Root menu under Purchase -->
     <menuitem id="menu_auction_root"
               name="المزايدات"
-              parent="port_said_menu.menu_port_said_root"
+              parent="port_said_menu.menu_ps_30_purchase"
               sequence="55"
               groups="base.group_user"/>
 
