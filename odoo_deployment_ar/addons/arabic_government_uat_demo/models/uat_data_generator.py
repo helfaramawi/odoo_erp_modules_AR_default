@@ -101,6 +101,18 @@ class UATDataGenerator(models.AbstractModel):
             run('المخازن', self._generate_inventory)
         if options.get('generate_hr_cases'):
             run('الموارد البشرية', self._generate_hr)
+        if options.get('generate_custody_cases'):
+            run('العهد', self._generate_custody)
+        if options.get('generate_auction_cases'):
+            run('المزادات', self._generate_auctions)
+        if options.get('generate_cheque_cases'):
+            run('الشيكات', self._generate_cheques)
+        if options.get('generate_penalty_cases'):
+            run('الجزاءات', self._generate_penalties)
+        if options.get('generate_stocktaking_cases'):
+            run('الجرد الحكومي', self._generate_stocktaking)
+        if options.get('generate_fixed_asset_cases'):
+            run('الأصول الثابتة', self._generate_fixed_assets)
         if options.get('generate_ai_agent_cases'):
             run('سيناريوهات الذكاء الاصطناعي', self._generate_ai_scenarios)
         if options.get('generate_report_cases'):
@@ -1516,5 +1528,420 @@ class UATDataGenerator(models.AbstractModel):
                 vals['category'] = cat
             Scenario.create(vals)
             count += 1
+
+        return count
+
+    # ------------------------------------------------------------------ #
+    #  CUSTODY GENERATION — العهد                                          #
+    # ------------------------------------------------------------------ #
+    def _generate_custody(self):
+        count = 0
+        Custody = self.env['custody.assignment']
+        Employee = self.env['hr.employee']
+
+        employees = Employee.search([('active', '=', True)], limit=6)
+        if not employees:
+            _logger.warning('UAT custody: no active employees found, skipping')
+            return 0
+
+        items = [
+            ('حاسب آلي محمول Dell', '12345678901234', 2500.0, 'active'),
+            ('طابعة ليزر HP LaserJet', '23456789012345', 800.0, 'active'),
+            ('جهاز عرض بروجكتور', '34567890123456', 1200.0, 'active'),
+            ('هاتف مكتبي IP', '45678901234567', 300.0, 'active'),
+            ('كاميرا رقمية Canon', '56789012345678', 1800.0, 'returned'),
+            ('جهاز ماسح ضوئي Epson', '67890123456789', 600.0, 'draft'),
+        ]
+
+        for i, (item_name, national_id, cost, state) in enumerate(items):
+            emp = employees[i % len(employees)]
+            existing = Custody.search([
+                ('employee_id', '=', emp.id),
+                ('form_193_ref', '=', f'UAT-193-{i+1:03d}'),
+            ], limit=1)
+            if existing:
+                continue
+
+            product = self._get_or_create_product(item_name)
+            vals = {
+                'form_193_ref': f'UAT-193-{i+1:03d}',
+                'employee_id': emp.id,
+                'national_id': national_id,
+                'product_id': product.id,
+                'qty': 1.0,
+                'standard_price': cost,
+                'issue_date': TODAY - timedelta(days=30 * (i + 1)),
+                'notes': f'بيانات اختبار - {UAT_BATCH}',
+            }
+            try:
+                rec = Custody.create(vals)
+                if state == 'active':
+                    rec.action_activate()
+                elif state == 'returned':
+                    rec.action_activate()
+                count += 1
+            except Exception as exc:
+                _logger.warning('UAT custody create failed: %s', exc)
+
+        return count
+
+    # ------------------------------------------------------------------ #
+    #  AUCTION GENERATION — المزادات                                       #
+    # ------------------------------------------------------------------ #
+    def _generate_auctions(self):
+        count = 0
+        Auction = self.env['auction.request']
+
+        scenarios = [
+            {
+                'description': f'{UAT_BATCH} - مزاد بيع منقولات حكومية — آليات وسيارات',
+                'auction_type': 'sale',
+                'sale_type': 'movables',
+                'tender_method': 'public',
+                'estimated_value': 450000.0,
+                'state': 'awarded',
+            },
+            {
+                'description': f'{UAT_BATCH} - مزاد إيجار مبنى إداري — شارع 23 يوليو',
+                'auction_type': 'lease',
+                'sale_type': False,
+                'tender_method': 'public',
+                'estimated_value': 120000.0,
+                'state': 'done',
+            },
+            {
+                'description': f'{UAT_BATCH} - مزاد بيع معدات مكتبية متقادمة',
+                'auction_type': 'sale',
+                'sale_type': 'movables',
+                'tender_method': 'local',
+                'estimated_value': 80000.0,
+                'state': 'bidding',
+            },
+            {
+                'description': f'{UAT_BATCH} - مزاد بيع عقار — أرض بورسعيد الجديدة',
+                'auction_type': 'sale',
+                'sale_type': 'property',
+                'tender_method': 'public',
+                'estimated_value': 2500000.0,
+                'state': 'session_open',
+            },
+            {
+                'description': f'{UAT_BATCH} - مزاد إيجار محل تجاري — سوق العرب',
+                'auction_type': 'lease',
+                'sale_type': False,
+                'tender_method': 'public',
+                'estimated_value': 36000.0,
+                'state': 'confirmed',
+            },
+            {
+                'description': f'{UAT_BATCH} - مزاد بيع سيارة خدمة قديمة',
+                'auction_type': 'sale',
+                'sale_type': 'movables',
+                'tender_method': 'local',
+                'estimated_value': 25000.0,
+                'state': 'draft',
+            },
+        ]
+
+        from datetime import datetime
+        state_order = ['draft', 'confirmed', 'session_open', 'bidding', 'awarded', 'done', 'cancelled']
+
+        for s in scenarios:
+            existing = Auction.search([('description', '=', s['description'])], limit=1)
+            if existing:
+                continue
+            vals = {
+                'description': s['description'],
+                'auction_type': s['auction_type'],
+                'tender_method': s['tender_method'],
+                'estimated_value': s['estimated_value'],
+                'venue': 'قاعة الاجتماعات الرئيسية — ديوان عام المحافظة',
+                'asset_description': s['description'],
+                'auction_date': fields.Datetime.now(),
+            }
+            if s.get('sale_type'):
+                vals['sale_type'] = s['sale_type']
+            try:
+                rec = Auction.create(vals)
+                target = s['state']
+                transitions = ['confirmed', 'session_open', 'bidding', 'awarded', 'done']
+                for t in transitions:
+                    if rec.state == target:
+                        break
+                    try:
+                        if t == 'confirmed':
+                            rec.action_confirm()
+                        elif t == 'session_open':
+                            rec.action_open_session()
+                        elif t == 'bidding':
+                            rec.action_start_bidding()
+                        elif t == 'awarded':
+                            rec.action_award()
+                        elif t == 'done':
+                            rec.action_done()
+                    except Exception:
+                        break
+                count += 1
+            except Exception as exc:
+                _logger.warning('UAT auction create failed: %s', exc)
+
+        return count
+
+    # ------------------------------------------------------------------ #
+    #  CHEQUE GENERATION — الشيكات                                         #
+    # ------------------------------------------------------------------ #
+    def _generate_cheques(self):
+        count = 0
+        OutgoingPO = self.env['port_said.outgoing_po']
+        ChequeBook = self.env['port_said.cheque.book']
+
+        # Create a cheque book first
+        book = ChequeBook.search([('bank_name', '=', 'البنك الأهلي المصري — فرع بورسعيد')], limit=1)
+        if not book:
+            try:
+                book = ChequeBook.create({
+                    'bank_name': 'البنك الأهلي المصري — فرع بورسعيد',
+                    'book_reference': f'UAT-BK-001',
+                    'first_cheque_number': 1001,
+                    'last_cheque_number': 1100,
+                    'issue_date': FY_START,
+                })
+                book.action_activate()
+            except Exception as exc:
+                _logger.warning('UAT cheque book create failed: %s', exc)
+                book = None
+
+        journal = self._get_journal('bank')
+        partner = self._get_or_create_vendor(VENDORS[0])
+
+        scenarios = [
+            (f'{UAT_BATCH} - صرف شيك — توريد أجهزة حاسب آلي', 85000.0, 'cleared'),
+            (f'{UAT_BATCH} - صرف شيك — أعمال صيانة المبنى', 42000.0, 'sent'),
+            (f'{UAT_BATCH} - صرف شيك — توريد مستلزمات نظافة', 18500.0, 'registered'),
+            (f'{UAT_BATCH} - صرف شيك — خدمات استشارية', 95000.0, 'draft'),
+            (f'{UAT_BATCH} - صرف شيك — توريد قطع غيار', 33000.0, 'cleared'),
+        ]
+
+        for i, (desc, amount, state) in enumerate(scenarios):
+            existing = OutgoingPO.search([('notes', '=', desc)], limit=1)
+            if existing:
+                continue
+            vals = {
+                'partner_id': partner.id,
+                'amount': amount,
+                'payment_date': TODAY - timedelta(days=10 * (i + 1)),
+                'payment_method': 'cheque',
+                'notes': desc,
+            }
+            if book:
+                vals['cheque_book_id'] = book.id
+            if journal:
+                vals['journal_id'] = journal.id
+            try:
+                rec = OutgoingPO.create(vals)
+                if state in ('registered', 'sent', 'cleared'):
+                    rec.action_register()
+                if state in ('sent', 'cleared'):
+                    rec.action_send()
+                if state == 'cleared':
+                    rec.action_clear()
+                count += 1
+            except Exception as exc:
+                _logger.warning('UAT cheque create failed (%s): %s', desc, exc)
+
+        return count
+
+    # ------------------------------------------------------------------ #
+    #  PENALTIES GENERATION — الجزاءات                                     #
+    # ------------------------------------------------------------------ #
+    def _generate_penalties(self):
+        count = 0
+        Penalty = self.env['port_said.penalty']
+        Employee = self.env['hr.employee']
+
+        employees = Employee.search([('active', '=', True)], limit=5)
+
+        scenarios = [
+            ('انقطاع عن العمل بدون إذن لمدة 3 أيام', 'warning', 'approved'),
+            ('تأخر متكرر في الحضور', 'salary_deduction', 'recorded'),
+            ('إهمال في تنفيذ المهام الوظيفية', 'warning', 'executed'),
+            ('مخالفة لوائح استخدام الحاسب الآلي', 'warning', 'draft'),
+            ('تغيب بدون إذن — إجراءات تأديبية', 'suspension', 'approved'),
+        ]
+
+        for i, (reason, penalty_type, state) in enumerate(scenarios):
+            desc = f'{UAT_BATCH} - {reason}'
+            existing = Penalty.search([('violation_description', '=', desc)], limit=1)
+            if existing:
+                continue
+            vals = {
+                'violation_description': desc,
+                'penalty_type': penalty_type,
+                'violation_date': TODAY - timedelta(days=20 * (i + 1)),
+                'subject_type': 'employee',
+                'notes': f'بيانات اختبار - {UAT_BATCH}',
+            }
+            if employees:
+                vals['employee_id'] = employees[i % len(employees)].id
+            try:
+                rec = Penalty.create(vals)
+                if state in ('recorded', 'approved', 'executed'):
+                    rec.action_record()
+                if state in ('approved', 'executed'):
+                    rec.action_approve()
+                if state == 'executed':
+                    try:
+                        rec.action_execute()
+                    except Exception:
+                        pass
+                count += 1
+            except Exception as exc:
+                _logger.warning('UAT penalty create failed (%s): %s', reason, exc)
+
+        return count
+
+    # ------------------------------------------------------------------ #
+    #  STOCKTAKING GENERATION — الجرد الحكومي                              #
+    # ------------------------------------------------------------------ #
+    def _generate_stocktaking(self):
+        count = 0
+        Session = self.env['stock.stocktaking.session']
+        Warehouse = self.env['stock.warehouse']
+
+        warehouse = Warehouse.search([], limit=1)
+        if not warehouse:
+            _logger.warning('UAT stocktaking: no warehouse found, skipping')
+            return 0
+
+        partner_chairman = self.env['res.users'].search([('active', '=', True)], limit=1).partner_id
+
+        products = [
+            ('ورق A4', 500.0, 480.0),
+            ('حبر طابعة أسود', 20.0, 18.0),
+            ('أقلام جاف زرقاء', 200.0, 220.0),
+            ('دباسة مكتبية', 15.0, 12.0),
+            ('ملفات كرتون', 100.0, 95.0),
+        ]
+
+        sessions = [
+            (f'{UAT_BATCH} - جرد مخزن الديوان العام {TODAY.year}', 'validated'),
+            (f'{UAT_BATCH} - جرد مخزن إدارة الطرق {TODAY.year}', 'done'),
+            (f'{UAT_BATCH} - جرد مخزن إدارة النظافة {TODAY.year}', 'counting'),
+            (f'{UAT_BATCH} - جرد مخزن مركز المعلومات {TODAY.year}', 'draft'),
+        ]
+
+        for i, (session_name, target_state) in enumerate(sessions):
+            existing = Session.search([('name', 'ilike', UAT_BATCH)], limit=1)
+            # Use unique notes field unavailable; check by stocktaking_date+warehouse combo
+            existing = Session.search([
+                ('notes', '=', session_name),
+            ], limit=1)
+            if existing:
+                continue
+
+            vals = {
+                'stocktaking_date': TODAY - timedelta(days=30 * i),
+                'fiscal_year': str(TODAY.year),
+                'warehouse_id': warehouse.id,
+                'notes': session_name,
+                'committee_members': f'أحمد محمد، سامي علي، هدى إبراهيم — {UAT_BATCH}',
+            }
+            if partner_chairman:
+                vals['committee_chairman_id'] = partner_chairman.id
+                vals['storekeeper_id'] = partner_chairman.id
+
+            try:
+                session = Session.create(vals)
+                if target_state != 'draft':
+                    # Load stock then add lines manually
+                    try:
+                        session.action_load_stock()
+                    except Exception:
+                        # If action_load_stock unavailable, create lines manually
+                        Line = self.env['stock.stocktaking.line']
+                        for pname, sys_qty, phys_qty in products:
+                            product = self._get_or_create_product(pname)
+                            Line.create({
+                                'session_id': session.id,
+                                'product_id': product.id,
+                                'system_qty': sys_qty,
+                                'physical_qty': phys_qty,
+                            })
+
+                    if target_state in ('done', 'validated'):
+                        try:
+                            session.action_post()
+                        except Exception:
+                            pass
+                    if target_state == 'validated':
+                        try:
+                            session.action_validate()
+                        except Exception:
+                            pass
+                count += 1
+            except Exception as exc:
+                _logger.warning('UAT stocktaking create failed (%s): %s', session_name, exc)
+
+        return count
+
+    # ------------------------------------------------------------------ #
+    #  FIXED ASSETS GENERATION — الأصول الثابتة                            #
+    # ------------------------------------------------------------------ #
+    def _generate_fixed_assets(self):
+        count = 0
+        Asset = self.env['port_said.fixed.asset']
+        Category = self.env['port_said.asset.category']
+
+        category = Category.search([], limit=1)
+        if not category:
+            _logger.warning('UAT fixed assets: no category found, trying to create one')
+            try:
+                category = Category.create({
+                    'name': 'أجهزة ومعدات',
+                    'depreciation_rate': 10.0,
+                    'useful_life_years': 10,
+                    'method': 'straight_line',
+                })
+            except Exception as exc:
+                _logger.warning('UAT fixed asset category create failed: %s', exc)
+                return 0
+
+        assets = [
+            ('سيارة خدمة كيا', 180000.0, '2020-03-15', 'active'),
+            ('جهاز تكييف مركزي — ديوان عام', 45000.0, '2021-06-01', 'active'),
+            ('مولد كهربائي احتياطي', 120000.0, '2019-09-10', 'suspended'),
+            ('خادم شبكة IBM', 95000.0, '2022-01-20', 'active'),
+            ('معدة رصف آسفلت', 650000.0, '2018-05-05', 'active'),
+            ('سيارة نظافة مرسيدس', 380000.0, '2017-08-15', 'draft'),
+        ]
+
+        from datetime import date as date_type
+        for i, (asset_name, value, acq_date_str, state) in enumerate(assets):
+            desc = f'{UAT_BATCH} - {asset_name}'
+            existing = Asset.search([('name', '=', desc)], limit=1)
+            if existing:
+                continue
+
+            y, m, d = [int(x) for x in acq_date_str.split('-')]
+            acq_date = date_type(y, m, d)
+            vals = {
+                'name': desc,
+                'category_id': category.id,
+                'purchase_value': value,
+                'acquisition_date': acq_date,
+                'activation_date': acq_date,
+                'location': DEPARTMENTS[i % len(DEPARTMENTS)],
+                'condition': 'good',
+                'notes': f'بيانات اختبار - {UAT_BATCH}',
+            }
+            try:
+                rec = Asset.create(vals)
+                if state in ('active', 'suspended'):
+                    rec.action_activate()
+                if state == 'suspended':
+                    rec.action_suspend()
+                count += 1
+            except Exception as exc:
+                _logger.warning('UAT fixed asset create failed (%s): %s', asset_name, exc)
 
         return count

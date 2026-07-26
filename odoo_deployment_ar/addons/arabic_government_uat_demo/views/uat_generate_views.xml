@@ -38,6 +38,12 @@
                     <group>
                         <group string="الموارد البشرية والأنظمة">
                             <field name="generate_hr_cases" widget="boolean_toggle"/>
+                            <field name="generate_custody_cases" widget="boolean_toggle"/>
+                            <field name="generate_auction_cases" widget="boolean_toggle"/>
+                            <field name="generate_cheque_cases" widget="boolean_toggle"/>
+                            <field name="generate_penalty_cases" widget="boolean_toggle"/>
+                            <field name="generate_stocktaking_cases" widget="boolean_toggle"/>
+                            <field name="generate_fixed_asset_cases" widget="boolean_toggle"/>
                             <field name="generate_ai_agent_cases" widget="boolean_toggle"/>
                             <field name="generate_report_cases" widget="boolean_toggle"/>
                         </group>

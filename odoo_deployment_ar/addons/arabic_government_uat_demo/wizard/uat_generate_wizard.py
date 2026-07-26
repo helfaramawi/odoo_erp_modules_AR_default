@@ -25,6 +25,12 @@ class UATGenerateWizard(models.TransientModel):
     generate_project_cases = fields.Boolean('توليد بيانات المشروعات', default=True)
     generate_inventory_cases = fields.Boolean('توليد بيانات المخازن', default=True)
     generate_hr_cases = fields.Boolean('توليد بيانات الموارد البشرية والسلف', default=True)
+    generate_custody_cases = fields.Boolean('توليد بيانات العهد', default=True)
+    generate_auction_cases = fields.Boolean('توليد بيانات المزادات', default=True)
+    generate_cheque_cases = fields.Boolean('توليد بيانات الشيكات', default=True)
+    generate_penalty_cases = fields.Boolean('توليد بيانات الجزاءات', default=True)
+    generate_stocktaking_cases = fields.Boolean('توليد بيانات الجرد الحكومي', default=True)
+    generate_fixed_asset_cases = fields.Boolean('توليد بيانات الأصول الثابتة', default=True)
     generate_ai_agent_cases = fields.Boolean('توليد سيناريوهات الذكاء الاصطناعي', default=True)
     generate_report_cases = fields.Boolean('توليد سيناريوهات التقارير', default=True)
     reset_existing_uat_data = fields.Boolean(
@@ -61,6 +67,12 @@ class UATGenerateWizard(models.TransientModel):
             'generate_project_cases': self.generate_project_cases,
             'generate_inventory_cases': self.generate_inventory_cases,
             'generate_hr_cases': self.generate_hr_cases,
+            'generate_custody_cases': self.generate_custody_cases,
+            'generate_auction_cases': self.generate_auction_cases,
+            'generate_cheque_cases': self.generate_cheque_cases,
+            'generate_penalty_cases': self.generate_penalty_cases,
+            'generate_stocktaking_cases': self.generate_stocktaking_cases,
+            'generate_fixed_asset_cases': self.generate_fixed_asset_cases,
             'generate_ai_agent_cases': self.generate_ai_agent_cases,
             'generate_report_cases': self.generate_report_cases,
         }
