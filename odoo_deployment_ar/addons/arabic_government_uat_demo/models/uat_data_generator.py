@@ -1576,6 +1576,7 @@ class UATDataGenerator(models.AbstractModel):
                     'qty': 1.0,
                     'estimated_value': cost,
                     'warehouse_id': warehouse.id,
+                    'storekeeper_id': emp.id,
                     'issue_date': TODAY - timedelta(days=30 * (i + 1)),
                     'notes': f'بيانات اختبار - {UAT_BATCH}',
                 }
@@ -1719,7 +1720,7 @@ class UATDataGenerator(models.AbstractModel):
                     'beneficiary_id': partner.id,
                     'amount': amount,
                     'issue_date': TODAY - timedelta(days=10 * (i + 1)),
-                    'payment_method': 'transfer',
+                    'payment_method': 'bank_transfer',
                     'purpose': desc,
                     'notes': f'بيانات اختبار - {UAT_BATCH}',
                 }
@@ -1760,6 +1761,9 @@ class UATDataGenerator(models.AbstractModel):
         if not violation_type:
             violation_type = ViolationType.search([], limit=1)
 
+        PenaltyTypeOption = self.env['port_said.penalty.type_option']
+        penalty_type_option = PenaltyTypeOption.search([], limit=1)
+
         for i, (reason, state) in enumerate(scenarios):
             desc = f'{UAT_BATCH} - {reason}'
             try:
@@ -1776,6 +1780,8 @@ class UATDataGenerator(models.AbstractModel):
                     vals['employee_id'] = employees[i % len(employees)].id
                 if violation_type:
                     vals['violation_type_id'] = violation_type.id
+                if penalty_type_option:
+                    vals['penalty_type_option_id'] = penalty_type_option.id
                 with self.env.cr.savepoint():
                     rec = Penalty.create(vals)
                     if state in ('recorded', 'approved', 'executed'):
@@ -1925,7 +1931,7 @@ class UATDataGenerator(models.AbstractModel):
                     'name': desc,
                     'category_id': category.id,
                     'purchase_value': value,
-                    'acquisition_date': acq_date,
+                    'purchase_date': acq_date,
                     'activation_date': acq_date,
                     'location': DEPARTMENTS[i % len(DEPARTMENTS)],
                     'condition': 'good',
