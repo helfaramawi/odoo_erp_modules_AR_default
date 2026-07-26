@@ -1538,10 +1538,16 @@ class UATDataGenerator(models.AbstractModel):
         count = 0
         Custody = self.env['custody.assignment']
         Employee = self.env['hr.employee']
+        Warehouse = self.env['stock.warehouse']
 
         employees = Employee.search([('active', '=', True)], limit=6)
         if not employees:
             _logger.warning('UAT custody: no active employees found, skipping')
+            return 0
+
+        warehouse = Warehouse.search([], limit=1)
+        if not warehouse:
+            _logger.warning('UAT custody: no warehouse found, skipping')
             return 0
 
         items = [
@@ -1555,27 +1561,28 @@ class UATDataGenerator(models.AbstractModel):
 
         for i, (item_name, national_id, cost, state) in enumerate(items):
             emp = employees[i % len(employees)]
-            existing = Custody.search([
-                ('form_193_ref', '=', f'UAT-193-{i+1:03d}'),
-            ], limit=1)
-            if existing:
-                continue
-
-            product = self._get_or_create_product(item_name)
-            vals = {
-                'form_193_ref': f'UAT-193-{i+1:03d}',
-                'employee_id': emp.id,
-                'national_id': national_id,
-                'product_id': product.id,
-                'qty': 1.0,
-                'estimated_value': cost,
-                'issue_date': TODAY - timedelta(days=30 * (i + 1)),
-                'notes': f'بيانات اختبار - {UAT_BATCH}',
-            }
             try:
-                rec = Custody.create(vals)
-                if state in ('active', 'returned'):
-                    rec.action_confirm()
+                existing = Custody.search([
+                    ('form_193_ref', '=', f'UAT-193-{i+1:03d}'),
+                ], limit=1)
+                if existing:
+                    continue
+                product = self._get_or_create_product(item_name)
+                vals = {
+                    'form_193_ref': f'UAT-193-{i+1:03d}',
+                    'employee_id': emp.id,
+                    'national_id': national_id,
+                    'product_id': product.id,
+                    'qty': 1.0,
+                    'estimated_value': cost,
+                    'warehouse_id': warehouse.id,
+                    'issue_date': TODAY - timedelta(days=30 * (i + 1)),
+                    'notes': f'بيانات اختبار - {UAT_BATCH}',
+                }
+                with self.env.cr.savepoint():
+                    rec = Custody.create(vals)
+                    if state in ('active', 'returned'):
+                        rec.action_confirm()
                 count += 1
             except Exception as exc:
                 _logger.warning('UAT custody create failed: %s', exc)
@@ -1692,54 +1699,38 @@ class UATDataGenerator(models.AbstractModel):
         OutgoingPO = self.env['port_said.outgoing_po']
         ChequeBook = self.env['port_said.cheque.book']
 
-        # Create a cheque book first
-        book = ChequeBook.search([('bank_name', '=', 'البنك الأهلي المصري — فرع بورسعيد')], limit=1)
-        if not book:
-            try:
-                book = ChequeBook.create({
-                    'bank_name': 'البنك الأهلي المصري — فرع بورسعيد',
-                    'book_reference': f'UAT-BK-001',
-                    'first_cheque_number': 1001,
-                    'last_cheque_number': 1100,
-                    'issue_date': FY_START,
-                })
-                book.action_activate()
-            except Exception as exc:
-                _logger.warning('UAT cheque book create failed: %s', exc)
-                book = None
-
-        journal = self._get_journal('bank')
         partner = self._get_or_create_vendor(VENDORS[0])
 
         scenarios = [
-            (f'{UAT_BATCH} - صرف شيك — توريد أجهزة حاسب آلي', 85000.0, 'cleared'),
-            (f'{UAT_BATCH} - صرف شيك — أعمال صيانة المبنى', 42000.0, 'sent'),
-            (f'{UAT_BATCH} - صرف شيك — توريد مستلزمات نظافة', 18500.0, 'registered'),
-            (f'{UAT_BATCH} - صرف شيك — خدمات استشارية', 95000.0, 'draft'),
-            (f'{UAT_BATCH} - صرف شيك — توريد قطع غيار', 33000.0, 'cleared'),
+            (f'{UAT_BATCH} - أمر دفع — توريد أجهزة حاسب آلي', 85000.0, 'cleared'),
+            (f'{UAT_BATCH} - أمر دفع — أعمال صيانة المبنى', 42000.0, 'sent'),
+            (f'{UAT_BATCH} - أمر دفع — توريد مستلزمات نظافة', 18500.0, 'registered'),
+            (f'{UAT_BATCH} - أمر دفع — خدمات استشارية', 95000.0, 'draft'),
+            (f'{UAT_BATCH} - أمر دفع — توريد قطع غيار', 33000.0, 'cleared'),
         ]
 
         for i, (desc, amount, state) in enumerate(scenarios):
-            existing = OutgoingPO.search([('purpose', '=', desc)], limit=1)
-            if existing:
-                continue
-            vals = {
-                'po_number': f'UAT-PO-{i+1:04d}',
-                'beneficiary_id': partner.id,
-                'amount': amount,
-                'issue_date': TODAY - timedelta(days=10 * (i + 1)),
-                'payment_method': 'cheque',
-                'purpose': desc,
-                'notes': f'بيانات اختبار - {UAT_BATCH}',
-            }
             try:
-                rec = OutgoingPO.create(vals)
-                if state in ('registered', 'sent', 'cleared'):
-                    rec.action_register()
-                if state in ('sent', 'cleared'):
-                    rec.action_send()
-                if state == 'cleared':
-                    rec.action_clear()
+                existing = OutgoingPO.search([('purpose', '=', desc)], limit=1)
+                if existing:
+                    continue
+                vals = {
+                    'po_number': f'UAT-PO-{i+1:04d}',
+                    'beneficiary_id': partner.id,
+                    'amount': amount,
+                    'issue_date': TODAY - timedelta(days=10 * (i + 1)),
+                    'payment_method': 'transfer',
+                    'purpose': desc,
+                    'notes': f'بيانات اختبار - {UAT_BATCH}',
+                }
+                with self.env.cr.savepoint():
+                    rec = OutgoingPO.create(vals)
+                    if state in ('registered', 'sent', 'cleared'):
+                        rec.action_register()
+                    if state in ('sent', 'cleared'):
+                        rec.action_send()
+                    if state == 'cleared':
+                        rec.action_clear()
                 count += 1
             except Exception as exc:
                 _logger.warning('UAT cheque create failed (%s): %s', desc, exc)
@@ -1764,33 +1755,41 @@ class UATDataGenerator(models.AbstractModel):
             ('تغيب بدون إذن — إجراءات تأديبية رسمية', 'recorded'),
         ]
 
+        ViolationType = self.env['port_said.penalty.violation_type']
+        violation_type = ViolationType.search([('subject_type', '=', 'employee')], limit=1)
+        if not violation_type:
+            violation_type = ViolationType.search([], limit=1)
+
         for i, (reason, state) in enumerate(scenarios):
             desc = f'{UAT_BATCH} - {reason}'
-            existing = Penalty.search([('incident_description', '=', desc)], limit=1)
-            if existing:
-                continue
-            vals = {
-                'incident_description': desc,
-                'incident_date': TODAY - timedelta(days=20 * (i + 1)),
-                'subject_type': 'employee',
-                'notes': f'بيانات اختبار - {UAT_BATCH}',
-            }
-            if employees:
-                vals['employee_id'] = employees[i % len(employees)].id
             try:
-                rec = Penalty.create(vals)
-                if state in ('recorded', 'approved', 'executed'):
-                    rec.action_record()
-                if state in ('approved', 'executed'):
-                    try:
-                        rec.action_approve()
-                    except Exception:
-                        pass
-                if state == 'executed':
-                    try:
-                        rec.action_execute()
-                    except Exception:
-                        pass
+                existing = Penalty.search([('incident_description', '=', desc)], limit=1)
+                if existing:
+                    continue
+                vals = {
+                    'incident_description': desc,
+                    'incident_date': TODAY - timedelta(days=20 * (i + 1)),
+                    'subject_type': 'employee',
+                    'notes': f'بيانات اختبار - {UAT_BATCH}',
+                }
+                if employees:
+                    vals['employee_id'] = employees[i % len(employees)].id
+                if violation_type:
+                    vals['violation_type_id'] = violation_type.id
+                with self.env.cr.savepoint():
+                    rec = Penalty.create(vals)
+                    if state in ('recorded', 'approved', 'executed'):
+                        rec.action_record()
+                    if state in ('approved', 'executed'):
+                        try:
+                            rec.action_approve()
+                        except Exception:
+                            pass
+                    if state == 'executed':
+                        try:
+                            rec.action_execute()
+                        except Exception:
+                            pass
                 count += 1
             except Exception as exc:
                 _logger.warning('UAT penalty create failed (%s): %s', reason, exc)
@@ -1895,6 +1894,7 @@ class UATDataGenerator(models.AbstractModel):
             try:
                 category = Category.create({
                     'name': 'أجهزة ومعدات',
+                    'code': 'UAT-EQ',
                     'depreciation_rate': 10.0,
                     'useful_life_years': 10,
                     'method': 'straight_line',
@@ -1915,28 +1915,28 @@ class UATDataGenerator(models.AbstractModel):
         from datetime import date as date_type
         for i, (asset_name, value, acq_date_str, state) in enumerate(assets):
             desc = f'{UAT_BATCH} - {asset_name}'
-            existing = Asset.search([('name', '=', desc)], limit=1)
-            if existing:
-                continue
-
-            y, m, d = [int(x) for x in acq_date_str.split('-')]
-            acq_date = date_type(y, m, d)
-            vals = {
-                'name': desc,
-                'category_id': category.id,
-                'purchase_value': value,
-                'acquisition_date': acq_date,
-                'activation_date': acq_date,
-                'location': DEPARTMENTS[i % len(DEPARTMENTS)],
-                'condition': 'good',
-                'notes': f'بيانات اختبار - {UAT_BATCH}',
-            }
             try:
-                rec = Asset.create(vals)
-                if state in ('active', 'suspended'):
-                    rec.action_activate()
-                if state == 'suspended':
-                    rec.action_suspend()
+                existing = Asset.search([('name', '=', desc)], limit=1)
+                if existing:
+                    continue
+                y, m, d = [int(x) for x in acq_date_str.split('-')]
+                acq_date = date_type(y, m, d)
+                vals = {
+                    'name': desc,
+                    'category_id': category.id,
+                    'purchase_value': value,
+                    'acquisition_date': acq_date,
+                    'activation_date': acq_date,
+                    'location': DEPARTMENTS[i % len(DEPARTMENTS)],
+                    'condition': 'good',
+                    'notes': f'بيانات اختبار - {UAT_BATCH}',
+                }
+                with self.env.cr.savepoint():
+                    rec = Asset.create(vals)
+                    if state in ('active', 'suspended'):
+                        rec.action_activate()
+                    if state == 'suspended':
+                        rec.action_suspend()
                 count += 1
             except Exception as exc:
                 _logger.warning('UAT fixed asset create failed (%s): %s', asset_name, exc)
