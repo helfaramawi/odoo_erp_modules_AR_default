@@ -1556,7 +1556,6 @@ class UATDataGenerator(models.AbstractModel):
         for i, (item_name, national_id, cost, state) in enumerate(items):
             emp = employees[i % len(employees)]
             existing = Custody.search([
-                ('employee_id', '=', emp.id),
                 ('form_193_ref', '=', f'UAT-193-{i+1:03d}'),
             ], limit=1)
             if existing:
@@ -1569,16 +1568,14 @@ class UATDataGenerator(models.AbstractModel):
                 'national_id': national_id,
                 'product_id': product.id,
                 'qty': 1.0,
-                'standard_price': cost,
+                'estimated_value': cost,
                 'issue_date': TODAY - timedelta(days=30 * (i + 1)),
                 'notes': f'بيانات اختبار - {UAT_BATCH}',
             }
             try:
                 rec = Custody.create(vals)
-                if state == 'active':
-                    rec.action_activate()
-                elif state == 'returned':
-                    rec.action_activate()
+                if state in ('active', 'returned'):
+                    rec.action_confirm()
                 count += 1
             except Exception as exc:
                 _logger.warning('UAT custody create failed: %s', exc)
@@ -1723,20 +1720,18 @@ class UATDataGenerator(models.AbstractModel):
         ]
 
         for i, (desc, amount, state) in enumerate(scenarios):
-            existing = OutgoingPO.search([('notes', '=', desc)], limit=1)
+            existing = OutgoingPO.search([('purpose', '=', desc)], limit=1)
             if existing:
                 continue
             vals = {
-                'partner_id': partner.id,
+                'po_number': f'UAT-PO-{i+1:04d}',
+                'beneficiary_id': partner.id,
                 'amount': amount,
-                'payment_date': TODAY - timedelta(days=10 * (i + 1)),
+                'issue_date': TODAY - timedelta(days=10 * (i + 1)),
                 'payment_method': 'cheque',
-                'notes': desc,
+                'purpose': desc,
+                'notes': f'بيانات اختبار - {UAT_BATCH}',
             }
-            if book:
-                vals['cheque_book_id'] = book.id
-            if journal:
-                vals['journal_id'] = journal.id
             try:
                 rec = OutgoingPO.create(vals)
                 if state in ('registered', 'sent', 'cleared'):
@@ -1762,22 +1757,21 @@ class UATDataGenerator(models.AbstractModel):
         employees = Employee.search([('active', '=', True)], limit=5)
 
         scenarios = [
-            ('انقطاع عن العمل بدون إذن لمدة 3 أيام', 'warning', 'approved'),
-            ('تأخر متكرر في الحضور', 'salary_deduction', 'recorded'),
-            ('إهمال في تنفيذ المهام الوظيفية', 'warning', 'executed'),
-            ('مخالفة لوائح استخدام الحاسب الآلي', 'warning', 'draft'),
-            ('تغيب بدون إذن — إجراءات تأديبية', 'suspension', 'approved'),
+            ('انقطاع عن العمل بدون إذن لمدة 3 أيام', 'approved'),
+            ('تأخر متكرر في الحضور بدون عذر مقبول', 'recorded'),
+            ('إهمال في تنفيذ المهام الوظيفية المنوطة به', 'approved'),
+            ('مخالفة لوائح استخدام الحاسب الآلي', 'draft'),
+            ('تغيب بدون إذن — إجراءات تأديبية رسمية', 'recorded'),
         ]
 
-        for i, (reason, penalty_type, state) in enumerate(scenarios):
+        for i, (reason, state) in enumerate(scenarios):
             desc = f'{UAT_BATCH} - {reason}'
-            existing = Penalty.search([('violation_description', '=', desc)], limit=1)
+            existing = Penalty.search([('incident_description', '=', desc)], limit=1)
             if existing:
                 continue
             vals = {
-                'violation_description': desc,
-                'penalty_type': penalty_type,
-                'violation_date': TODAY - timedelta(days=20 * (i + 1)),
+                'incident_description': desc,
+                'incident_date': TODAY - timedelta(days=20 * (i + 1)),
                 'subject_type': 'employee',
                 'notes': f'بيانات اختبار - {UAT_BATCH}',
             }
@@ -1788,7 +1782,10 @@ class UATDataGenerator(models.AbstractModel):
                 if state in ('recorded', 'approved', 'executed'):
                     rec.action_record()
                 if state in ('approved', 'executed'):
-                    rec.action_approve()
+                    try:
+                        rec.action_approve()
+                    except Exception:
+                        pass
                 if state == 'executed':
                     try:
                         rec.action_execute()
