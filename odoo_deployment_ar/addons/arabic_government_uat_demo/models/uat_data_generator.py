@@ -1578,7 +1578,7 @@ class UATDataGenerator(models.AbstractModel):
                     'warehouse_id': warehouse.id,
                     'storekeeper_id': emp.id,
                     'dept_manager_id': emp.id,
-                    'issued_by_id': emp.id,
+                    'issued_by_id': self.env.user.id,
                     'issue_date': TODAY - timedelta(days=30 * (i + 1)),
                     'notes': f'بيانات اختبار - {UAT_BATCH}',
                 }
