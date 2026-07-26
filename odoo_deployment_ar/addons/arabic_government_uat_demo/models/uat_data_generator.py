@@ -1577,6 +1577,8 @@ class UATDataGenerator(models.AbstractModel):
                     'estimated_value': cost,
                     'warehouse_id': warehouse.id,
                     'storekeeper_id': emp.id,
+                    'dept_manager_id': emp.id,
+                    'issued_by_id': emp.id,
                     'issue_date': TODAY - timedelta(days=30 * (i + 1)),
                     'notes': f'بيانات اختبار - {UAT_BATCH}',
                 }
@@ -1782,6 +1784,7 @@ class UATDataGenerator(models.AbstractModel):
                     vals['violation_type_id'] = violation_type.id
                 if penalty_type_option:
                     vals['penalty_type_option_id'] = penalty_type_option.id
+                vals['investigation_reference'] = f'UAT-INV-{i+1:04d}'
                 with self.env.cr.savepoint():
                     rec = Penalty.create(vals)
                     if state in ('recorded', 'approved', 'executed'):
