@@ -398,6 +398,12 @@ class CustodyTransfer(models.Model):
                 vals['from_employee_id'] = custody.current_holder_id.id or custody.employee_id.id
         return super().create(vals_list)
 
+    @api.onchange('custody_assignment_id')
+    def _onchange_custody_assignment(self):
+        if self.custody_assignment_id:
+            custody = self.custody_assignment_id
+            self.from_employee_id = custody.current_holder_id or custody.employee_id
+
     @api.onchange('to_employee_id')
     def _onchange_to_employee(self):
         if self.to_employee_id and self.to_employee_id.ssnid:

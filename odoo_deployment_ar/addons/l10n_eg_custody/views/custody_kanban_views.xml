@@ -195,7 +195,7 @@ action = {
                             <field name="authorised_by_id"/>
                         </group>
                         <group>
-                            <field name="from_employee_id" readonly="1"/>
+                            <field name="from_employee_id" readonly="state == 'done'"/>
                             <field name="to_employee_id"/>
                             <field name="to_national_id"
                                    decoration-danger="not to_national_id"/>
