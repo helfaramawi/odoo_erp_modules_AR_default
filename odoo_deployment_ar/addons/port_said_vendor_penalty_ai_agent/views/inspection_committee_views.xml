@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_inspection_committee_form_vendor_penalty_agent_inherit" model="ir.ui.view">
+        <field name="name">port_said.inspection.committee.form.vendor.penalty.agent.inherit</field>
+        <field name="model">port_said.inspection.committee</field>
+        <field name="inherit_id" ref="port_said_scm_warehouse.view_inspection_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//header" position="inside">
+                <button name="action_agent_run_penalty_now"
+                        type="object"
+                        string="🤖 فحص جزاءات المورد"
+                        class="btn-secondary"/>
+            </xpath>
+
+            <xpath expr="//sheet" position="inside">
+                <notebook>
+                    <page string="وكيل جزاءات الموردين" name="vendor_penalty_agent">
+                        <group>
+                            <group string="نتيجة الوكيل">
+                                <field name="agent_penalty_created" readonly="1"/>
+                                <field name="agent_penalty_id" readonly="1"/>
+                                <field name="agent_penalty_last_check" readonly="1"/>
+                            </group>
+                            <group string="الحسابات">
+                                <field name="agent_penalty_rate" readonly="1"/>
+                                <field name="agent_penalty_amount" readonly="1"/>
+                            </group>
+                        </group>
+
+                        <group string="إخطار المورد">
+                            <field name="agent_penalty_notification" readonly="1"/>
+                        </group>
+
+                        <separator string="سجل وكيل الجزاءات"/>
+                        <field name="agent_penalty_log_ids" readonly="1">
+                            <tree>
+                                <field name="name"/>
+                                <field name="create_date"/>
+                                <field name="decision"/>
+                                <field name="vendor_id"/>
+                                <field name="penalty_id"/>
+                                <field name="quantity_rejected"/>
+                                <field name="offense_count"/>
+                                <field name="penalty_rate"/>
+                                <field name="rejected_value"/>
+                                <field name="penalty_amount"/>
+                                <field name="decision_reason"/>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

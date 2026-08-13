@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_procurement_adjudication_form_agent_tab_inherit" model="ir.ui.view">
+        <field name="name">procurement.adjudication.form.agent.tab.inherit</field>
+        <field name="model">procurement.adjudication</field>
+        <field name="inherit_id" ref="procurement_adjudication.view_adjudication_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Add agent buttons safely inside the existing header -->
+            <xpath expr="//header" position="inside">
+                <button name="action_agent_run_technical_now"
+                        type="object"
+                        string="🤖 تحليل فني بالوكيل"
+                        class="btn-secondary"
+                        invisible="state == 'draft'"/>
+                <button name="action_agent_run_financial_now"
+                        type="object"
+                        string="🤖 تحليل مالي بالوكيل"
+                        class="btn-secondary"
+                        invisible="state not in ['financial_open','adjudicated','awarded','po_created']"/>
+            </xpath>
+
+            <!-- Add agent tab directly after the known suppliers page -->
+            <xpath expr="//page[@name='suppliers']" position="after">
+                <page string="تحليل الوكيل" name="agent_analysis">
+                    <group>
+                        <field name="agent_last_analysis_date" readonly="1"/>
+                    </group>
+
+                    <notebook>
+                        <page string="مسودة محضر البت الفني">
+                            <field name="agent_technical_minutes" widget="html" readonly="1"/>
+                        </page>
+
+                        <page string="مسودة المقارنة المالية">
+                            <field name="agent_financial_minutes" widget="html" readonly="1"/>
+                        </page>
+
+                        <page string="مسودة إخطار الترسية">
+                            <field name="agent_award_notification" widget="html" readonly="1"/>
+                        </page>
+
+                        <page string="سجل تحليل الوكيل">
+                            <field name="agent_log_ids" readonly="1">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="analysis_date"/>
+                                    <field name="analysis_type"/>
+                                    <field name="partner_id"/>
+                                    <field name="technical_score"/>
+                                    <field name="technical_pass"/>
+                                    <field name="financial_rank"/>
+                                    <field name="financial_bid"/>
+                                    <field name="deviation_pct"/>
+                                    <field name="dumping_warning"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </page>
+            </xpath>
+
+            <!-- Add compact agent columns to the existing supplier lines tree -->
+            <xpath expr="//field[@name='supplier_line_ids']/tree/field[@name='technical_result']" position="after">
+                <field name="agent_technical_score" string="مطابقة الوكيل %" readonly="1" optional="show"/>
+                <field name="agent_technical_pass" string="استيفاء الوكيل" readonly="1" optional="show"/>
+            </xpath>
+
+            <xpath expr="//field[@name='supplier_line_ids']/tree/field[@name='financial_bid']" position="after">
+                <field name="agent_financial_rank" string="ترتيب الوكيل" readonly="1" optional="show"/>
+                <field name="agent_deviation_pct" string="انحراف الوكيل %" readonly="1" optional="show"/>
+                <field name="agent_dumping_warning" string="تحذير إغراق" readonly="1" optional="show"/>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

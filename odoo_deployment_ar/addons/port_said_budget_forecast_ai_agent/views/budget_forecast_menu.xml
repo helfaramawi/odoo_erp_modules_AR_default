@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_budget_forecast_root"
+              name="توقع انحرافات الموازنة"
+              sequence="50"
+              groups="base.group_user"/>
+
+    <menuitem id="menu_budget_forecast_records"
+              name="توقعات الموازنة السنوية"
+              parent="menu_budget_forecast_root"
+              action="action_budget_forecast"
+              sequence="1"
+              groups="base.group_user"/>
+
+    <menuitem id="menu_budget_forecast_generate_now"
+              name="تشغيل التوقع الآن"
+              parent="menu_budget_forecast_root"
+              action="action_budget_forecast_generate_now"
+              sequence="2"
+              groups="base.group_user"/>
+</odoo>

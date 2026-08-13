@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_procurement_adjudication_agent_log_tree" model="ir.ui.view">
+        <field name="name">procurement.adjudication.agent.log.tree</field>
+        <field name="model">procurement.adjudication.agent.log</field>
+        <field name="arch" type="xml">
+            <tree string="سجل تحليل العروض" decoration-success="technical_pass == True" decoration-warning="dumping_warning == True">
+                <field name="name"/>
+                <field name="analysis_date"/>
+                <field name="analysis_type"/>
+                <field name="adjudication_id"/>
+                <field name="supplier_line_id"/>
+                <field name="partner_id"/>
+                <field name="technical_score"/>
+                <field name="technical_pass"/>
+                <field name="financial_rank"/>
+                <field name="financial_bid"/>
+                <field name="deviation_pct"/>
+                <field name="dumping_warning"/>
+                <field name="user_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_procurement_adjudication_agent_log_form" model="ir.ui.view">
+        <field name="name">procurement.adjudication.agent.log.form</field>
+        <field name="model">procurement.adjudication.agent.log</field>
+        <field name="arch" type="xml">
+            <form string="تحليل عرض">
+                <header>
+                    <button name="action_open_adjudication" type="object" string="فتح عملية البت" class="btn-primary" invisible="not adjudication_id"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="analysis_date" readonly="1"/>
+                            <field name="analysis_type" readonly="1"/>
+                            <field name="user_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="adjudication_id" readonly="1"/>
+                            <field name="supplier_line_id" readonly="1"/>
+                            <field name="partner_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="التحليل الفني">
+                            <group>
+                                <field name="technical_score" readonly="1"/>
+                                <field name="technical_pass" readonly="1"/>
+                                <field name="strengths" readonly="1"/>
+                                <field name="weaknesses" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="التحليل المالي">
+                            <group>
+                                <field name="financial_rank" readonly="1"/>
+                                <field name="financial_bid" readonly="1"/>
+                                <field name="deviation_pct" readonly="1"/>
+                                <field name="dumping_warning" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="الملخص والتوصية">
+                            <field name="result_summary" readonly="1"/>
+                            <field name="recommendation" readonly="1"/>
+                        </page>
+                        <page string="تفاصيل تقنية">
+                            <field name="technical_details" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_procurement_adjudication_agent_log_search" model="ir.ui.view">
+        <field name="name">procurement.adjudication.agent.log.search</field>
+        <field name="model">procurement.adjudication.agent.log</field>
+        <field name="arch" type="xml">
+            <search string="سجل تحليل العروض">
+                <field name="name"/>
+                <field name="adjudication_id"/>
+                <field name="partner_id"/>
+                <filter name="technical" string="تحليل فني" domain="[('analysis_type','=','technical')]"/>
+                <filter name="financial" string="تحليل مالي" domain="[('analysis_type','=','financial')]"/>
+                <filter name="passed" string="مستوفٍ فنياً" domain="[('technical_pass','=',True)]"/>
+                <filter name="dumping" string="تحذير انخفاض مبالغ فيه" domain="[('dumping_warning','=',True)]"/>
+                <group expand="0" string="تجميع حسب">
+                    <filter name="group_type" string="نوع التحليل" context="{'group_by':'analysis_type'}"/>
+                    <filter name="group_adjudication" string="عملية البت" context="{'group_by':'adjudication_id'}"/>
+                    <filter name="group_supplier" string="المورد" context="{'group_by':'partner_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_procurement_adjudication_agent_logs" model="ir.actions.act_window">
+        <field name="name">سجل تحليل العروض</field>
+        <field name="res_model">procurement.adjudication.agent.log</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_procurement_adjudication_agent_log_search"/>
+    </record>
+
+    <menuitem id="menu_procurement_adjudication_ai_agent_root"
+              name="وكيل تحليل العروض"
+              sequence="95"
+              groups="base.group_user"/>
+
+    <menuitem id="menu_procurement_adjudication_agent_logs"
+              name="سجل تحليل العروض"
+              parent="menu_procurement_adjudication_ai_agent_root"
+              action="action_procurement_adjudication_agent_logs"
+              sequence="10"
+              groups="base.group_user"/>
+</odoo>

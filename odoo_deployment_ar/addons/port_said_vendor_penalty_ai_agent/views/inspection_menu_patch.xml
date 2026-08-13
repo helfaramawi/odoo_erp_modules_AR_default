@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Explicit submenu because the original parent menu opens the action directly and hides the inspection list as a clear child item. -->
+    <menuitem id="menu_vendor_penalty_agent_inspection_records"
+              name="محاضر لجنة الفحص (نموذج 12)"
+              parent="port_said_scm_warehouse.menu_ps_warehouse"
+              action="port_said_scm_warehouse.action_inspection"
+              sequence="1"
+              groups="base.group_user"/>
+</odoo>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="action_report_aging" model="ir.actions.report">
+    <field name="name">AR/AP Aging Report</field>
+    <field name="model">aging.report.wizard</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">c3_aging_report.report_aging_template</field>
+  </record>
+  <template id="report_aging_template">
+    <t t-call="web.html_container">
+      <t t-call="web.external_layout">
+        <div class="page">
+          <h2 style="text-align:center;color:#1F4E79;">
+            <t t-if="data['report_type']=='receivable'">Accounts Receivable Aging / تقرير أعمار المدينين</t>
+            <t t-else="">Accounts Payable Aging / تقرير أعمار الدائنين</t>
+          </h2>
+          <p style="text-align:center;">As of / حتى: <strong><t t-esc="data['as_of_date']"/></strong></p>
+          <table class="table table-sm table-bordered" style="font-size:11px;">
+            <thead style="background:#1F4E79;color:white;">
+              <tr><th>Partner / الشريك</th><th>Current</th><th>1-30d</th>
+                <th>31-60d</th><th>61-90d</th><th>91+d</th><th>Total / المجموع</th></tr>
+            </thead>
+            <tbody>
+              <t t-foreach="docs._get_aging_data()" t-as="ln">
+                <tr><td><t t-esc="ln['partner']"/></td>
+                  <td class="text-right"><t t-esc="'%.2f' % ln['current']"/></td>
+                  <td class="text-right"><t t-esc="'%.2f' % ln['b1']"/></td>
+                  <td class="text-right"><t t-esc="'%.2f' % ln['b2']"/></td>
+                  <td class="text-right"><t t-esc="'%.2f' % ln['b3']"/></td>
+                  <td class="text-right"><t t-esc="'%.2f' % ln['b4']"/></td>
+                  <td class="text-right"><strong><t t-esc="'%.2f' % ln['total']"/></strong></td>
+                </tr>
+              </t>
+            </tbody>
+          </table>
+        </div>
+      </t>
+    </t>
+  </template>
+</odoo>

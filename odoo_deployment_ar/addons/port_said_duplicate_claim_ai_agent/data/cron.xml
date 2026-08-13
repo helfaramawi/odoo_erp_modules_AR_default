@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_duplicate_claim_alert" model="ir.sequence">
+        <field name="name">تسلسل تنبيهات تكرار المستندات والمطالبات</field>
+        <field name="code">port_said.duplicate.claim.alert</field>
+        <field name="prefix">DUPCLM/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="param_duplicate_claim_scan_days" model="ir.config_parameter">
+        <field name="key">port_said_duplicate_claim.scan_days</field>
+        <field name="value">90</field>
+    </record>
+
+    <record id="param_duplicate_claim_amount_tolerance" model="ir.config_parameter">
+        <field name="key">port_said_duplicate_claim.amount_tolerance</field>
+        <field name="value">1</field>
+    </record>
+
+    <record id="param_duplicate_claim_date_tolerance_days" model="ir.config_parameter">
+        <field name="key">port_said_duplicate_claim.date_tolerance_days</field>
+        <field name="value">3</field>
+    </record>
+
+    <record id="param_duplicate_claim_filename_similarity_threshold" model="ir.config_parameter">
+        <field name="key">port_said_duplicate_claim.filename_similarity_threshold</field>
+        <field name="value">85</field>
+    </record>
+
+    <record id="ir_cron_daily_duplicate_claim_scan" model="ir.cron">
+        <field name="name">وكيل تكرار المستندات والمطالبات - فحص يومي</field>
+        <field name="model_id" ref="model_port_said_duplicate_claim_engine"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_daily_duplicate_claim_scan()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

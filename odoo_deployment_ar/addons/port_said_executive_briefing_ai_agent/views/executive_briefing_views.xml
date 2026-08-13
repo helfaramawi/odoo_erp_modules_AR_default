@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_executive_briefing_tree" model="ir.ui.view">
+        <field name="name">port_said.executive.briefing.tree</field>
+        <field name="model">port_said.executive.briefing</field>
+        <field name="arch" type="xml">
+            <tree string="الملخصات التنفيذية اليومية"
+                  decoration-danger="risk_level in ('critical','high')"
+                  decoration-warning="risk_level == 'medium'"
+                  decoration-success="risk_level == 'low'">
+                <field name="name"/>
+                <field name="briefing_date"/>
+                <field name="risk_score"/>
+                <field name="risk_level"/>
+                <field name="total_exception_count"/>
+                <field name="budget_risk_count"/>
+                <field name="late_cheque_count"/>
+                <field name="eta_failed_count"/>
+                <field name="pending_procurement_count"/>
+                <field name="payment_delay_count"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_executive_briefing_form" model="ir.ui.view">
+        <field name="name">port_said.executive.briefing.form</field>
+        <field name="model">port_said.executive.briefing</field>
+        <field name="arch" type="xml">
+            <form string="الملخص التنفيذي اليومي">
+                <header>
+                    <button name="action_generate_now" type="object" string="توليد ملخص الآن" class="btn-primary"/>
+                    <button name="action_send_internal_mail" type="object" string="إرسال للمديرين" class="btn-success" invisible="state == 'sent'"/>
+                    <button name="action_archive" type="object" string="أرشفة" class="btn-secondary" invisible="state == 'archived'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,generated,sent,archived"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+
+                    <group>
+                        <group string="مؤشر الخطورة">
+                            <field name="briefing_date"/>
+                            <field name="risk_score"/>
+                            <field name="risk_level"/>
+                            <field name="total_exception_count"/>
+                        </group>
+                        <group string="ملخص الأعداد">
+                            <field name="budget_risk_count"/>
+                            <field name="late_cheque_count"/>
+                            <field name="eta_failed_count"/>
+                            <field name="penalty_count"/>
+                            <field name="pending_procurement_count"/>
+                            <field name="payment_delay_count"/>
+                            <field name="dead_stock_count"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="الملخص التنفيذي">
+                            <field name="summary_html" nolabel="1" readonly="1"/>
+                        </page>
+                        <page string="الإجراءات المطلوبة">
+                            <field name="action_items" nolabel="1" readonly="1"/>
+                        </page>
+                        <page string="بنود الاستثناءات">
+                            <field name="line_ids" readonly="1">
+                                <tree decoration-danger="severity in ('critical','high')" decoration-warning="severity == 'medium'">
+                                    <field name="section"/>
+                                    <field name="severity"/>
+                                    <field name="title"/>
+                                    <field name="amount"/>
+                                    <field name="metric_1"/>
+                                    <field name="source_display_name"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="رسالة الإدارة">
+                            <field name="management_message" nolabel="1" readonly="1"/>
+                        </page>
+                        <page string="بيانات الإرسال">
+                            <group>
+                                <field name="sent_date"/>
+                                <field name="sent_to"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_executive_briefing_line_tree" model="ir.ui.view">
+        <field name="name">port_said.executive.briefing.line.tree</field>
+        <field name="model">port_said.executive.briefing.line</field>
+        <field name="arch" type="xml">
+            <tree string="بنود الملخص التنفيذي"
+                  decoration-danger="severity in ('critical','high')"
+                  decoration-warning="severity == 'medium'">
+                <field name="briefing_id"/>
+                <field name="section"/>
+                <field name="severity"/>
+                <field name="title"/>
+                <field name="description"/>
+                <field name="recommended_action"/>
+                <field name="amount"/>
+                <field name="source_display_name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_executive_briefing_line_form" model="ir.ui.view">
+        <field name="name">port_said.executive.briefing.line.form</field>
+        <field name="model">port_said.executive.briefing.line</field>
+        <field name="arch" type="xml">
+            <form string="بند في الملخص التنفيذي">
+                <header>
+                    <button name="action_open_source" type="object" string="فتح السجل المصدر" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="briefing_id"/>
+                            <field name="section"/>
+                            <field name="severity"/>
+                            <field name="title"/>
+                            <field name="amount"/>
+                        </group>
+                        <group>
+                            <field name="source_model"/>
+                            <field name="source_res_id"/>
+                            <field name="source_display_name"/>
+                            <field name="record_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="الوصف"><field name="description" nolabel="1"/></page>
+                        <page string="الإجراء المطلوب"><field name="recommended_action" nolabel="1"/></page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_executive_briefing_search" model="ir.ui.view">
+        <field name="name">port_said.executive.briefing.search</field>
+        <field name="model">port_said.executive.briefing</field>
+        <field name="arch" type="xml">
+            <search string="بحث الملخص التنفيذي">
+                <field name="name"/>
+                <field name="briefing_date"/>
+                <filter string="حرج/مرتفع" name="high_risk" domain="[('risk_level','in',('critical','high'))]"/>
+                <filter string="اليوم" name="today" domain="[('briefing_date','=',context_today())]"/>
+                <group expand="0" string="تجميع حسب">
+                    <filter string="مستوى الخطورة" name="grp_risk" context="{'group_by':'risk_level'}"/>
+                    <filter string="الحالة" name="grp_state" context="{'group_by':'state'}"/>
+                    <filter string="التاريخ" name="grp_date" context="{'group_by':'briefing_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_executive_briefings" model="ir.actions.act_window">
+        <field name="name">الملخص التنفيذي اليومي</field>
+        <field name="res_model">port_said.executive.briefing</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_executive_briefing_search"/>
+        <field name="context">{'search_default_today': 1}</field>
+    </record>
+
+    <record id="action_executive_briefing_lines" model="ir.actions.act_window">
+        <field name="name">بنود ومخاطر الملخص التنفيذي</field>
+        <field name="res_model">port_said.executive.briefing.line</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_generate_executive_briefing_now" model="ir.actions.server">
+        <field name="name">توليد الملخص التنفيذي الآن</field>
+        <field name="model_id" ref="model_port_said_executive_briefing_engine"/>
+        <field name="state">code</field>
+        <field name="code">action = env['port_said.executive.briefing.engine'].sudo().action_generate_now()</field>
+    </record>
+
+    <menuitem id="menu_executive_briefing_root" name="وكيل الملخص التنفيذي اليومي" sequence="62" parent="port_said_ai_agents_menu.menu_ai_agents_root" groups="base.group_user"/>
+    <menuitem id="menu_executive_briefings" name="الملخص التنفيذي اليومي" parent="menu_executive_briefing_root" action="action_executive_briefings" sequence="10" groups="base.group_user"/>
+    <menuitem id="menu_executive_briefing_lines" name="بنود ومخاطر الملخص التنفيذي" parent="menu_executive_briefing_root" action="action_executive_briefing_lines" sequence="20" groups="base.group_user"/>
+    <menuitem id="menu_generate_executive_briefing_now" name="توليد الملخص التنفيذي الآن" parent="menu_executive_briefing_root" action="action_generate_executive_briefing_now" sequence="30" groups="base.group_system"/>
+</odoo>

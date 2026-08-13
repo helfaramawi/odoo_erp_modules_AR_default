@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_duplicate_claim_alert_tree" model="ir.ui.view">
+        <field name="name">port_said.duplicate.claim.alert.tree</field>
+        <field name="model">port_said.duplicate.claim.alert</field>
+        <field name="arch" type="xml">
+            <tree string="تنبيهات تكرار المستندات والمطالبات"
+                  decoration-danger="risk_level in ('critical','high')"
+                  decoration-warning="risk_level == 'medium'"
+                  decoration-success="state in ('false_positive','resolved')">
+                <field name="name"/>
+                <field name="alert_type"/>
+                <field name="similarity_score"/>
+                <field name="risk_level"/>
+                <field name="partner_id"/>
+                <field name="invoice_number"/>
+                <field name="amount"/>
+                <field name="source_display_name"/>
+                <field name="duplicate_display_name"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_duplicate_claim_alert_form" model="ir.ui.view">
+        <field name="name">port_said.duplicate.claim.alert.form</field>
+        <field name="model">port_said.duplicate.claim.alert</field>
+        <field name="arch" type="xml">
+            <form string="تنبيه تكرار مستند أو مطالبة">
+                <header>
+                    <button name="action_review" type="object" string="بدء المراجعة" class="btn-secondary" invisible="state != 'new'"/>
+                    <button name="action_confirm_duplicate" type="object" string="تكرار مؤكد" class="btn-danger" invisible="state in ('confirmed_duplicate','resolved','cancelled')"/>
+                    <button name="action_block_payment" type="object" string="إيقاف الصرف" class="btn-warning" invisible="state in ('blocked','resolved','cancelled')"/>
+                    <button name="action_false_positive" type="object" string="ليس تكرارًا" class="btn-secondary" invisible="state in ('false_positive','resolved','cancelled')"/>
+                    <button name="action_resolve" type="object" string="تمت المعالجة" class="btn-success" invisible="state == 'resolved'"/>
+                    <button name="action_open_source" type="object" string="فتح السجل المصدر" class="btn-primary"/>
+                    <button name="action_open_duplicate" type="object" string="فتح السجل المكرر" class="btn-secondary"/>
+                    <field name="state" widget="statusbar" statusbar_visible="new,under_review,confirmed_duplicate,blocked,false_positive,resolved"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+
+                    <group>
+                        <group string="بيانات التكرار">
+                            <field name="alert_type"/>
+                            <field name="similarity_score"/>
+                            <field name="risk_level"/>
+                            <field name="partner_id"/>
+                            <field name="invoice_number"/>
+                            <field name="claim_date"/>
+                            <field name="amount"/>
+                            <field name="difference_amount"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="السجلات المرتبطة">
+                            <field name="source_model"/>
+                            <field name="source_res_id"/>
+                            <field name="source_display_name"/>
+                            <field name="duplicate_model"/>
+                            <field name="duplicate_res_id"/>
+                            <field name="duplicate_display_name"/>
+                        </group>
+                    </group>
+
+                    <group string="المستندات">
+                        <field name="original_attachment_id"/>
+                        <field name="duplicate_attachment_id"/>
+                        <field name="checksum"/>
+                    </group>
+
+                    <notebook>
+                        <page string="سبب التنبيه">
+                            <field name="reason" nolabel="1" readonly="1"/>
+                        </page>
+                        <page string="التوصية">
+                            <field name="recommendation" nolabel="1" readonly="1"/>
+                        </page>
+                        <page string="ملاحظات المراجعة">
+                            <field name="review_notes" nolabel="1"/>
+                            <group>
+                                <field name="reviewed_by"/>
+                                <field name="reviewed_date"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_duplicate_claim_alert_search" model="ir.ui.view">
+        <field name="name">port_said.duplicate.claim.alert.search</field>
+        <field name="model">port_said.duplicate.claim.alert</field>
+        <field name="arch" type="xml">
+            <search string="بحث تكرار المستندات والمطالبات">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="invoice_number"/>
+                <field name="source_display_name"/>
+                <field name="duplicate_display_name"/>
+                <filter string="حرجة/مرتفعة" name="high_risk" domain="[('risk_level','in',('critical','high'))]"/>
+                <filter string="نفس الملف" name="same_file" domain="[('alert_type','=','same_file')]"/>
+                <filter string="نفس الفاتورة" name="same_invoice" domain="[('alert_type','in',('same_invoice','duplicate_account_bill'))]"/>
+                <filter string="مفتوحة" name="open" domain="[('state','not in',('false_positive','resolved','cancelled'))]"/>
+                <group expand="0" string="تجميع حسب">
+                    <filter string="نوع التكرار" name="grp_alert_type" context="{'group_by':'alert_type'}"/>
+                    <filter string="المورد" name="grp_partner" context="{'group_by':'partner_id'}"/>
+                    <filter string="مستوى الخطورة" name="grp_risk" context="{'group_by':'risk_level'}"/>
+                    <filter string="الحالة" name="grp_state" context="{'group_by':'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_duplicate_claim_alerts" model="ir.actions.act_window">
+        <field name="name">تنبيهات تكرار المستندات والمطالبات</field>
+        <field name="res_model">port_said.duplicate.claim.alert</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_duplicate_claim_alert_search"/>
+        <field name="context">{'search_default_open': 1}</field>
+    </record>
+
+    <record id="action_duplicate_claim_run_scan" model="ir.actions.server">
+        <field name="name">تشغيل فحص تكرار المستندات والمطالبات الآن</field>
+        <field name="model_id" ref="model_port_said_duplicate_claim_engine"/>
+        <field name="state">code</field>
+        <field name="code">action = env['port_said.duplicate.claim.engine'].sudo().action_run_full_scan()</field>
+    </record>
+
+    <menuitem id="menu_duplicate_claim_root" name="وكيل كشف تكرار المستندات والمطالبات" sequence="59" groups="base.group_user"/>
+    <menuitem id="menu_duplicate_claim_alerts" name="تنبيهات تكرار المستندات والمطالبات" parent="menu_duplicate_claim_root" action="action_duplicate_claim_alerts" sequence="10" groups="base.group_user"/>
+    <menuitem id="menu_duplicate_claim_run_scan" name="تشغيل فحص تكرار المستندات والمطالبات الآن" parent="menu_duplicate_claim_root" action="action_duplicate_claim_run_scan" sequence="20" groups="base.group_system"/>
+</odoo>

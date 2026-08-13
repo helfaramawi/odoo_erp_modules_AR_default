@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <!--
+        GovAITrayIcon — أيقونة الـ systray فقط.
+        الشريط الجانبي الفعلي يُبنى على document.body بـ JavaScript.
+    -->
+    <t t-name="gov_ai_guide.GovAITrayIcon">
+        <div class="gov-ai-tray-icon" title="المرشد الحكومي" style="display:none"/>
+    </t>
+</templates>

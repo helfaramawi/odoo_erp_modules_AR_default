@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_procurement_adjudication_agent_log" model="ir.sequence">
+        <field name="name">سجل وكيل تحليل العروض</field>
+        <field name="code">procurement.adjudication.agent.log</field>
+        <field name="prefix">ADJAGT/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>

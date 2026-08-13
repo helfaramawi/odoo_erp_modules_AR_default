@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_conflict_interest_alert_tree" model="ir.ui.view">
+        <field name="name">port_said.conflict.interest.alert.tree</field>
+        <field name="model">port_said.conflict.interest.alert</field>
+        <field name="arch" type="xml">
+            <tree string="تنبيهات تضارب المصالح" decoration-danger="risk_level in ('critical','high')" decoration-warning="risk_level == 'medium'" decoration-success="state == 'cleared'">
+                <field name="name"/>
+                <field name="risk_score"/>
+                <field name="risk_level"/>
+                <field name="check_type"/>
+                <field name="supplier_id"/>
+                <field name="employee_id"/>
+                <field name="committee_name"/>
+                <field name="state"/>
+                <field name="create_date"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_conflict_interest_alert_form" model="ir.ui.view">
+        <field name="name">port_said.conflict.interest.alert.form</field>
+        <field name="model">port_said.conflict.interest.alert</field>
+        <field name="arch" type="xml">
+            <form string="تنبيه تضارب مصالح محتمل">
+                <header>
+                    <button name="action_review" type="object" string="بدء المراجعة" class="btn-secondary" invisible="state != 'new'"/>
+                    <button name="action_escalate" type="object" string="تصعيد" class="btn-danger" invisible="state in ('escalated','cleared','cancelled')"/>
+                    <button name="action_accept_with_reservation" type="object" string="اعتماد مع تحفظ" class="btn-warning" invisible="state in ('accepted_with_reservation','cleared','cancelled')"/>
+                    <button name="action_clear" type="object" string="لا توجد مشكلة" class="btn-success" invisible="state == 'cleared'"/>
+                    <button name="action_open_source" type="object" string="فتح السجل المصدر" class="btn-primary" invisible="not source_model or not source_res_id"/>
+                    <field name="state" widget="statusbar" statusbar_visible="new,under_review,escalated,accepted_with_reservation,cleared"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group string="بيانات الاشتباه">
+                            <field name="risk_score"/>
+                            <field name="risk_level"/>
+                            <field name="check_type"/>
+                            <field name="committee_name"/>
+                        </group>
+                        <group string="الأطراف">
+                            <field name="supplier_id"/>
+                            <field name="supplier_name" readonly="1"/>
+                            <field name="employee_id"/>
+                            <field name="employee_name" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="السجل المصدر">
+                            <field name="source_model"/>
+                            <field name="source_res_id"/>
+                            <field name="source_display_name"/>
+                        </group>
+                        <group string="المراجعة">
+                            <field name="reviewed_by"/>
+                            <field name="reviewed_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="سبب الاشتباه"><field name="reason" nolabel="1" readonly="1"/></page>
+                        <page string="التوصية"><field name="recommendation" nolabel="1" readonly="1"/></page>
+                        <page string="ملاحظات المراجعة"><field name="review_notes" nolabel="1"/></page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    <record id="view_conflict_interest_alert_search" model="ir.ui.view">
+        <field name="name">port_said.conflict.interest.alert.search</field>
+        <field name="model">port_said.conflict.interest.alert</field>
+        <field name="arch" type="xml">
+            <search string="بحث تنبيهات تضارب المصالح">
+                <field name="name"/>
+                <field name="supplier_id"/>
+                <field name="employee_id"/>
+                <field name="committee_name"/>
+                <filter string="حرجة/مرتفعة" name="high_risk" domain="[('risk_level','in',('critical','high'))]"/>
+                <filter string="جديدة" name="new" domain="[('state','=','new')]"/>
+                <filter string="لم تتم المراجعة" name="not_cleared" domain="[('state','not in',('cleared','cancelled'))]"/>
+                <group expand="0" string="تجميع حسب">
+                    <filter string="مستوى الخطورة" name="grp_risk_level" context="{'group_by':'risk_level'}"/>
+                    <filter string="نوع الاشتباه" name="grp_check_type" context="{'group_by':'check_type'}"/>
+                    <filter string="المورد" name="grp_supplier" context="{'group_by':'supplier_id'}"/>
+                    <filter string="الحالة" name="grp_state" context="{'group_by':'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="action_conflict_interest_alerts" model="ir.actions.act_window">
+        <field name="name">تنبيهات تضارب المصالح</field>
+        <field name="res_model">port_said.conflict.interest.alert</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_conflict_interest_alert_search"/>
+        <field name="context">{'search_default_not_cleared': 1}</field>
+    </record>
+    <record id="action_conflict_interest_run_scan" model="ir.actions.server">
+        <field name="name">تشغيل فحص تضارب المصالح الآن</field>
+        <field name="model_id" ref="model_port_said_conflict_interest_engine"/>
+        <field name="state">code</field>
+        <field name="code">action = env['port_said.conflict.interest.engine'].sudo().action_run_full_scan()</field>
+    </record>
+    <menuitem id="menu_conflict_interest_root" name="وكيل الحوكمة ومكافحة تضارب المصالح" sequence="52" groups="base.group_user"/>
+    <menuitem id="menu_conflict_interest_alerts" name="تنبيهات تضارب المصالح" parent="menu_conflict_interest_root" action="action_conflict_interest_alerts" sequence="10" groups="base.group_user"/>
+    <menuitem id="menu_conflict_interest_run_scan" name="تشغيل فحص تضارب المصالح الآن" parent="menu_conflict_interest_root" action="action_conflict_interest_run_scan" sequence="20" groups="base.group_system"/>
+</odoo>

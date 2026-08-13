@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_payment_anomaly_log" model="ir.sequence">
+        <field name="name">Payment Anomaly Agent Log</field>
+        <field name="code">port_said.payment.anomaly.log</field>
+        <field name="prefix">PAN/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_adjudication_agent" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.adjudication.agent</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="وكيل تحليل العروض" string="وكيل تحليل العروض" name="adjudication_ai_agent">
+                    <block title="إعدادات وكيل تحليل العروض الفنية والمالية">
+                        <setting string="تفعيل وكيل تحليل العروض">
+                            <field name="adjudication_agent_enabled"/>
+                        </setting>
+                        <setting string="الحد الأدنى للمطابقة الفنية %">
+                            <field name="adjudication_agent_min_technical_score"/>
+                        </setting>
+                        <setting string="حد التحذير من الانخفاض عن القيمة التقديرية %">
+                            <field name="adjudication_agent_dumping_threshold"/>
+                            <div class="text-muted">القيمة الافتراضية -15 تعني تحذير إذا كان العرض أقل من القيمة التقديرية بأكثر من 15%.</div>
+                        </setting>
+                        <setting string="تحديث نتيجة الاستيفاء الفني تلقائياً إن وجد الحقل">
+                            <field name="adjudication_agent_auto_write_pass"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>

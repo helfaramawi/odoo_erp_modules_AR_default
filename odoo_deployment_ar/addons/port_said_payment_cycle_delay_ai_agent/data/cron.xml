@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_payment_cycle_delay" model="ir.sequence">
+        <field name="name">تسلسل تنبيهات تأخير دورة الصرف</field>
+        <field name="code">port_said.payment.cycle.delay</field>
+        <field name="prefix">PAYDLY/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="param_payment_cycle_scan_days" model="ir.config_parameter">
+        <field name="key">port_said_payment_cycle_delay.scan_days</field>
+        <field name="value">60</field>
+    </record>
+
+    <record id="param_payment_cycle_sla_dossier_completion" model="ir.config_parameter">
+        <field name="key">port_said_payment_cycle_delay.sla_dossier_completion</field>
+        <field name="value">5</field>
+    </record>
+
+    <record id="param_payment_cycle_sla_daftar55_approval" model="ir.config_parameter">
+        <field name="key">port_said_payment_cycle_delay.sla_daftar55_approval</field>
+        <field name="value">3</field>
+    </record>
+
+    <record id="param_payment_cycle_sla_payment_order" model="ir.config_parameter">
+        <field name="key">port_said_payment_cycle_delay.sla_payment_order</field>
+        <field name="value">3</field>
+    </record>
+
+    <record id="param_payment_cycle_sla_cheque_delivery" model="ir.config_parameter">
+        <field name="key">port_said_payment_cycle_delay.sla_cheque_delivery</field>
+        <field name="value">7</field>
+    </record>
+
+    <record id="ir_cron_daily_payment_cycle_delay_scan" model="ir.cron">
+        <field name="name">وكيل تأخيرات دورة الصرف - فحص يومي</field>
+        <field name="model_id" ref="model_port_said_payment_cycle_engine"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_daily_payment_cycle_delay_scan()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

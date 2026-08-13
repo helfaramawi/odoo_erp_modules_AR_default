@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_port_said_dossier_audit_log_tree" model="ir.ui.view">
+        <field name="name">port_said.dossier.audit.log.tree</field>
+        <field name="model">port_said.dossier.audit.log</field>
+        <field name="arch" type="xml">
+            <tree string="سجل فحص الإضبارة" decoration-danger="result in ('blocked_missing','blocked_ai')" decoration-warning="result == 'warning'" decoration-success="result == 'passed'">
+                <field name="name"/>
+                <field name="check_date"/>
+                <field name="daftar55_id"/>
+                <field name="dossier_id"/>
+                <field name="vendor_id"/>
+                <field name="amount_gross"/>
+                <field name="is_complete"/>
+                <field name="result"/>
+                <field name="ai_check_status"/>
+                <field name="user_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_port_said_dossier_audit_log_form" model="ir.ui.view">
+        <field name="name">port_said.dossier.audit.log.form</field>
+        <field name="model">port_said.dossier.audit.log</field>
+        <field name="arch" type="xml">
+            <form string="فحص الإضبارة قبل الصرف">
+                <header>
+                    <button name="action_open_daftar55" type="object" string="فتح دفتر 55" class="btn-primary" invisible="not daftar55_id"/>
+                    <button name="action_open_dossier" type="object" string="فتح الإضبارة" invisible="not dossier_id"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="check_date" readonly="1"/>
+                            <field name="user_id" readonly="1"/>
+                            <field name="company_id" readonly="1"/>
+                            <field name="result" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="daftar55_id" readonly="1"/>
+                            <field name="dossier_id" readonly="1"/>
+                            <field name="vendor_id" readonly="1"/>
+                            <field name="amount_gross" readonly="1"/>
+                            <field name="reference" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="اكتمال المستندات">
+                            <group>
+                                <field name="is_complete" readonly="1"/>
+                                <field name="missing_attachments" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="الفحص الذكي">
+                            <group>
+                                <field name="ai_check_enabled" readonly="1"/>
+                                <field name="ai_check_status" readonly="1"/>
+                                <field name="discrepancy_note" readonly="1"/>
+                                <field name="technical_details" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="المرفقات المفحوصة">
+                            <field name="attachment_ids" readonly="1">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="mimetype"/>
+                                    <field name="create_date"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_port_said_dossier_audit_log_search" model="ir.ui.view">
+        <field name="name">port_said.dossier.audit.log.search</field>
+        <field name="model">port_said.dossier.audit.log</field>
+        <field name="arch" type="xml">
+            <search string="سجل فحص الإضبارة">
+                <field name="name"/>
+                <field name="daftar55_id"/>
+                <field name="dossier_id"/>
+                <field name="vendor_id"/>
+                <filter name="blocked" string="عمليات ممنوعة" domain="[('result','in',('blocked_missing','blocked_ai'))]"/>
+                <filter name="passed" string="عمليات مسموحة" domain="[('result','=','passed')]"/>
+                <filter name="warning" string="تحذيرات" domain="[('result','=','warning')]"/>
+                <group expand="0" string="تجميع حسب">
+                    <filter name="group_result" string="نتيجة الفحص" context="{'group_by':'result'}"/>
+                    <filter name="group_dossier" string="الإضبارة" context="{'group_by':'dossier_id'}"/>
+                    <filter name="group_vendor" string="المورد / المستفيد" context="{'group_by':'vendor_id'}"/>
+                    <filter name="group_user" string="المستخدم" context="{'group_by':'user_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_port_said_dossier_audit_logs" model="ir.actions.act_window">
+        <field name="name">سجل فحص الإضبارة قبل الصرف</field>
+        <field name="res_model">port_said.dossier.audit.log</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_port_said_dossier_audit_log_search"/>
+        <field name="context">{'search_default_blocked': 1}</field>
+    </record>
+
+    <menuitem id="menu_port_said_dossier_ai_agent_root"
+              name="وكيل فحص الإضبارة"
+              sequence="85"
+              groups="base.group_user"/>
+
+    <menuitem id="menu_port_said_dossier_audit_logs"
+              name="سجل فحص الإضبارة قبل الصرف"
+              parent="menu_port_said_dossier_ai_agent_root"
+              action="action_port_said_dossier_audit_logs"
+              sequence="10"
+              groups="base.group_user"/>
+</odoo>

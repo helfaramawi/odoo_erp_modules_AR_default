@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_budget_reallocation_recommendation_tree" model="ir.ui.view">
+        <field name="name">port_said.budget.reallocation.recommendation.tree</field>
+        <field name="model">port_said.budget.reallocation.recommendation</field>
+        <field name="arch" type="xml">
+            <tree string="توصيات إعادة توزيع الاعتمادات"
+                  decoration-danger="priority in ('critical','high')"
+                  decoration-success="state == 'accepted'"
+                  decoration-muted="state in ('rejected','cancelled')">
+                <field name="name"/>
+                <field name="budget_plan_id"/>
+                <field name="from_budget_code"/>
+                <field name="to_budget_code"/>
+                <field name="surplus_amount"/>
+                <field name="deficit_amount"/>
+                <field name="recommended_amount"/>
+                <field name="confidence_score"/>
+                <field name="priority"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_budget_reallocation_recommendation_form" model="ir.ui.view">
+        <field name="name">port_said.budget.reallocation.recommendation.form</field>
+        <field name="model">port_said.budget.reallocation.recommendation</field>
+        <field name="arch" type="xml">
+            <form string="توصية إعادة توزيع اعتماد">
+                <header>
+                    <button name="action_to_review" type="object" string="إرسال للمراجعة" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_accept" type="object" string="قبول التوصية" class="btn-success" invisible="state in ('accepted','rejected','cancelled')"/>
+                    <button name="action_reject" type="object" string="رفض التوصية" class="btn-danger" invisible="state in ('accepted','rejected','cancelled')"/>
+                    <button name="action_cancel" type="object" string="إلغاء" class="btn-secondary" invisible="state == 'cancelled'"/>
+                    <button name="action_open_budget_plan" type="object" string="فتح خطة الموازنة" class="btn-secondary" invisible="not budget_plan_id"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,to_review,accepted,rejected"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+
+                    <group>
+                        <group string="مصدر التوصية">
+                            <field name="source_type"/>
+                            <field name="source_forecast_model"/>
+                            <field name="source_forecast_id"/>
+                            <field name="budget_plan_id"/>
+                            <field name="priority"/>
+                            <field name="confidence_score"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="القيم">
+                            <field name="surplus_amount"/>
+                            <field name="deficit_amount"/>
+                            <field name="transferable_amount"/>
+                            <field name="recommended_amount"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="من بند فائض">
+                            <field name="from_budget_line_id"/>
+                            <field name="from_budget_code"/>
+                            <field name="from_budget_name"/>
+                            <field name="from_budget_category"/>
+                        </group>
+                        <group string="إلى بند عجز">
+                            <field name="to_budget_line_id"/>
+                            <field name="to_budget_code"/>
+                            <field name="to_budget_name"/>
+                            <field name="to_budget_category"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="سبب التوصية">
+                            <field name="reason" nolabel="1" readonly="1"/>
+                        </page>
+                        <page string="المذكرة الرسمية">
+                            <field name="official_memo" nolabel="1" readonly="1"/>
+                        </page>
+                        <page string="ملاحظات داخلية">
+                            <field name="recommendation_notes" nolabel="1"/>
+                        </page>
+                        <page string="قرار المراجعة">
+                            <field name="review_decision_notes" nolabel="1"/>
+                            <group>
+                                <field name="reviewed_by"/>
+                                <field name="reviewed_date"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_budget_reallocation_recommendation_search" model="ir.ui.view">
+        <field name="name">port_said.budget.reallocation.recommendation.search</field>
+        <field name="model">port_said.budget.reallocation.recommendation</field>
+        <field name="arch" type="xml">
+            <search string="بحث توصيات إعادة توزيع الاعتمادات">
+                <field name="name"/>
+                <field name="budget_plan_id"/>
+                <field name="from_budget_code"/>
+                <field name="to_budget_code"/>
+                <filter string="للمراجعة" name="to_review" domain="[('state','in',('draft','to_review'))]"/>
+                <filter string="أولوية عالية" name="high_priority" domain="[('priority','in',('critical','high'))]"/>
+                <filter string="مقبولة" name="accepted" domain="[('state','=','accepted')]"/>
+                <group expand="0" string="تجميع حسب">
+                    <filter string="خطة الموازنة" name="grp_plan" context="{'group_by':'budget_plan_id'}"/>
+                    <filter string="الأولوية" name="grp_priority" context="{'group_by':'priority'}"/>
+                    <filter string="الحالة" name="grp_state" context="{'group_by':'state'}"/>
+                    <filter string="مصدر التوصية" name="grp_source" context="{'group_by':'source_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_budget_reallocation_recommendations" model="ir.actions.act_window">
+        <field name="name">توصيات إعادة توزيع الاعتمادات</field>
+        <field name="res_model">port_said.budget.reallocation.recommendation</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_budget_reallocation_recommendation_search"/>
+        <field name="context">{'search_default_to_review': 1}</field>
+    </record>
+
+    <record id="action_budget_reallocation_run_now" model="ir.actions.server">
+        <field name="name">تشغيل توصية إعادة توزيع الاعتمادات الآن</field>
+        <field name="model_id" ref="model_port_said_budget_reallocation_engine"/>
+        <field name="state">code</field>
+        <field name="code">action = env['port_said.budget.reallocation.engine'].sudo().action_run_recommendation_now()</field>
+    </record>
+
+    <menuitem id="menu_budget_reallocation_root" name="وكيل توصية إعادة توزيع الاعتمادات" sequence="60" groups="base.group_user"/>
+    <menuitem id="menu_budget_reallocation_recommendations" name="توصيات إعادة توزيع الاعتمادات" parent="menu_budget_reallocation_root" action="action_budget_reallocation_recommendations" sequence="10" groups="base.group_user"/>
+    <menuitem id="menu_budget_reallocation_run_now" name="تشغيل توصية إعادة توزيع الاعتمادات الآن" parent="menu_budget_reallocation_root" action="action_budget_reallocation_run_now" sequence="20" groups="base.group_system"/>
+</odoo>

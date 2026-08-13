@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_port_said_ai_assistant_log_tree" model="ir.ui.view">
+        <field name="name">port_said.ai.assistant.log.tree</field>
+        <field name="model">port_said.ai.assistant.log</field>
+        <field name="arch" type="xml">
+            <tree string="سجل أسئلة المساعد العربي" decoration-danger="success == False" decoration-success="success == True">
+                <field name="create_date"/>
+                <field name="user_id"/>
+                <field name="question"/>
+                <field name="model_description"/>
+                <field name="query_type"/>
+                <field name="result_count"/>
+                <field name="confidence"/>
+                <field name="used_ollama"/>
+                <field name="success"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_port_said_ai_assistant_log_form" model="ir.ui.view">
+        <field name="name">port_said.ai.assistant.log.form</field>
+        <field name="model">port_said.ai.assistant.log</field>
+        <field name="arch" type="xml">
+            <form string="سجل سؤال المساعد العربي">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="user_id" readonly="1"/>
+                            <field name="company_id" readonly="1"/>
+                            <field name="model_name" readonly="1"/>
+                            <field name="model_description" readonly="1"/>
+                            <field name="query_type" readonly="1"/>
+                            <field name="result_count" readonly="1"/>
+                            <field name="confidence" readonly="1"/>
+                            <field name="used_ollama" readonly="1"/>
+                            <field name="success" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="question" readonly="1"/>
+                            <field name="normalized_question" readonly="1"/>
+                            <field name="answer_summary" readonly="1"/>
+                            <field name="error_message" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Domain"><field name="domain_text" readonly="1" nolabel="1"/></page>
+                        <page string="Fields"><field name="fields_text" readonly="1" nolabel="1"/></page>
+                        <page string="Ollama"><field name="ollama_raw" readonly="1" nolabel="1"/></page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_port_said_ai_assistant_log_search" model="ir.ui.view">
+        <field name="name">port_said.ai.assistant.log.search</field>
+        <field name="model">port_said.ai.assistant.log</field>
+        <field name="arch" type="xml">
+            <search string="بحث سجل المساعد">
+                <field name="question"/>
+                <field name="model_name"/>
+                <field name="user_id"/>
+                <filter string="استخدم Ollama" name="used_ollama" domain="[('used_ollama','=',True)]"/>
+                <filter string="ناجحة" name="success" domain="[('success','=',True)]"/>
+                <filter string="فاشلة" name="failed" domain="[('success','=',False)]"/>
+                <group expand="0" string="تجميع">
+                    <filter string="المستخدم" name="group_user" context="{'group_by':'user_id'}"/>
+                    <filter string="الموديل" name="group_model" context="{'group_by':'model_name'}"/>
+                    <filter string="نوع الاستعلام" name="group_query" context="{'group_by':'query_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_port_said_ai_assistant_log" model="ir.actions.act_window">
+        <field name="name">سجل أسئلة المساعد العربي</field>
+        <field name="res_model">port_said.ai.assistant.log</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_port_said_ai_assistant_log_search"/>
+    </record>
+</odoo>

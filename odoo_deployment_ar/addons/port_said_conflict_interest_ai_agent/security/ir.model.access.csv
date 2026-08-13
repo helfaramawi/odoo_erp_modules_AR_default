@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_conflict_interest_alert_user,access.conflict.interest.alert.user,model_port_said_conflict_interest_alert,base.group_user,1,0,0,0
+access_conflict_interest_alert_manager,access.conflict.interest.alert.manager,model_port_said_conflict_interest_alert,base.group_system,1,1,1,0
+access_conflict_interest_engine_manager,access.conflict.interest.engine.manager,model_port_said_conflict_interest_engine,base.group_system,1,1,1,0

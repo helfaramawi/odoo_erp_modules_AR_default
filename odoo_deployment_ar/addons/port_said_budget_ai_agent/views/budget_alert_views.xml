@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_port_said_budget_alert_tree" model="ir.ui.view">
+        <field name="name">port_said.budget.alert.tree</field>
+        <field name="model">port_said.budget.alert</field>
+        <field name="arch" type="xml">
+            <tree string="تنبيهات الموازنة" decoration-danger="risk_level == 'critical'" decoration-warning="risk_level == 'high'" decoration-muted="state == 'closed'">
+                <field name="name"/>
+                <field name="alert_date"/>
+                <field name="fiscal_year"/>
+                <field name="plan_id"/>
+                <field name="line_id"/>
+                <field name="risk_level"/>
+                <field name="amount_available"/>
+                <field name="actual_execution_rate"/>
+                <field name="exposure_rate"/>
+                <field name="days_to_exhaust"/>
+                <field name="expected_exhaustion_date"/>
+                <field name="responsible_id"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_port_said_budget_alert_form" model="ir.ui.view">
+        <field name="name">port_said.budget.alert.form</field>
+        <field name="model">port_said.budget.alert</field>
+        <field name="arch" type="xml">
+            <form string="تنبيه موازنة">
+                <header>
+                    <button name="action_send_notification" type="object" string="إرسال الإشعار" class="btn-primary" invisible="state == 'closed'"/>
+                    <button name="action_mark_reviewed" type="object" string="تعليم كمراجع" invisible="state not in ('draft','sent')"/>
+                    <button name="action_close" type="object" string="إغلاق" invisible="state == 'closed'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,sent,reviewed,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="alert_date" readonly="1"/>
+                            <field name="fiscal_year" readonly="1"/>
+                            <field name="plan_id" readonly="1"/>
+                            <field name="line_id" readonly="1"/>
+                            <field name="responsible_id"/>
+                        </group>
+                        <group>
+                            <field name="risk_level" readonly="1"/>
+                            <field name="expected_exhaustion_date" readonly="1"/>
+                            <field name="days_to_exhaust" readonly="1"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="المؤشرات المالية">
+                            <group>
+                                <group>
+                                    <field name="amount_approved" readonly="1"/>
+                                    <field name="amount_actual" readonly="1"/>
+                                    <field name="amount_committed" readonly="1"/>
+                                    <field name="amount_available" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="actual_execution_rate" readonly="1"/>
+                                    <field name="commitment_rate" readonly="1"/>
+                                    <field name="exposure_rate" readonly="1"/>
+                                    <field name="daily_burn_rate" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="التوصية">
+                            <field name="recommendation" readonly="1"/>
+                        </page>
+                        <page string="نص الإشعار">
+                            <field name="body_html" widget="html" readonly="1"/>
+                        </page>
+                        <page string="بنود منخفضة الصرف للمراجعة">
+                            <field name="surplus_line_ids" readonly="1">
+                                <tree>
+                                    <field name="full_code"/>
+                                    <field name="description"/>
+                                    <field name="amount_approved"/>
+                                    <field name="amount_actual"/>
+                                    <field name="amount_available"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_port_said_budget_alert_search" model="ir.ui.view">
+        <field name="name">port_said.budget.alert.search</field>
+        <field name="model">port_said.budget.alert</field>
+        <field name="arch" type="xml">
+            <search string="تنبيهات الموازنة">
+                <field name="name"/>
+                <field name="plan_id"/>
+                <field name="line_id"/>
+                <field name="responsible_id"/>
+                <filter name="critical" string="حرج" domain="[('risk_level','=','critical')]"/>
+                <filter name="high" string="مرتفع" domain="[('risk_level','=','high')]"/>
+                <filter name="open" string="مفتوح" domain="[('state','in',('draft','sent','reviewed'))]"/>
+                <filter name="closed" string="مغلق" domain="[('state','=','closed')]"/>
+                <group expand="0" string="تجميع حسب">
+                    <filter name="group_risk" string="مستوى الخطورة" context="{'group_by':'risk_level'}"/>
+                    <filter name="group_plan" string="خطة الموازنة" context="{'group_by':'plan_id'}"/>
+                    <filter name="group_responsible" string="المسؤول" context="{'group_by':'responsible_id'}"/>
+                    <filter name="group_state" string="الحالة" context="{'group_by':'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_port_said_budget_alerts" model="ir.actions.act_window">
+        <field name="name">تنبيهات مراقبة الموازنة</field>
+        <field name="res_model">port_said.budget.alert</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_port_said_budget_alert_search"/>
+        <field name="context">{'search_default_open': 1}</field>
+    </record>
+
+    <!-- This menu assumes a parent menu exists in port_said_budget_planning. If installation fails because of the parent ID, replace parent with your actual budget menu XML ID. -->
+
+    <record id="action_run_budget_monitor_now_server" model="ir.actions.server">
+        <field name="name">تشغيل فحص الموازنة الآن</field>
+        <field name="model_id" ref="port_said_budget_planning.model_port_said_budget_plan"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_run_budget_monitor_now()</field>
+    </record>
+
+    <record id="action_open_budget_alerts_server" model="ir.actions.server">
+        <field name="name">فتح تنبيهات الموازنة</field>
+        <field name="model_id" ref="port_said_budget_planning.model_port_said_budget_plan"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_open_budget_alerts()</field>
+    </record>
+
+    <menuitem id="menu_port_said_budget_ai_agent_root"
+              name="وكيل مراقبة الموازنة"
+              sequence="80"
+              groups="base.group_user"/>
+
+
+    <menuitem id="menu_port_said_budget_monitor_run_now"
+              name="تشغيل فحص الموازنة الآن"
+              parent="menu_port_said_budget_ai_agent_root"
+              action="action_run_budget_monitor_now_server"
+              sequence="5"
+              groups="base.group_user"/>
+
+    <menuitem id="menu_port_said_budget_monitor_open_alerts"
+              name="فتح تنبيهات الموازنة"
+              parent="menu_port_said_budget_ai_agent_root"
+              action="action_open_budget_alerts_server"
+              sequence="6"
+              groups="base.group_user"/>
+
+    <menuitem id="menu_port_said_budget_alerts"
+              name="تنبيهات الموازنة"
+              parent="menu_port_said_budget_ai_agent_root"
+              action="action_port_said_budget_alerts"
+              sequence="10"
+              groups="base.group_user"/>
+</odoo>

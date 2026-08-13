@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ai_agents_menu_manager,access.ai.agents.menu.manager,model_port_said_ai_agents_menu_manager,base.group_system,1,1,1,0

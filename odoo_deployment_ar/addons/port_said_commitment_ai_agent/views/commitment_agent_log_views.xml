@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_port_said_commitment_agent_log_tree" model="ir.ui.view">
+        <field name="name">port_said.commitment.agent.log.tree</field>
+        <field name="model">port_said.commitment.agent.log</field>
+        <field name="arch" type="xml">
+            <tree string="سجل قرارات أتمتة الارتباطات" decoration-success="decision == 'auto_reserved'" decoration-warning="decision == 'manual_review'" decoration-danger="decision == 'failed'">
+                <field name="name"/>
+                <field name="decision_date"/>
+                <field name="requisition_id"/>
+                <field name="commitment_id"/>
+                <field name="vendor_id"/>
+                <field name="total_amount"/>
+                <field name="available_balance"/>
+                <field name="risk_level"/>
+                <field name="risk_score"/>
+                <field name="vendor_has_penalties"/>
+                <field name="decision"/>
+                <field name="user_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_port_said_commitment_agent_log_form" model="ir.ui.view">
+        <field name="name">port_said.commitment.agent.log.form</field>
+        <field name="model">port_said.commitment.agent.log</field>
+        <field name="arch" type="xml">
+            <form string="قرار وكيل أتمتة الارتباطات">
+                <header>
+                    <button name="action_open_requisition" type="object" string="فتح الطلب" class="btn-primary" invisible="not requisition_id"/>
+                    <button name="action_open_commitment" type="object" string="فتح الارتباط" invisible="not commitment_id"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="decision_date" readonly="1"/>
+                            <field name="user_id" readonly="1"/>
+                            <field name="company_id" readonly="1"/>
+                            <field name="decision" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="requisition_id" readonly="1"/>
+                            <field name="commitment_id" readonly="1"/>
+                            <field name="vendor_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="بيانات القرار">
+                            <group>
+                                <group>
+                                    <field name="total_amount" readonly="1"/>
+                                    <field name="available_balance" readonly="1"/>
+                                    <field name="auto_commit_limit" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="risk_level" readonly="1"/>
+                                    <field name="risk_score" readonly="1"/>
+                                    <field name="vendor_has_penalties" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="سبب القرار">
+                            <field name="decision_reason" readonly="1"/>
+                        </page>
+                        <page string="جزاءات المورد">
+                            <field name="penalty_summary" readonly="1"/>
+                        </page>
+                        <page string="تفاصيل تقنية">
+                            <field name="technical_details" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_port_said_commitment_agent_log_search" model="ir.ui.view">
+        <field name="name">port_said.commitment.agent.log.search</field>
+        <field name="model">port_said.commitment.agent.log</field>
+        <field name="arch" type="xml">
+            <search string="سجل قرارات أتمتة الارتباطات">
+                <field name="name"/>
+                <field name="requisition_id"/>
+                <field name="commitment_id"/>
+                <field name="vendor_id"/>
+                <filter name="auto_reserved" string="تم التجنيب تلقائياً" domain="[('decision','=','auto_reserved')]"/>
+                <filter name="manual_review" string="مراجعة بشرية" domain="[('decision','=','manual_review')]"/>
+                <filter name="failed" string="فشل التنفيذ" domain="[('decision','=','failed')]"/>
+                <filter name="vendor_penalties" string="يوجد جزاءات مورد" domain="[('vendor_has_penalties','=',True)]"/>
+                <group expand="0" string="تجميع حسب">
+                    <filter name="group_decision" string="القرار" context="{'group_by':'decision'}"/>
+                    <filter name="group_risk" string="مستوى المخاطر" context="{'group_by':'risk_level'}"/>
+                    <filter name="group_vendor" string="المورد" context="{'group_by':'vendor_id'}"/>
+                    <filter name="group_user" string="المستخدم" context="{'group_by':'user_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_port_said_commitment_agent_logs" model="ir.actions.act_window">
+        <field name="name">سجل قرارات أتمتة الارتباطات</field>
+        <field name="res_model">port_said.commitment.agent.log</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_port_said_commitment_agent_log_search"/>
+    </record>
+
+    <menuitem id="menu_port_said_commitment_ai_agent_root"
+              name="وكيل أتمتة الارتباطات"
+              sequence="90"
+              groups="base.group_user"/>
+
+    <menuitem id="menu_port_said_commitment_agent_logs"
+              name="سجل قرارات أتمتة الارتباطات"
+              parent="menu_port_said_commitment_ai_agent_root"
+              action="action_port_said_commitment_agent_logs"
+              sequence="10"
+              groups="base.group_user"/>
+</odoo>

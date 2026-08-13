@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_executive_briefing_user,access.executive.briefing.user,model_port_said_executive_briefing,base.group_user,1,0,0,0
+access_executive_briefing_manager,access.executive.briefing.manager,model_port_said_executive_briefing,base.group_system,1,1,1,0
+access_executive_briefing_line_user,access.executive.briefing.line.user,model_port_said_executive_briefing_line,base.group_user,1,0,0,0
+access_executive_briefing_line_manager,access.executive.briefing.line.manager,model_port_said_executive_briefing_line,base.group_system,1,1,1,0
+access_executive_briefing_engine_manager,access.executive.briefing.engine.manager,model_port_said_executive_briefing_engine,base.group_system,1,1,1,0

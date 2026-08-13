@@ -1,0 +1,10 @@
+[33mf1f3480[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mclaude/trusting-bohr-5glxo0[m[33m, [m[1;31morigin/claude/trusting-bohr-5glxo0[m[33m)[m fix(uat-demo): issued_by_id must be res.users not hr.employee
+[33mf5dfa77[m fix(uat-demo): add dept_manager_id/issued_by_id for custody, investigation_reference for penalties
+[33ma8e2e10[m fix(uat-demo): fix 3 more required fields in generators
+[33m91b480f[m fix(uat-demo): fix required fields and savepoint isolation in 6 generators
+[33m47aaa84[m fix(custody): add onchange to auto-fill from_employee_id when custody selected
+[33m23e5d14[m fix(uat-demo): correct field names in custody, cheques, penalties generators
+[33mf34a3e1[m feat(uat-demo): add generators for custody, auctions, cheques, penalties, stocktaking, fixed assets
+[33mfb9611f[m fix(l10n_eg_auction): move auction menu under المشتريات within الديوان العام
+[33m56fded3[m fix(l10n_eg_auction): move auction menu under الديوان العام instead of purchase
+[33mc46b1a6[m fix(l10n_eg_auction): move auction menu under purchase root

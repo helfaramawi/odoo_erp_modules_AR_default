@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_duplicate_claim_alert_user,access.duplicate.claim.alert.user,model_port_said_duplicate_claim_alert,base.group_user,1,0,0,0
+access_duplicate_claim_alert_manager,access.duplicate.claim.alert.manager,model_port_said_duplicate_claim_alert,base.group_system,1,1,1,0
+access_duplicate_claim_engine_manager,access.duplicate.claim.engine.manager,model_port_said_duplicate_claim_engine,base.group_system,1,1,1,0

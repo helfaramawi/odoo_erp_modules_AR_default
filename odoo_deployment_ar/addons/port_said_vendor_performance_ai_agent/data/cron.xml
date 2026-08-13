@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="param_vendor_performance_min_warning_score" model="ir.config_parameter">
+        <field name="key">port_said_vendor_performance.min_warning_score</field>
+        <field name="value">60</field>
+    </record>
+
+    <record id="param_vendor_performance_max_volume_reference" model="ir.config_parameter">
+        <field name="key">port_said_vendor_performance.max_volume_reference</field>
+        <field name="value">500000</field>
+    </record>
+
+    <record id="ir_cron_monthly_vendor_performance_scan" model="ir.cron">
+        <field name="name">وكيل تقييم الموردين - فحص شهري</field>
+        <field name="model_id" ref="model_port_said_vendor_performance_engine"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_monthly_vendor_performance_scan()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">months</field>
+        <field name="numbercall">-1</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

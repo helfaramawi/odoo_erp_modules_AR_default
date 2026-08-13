@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_budget_reallocation_recommendation_user,access.budget.reallocation.recommendation.user,model_port_said_budget_reallocation_recommendation,base.group_user,1,0,0,0
+access_budget_reallocation_recommendation_manager,access.budget.reallocation.recommendation.manager,model_port_said_budget_reallocation_recommendation,base.group_system,1,1,1,0
+access_budget_reallocation_engine_manager,access.budget.reallocation.engine.manager,model_port_said_budget_reallocation_engine,base.group_system,1,1,1,0

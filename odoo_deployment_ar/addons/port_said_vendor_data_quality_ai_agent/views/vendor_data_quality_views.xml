@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_vendor_data_quality_tree" model="ir.ui.view">
+        <field name="name">port_said.vendor.data.quality.tree</field>
+        <field name="model">port_said.vendor.data.quality</field>
+        <field name="arch" type="xml">
+            <tree string="جودة بيانات الموردين"
+                  decoration-danger="status == 'blocked'"
+                  decoration-warning="status == 'needs_completion'"
+                  decoration-success="status == 'valid'">
+                <field name="partner_id"/>
+                <field name="score"/>
+                <field name="status"/>
+                <field name="issue_count"/>
+                <field name="missing_vat"/>
+                <field name="missing_bank"/>
+                <field name="duplicate_vat"/>
+                <field name="open_penalties"/>
+                <field name="eta_not_ready"/>
+                <field name="last_check_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_vendor_data_quality_form" model="ir.ui.view">
+        <field name="name">port_said.vendor.data.quality.form</field>
+        <field name="model">port_said.vendor.data.quality</field>
+        <field name="arch" type="xml">
+            <form string="جودة بيانات المورد">
+                <header>
+                    <button name="action_recheck" type="object" string="إعادة فحص" class="btn-primary"/>
+                    <button name="action_open_vendor" type="object" string="فتح المورد" class="btn-secondary"/>
+                    <field name="status" widget="statusbar" statusbar_visible="valid,needs_completion,blocked"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+
+                    <group>
+                        <group string="المورد">
+                            <field name="partner_id"/>
+                            <field name="score"/>
+                            <field name="issue_count"/>
+                        </group>
+                        <group string="آخر فحص">
+                            <field name="last_check_date"/>
+                            <field name="checked_by"/>
+                        </group>
+                    </group>
+
+                    <group string="قواعد الفحص">
+                        <field name="missing_vat"/>
+                        <field name="invalid_vat"/>
+                        <field name="missing_bank"/>
+                        <field name="missing_address"/>
+                        <field name="missing_contact"/>
+                        <field name="duplicate_vat"/>
+                        <field name="open_penalties"/>
+                        <field name="eta_not_ready"/>
+                        <field name="open_penalty_count"/>
+                    </group>
+
+                    <notebook>
+                        <page string="النواقص">
+                            <field name="issue_summary" nolabel="1" readonly="1"/>
+                        </page>
+                        <page string="التوصية">
+                            <field name="recommendation" nolabel="1" readonly="1"/>
+                        </page>
+                        <page string="موردون بنفس الرقم الضريبي">
+                            <field name="duplicate_partner_ids" readonly="1">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="vat"/>
+                                    <field name="phone"/>
+                                    <field name="email"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_vendor_data_quality_search" model="ir.ui.view">
+        <field name="name">port_said.vendor.data.quality.search</field>
+        <field name="model">port_said.vendor.data.quality</field>
+        <field name="arch" type="xml">
+            <search string="بحث جودة بيانات الموردين">
+                <field name="partner_id"/>
+                <filter string="موقوف رقابيًا" name="blocked" domain="[('status','=','blocked')]"/>
+                <filter string="يحتاج استكمال" name="needs_completion" domain="[('status','=','needs_completion')]"/>
+                <filter string="صالح للتعامل" name="valid" domain="[('status','=','valid')]"/>
+                <filter string="رقم ضريبي مفقود/غير صحيح" name="vat_issue" domain="['|',('missing_vat','=',True),('invalid_vat','=',True)]"/>
+                <filter string="حساب بنكي مفقود" name="missing_bank" domain="[('missing_bank','=',True)]"/>
+                <filter string="رقم ضريبي مكرر" name="duplicate_vat" domain="[('duplicate_vat','=',True)]"/>
+                <group expand="0" string="تجميع حسب">
+                    <filter string="الحالة" name="grp_status" context="{'group_by':'status'}"/>
+                    <filter string="رقم ضريبي مكرر" name="grp_duplicate" context="{'group_by':'duplicate_vat'}"/>
+                    <filter string="جزاءات مفتوحة" name="grp_penalty" context="{'group_by':'open_penalties'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_vendor_data_quality" model="ir.actions.act_window">
+        <field name="name">جودة بيانات الموردين</field>
+        <field name="res_model">port_said.vendor.data.quality</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_vendor_data_quality_search"/>
+        <field name="context">{'search_default_blocked': 1}</field>
+    </record>
+
+    <record id="action_vendor_data_quality_run_scan" model="ir.actions.server">
+        <field name="name">تشغيل فحص جودة الموردين الآن</field>
+        <field name="model_id" ref="model_port_said_vendor_data_quality_engine"/>
+        <field name="state">code</field>
+        <field name="code">action = env['port_said.vendor.data.quality.engine'].sudo().action_run_full_scan()</field>
+    </record>
+
+    <record id="view_partner_form_vendor_quality_inherit" model="ir.ui.view">
+        <field name="name">res.partner.form.vendor.quality.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/notebook" position="before">
+                <field name="supplier_rank" invisible="1"/>
+            </xpath>
+
+            <xpath expr="//sheet/notebook" position="inside">
+                <page string="جودة بيانات المورد" invisible="supplier_rank == 0">
+                    <group>
+                        <field name="vendor_quality_score"/>
+                        <field name="vendor_quality_status"/>
+                        <field name="vendor_quality_issue_count"/>
+                    </group>
+                    <button name="action_recalculate_vendor_quality" type="object" string="إعادة فحص جودة البيانات" class="btn-primary"/>
+                    <field name="vendor_quality_id" readonly="1">
+                        <tree>
+                            <field name="score"/>
+                            <field name="status"/>
+                            <field name="issue_count"/>
+                            <field name="last_check_date"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <menuitem id="menu_vendor_quality_root"
+              name="وكيل جودة بيانات الموردين"
+              sequence="54"
+              groups="base.group_user"/>
+
+    <menuitem id="menu_vendor_quality_records"
+              name="جودة بيانات الموردين"
+              parent="menu_vendor_quality_root"
+              action="action_vendor_data_quality"
+              sequence="10"
+              groups="base.group_user"/>
+
+    <menuitem id="menu_vendor_quality_run_scan"
+              name="تشغيل فحص جودة الموردين الآن"
+              parent="menu_vendor_quality_root"
+              action="action_vendor_data_quality_run_scan"
+              sequence="20"
+              groups="base.group_system"/>
+</odoo>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_budget_forecast" model="ir.actions.report">
+        <field name="name">تقرير توقع انحرافات الموازنة</field>
+        <field name="model">port_said.budget.forecast</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">port_said_budget_forecast_ai_agent.report_budget_forecast_document</field>
+        <field name="report_file">port_said_budget_forecast_ai_agent.report_budget_forecast_document</field>
+        <field name="print_report_name">'Budget Forecast - %s' % (object.name)</field>
+    </record>
+
+    <template id="report_budget_forecast_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page" dir="rtl" style="font-family: Tahoma, Arial;">
+                        <h2 style="text-align:center;">تقرير توقع انحرافات الموازنة السنوية</h2>
+                        <p><strong>رقم التقرير:</strong> <span t-field="o.name"/></p>
+                        <p><strong>الموازنة:</strong> <span t-field="o.plan_id"/></p>
+                        <p><strong>السنة المالية:</strong> <span t-field="o.fiscal_year"/></p>
+                        <p><strong>تاريخ التقرير:</strong> <span t-field="o.forecast_date"/></p>
+
+                        <h3>الملخص التنفيذي</h3>
+                        <table class="table table-sm table-bordered">
+                            <tr>
+                                <td>إجمالي الاعتماد</td>
+                                <td><span t-field="o.total_approved"/></td>
+                                <td>إجمالي الفعلي حتى تاريخه</td>
+                                <td><span t-field="o.total_actual_to_date"/></td>
+                            </tr>
+                            <tr>
+                                <td>المتوقع لنهاية السنة</td>
+                                <td><span t-field="o.total_forecast_annual"/></td>
+                                <td>الانحراف المتوقع</td>
+                                <td><span t-field="o.total_expected_variance"/></td>
+                            </tr>
+                            <tr>
+                                <td>بنود حرجة</td>
+                                <td><span t-field="o.critical_count"/></td>
+                                <td>بنود تحتاج متابعة</td>
+                                <td><span t-field="o.warning_count"/></td>
+                            </tr>
+                        </table>
+
+                        <h3>التقرير العربي الرسمي</h3>
+                        <div t-field="o.report_text"/>
+
+                        <h3>تفصيل البنود</h3>
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>الكود</th>
+                                    <th>الوصف</th>
+                                    <th>الاعتماد</th>
+                                    <th>فعلي الشهر</th>
+                                    <th>انحراف الشهر %</th>
+                                    <th>المتوقع السنوي</th>
+                                    <th>الانحراف المتوقع</th>
+                                    <th>التصنيف</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.line_ids" t-as="l">
+                                    <td><span t-field="l.budget_code"/></td>
+                                    <td><span t-field="l.description"/></td>
+                                    <td><span t-field="l.amount_approved"/></td>
+                                    <td><span t-field="l.actual_month"/></td>
+                                    <td><span t-field="l.monthly_deviation_pct"/></td>
+                                    <td><span t-field="l.forecast_annual"/></td>
+                                    <td><span t-field="l.expected_variance"/></td>
+                                    <td><span t-field="l.risk_label"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <br/>
+                        <table style="width:100%; margin-top:30px;">
+                            <tr>
+                                <td style="text-align:center;">إعداد</td>
+                                <td style="text-align:center;">مراجعة</td>
+                                <td style="text-align:center;">اعتماد</td>
+                            </tr>
+                            <tr>
+                                <td style="height:60px;"></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
