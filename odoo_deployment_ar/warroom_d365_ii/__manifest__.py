@@ -4,6 +4,7 @@
     'summary': 'Generated from War Room reverse engineering output (wr-1a78086bbe).',
     'description': 'Auto-generated Odoo module from validated D365 F&O to Odoo War Room artifacts.',
     'author': 'TODO: Set implementation partner',
+    'license': 'LGPL-3',
     'depends': ['account', 'base', 'hr', 'mail', 'purchase', 'stock'],
     'data': [
         'security/security.xml',
