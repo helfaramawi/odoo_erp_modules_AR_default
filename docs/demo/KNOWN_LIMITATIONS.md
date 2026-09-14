@@ -537,6 +537,50 @@ value (not just change it), removing the `<field>` line from the XML
 is not enough — it must be replaced with an explicit empty/`False`
 value, or the stale value survives every future upgrade.
 
+### Update: `category_id` was never the cause — the real culprit was implying `account.group_account_user` directly
+
+Re-tested live a third time: the explicit `category_id` clear (above)
+still produced zero rows for all six modules. The category-exclusivity
+diagnosis was wrong from the start — a coincidental correlation, not a
+causal one. Went back to a structural, field-by-field diff between the
+one module that has always worked (`demo_gov_penalties`) and the six
+that never have, now that `category_id` was ruled out on both sides.
+One difference remained: every broken module's `_user` group directly
+implies `account.group_account_user`, while `demo_gov_penalties`'s
+`_user` group implies plain `base.group_user`. (Both sides' `_manager`
+group implies `account.group_account_manager` — that part was never
+the differentiator, which is also why the category theory produced no
+visible change: it was never involved.) `account`'s own module
+apparently normalizes/strips a custom group that reaches
+`account.group_account_user` by a second, redundant path (once
+directly through the custom `_user` group, once again through
+`account.group_account_manager`'s own implied chain via the
+`_manager` group) — consistent with every one of the six being wiped
+regardless of the (by-then-irrelevant) category settings, and with
+`demo_gov_penalties` surviving because its `_user` tier never touches
+the `account.group_account_*` hierarchy at all.
+
+**Fixed**: changed all five affected modules' `_user` group (`demo_gov_subsidiary_books`,
+`demo_gov_cash_books`, `demo_gov_cash_transfers`, `demo_gov_revenue_books`,
+`demo_gov_insurance_subsidiary` — `demo_gov_cheques` implies
+`demo_gov_cash_books`'s groups rather than `account.*` directly, so it
+inherits the fix) to imply `base.group_user` instead of
+`account.group_account_user`, matching `demo_gov_penalties`'s
+structure exactly. The `_manager` tier keeps implying
+`account.group_account_manager` (unchanged, and never the problem).
+This costs nothing functionally for the demo Administrator, who
+already holds `account.group_account_manager` independently from the
+base Accounting app install — the direct-to-`account.group_account_user`
+implication was pure redundancy that happened to trigger the
+strip. **Trade-off worth flagging**: a *non-admin* demo persona granted
+one of these six `_manager` groups (none currently are) would need
+`account.group_account_manager`'s own cascade to reach
+`account.group_account_user`-gated models like `account.account` —
+true either way since `_manager` still implies it, but a persona
+granted only the `_user` tier would no longer get baseline accounting
+read access bundled in; would need `account.group_account_user`
+granted separately if that scenario ever arises.
+
 ## `demo_gov_menu` is an incomplete module — confirmed pre-existing in production too
 
 **Problem**: `demo_gov_menu/__manifest__.py` (and the original
