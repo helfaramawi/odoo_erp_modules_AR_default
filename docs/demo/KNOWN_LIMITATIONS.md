@@ -82,6 +82,30 @@ input, not something to fabricate from the anonymized code alone).
 **Recommendation**: `docs/demo/DEPLOYMENT.md` and `demo_edition/README.md`'s
 install commands should drop `demo_gov_menu` until this is fixed.
 
+**Update — this went further than a missing-dependency problem.** Once
+installed live, 13 modules across the repository (`demo_gov_fixed_assets`,
+`demo_gov_form69`, `demo_gov_form75`, `demo_gov_reports`,
+`demo_gov_scm_requisition`, `demo_gov_scm_warehouse`,
+`demo_gov_special_funds`, `demo_gov_subsidiary_books` (two files),
+`l10n_eg_custody`, `procurement_adjudication`, `stock_addition_permit`,
+`stock_stocktaking_eg`) each define one top-level `<menuitem>` with
+`parent="demo_gov_menu.menu_ps_XX_yyy"` — an XML ID that, per the finding
+above, is never defined anywhere. None of these modules formally declare
+`demo_gov_menu` as an Odoo dependency either, so Odoo's own dependency
+graph gave no warning; the breakage only surfaces at literal install
+time, one module at a time, in whatever order Odoo's topological sort
+happens to process them (not the order given on the command line — this
+is why the first attempts appeared to get further before failing each
+time: modules with shallower dependency chains load earlier and hit
+their own copy of this bug sooner). **Fixed**: removed the `parent=`
+attribute from all 13 menuitems, verified each file still parses.
+Each of those 13 menu entries is now a standalone top-level menu instead
+of a child of the (nonexistent) unified structure — this is a strict
+improvement for the Demo Edition specifically, since every feature stays
+reachable from the UI once `demo_gov_menu` is dropped from the install
+list, rather than being silently unreachable. Confirmed zero remaining
+`demo_gov_menu.` references anywhere in `demo_edition/addons/`.
+
 ## Circular module dependency through `general_ledger_ar`
 
 **Problem**: `general_ledger_ar -> demo_gov_subsidiary_books ->

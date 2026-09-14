@@ -70,7 +70,6 @@
 
   <menuitem id="menu_ps_warehouse"
             name="المستودعات والمخازن"
-            parent="demo_gov_menu.menu_ps_40_inventory"
             action="demo_gov_scm_warehouse.action_inspection"
             sequence="41"/>
 

@@ -1323,7 +1323,6 @@
 
   <menuitem id="menu_ps_adjudication"
             name="البت الفني والمالي"
-            parent="demo_gov_menu.menu_ps_30_purchase"
             action="procurement_adjudication.action_adjudication"
             sequence="32"/>
 </odoo>

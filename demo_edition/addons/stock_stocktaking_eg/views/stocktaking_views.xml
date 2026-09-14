@@ -297,7 +297,6 @@
 
   <menuitem id="menu_ps_stocktaking"
             name="الجرد الحكومي"
-            parent="demo_gov_menu.menu_ps_40_inventory"
             action="stock_stocktaking_eg.action_stocktaking_session"
             sequence="43"/>
 </odoo>

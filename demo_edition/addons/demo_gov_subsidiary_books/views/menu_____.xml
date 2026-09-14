@@ -4,7 +4,6 @@
   <!-- Try to use the existing demo_gov_menu root if available -->
   <menuitem id="menu_subsidiary_root"
             name="الدفاتر المساعدة"
-            parent="demo_gov_menu.menu_demo_gov_accounting"
             sequence="55"/>
 
   <menuitem id="menu_folio"

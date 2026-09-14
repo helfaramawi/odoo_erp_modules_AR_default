@@ -64,7 +64,6 @@
   <!-- ══ Menu ════════════════════════════════════════════════════════════ -->
   <menuitem id="menu_ps_reports_gov"
             name="📋 التقارير الحكومية"
-            parent="demo_gov_menu.menu_ps_50_reports"
             action="action_demo_gov_report_wizard"
             sequence="5"/>
 

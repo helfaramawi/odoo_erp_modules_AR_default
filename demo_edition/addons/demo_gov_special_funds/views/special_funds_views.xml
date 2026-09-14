@@ -42,7 +42,6 @@
 
   <menuitem id="menu_ps_special_funds"
             name="الصناديق والحسابات الخاصة"
-            parent="demo_gov_menu.menu_ps_20_accts"
             action="demo_gov_special_funds.action_special_funds"
             sequence="22"/>
 </odoo>
