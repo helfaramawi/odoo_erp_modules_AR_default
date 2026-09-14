@@ -511,6 +511,32 @@ give it a category unique to that module — never share
 category) with another module's independent group hierarchy, or the
 same silent-strip will recur.
 
+### Update: that fix didn't actually apply either — omitting a field from XML doesn't clear it on an already-installed record
+
+Re-tested live: after removing `category_id` from all twelve groups
+and re-running `-u` on all six modules, the same SQL check still came
+back with **zero** rows — the demo Administrator still wasn't a member
+of any of them. The category-exclusivity diagnosis itself was correct,
+but the fix for it was not: these six modules' `res.groups` records
+were already installed from the earlier attempt, and Odoo's XML data
+loader only *updates the fields a `<record>` block actually mentions*
+on an existing record — it never resets an omitted field back to empty.
+Simply deleting the `<field name="category_id" ref="..."/>` line left
+the *old* category value sitting untouched in the database, so the
+exact same exclusivity conflict was still in effect; the fix looked
+right in the source but never took effect live.
+
+**Fixed**: changed the field from *omitted* to *explicitly empty* —
+`<field name="category_id"/>` (no `ref`, no `eval`) — on all twelve
+groups. An empty field tag is Odoo's actual syntax for clearing a
+field's value on an existing record, as opposed to leaving it alone.
+
+**General lesson, beyond this specific bug**: when a fix to
+already-installed demo data needs to *remove* a previously-set field
+value (not just change it), removing the `<field>` line from the XML
+is not enough — it must be replaced with an explicit empty/`False`
+value, or the stale value survives every future upgrade.
+
 ## `demo_gov_menu` is an incomplete module — confirmed pre-existing in production too
 
 **Problem**: `demo_gov_menu/__manifest__.py` (and the original
