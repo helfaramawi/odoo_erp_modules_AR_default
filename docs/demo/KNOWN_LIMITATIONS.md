@@ -113,6 +113,20 @@ up requires an actual module **upgrade** (`-u`), not just a restart —
 plain source-file changes to an already-installed module's `data`
 files aren't re-read until the module is reinstalled/upgraded.
 
+**Follow-up bug caught by the live upgrade**: `demo_gov_scm_issue`'s
+root `<menuitem>` also carried `web_icon="stock,static/description/icon.png"`
+(it was previously used to control that menu's own app-drawer icon).
+Odoo's RelaxNG schema only allows `web_icon` on a *root* menuitem (no
+`parent`) — once it gained a `parent`, the combination failed XML
+schema validation on upgrade
+(`RELAXNG_ERR_EXTRACONTENT: Element odoo has extra content: record`,
+reported against the file's first `<record>` rather than the actual
+offending `<menuitem>` further down, which is why it initially looked
+unrelated). Removed `web_icon` — the menu is nested now, so it doesn't
+need its own app icon. Confirmed (via a repo-wide grep) this was the
+only `web_icon` usage anywhere in `demo_edition/addons`, so none of
+the other 12 re-parented modules have the same issue.
+
 ## `demo_branding`'s Settings-page XML inheritance was wrong — fixed
 
 **Problem**: the first version of `demo_branding` added its config fields
