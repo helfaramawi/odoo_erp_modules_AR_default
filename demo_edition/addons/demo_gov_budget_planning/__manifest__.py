@@ -1,0 +1,27 @@
+{
+    'name': 'الموازنة التقديرية وتحليل الانحرافات — المحافظة التجريبية',
+    'summary': 'FR-S-01: موازنة تقديرية + تنفيذ فعلي + انحرافات + ربط ببنود الميزانية',
+    'version': '17.0.2.0.0',
+    'category': 'Accounting/Egypt Government',
+    'author': 'Enterprise Solutions Demo',
+    'license': 'LGPL-3',
+    'depends': [
+        'base', 'mail', 'account',
+        'demo_gov_daftar55',
+        'demo_gov_commitment',
+        'c5_financial_dimensions',
+        'general_ledger_ar',
+    ],
+    'data': [
+        'security/ir.model.access.csv',
+        'data/sequences.xml',
+        'views/budget_views.xml',
+        'views/menu.xml',
+        'reports/report_actions.xml',
+        'reports/report_budget_summary.xml',
+        'reports/report_budget_variance.xml',
+        'reports/report_budget_execution.xml',
+    ],
+    'installable': True,
+    'application': False,
+}

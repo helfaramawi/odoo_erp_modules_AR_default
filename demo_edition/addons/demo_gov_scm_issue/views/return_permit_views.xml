@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<record id="view_return_permit_form" model="ir.ui.view">
+  <field name="name">stock.return.permit.form</field>
+  <field name="model">stock.return.permit</field>
+  <field name="arch" type="xml">
+    <form string="إذن الارتجاع — نموذج 8 مخازن">
+      <header>
+        <field name="state" widget="statusbar" statusbar_visible="draft,committee,approved,posted"/>
+      </header>
+      <sheet>
+        <div class="o_field_widget" style="margin-bottom:10px;">
+          <button name="action_submit" string="تقديم" type="object" class="btn btn-primary btn-sm" invisible="state != 'draft'"/>
+          <button name="action_committee_done" string="قرار اللجنة" type="object" class="btn btn-warning btn-sm" invisible="state != 'committee'"/>
+          <button name="action_approve" string="اعتماد" type="object" class="btn btn-success btn-sm" invisible="state != 'submitted'" groups="stock.group_stock_manager"/>
+          <button name="action_post" string="ترحيل الارتجاع" type="object" class="btn btn-primary btn-sm" invisible="state != 'approved'" groups="stock.group_stock_manager"/>
+          <button name="action_create_journal_entry" string="إنشاء قيد محاسبي"
+                  type="object" class="btn btn-warning btn-sm"
+                  invisible="state != 'posted'"
+                  groups="account.group_account_user"/>
+          <button name="action_cancel" string="إلغاء" type="object" class="btn btn-danger btn-sm" invisible="state in ('posted','cancelled')" groups="stock.group_stock_manager"/>
+        </div>
+        <div class="oe_title">
+          <h1><field name="name" readonly="1"/></h1>
+        </div>
+        <group>
+          <group string="بيانات الارتجاع">
+            <field name="return_date"/>
+            <field name="return_type"/>
+            <field name="fiscal_year"/>
+          </group>
+          <group string="المُرتجِع">
+            <field name="returning_dept"/>
+            <field name="returning_employee_id"/>
+            <field name="original_issue_id"/>
+          </group>
+        </group>
+        <group string="المخزن">
+          <group>
+            <field name="warehouse_id"/>
+            <field name="location_id"/>
+            <field name="storekeeper_id"/>
+          </group>
+        </group>
+        <field name="return_reason"/>
+        <notebook>
+          <page string="الأصناف المرتجعة">
+            <field name="line_ids">
+              <tree editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="product_id"/>
+                <field name="product_code" optional="show"/>
+                <field name="uom_id" optional="show"/>
+                <field name="qty_original"/>
+                <field name="qty_returned"/>
+                <field name="unit_price"/>
+                <field name="total_value" readonly="1" sum="الإجمالي"/>
+                <field name="condition"/>
+                <field name="serial_lot" optional="show"/>
+                <field name="notes" optional="show"/>
+              </tree>
+            </field>
+            <group class="oe_subtotal_footer">
+              <field name="total_lines" readonly="1"/>
+              <field name="total_value" readonly="1"/>
+            </group>
+          </page>
+          <page string="لجنة الفحص" invisible="not needs_committee">
+            <group>
+              <field name="needs_committee" readonly="1"/>
+              <field name="committee_chairman_id"/>
+              <field name="committee_member1_id"/>
+              <field name="committee_member2_id"/>
+            </group>
+            <field name="committee_decision"/>
+          </page>
+          <page string="ملاحظات">
+            <field name="notes"/>
+            <field name="picking_id" readonly="1"/>
+            <field name="approved_by" readonly="1"/>
+          </page>
+        </notebook>
+      </sheet>
+      <chatter/>
+    </form>
+  </field>
+</record>
+
+<record id="view_return_permit_list" model="ir.ui.view">
+  <field name="name">stock.return.permit.list</field>
+  <field name="model">stock.return.permit</field>
+  <field name="arch" type="xml">
+    <tree string="أذونات الارتجاع"
+          decoration-success="state == 'posted'"
+          decoration-warning="state == 'committee'">
+      <field name="name"/>
+      <field name="return_date"/>
+      <field name="return_type"/>
+      <field name="returning_dept"/>
+      <field name="warehouse_id"/>
+      <field name="total_lines" string="أصناف"/>
+      <field name="total_value" sum="الإجمالي"/>
+      <field name="state" widget="badge"/>
+    </tree>
+  </field>
+</record>
+
+<record id="action_return_permits" model="ir.actions.act_window">
+  <field name="name">أذونات الارتجاع</field>
+  <field name="res_model">stock.return.permit</field>
+  <field name="view_mode">list,form</field>
+</record>
+
+</odoo>

@@ -1,0 +1,17 @@
+/* Arabic font override for all PDF reports */
+@font-face {
+    font-family: 'Amiri';
+    src: url('/usr/share/fonts/opentype/fonts-hosny-amiri/Amiri-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Amiri';
+    src: url('/usr/share/fonts/opentype/fonts-hosny-amiri/Amiri-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+body, .page, table, td, th, div, span, p, h1, h2, h3, h4 {
+    font-family: 'Amiri', 'Noto Naskh Arabic', Arial, sans-serif !important;
+}

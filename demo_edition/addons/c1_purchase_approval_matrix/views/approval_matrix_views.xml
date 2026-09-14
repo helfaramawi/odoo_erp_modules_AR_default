@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_approval_threshold_tree" model="ir.ui.view">
+    <field name="name">purchase.approval.threshold.tree</field>
+    <field name="model">purchase.approval.threshold</field>
+    <field name="arch" type="xml">
+      <tree string="Approval Thresholds" editable="bottom">
+        <field name="name"/>
+        <field name="tier"/>
+        <field name="min_amount"/>
+        <field name="max_amount"/>
+        <field name="approver_ids" widget="many2many_tags"/>
+        <field name="active"/>
+      </tree>
+    </field>
+  </record>
+  <record id="action_approval_threshold" model="ir.actions.act_window">
+    <field name="name">Approval Thresholds</field>
+    <field name="res_model">purchase.approval.threshold</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+</odoo>

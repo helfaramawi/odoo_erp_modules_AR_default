@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- ══════════════════════════════════════════════════════════════
+         مستخدمو العرض التجريبي — الديوان العام للمحافظة التجريبية
+         noupdate="1" → لا يُعاد إنشاؤهم عند كل Upgrade
+         بيانات صورية بالكامل — لا تُمثّل أشخاصاً حقيقيين.
+         كلمة المرور تُقرأ من متغير البيئة DEMO_USERS_PASSWORD عند التزريع
+         (راجع scripts/demo-seed/README.md) — القيمة أدناه افتراضية للتجربة المحلية فقط.
+    ══════════════════════════════════════════════════════════════════ -->
+
+    <!-- 1. مدير عام (تجريبي) -->
+    <record id="user_director_general" model="res.users">
+        <field name="name">مدير عام - حساب تجريبي</field>
+        <field name="login">demo.admin</field>
+        <field name="email">demo.admin@demo-gov.example</field>
+        <field name="password">Demo@2024</field>
+        <field name="groups_id" eval="[
+            (4, ref('base.group_user')),
+            (4, ref('base.group_system')),
+            (4, ref('l10n_eg_custody.group_custody_manager')),
+            (4, ref('procurement_committee.group_contract_director')),
+            (4, ref('stock_addition_permit.group_warehouse_manager')),
+            (4, ref('stock_stocktaking_eg.group_stocktaking_chairman')),
+            (4, ref('procurement_adjudication.group_adjudication_director')),
+            (4, ref('l10n_eg_auction.group_auction_manager')),
+            (4, ref('purchase.group_purchase_manager')),
+            (4, ref('stock.group_stock_manager')),
+        ]"/>
+    </record>
+
+    <!-- 2. مدير التعاقدات (تجريبي) -->
+    <record id="user_contracts_manager" model="res.users">
+        <field name="name">مدير التعاقدات - حساب تجريبي</field>
+        <field name="login">demo.contracts_manager</field>
+        <field name="email">demo.contracts_manager@demo-gov.example</field>
+        <field name="password">Demo@2024</field>
+        <field name="groups_id" eval="[
+            (4, ref('base.group_user')),
+            (4, ref('procurement_committee.group_contract_manager')),
+            (4, ref('procurement_adjudication.group_adjudication_director')),
+            (4, ref('l10n_eg_auction.group_auction_manager')),
+            (4, ref('purchase.group_purchase_manager')),
+            (4, ref('stock.group_stock_user')),
+        ]"/>
+    </record>
+
+    <!-- 3. موظف التعاقدات (تجريبي) -->
+    <record id="user_contracts_officer" model="res.users">
+        <field name="name">موظف التعاقدات - حساب تجريبي</field>
+        <field name="login">demo.contracts_officer</field>
+        <field name="email">demo.contracts_officer@demo-gov.example</field>
+        <field name="password">Demo@2024</field>
+        <field name="groups_id" eval="[
+            (4, ref('base.group_user')),
+            (4, ref('procurement_committee.group_contract_user')),
+            (4, ref('procurement_adjudication.group_adjudication_member')),
+            (4, ref('l10n_eg_auction.group_auction_user')),
+            (4, ref('purchase.group_purchase_user')),
+            (4, ref('stock.group_stock_user')),
+        ]"/>
+    </record>
+
+    <!-- 4. رئيس لجنة البت (تجريبي) -->
+    <record id="user_adjudication_chairman" model="res.users">
+        <field name="name">رئيس لجنة البت - حساب تجريبي</field>
+        <field name="login">demo.adjudication_chairman</field>
+        <field name="email">demo.adjudication_chairman@demo-gov.example</field>
+        <field name="password">Demo@2024</field>
+        <field name="groups_id" eval="[
+            (4, ref('base.group_user')),
+            (4, ref('procurement_committee.group_contract_user')),
+            (4, ref('procurement_adjudication.group_adjudication_chairman')),
+            (4, ref('purchase.group_purchase_user')),
+            (4, ref('stock.group_stock_user')),
+        ]"/>
+    </record>
+
+    <!-- 5. مدير المخازن (تجريبي) -->
+    <record id="user_warehouse_manager" model="res.users">
+        <field name="name">مدير المخازن - حساب تجريبي</field>
+        <field name="login">demo.warehouse_manager</field>
+        <field name="email">demo.warehouse_manager@demo-gov.example</field>
+        <field name="password">Demo@2024</field>
+        <field name="groups_id" eval="[
+            (4, ref('base.group_user')),
+            (4, ref('l10n_eg_custody.group_custody_manager')),
+            (4, ref('stock_addition_permit.group_warehouse_manager')),
+            (4, ref('stock_stocktaking_eg.group_stocktaking_chairman')),
+            (4, ref('stock.group_stock_manager')),
+            (4, ref('purchase.group_purchase_user')),
+        ]"/>
+    </record>
+
+    <!-- 6. أمين المخزن (تجريبي) -->
+    <record id="user_storekeeper" model="res.users">
+        <field name="name">أمين المخزن - حساب تجريبي</field>
+        <field name="login">demo.storekeeper</field>
+        <field name="email">demo.storekeeper@demo-gov.example</field>
+        <field name="password">Demo@2024</field>
+        <field name="groups_id" eval="[
+            (4, ref('base.group_user')),
+            (4, ref('l10n_eg_custody.group_custody_user')),
+            (4, ref('stock_addition_permit.group_storekeeper')),
+            (4, ref('stock_stocktaking_eg.group_stocktaking_user')),
+            (4, ref('stock.group_stock_user')),
+        ]"/>
+    </record>
+
+    <!-- 7. مفتش المخزن (تجريبي) -->
+    <record id="user_inspector" model="res.users">
+        <field name="name">مفتش المخزن - حساب تجريبي</field>
+        <field name="login">demo.inspector</field>
+        <field name="email">demo.inspector@demo-gov.example</field>
+        <field name="password">Demo@2024</field>
+        <field name="groups_id" eval="[
+            (4, ref('base.group_user')),
+            (4, ref('stock_addition_permit.group_inspector')),
+            (4, ref('stock_stocktaking_eg.group_stocktaking_user')),
+            (4, ref('stock.group_stock_user')),
+        ]"/>
+    </record>
+
+</odoo>

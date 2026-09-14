@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_sale_order_credit" model="ir.ui.view">
+    <field name="name">sale.order.credit</field>
+    <field name="model">sale.order</field>
+    <field name="inherit_id" ref="sale.view_order_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//header/button[@name='action_confirm']" position="before">
+        <button name="action_credit_check" string="Credit Check / فحص الائتمان"
+                type="object" class="btn-secondary"
+                invisible="credit_check_state == 'green'"/>
+      </xpath>
+      <xpath expr="//sheet/div[hasclass('oe_title')]" position="before">
+        <div class="alert alert-danger" role="alert"
+             invisible="credit_check_state != 'red'">
+          ⛔ <strong>RED / أحمر</strong> — Credit blocked. Override reason required.
+          / ائتمان محظور. سبب التجاوز مطلوب.
+        </div>
+        <div class="alert alert-warning" role="alert"
+             invisible="credit_check_state != 'amber'">
+          ⚠ <strong>AMBER / عنبري</strong> — Credit warning. Proceed with caution.
+          / تحذير ائتماني. تابع بحذر.
+        </div>
+      </xpath>
+      <xpath expr="//notebook" position="inside">
+        <page string="Credit Check / فحص الائتمان">
+          <group>
+            <field name="credit_check_state" widget="badge"
+                   decoration-success="credit_check_state=='green'"
+                   decoration-warning="credit_check_state=='amber'"
+                   decoration-danger="credit_check_state=='red'"/>
+            <field name="credit_score" readonly="1"/>
+            <field name="credit_checked_by" readonly="1"/>
+            <field name="credit_override_reason"
+                   invisible="credit_check_state not in ('amber','red')"/>
+          </group>
+        </page>
+      </xpath>
+    </field>
+  </record>
+</odoo>

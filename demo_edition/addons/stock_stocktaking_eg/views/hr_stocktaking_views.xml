@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hr_employee_stocktaking_inherit" model="ir.ui.view">
+        <field name="name">hr.employee.stocktaking.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_stocktaking" type="object"
+                    class="oe_stat_button" icon="fa-calculator"
+                    invisible="stocktaking_count == 0">
+                    <div class="o_stat_info">
+                        <field name="stocktaking_count" class="o_stat_value"/>
+                        <span class="o_stat_text">جرد</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_stocktaking_session_hr_inherit" model="ir.ui.view">
+        <field name="name">stock.stocktaking.session.hr.inherit</field>
+        <field name="model">stock.stocktaking.session</field>
+        <field name="inherit_id" ref="stock_stocktaking_eg.view_stocktaking_session_form"/>
+        <field name="arch" type="xml">
+            <!-- Replace plain text members with proper Many2many -->
+            <xpath expr="//field[@name='committee_members']" position="replace">
+                <field name="committee_member_ids" widget="many2many_tags"
+                       options="{'no_create': True}"/>
+            </xpath>
+            <xpath expr="//field[@name='warehouse_id']" position="after">
+                <field name="department_id"/>
+            </xpath>
+            <xpath expr="//field[@name='committee_chairman_id']" position="after">
+                <field name="chairman_job_title" readonly="1"
+                       invisible="not chairman_job_title"/>
+            </xpath>
+            <xpath expr="//field[@name='storekeeper_id']" position="after">
+                <field name="storekeeper_job_title" readonly="1"
+                       invisible="not storekeeper_job_title"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

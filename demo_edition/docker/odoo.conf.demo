@@ -1,0 +1,23 @@
+; ============================================================
+; Demo Edition — Odoo configuration
+; Every value that could point at a real system is read from the
+; environment at container start by docker-entrypoint (official Odoo
+; image behavior) rather than hard-coded here.
+; ============================================================
+[options]
+addons_path = /mnt/demo-addons,/usr/lib/python3/dist-packages/odoo/addons
+data_dir = /var/lib/odoo
+
+; Database connection comes from environment variables
+; (HOST/PORT/USER/PASSWORD) set in docker-compose.demo.yml / .env —
+; never hard-code credentials here.
+db_name = False
+list_db = False
+
+; Demo-safe defaults
+workers = 2
+max_cron_threads = 1
+proxy_mode = True
+
+; Disable outbound email by default in demo (see .env.example: MAIL_CONNECTION)
+email_from = False

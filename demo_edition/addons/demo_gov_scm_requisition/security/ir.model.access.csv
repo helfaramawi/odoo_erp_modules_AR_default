@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_req_user,demo_gov.requisition user,model_demo_gov_requisition,purchase.group_purchase_user,1,1,1,0
+access_req_mgr,demo_gov.requisition manager,model_demo_gov_requisition,purchase.group_purchase_manager,1,1,1,1
+access_req_line_user,demo_gov.requisition.line user,model_demo_gov_requisition_line,purchase.group_purchase_user,1,1,1,0
+access_req_line_mgr,demo_gov.requisition.line manager,model_demo_gov_requisition_line,purchase.group_purchase_manager,1,1,1,1

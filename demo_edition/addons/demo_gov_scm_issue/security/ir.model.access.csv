@@ -1,0 +1,16 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_issue_permit_user,stock.issue.permit user,model_stock_issue_permit,stock.group_stock_user,1,1,1,0
+access_issue_permit_manager,stock.issue.permit manager,model_stock_issue_permit,stock.group_stock_manager,1,1,1,1
+access_issue_permit_line_user,stock.issue.permit.line user,model_stock_issue_permit_line,stock.group_stock_user,1,1,1,0
+access_issue_permit_line_manager,stock.issue.permit.line manager,model_stock_issue_permit_line,stock.group_stock_manager,1,1,1,1
+access_return_permit_user,stock.return.permit user,model_stock_return_permit,stock.group_stock_user,1,1,1,0
+access_return_permit_manager,stock.return.permit manager,model_stock_return_permit,stock.group_stock_manager,1,1,1,1
+access_return_permit_line_user,stock.return.permit.line user,model_stock_return_permit_line,stock.group_stock_user,1,1,1,0
+access_return_permit_line_manager,stock.return.permit.line manager,model_stock_return_permit_line,stock.group_stock_manager,1,1,1,1
+access_transfer_permit_user,stock.transfer.permit user,model_stock_transfer_permit,stock.group_stock_user,1,1,1,0
+access_transfer_permit_manager,stock.transfer.permit manager,model_stock_transfer_permit,stock.group_stock_manager,1,1,1,1
+access_transfer_permit_line_user,stock.transfer.permit.line user,model_stock_transfer_permit_line,stock.group_stock_user,1,1,1,0
+access_transfer_permit_line_manager,stock.transfer.permit.line manager,model_stock_transfer_permit_line,stock.group_stock_manager,1,1,1,1
+access_issue_register_line_user,stock.issue.register.line user,model_stock_issue_register_line,stock.group_stock_user,1,0,0,0
+access_issue_register_line_manager,stock.issue.register.line manager,model_stock_issue_register_line,stock.group_stock_manager,1,1,1,0
+access_issue_register_line_accountant,stock.issue.register.line accountant,model_stock_issue_register_line,account.group_account_user,1,1,0,0

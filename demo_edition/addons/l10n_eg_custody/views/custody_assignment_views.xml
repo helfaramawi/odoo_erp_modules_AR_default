@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══ Form View ════════════════════════════════════════════════════════ -->
+    <record id="view_custody_assignment_form" model="ir.ui.view">
+        <field name="name">custody.assignment.form</field>
+        <field name="model">custody.assignment</field>
+        <field name="arch" type="xml">
+            <form string="إذن صرف العهدة">
+                <header>
+                    <button name="action_confirm"
+                            string="✅ تأكيد العهدة"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_return"
+                            string="📦 استرداد العهدة"
+                            type="object"
+                            invisible="state not in ['active','transferred']"
+                            confirm="هل تريد تسجيل استرداد هذه العهدة؟"/>
+                    <button name="action_cancel"
+                            string="إلغاء"
+                            type="object"
+                            invisible="state in ['returned','cancelled']"/>
+                    <button name="action_print_form193"
+                            string="🖨 طباعة استمارة 193"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state == 'draft'"/>
+                    <button name="action_print_custody_sheet"
+                            string="📋 كشف العهدة"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,active,transferred,returned"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_transfers" type="object"
+                                class="oe_stat_button" icon="fa-exchange"
+                                invisible="transfer_count == 0">
+                            <field name="transfer_count" widget="statinfo" string="تحويلات"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name" string="رقم العهدة"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+
+                    <group string="بيانات استمارة 193">
+                        <group>
+                            <field name="form_193_ref" required="1"/>
+                            <field name="issue_date"/>
+                            <field name="issue_permit_ref"/>
+                            <field name="custody_type"/>
+                        </group>
+                        <group>
+                            <field name="warehouse_id"/>
+                            <field name="location_id"/>
+                            <field name="expected_return_date"/>
+                            <field name="actual_return_date"
+                                   invisible="state != 'returned'"/>
+                        </group>
+                    </group>
+
+                    <group string="بيانات الموظف المستلم">
+                        <group>
+                            <field name="employee_id"/>
+                            <field name="national_id"
+                                   required="1"
+                                   decoration-danger="not national_id"/>
+                            <field name="employee_department_id" readonly="1"/>
+                            <field name="employee_job_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="storekeeper_id"/>
+                            <field name="dept_manager_id"/>
+                            <field name="issued_by_id" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <group string="بيانات الصنف">
+                        <group>
+                            <field name="product_id"/>
+                            <field name="serial_number"/>
+                            <field name="custody_type"/>
+                        </group>
+                        <group>
+                            <field name="qty"/>
+                            <field name="uom_id" readonly="1"/>
+                            <field name="estimated_value"/>
+                        </group>
+                    </group>
+
+                    <group string="الحائز الحالي"
+                           invisible="state != 'transferred'">
+                        <field name="current_holder_id" readonly="1"/>
+                    </group>
+
+                    <notebook>
+                        <page string="تحويلات العهدة" name="transfers">
+                            <field name="transfer_ids" mode="tree"
+                                   readonly="state == 'returned'">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="from_employee_id"/>
+                                    <field name="to_employee_id"/>
+                                    <field name="transfer_date"/>
+                                    <field name="state" widget="badge"
+                                        decoration-success="state == 'done'"
+                                        decoration-info="state == 'draft'"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="ملاحظات">
+                            <field name="notes" placeholder="ملاحظات إضافية..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ══ List View — with inline print button ═════════════════════════════ -->
+    <record id="view_custody_assignment_list" model="ir.ui.view">
+        <field name="name">custody.assignment.list</field>
+        <field name="model">custody.assignment</field>
+        <field name="arch" type="xml">
+            <tree string="سجلات العهد"
+                  decoration-danger="not national_id"
+                  decoration-success="state == 'returned'"
+                  decoration-info="state == 'active'"
+                  decoration-warning="state == 'transferred'">
+                <field name="name"/>
+                <field name="form_193_ref"/>
+                <field name="employee_id"/>
+                <field name="national_id"
+                       decoration-danger="not national_id"/>
+                <field name="employee_department_id" optional="show"/>
+                <field name="product_id"/>
+                <field name="qty"/>
+                <field name="serial_number" optional="hide"/>
+                <field name="custody_type"/>
+                <field name="issue_date"/>
+                <field name="expected_return_date" optional="show"/>
+                <field name="warehouse_id" optional="show"/>
+                <field name="storekeeper_id" optional="hide"/>
+                <field name="estimated_value" optional="hide"/>
+                <field name="state" widget="badge"
+                    decoration-success="state == 'active'"
+                    decoration-warning="state == 'transferred'"
+                    decoration-danger="state == 'cancelled'"
+                    decoration-muted="state == 'returned'"/>
+                <button name="action_print_form193"
+                        string="طباعة 193"
+                        type="object"
+                        icon="fa-print"
+                        invisible="state == 'draft'"
+                        title="طباعة استمارة 193 (ع.ح)"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ══ Search View ══════════════════════════════════════════════════════ -->
+    <record id="view_custody_assignment_search" model="ir.ui.view">
+        <field name="name">custody.assignment.search</field>
+        <field name="model">custody.assignment</field>
+        <field name="arch" type="xml">
+            <search string="بحث في العهد">
+                <field name="name"         string="رقم العهدة"/>
+                <field name="employee_id"  string="الموظف"/>
+                <field name="national_id"  string="الرقم القومي"/>
+                <field name="product_id"   string="الصنف"/>
+                <field name="form_193_ref" string="رقم استمارة 193"/>
+                <field name="warehouse_id"/>
+                <separator/>
+                <filter name="all_custody"         string="الكل"
+                        domain="[]"/>
+                <filter name="active_custody"      string="نشطة"
+                        domain="[('state','=','active')]"/>
+                <filter name="transferred"         string="محولة"
+                        domain="[('state','=','transferred')]"/>
+                <filter name="returned"            string="مستردة"
+                        domain="[('state','=','returned')]"/>
+                <filter name="draft"               string="مسودة"
+                        domain="[('state','=','draft')]"/>
+                <filter name="missing_national_id" string="بدون رقم قومي"
+                        domain="[('national_id','=',False)]"/>
+                <separator/>
+                <group expand="1" string="تجميع حسب">
+                    <filter name="group_employee"  string="الموظف"
+                            context="{'group_by':'employee_id'}"/>
+                    <filter name="group_dept"      string="الإدارة"
+                            context="{'group_by':'employee_department_id'}"/>
+                    <filter name="group_warehouse" string="المخزن"
+                            context="{'group_by':'warehouse_id'}"/>
+                    <filter name="group_state"     string="الحالة"
+                            context="{'group_by':'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ══ Action — show ALL states by default ══════════════════════════════ -->
+    <record id="action_custody_assignment" model="ir.actions.act_window">
+        <field name="name">سجلات العهد</field>
+        <field name="res_model">custody.assignment</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">لا توجد عهد مسجلة بعد</p>
+            <p>اضغط على <strong>عهدة جديدة</strong> من القائمة لتسجيل عهدة جديدة</p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="product_office_laptop" model="product.product">
+        <field name="name">Office Laptop</field>
+        <field name="type">product</field>
+        <field name="default_code">DEMO-ITEM-001</field>
+        <field name="list_price">18000</field>
+        <field name="standard_price">15000</field>
+    </record>
+    <record id="product_printer" model="product.product">
+        <field name="name">Printer</field>
+        <field name="type">product</field>
+        <field name="default_code">DEMO-ITEM-002</field>
+        <field name="list_price">3500</field>
+        <field name="standard_price">2800</field>
+    </record>
+    <record id="product_office_chair" model="product.product">
+        <field name="name">Office Chair</field>
+        <field name="type">product</field>
+        <field name="default_code">DEMO-ITEM-003</field>
+        <field name="list_price">1200</field>
+        <field name="standard_price">900</field>
+    </record>
+    <record id="product_paper_a4" model="product.product">
+        <field name="name">Paper A4</field>
+        <field name="type">product</field>
+        <field name="default_code">DEMO-ITEM-004</field>
+        <field name="list_price">150</field>
+        <field name="standard_price">110</field>
+    </record>
+    <record id="product_network_switch" model="product.product">
+        <field name="name">Network Switch</field>
+        <field name="type">product</field>
+        <field name="default_code">DEMO-ITEM-005</field>
+        <field name="list_price">4200</field>
+        <field name="standard_price">3300</field>
+    </record>
+    <record id="product_storage_cabinet" model="product.product">
+        <field name="name">Storage Cabinet</field>
+        <field name="type">product</field>
+        <field name="default_code">DEMO-ITEM-006</field>
+        <field name="list_price">2600</field>
+        <field name="standard_price">2000</field>
+    </record>
+
+</odoo>

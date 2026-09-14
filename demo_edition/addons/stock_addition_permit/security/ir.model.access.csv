@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_inspection_readonly,inspection readonly,model_stock_inspection_report,base.group_user,1,0,0,0
+access_inspection_storekeeper,inspection storekeeper,model_stock_inspection_report,stock_addition_permit.group_storekeeper,1,1,1,0
+access_inspection_inspector,inspection inspector,model_stock_inspection_report,stock_addition_permit.group_inspector,1,1,1,0
+access_inspection_manager,inspection manager,model_stock_inspection_report,stock_addition_permit.group_warehouse_manager,1,1,1,1
+access_addition_permit_readonly,addition permit readonly,model_stock_addition_permit,base.group_user,1,0,0,0
+access_addition_permit_storekeeper,addition permit storekeeper,model_stock_addition_permit,stock_addition_permit.group_storekeeper,1,1,1,0
+access_addition_permit_manager,addition permit manager,model_stock_addition_permit,stock_addition_permit.group_warehouse_manager,1,1,1,1

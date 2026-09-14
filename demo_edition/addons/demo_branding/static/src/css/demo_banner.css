@@ -1,0 +1,11 @@
+.o_demo_branding_banner {
+    margin-top: 12px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    background-color: #fff3cd;
+    color: #664d03;
+    border: 1px solid #ffe69c;
+    font-size: 12px;
+    text-align: center;
+    font-weight: 600;
+}

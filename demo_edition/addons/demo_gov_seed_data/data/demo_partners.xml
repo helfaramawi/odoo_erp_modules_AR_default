@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Synthetic vendors -->
+    <record id="partner_vendor_1" model="res.partner">
+        <field name="name">Supplier One</field>
+        <field name="is_company">True</field>
+        <field name="supplier_rank">1</field>
+        <field name="email">sales@supplier-one.example</field>
+        <field name="city">Demo City</field>
+    </record>
+    <record id="partner_vendor_2" model="res.partner">
+        <field name="name">Supplier Two</field>
+        <field name="is_company">True</field>
+        <field name="supplier_rank">1</field>
+        <field name="email">sales@supplier-two.example</field>
+        <field name="city">Demo City</field>
+    </record>
+    <record id="partner_vendor_3" model="res.partner">
+        <field name="name">National Demo Supplies</field>
+        <field name="is_company">True</field>
+        <field name="supplier_rank">1</field>
+        <field name="email">contact@national-demo-supplies.example</field>
+        <field name="city">Demo City</field>
+    </record>
+    <record id="partner_vendor_4" model="res.partner">
+        <field name="name">Technology Demo Services</field>
+        <field name="is_company">True</field>
+        <field name="supplier_rank">1</field>
+        <field name="email">contact@technology-demo-services.example</field>
+        <field name="city">Demo City</field>
+    </record>
+
+    <!-- Synthetic customers / service beneficiaries -->
+    <record id="partner_customer_a" model="res.partner">
+        <field name="name">Customer A</field>
+        <field name="is_company">True</field>
+        <field name="customer_rank">1</field>
+        <field name="email">info@customer-a.example</field>
+    </record>
+    <record id="partner_customer_b" model="res.partner">
+        <field name="name">Customer B</field>
+        <field name="is_company">True</field>
+        <field name="customer_rank">1</field>
+        <field name="email">info@customer-b.example</field>
+    </record>
+    <record id="partner_service_beneficiary_1" model="res.partner">
+        <field name="name">Service Beneficiary 001</field>
+        <field name="is_company">False</field>
+        <field name="customer_rank">1</field>
+        <field name="email">beneficiary001@demo-gov.example</field>
+    </record>
+
+</odoo>

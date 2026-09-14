@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_purchase_order_form_approval" model="ir.ui.view">
+    <field name="name">purchase.order.form.approval</field>
+    <field name="model">purchase.order</field>
+    <field name="inherit_id" ref="purchase.purchase_order_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//header/button[@name='button_confirm']" position="after">
+        <field name="approval_state" invisible="1"/>
+        <field name="requires_approval" invisible="1"/>
+        <button name="action_approve" string="Approve" type="object" class="btn-success"
+                invisible="approval_state not in ('pending_t1','pending_t2','pending_t3')"/>
+        <button name="action_reject" string="Reject" type="object" class="btn-danger"
+                invisible="approval_state not in ('pending_t1','pending_t2','pending_t3')"/>
+        <button name="action_reset_to_draft" string="Reset to Draft" type="object"
+                invisible="approval_state != 'rejected'"/>
+      </xpath>
+      <xpath expr="//notebook" position="inside">
+        <page string="Approval Log" invisible="not requires_approval">
+          <field name="approval_log_ids" readonly="1">
+            <tree create="false" delete="false" edit="false">
+              <field name="create_date"/>
+              <field name="tier"/>
+              <field name="action"/>
+              <field name="user_id"/>
+              <field name="comment"/>
+            </tree>
+          </field>
+        </page>
+      </xpath>
+    </field>
+  </record>
+
+  <record id="view_rejection_wizard_form" model="ir.ui.view">
+    <field name="name">purchase.rejection.wizard.form</field>
+    <field name="model">purchase.rejection.wizard</field>
+    <field name="arch" type="xml">
+      <form string="Reject Purchase Order">
+        <group>
+          <field name="purchase_id" readonly="1"/>
+          <field name="rejection_comment"/>
+        </group>
+        <footer>
+          <button name="action_confirm_rejection" string="Confirm Rejection"
+                  type="object" class="btn-danger"/>
+          <button string="Cancel" special="cancel"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+</odoo>

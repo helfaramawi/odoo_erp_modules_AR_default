@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem
+        id="menu_helper_notebooks_general_ledger"
+        name="دفتر الأستاذ العام"
+        parent="demo_gov_subsidiary_books.menu_subsidiary_root"
+        action="account.action_account_ledger"
+        sequence="10"
+    />
+
+    <menuitem
+        id="menu_helper_notebooks_receivable"
+        name="دفتر مديونيات العملاء"
+        parent="demo_gov_subsidiary_books.menu_subsidiary_root"
+        action="account.action_account_receivable_from_account"
+        sequence="20"
+    />
+
+    <menuitem
+        id="menu_helper_notebooks_payable"
+        name="دفتر دائنية الموردين"
+        parent="demo_gov_subsidiary_books.menu_subsidiary_root"
+        action="account.action_account_payable_from_account"
+        sequence="30"
+    />
+
+    <menuitem
+        id="menu_helper_notebooks_journal_entries"
+        name="قيود اليومية"
+        parent="demo_gov_subsidiary_books.menu_subsidiary_root"
+        action="account.action_move_journal_line"
+        sequence="40"
+    />
+
+</odoo>

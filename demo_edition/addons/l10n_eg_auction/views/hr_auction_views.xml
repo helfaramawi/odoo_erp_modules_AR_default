@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ══ Auction Request — session officer from HR ════════════════════════ -->
+    <record id="view_auction_request_hr_inherit" model="ir.ui.view">
+        <field name="name">auction.request.hr.inherit</field>
+        <field name="model">auction.request</field>
+        <field name="inherit_id" ref="l10n_eg_auction.view_auction_request_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='venue']" position="after">
+                <field name="session_officer_id"/>
+                <field name="session_officer_job"   readonly="1"
+                       invisible="not session_officer_job"/>
+                <field name="session_officer_phone" readonly="1"
+                       invisible="not session_officer_phone"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ══ Lease Contract — contract officer from HR ════════════════════════ -->
+    <record id="view_auction_lease_contract_hr_inherit" model="ir.ui.view">
+        <field name="name">auction.lease.contract.hr.inherit</field>
+        <field name="model">auction.lease.contract</field>
+        <field name="inherit_id" ref="l10n_eg_auction.view_auction_lease_contract_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="contract_officer_id"/>
+                <field name="contract_officer_job" readonly="1"
+                       invisible="not contract_officer_job"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

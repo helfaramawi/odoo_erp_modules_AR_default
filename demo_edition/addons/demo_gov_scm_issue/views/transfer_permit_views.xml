@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<record id="view_transfer_permit_form" model="ir.ui.view">
+  <field name="name">stock.transfer.permit.form</field>
+  <field name="model">stock.transfer.permit</field>
+  <field name="arch" type="xml">
+    <form string="إذن التحويل بين المخازن">
+      <header>
+        <field name="state" widget="statusbar" statusbar_visible="draft,approved,posted,received"/>
+      </header>
+      <sheet>
+        <div class="o_field_widget" style="margin-bottom:10px;">
+          <button name="action_submit" string="تقديم" type="object" class="btn btn-primary btn-sm" invisible="state != 'draft'"/>
+          <button name="action_approve" string="اعتماد" type="object" class="btn btn-success btn-sm" invisible="state != 'submitted'" groups="stock.group_stock_manager"/>
+          <button name="action_post" string="ترحيل التحويل" type="object" class="btn btn-primary btn-sm" invisible="state != 'approved'" groups="stock.group_stock_manager"/>
+          <button name="action_receive" string="تاكيد الاستلام" type="object" class="btn btn-success btn-sm" invisible="state != 'posted'"/>
+          <button name="action_create_journal_entry" string="إنشاء قيد محاسبي"
+                  type="object" class="btn btn-warning btn-sm"
+                  invisible="state not in ('posted','received')"
+                  groups="account.group_account_user"/>
+          <button name="action_cancel" string="إلغاء" type="object" class="btn btn-danger btn-sm" invisible="state in ('posted','received','cancelled')" groups="stock.group_stock_manager"/>
+        </div>
+        <div class="oe_title">
+          <h1><field name="name" readonly="1"/></h1>
+        </div>
+        <group>
+          <group string="من">
+            <field name="from_warehouse_id"/>
+            <field name="from_location_id"/>
+            <field name="from_dept"/>
+            <field name="from_storekeeper_id"/>
+          </group>
+          <group string="إلى">
+            <field name="to_warehouse_id"/>
+            <field name="to_location_id"/>
+            <field name="to_dept"/>
+            <field name="to_storekeeper_id"/>
+          </group>
+        </group>
+        <group>
+          <group>
+            <field name="transfer_date"/>
+            <field name="fiscal_year"/>
+          </group>
+          <group>
+            <field name="fixed_asset_id"/>
+            <field name="custody_id"/>
+          </group>
+        </group>
+        <field name="transfer_reason"/>
+        <notebook>
+          <page string="الأصناف المحولة">
+            <field name="line_ids">
+              <tree editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="product_id"/>
+                <field name="product_code" optional="show"/>
+                <field name="uom_id" optional="show"/>
+                <field name="qty"/>
+                <field name="unit_price"/>
+                <field name="total_value" readonly="1" sum="الإجمالي"/>
+                <field name="serial_lot" optional="show"/>
+                <field name="condition"/>
+                <field name="notes" optional="show"/>
+              </tree>
+            </field>
+            <group class="oe_subtotal_footer">
+              <field name="total_lines" readonly="1"/>
+              <field name="total_value" readonly="1"/>
+            </group>
+          </page>
+          <page string="معلومات إضافية">
+            <field name="notes"/>
+            <group>
+              <field name="picking_id" readonly="1"/>
+              <field name="approved_by" readonly="1"/>
+              <field name="received_by" readonly="1"/>
+            </group>
+          </page>
+        </notebook>
+      </sheet>
+      <chatter/>
+    </form>
+  </field>
+</record>
+
+<record id="view_transfer_permit_list" model="ir.ui.view">
+  <field name="name">stock.transfer.permit.list</field>
+  <field name="model">stock.transfer.permit</field>
+  <field name="arch" type="xml">
+    <tree string="أذونات التحويل"
+          decoration-success="state == 'received'"
+          decoration-primary="state == 'posted'"
+          decoration-warning="state == 'approved'">
+      <field name="name"/>
+      <field name="transfer_date"/>
+      <field name="from_warehouse_id" string="من"/>
+      <field name="to_warehouse_id" string="إلى"/>
+      <field name="total_lines" string="أصناف"/>
+      <field name="total_value" sum="الإجمالي"/>
+      <field name="state" widget="badge"/>
+    </tree>
+  </field>
+</record>
+
+<record id="action_transfer_permits" model="ir.actions.act_window">
+  <field name="name">أذونات التحويل</field>
+  <field name="res_model">stock.transfer.permit</field>
+  <field name="view_mode">list,form</field>
+</record>
+
+</odoo>
