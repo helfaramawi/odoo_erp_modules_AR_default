@@ -11,8 +11,6 @@
         'views/commitment_views.xml',
         'reports/commitment_report.xml',
         'reports/commitment_template.xml',
-        'reports/commitment_report.xml',
-        'reports/commitment_template.xml',
     ],
     'installable': True,
 }

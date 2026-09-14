@@ -48,7 +48,6 @@ class GovernmentAdvance(models.Model):
     employee_id = fields.Many2one(
         'hr.employee', string='الموظف المستفيد',
         tracking=True,
-        invisible="advance_type == 'vendor'",
     )
     employee_job = fields.Char(
         string='الوظيفة', related='employee_id.job_title', store=True,
@@ -63,7 +62,6 @@ class GovernmentAdvance(models.Model):
     )
     vendor_id = fields.Many2one(
         'res.partner', string='المورد',
-        invisible="advance_type != 'vendor'",
     )
 
     # ── القيم المالية ────────────────────────────────────────────

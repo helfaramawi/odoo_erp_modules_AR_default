@@ -12,8 +12,6 @@
         'views/requisition_views.xml',
         'reports/requisition_report.xml',
         'reports/requisition_template.xml',
-        'reports/requisition_report.xml',
-        'reports/requisition_template.xml',
     ],
     'installable': True,
 }

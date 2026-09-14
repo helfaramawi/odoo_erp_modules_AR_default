@@ -43,7 +43,6 @@ class EtaConfig(models.Model):
     )
     client_secret = fields.Char(
         string='Client Secret', required=True,
-        password=True,
         help='احتفظ بهذه البيانات سرية — لا تشاركها'
     )
 

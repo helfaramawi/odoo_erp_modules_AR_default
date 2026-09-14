@@ -43,7 +43,7 @@
               <field name="stage3_note"/>
             </group>
           </group>
-          <div class="alert alert-warning" invisible="state == 'approved'">
+          <div class="alert alert-warning" role="alert" invisible="state == 'approved'">
             لا يمكن طباعة استمارة 75 قبل اعتمادها من رئيس المصلحة (المرحلة الثالثة)
           </div>
           <field name="rejection_reason" invisible="state != 'rejected'" placeholder="سبب الرفض..."/>

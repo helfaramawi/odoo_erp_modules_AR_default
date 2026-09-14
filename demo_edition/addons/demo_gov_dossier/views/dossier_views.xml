@@ -22,7 +22,7 @@
               <field name="is_complete" widget="boolean_toggle"/>
             </group>
           </group>
-          <div class="alert alert-danger" invisible="is_complete">
+          <div class="alert alert-danger" role="alert" invisible="is_complete">
             <strong>⚠️ المرفقات الناقصة: </strong>
             <field name="missing_attachments" readonly="1"/>
           </div>

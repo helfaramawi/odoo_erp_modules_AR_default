@@ -20,7 +20,7 @@
               <field name="current_balance" readonly="1"/>
             </group>
           </group>
-          <div class="alert alert-warning" invisible="current_balance >= 0">
+          <div class="alert alert-warning" role="alert" invisible="current_balance >= 0">
             <strong>⚠️ تحذير: الرصيد سالب — يُعد ذلك مخالفة مالية!</strong>
           </div>
           <field name="transaction_ids">

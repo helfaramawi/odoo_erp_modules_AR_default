@@ -11,8 +11,6 @@
         'views/dossier_views.xml',
         'reports/dossier_report.xml',
         'reports/dossier_template.xml',
-        'reports/dossier_report.xml',
-        'reports/dossier_template.xml',
     ],
     'installable': True,
 }

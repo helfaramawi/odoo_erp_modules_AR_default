@@ -72,7 +72,7 @@ class Form69DailyReckoning(models.Model):
         ('draft',  'مسودة'),
         ('done',   'مكتمل'),
         ('signed', 'معتمد'),
-    ], default='draft', string='الحالة', tracking=True)
+    ], default='draft', string='الحالة')
 
     currency_id  = fields.Many2one('res.currency', default=lambda s: s.env.company.currency_id)
     company_id   = fields.Many2one('res.company', default=lambda s: s.env.company)

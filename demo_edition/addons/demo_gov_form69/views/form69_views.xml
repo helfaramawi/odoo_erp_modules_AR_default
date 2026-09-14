@@ -44,7 +44,7 @@
               <field name="is_balanced" widget="boolean_toggle" readonly="1"/>
             </group>
           </group>
-          <div class="alert alert-danger" invisible="match_ok">
+          <div class="alert alert-danger" role="alert" invisible="match_ok">
             <strong>تحذير: إجمالي الصرفيات لا يتطابق مع دفتر 55 ع.ح — يجب المراجعة قبل الاعتماد</strong>
           </div>
           <group string="الاعتماد">
@@ -117,7 +117,7 @@
             <field name="signed_by" readonly="1"/>
             <field name="sign_date" readonly="1"/>
           </group>
-          <div class="alert alert-danger" invisible="match_ok">
+          <div class="alert alert-danger" role="alert" invisible="match_ok">
             <strong>تحذير: الإجماليات لا تتطابق مع دفتر 55 ع.ح — يرجى المراجعة قبل الاعتماد</strong>
           </div>
           <field name="notes"/>

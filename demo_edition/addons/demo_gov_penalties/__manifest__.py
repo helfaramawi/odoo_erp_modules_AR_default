@@ -21,7 +21,7 @@
 
         دورة الحياة:
         draft → recorded → approved → executed → (appealed → resolved)
-                                              → (cancelled if void)
+        → (cancelled if void)
 
         السنة المالية: 1 يوليو – 30 يونيو
     """,

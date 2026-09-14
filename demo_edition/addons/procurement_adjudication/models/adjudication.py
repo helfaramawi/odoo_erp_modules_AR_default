@@ -286,7 +286,7 @@ class AdjudicationSupplierLine(models.Model):
         ('pass',        'مطابق للشروط ✓'),
         ('conditional', 'مطابق مع تحفظ'),
         ('fail',        'غير مطابق ✗'),
-    ], string='نتيجة البت الفني', default='pending', tracking=True)
+    ], string='نتيجة البت الفني', default='pending')
     technical_notes = fields.Text(string='ملاحظات البت الفني')
     compliance_form = fields.Boolean(
         string='نموذج استيفاء الشروط',
@@ -300,7 +300,7 @@ class AdjudicationSupplierLine(models.Model):
         ('pending',  'قيد المقارنة'),
         ('accepted', 'فائز بالترسية ✓'),
         ('rejected', 'مرفوض'),
-    ], string='نتيجة البت المالي', default='pending', tracking=True)
+    ], string='نتيجة البت المالي', default='pending')
     financial_notes = fields.Text(string='ملاحظات البت المالي')
 
     bid_vs_estimate = fields.Float(

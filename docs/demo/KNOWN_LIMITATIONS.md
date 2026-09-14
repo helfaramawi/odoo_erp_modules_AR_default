@@ -209,6 +209,66 @@ names against that instance the same way (query `ir_model_data`) rather
 than assuming this mapping is portable — it's specific to the exact
 Odoo build this Demo Edition was tested against.
 
+## `demo_gov_revenue_books` menu loaded before the action it needs
+
+**Problem**: `views/menu.xml` was listed in the manifest's `data` array
+*before* `wizard/print_wizard_views.xml`, but its menu item references
+an action (`action_revenue_print_wizard`) defined in that later file —
+install failed with `External ID not found`.
+**Fixed**: reordered the `data` list so the wizard/action file loads
+before the menu that references it.
+**Also**: wrote a repository-wide static check for this exact bug shape
+(a menuitem referencing a same-module action defined in a file that
+loads later per the manifest's `data` order) — zero further instances
+found anywhere in the 49-module repository.
+
+## Cleaned up every warning surfaced during the live install
+
+None of these blocked installation, but since a live install was
+already underway, all warnings raised along the way were fixed rather
+than left as noise for the next person:
+
+- **3 manifests listed a data file twice** (`demo_gov_commitment`,
+  `demo_gov_dossier`, `demo_gov_scm_requisition` each had their
+  `reports/*_report.xml` and `reports/*_template.xml` entries
+  duplicated in `data`) — deduplicated.
+- **4 module `description` fields broke Odoo's RST renderer**
+  (`demo_gov_seed_data` — introduced in this pass, a bullet list
+  directly after a paragraph with no blank line; `demo_gov_cash_books`
+  and `demo_gov_penalties` — pre-existing, same missing-blank-line
+  pattern before a list, plus over-indented continuation text;
+  `demo_gov_insurance_subsidiary` — pre-existing, a line of `===`
+  characters under a heading-like line was parsed as a section-title
+  underline). Fixed all four and then ran every module's `description`
+  through `docutils` directly (not just the ones that happened to
+  surface in the install log) — zero remaining RST issues anywhere in
+  the repository.
+- **11 Python field definitions passed view-only attributes
+  (`invisible=`, `tracking=`, `password=`) as ORM field constructor
+  kwargs** — these aren't valid `fields.X()` parameters and were always
+  silently ignored, so removing them is a pure no-op with zero behavior
+  change. For the `invisible=` and `password=` cases (which are never
+  valid as Python field kwargs regardless of model setup), verified the
+  correct `invisible=`/`password=` attribute already exists on the
+  corresponding `<field>` tag in each module's own view XML, so the
+  actual show/hide and masking behavior was already correct and unaffected.
+  For the `tracking=` cases, checked whether the model inherits
+  `mail.thread` first: `demo_gov.advance` and `auction.request` do (kept
+  `tracking=True`, only removed the co-located invalid `invisible=`);
+  `adjudication.supplier.line` and `demo_gov.form69` don't (removed
+  `tracking=True`, since it was already non-functional there).
+- **5 view files had a Bootstrap `alert`/`alert-*` div with no
+  accessibility role** — added `role="alert"` to each (found by a
+  repository-wide grep for the pattern, not just instances already hit
+  during install).
+- **One warning was left as-is deliberately**:
+  `custody.assignment.product_description` is a `related`,
+  `store=True` field pointing at a translatable source
+  (`product.template.description`) — Odoo's warning here is a standard,
+  well-known framework caveat about that combination, not a bug; "fixing"
+  it would mean removing the stored/related design (used for search and
+  reporting) rather than fixing anything broken.
+
 ## Not tested against a live Odoo instance
 
 **Root cause**: the build environment had no cloud account and no
