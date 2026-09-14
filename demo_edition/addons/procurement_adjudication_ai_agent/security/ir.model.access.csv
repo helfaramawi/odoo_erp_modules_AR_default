@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_procurement_adjudication_agent_log_user,access.procurement.adjudication.agent.log.user,model_procurement_adjudication_agent_log,base.group_user,1,1,1,0
+access_procurement_adjudication_agent_log_admin,access.procurement.adjudication.agent.log.admin,model_procurement_adjudication_agent_log,base.group_system,1,1,1,1

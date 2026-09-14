@@ -1095,3 +1095,107 @@ customer-facing demo deployment.
 
 Documented already in `DEPLOYMENT.md`. No pipeline existed to extend; not
 built from scratch in this pass.
+
+## 20 production-only "AI agent" modules were never anonymized — now added to the Demo Edition
+
+**Problem**: the user found, on their own local clone of
+`odoo_deployment_ar/addons/`, 20 modules never mentioned anywhere in
+this document set or in `demo_edition/`: a suite of AI-driven
+monitoring/automation agents (`port_said_budget_forecast_ai_agent`,
+`port_said_vendor_performance_ai_agent`, `port_said_duplicate_claim_ai_agent`,
+etc. — full list below) plus a menu-aggregator (`port_said_ai_agents_menu`)
+and an Arabic AI assistant (`port_said_arabic_ai_assistant`). These
+were untracked locally (never committed to git) until the user pushed
+them into `odoo_deployment_ar/addons/` in this session. Like every
+other `port_said_*` module, they carry the real, un-anonymized vendor
+name (`Paradise AI Solutions`/`Paradise Integrated Solutions`) and
+client identity — the original `BRANDING.md` anonymization pass, run
+before these modules existed in the tracked repo, never touched them.
+**Also found while committing them**: a completely unrelated repo
+hygiene gap — the repository had **no `.gitignore` at all**, and the
+same local working copy had an untracked `.env`, a `Demo Password.txt`,
+`__pycache__/` directories, and install/upgrade log files sitting
+alongside the real changes. Added a `.gitignore` (secrets, `__pycache__`,
+`*.pyc`, logs, OS cruft) before anything else was staged, specifically
+to stop those from ever being swept into a commit.
+
+**Fixed**: anonymized and copied all 20 into `demo_edition/addons/`
+(the `odoo_deployment_ar/` originals are untouched, matching how every
+other module in this repo works — raw in production, anonymized copy
+in the demo). Applied the exact same ordered replacement table as
+`BRANDING.md` (`Paradise AI Solutions`/`Paradise Integrated
+Solutions`/`Paradise AI` → `Enterprise Solutions Demo`,
+`port_said_*`/`portsaid` → `demo_gov_*`, `Port Said Governorate` →
+`Demo Governorate`, `بورسعيد` → `المحافظة التجريبية`, `Diwan@2024` →
+`Demo@2024`, vendor domains/emails → `example.com`), renamed each
+module's own directory the same way, then re-verified with the same
+`port_said|portsaid|Port Said|PORT SAID|Paradise|بورسعيد|Diwan@2024`
+grep `BRANDING.md` itself uses — zero hits repo-wide in the new copies.
+
+The automated pass caught the vast majority, but two variants slipped
+through because they used **dots instead of underscores** or **reversed
+word order** — patterns the literal `port_said`/`Port Said` string
+match doesn't catch: `access.port.said.<model>.<role>` in two
+`ir.model.access.csv` `name` columns (`demo_gov_commitment_ai_agent`,
+`demo_gov_arabic_ai_assistant` — cosmetic label text, not a
+functional reference, but still spelled out the real client name) and
+a defensive `'penalties.said.port'` fallback entry in three Python
+`candidate_models` guess-lists (`demo_gov_executive_briefing_ai_agent`,
+`demo_gov_vendor_data_quality_ai_agent`,
+`demo_gov_vendor_performance_ai_agent`) that would never have matched
+a real model anyway. Fixed by hand; a second grep pass (broadened to
+`port.?said` to catch both separators) came back clean.
+
+**Menu bug, same class as every other one in this document**: all 18
+of the 20 modules that have their own top-level menu (excluding
+`demo_gov_custom_programs_menu`, a self-contained, unrelated grouper
+for the generic `c*` modules) define a root `<menuitem>` with no
+`parent=` — standalone apps rather than grouped under
+`demo_gov_ai_agents_menu`'s aggregator menu
+(`menu_ai_agents_root`). Two already referenced it correctly
+(`demo_gov_arabic_ai_assistant`, `demo_gov_executive_briefing_ai_agent`)
+but were still missing `demo_gov_ai_agents_menu` from their manifest
+`depends` — the same "menu references another module's xmlid without
+declaring the dependency" bug fixed repeatedly earlier in this
+document. The other 16 had no `parent=` at all. **Fixed**: added
+`parent="demo_gov_ai_agents_menu.menu_ai_agents_root"` to all 16 root
+menuitems and `demo_gov_ai_agents_menu` to all 18 affected manifests'
+`depends`.
+
+`demo_gov_ai_agents_menu` itself also ships a `post_init_hook`-driven
+Python model (`demo_gov.ai.agents.menu.manager`) that dynamically
+re-parents any still-top-level agent-module root menu under the same
+aggregator at install time — a runtime version of the same grouping,
+presumably meant as a fallback for whichever agent modules didn't
+statically declare the parent. Confirmed it's safe to leave in place
+alongside the static fix above: it only moves a menu that currently
+has `parent_id = False`, so once every root menu is statically
+parented it simply has nothing left to do. Also removed two phantom
+entries from its `AI_AGENT_MODULES` list
+(`demo_gov_budget_ai_agent`, `demo_gov_dossier_ai_agent`) that don't
+correspond to any real module — leftover from the same
+dot/reversed-word corruption pattern found above, not modules that
+were ever supposed to exist.
+
+Full list of the 20 modules added
+(`port_said_*` → `demo_gov_*`, except `procurement_adjudication_ai_agent`
+which had no prefix to rename): `ai_agents_menu`, `arabic_ai_assistant`,
+`budget_forecast_ai_agent`, `budget_reallocation_ai_agent`,
+`commitment_ai_agent`, `conflict_interest_ai_agent`,
+`custom_programs_menu`, `daftar55_reconcile_ai_agent`,
+`dead_stock_ai_agent`, `duplicate_claim_ai_agent`, `eta_retry_ai_agent`,
+`executive_briefing_ai_agent`, `payment_anomaly_ai_agent`,
+`payment_cycle_delay_ai_agent`, `procurement_legal_compliance_ai_agent`,
+`procurement_splitting_ai_agent`, `vendor_data_quality_ai_agent`,
+`vendor_penalty_ai_agent`, `vendor_performance_ai_agent`,
+`procurement_adjudication_ai_agent`.
+
+Re-verified with the repo-wide cycle/dependency/dangling-action scan
+extended to cover all of `demo_edition/addons/` (69 modules now, up
+from 49): zero cycles, zero missing manifest dependencies, zero
+dangling action references. **Not yet done**: these 20 were never
+installed against a live Odoo instance in this pass (no live instance
+available here) — the user needs to run a fresh `-i` (not `-u`, since
+none of these were ever installed before) the same way every other
+fix in this document was live-verified, and report back anything that
+still doesn't load cleanly.
