@@ -106,6 +106,28 @@ reachable from the UI once `demo_gov_menu` is dropped from the install
 list, rather than being silently unreachable. Confirmed zero remaining
 `demo_gov_menu.` references anywhere in `demo_edition/addons/`.
 
+**Same theme, one more instance**: `l10n_eg_custody/data/demo_users.xml`
+seeds `groups_id` with `ref()` calls into `procurement_committee`,
+`procurement_adjudication`, `stock_addition_permit`,
+`stock_stocktaking_eg`, and `l10n_eg_auction` — none of which
+`l10n_eg_custody`'s manifest declared as dependencies (it only depended
+on `purchase, sale, stock, account, mail, hr`). Install failed with
+`External ID not found in the system: procurement_adjudication.group_adjudication_director`
+once Odoo's topological sort happened to load `l10n_eg_custody` before
+that module. **Fixed**: added the five missing dependencies to
+`l10n_eg_custody/__manifest__.py` (verified no circular dependency
+results). Then wrote a static scan across every module in the
+recommended install set's transitive closure, checking every `ref('module.xmlid')`
+call and every `ir.model.access.csv` `group_id:id` value against that
+module's declared dependencies — zero further instances found in that
+scope. This class of bug (a data file referencing another module's XML
+ID without a matching manifest dependency) is exactly the kind of thing
+Odoo's own tooling doesn't catch until literal install time in
+whatever order the topological sort happens to pick; the same static
+scan, run against the full ~50-module repository rather than just the
+8-module recommended set, would be worth doing before expanding the
+install list.
+
 ## Circular module dependency through `general_ledger_ar`
 
 **Problem**: `general_ledger_ar -> demo_gov_subsidiary_books ->
