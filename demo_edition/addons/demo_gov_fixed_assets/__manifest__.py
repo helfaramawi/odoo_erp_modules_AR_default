@@ -11,7 +11,6 @@
         'demo_gov_daftar55',
         'demo_gov_commitment',
         'l10n_eg_auction',
-        'general_ledger_ar',
     ],
     'data': [
         'security/ir.model.access.csv',

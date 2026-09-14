@@ -27,7 +27,7 @@ the deployment commands differ:
 
 | Provider | Suggested approach |
 |---|---|
-| Any VM (DigitalOcean Droplet, Azure VM, EC2, on-prem) | Install Docker + Compose, copy `demo_edition/`, `docker compose -f docker/docker-compose.demo.yml up -d --build` |
+| Any VM (DigitalOcean Droplet, Azure VM, EC2, on-prem) | Install Docker + Compose, copy `demo_edition/`, `docker compose --env-file .env -f docker/docker-compose.demo.yml up -d --build` |
 | AWS | ECS/Fargate (two task definitions from the same Dockerfile + an RDS Postgres instead of the `db` service) or plain EC2 + Docker Compose |
 | Azure | Container Apps or App Service for Containers + Azure Database for PostgreSQL |
 | Google Cloud | Cloud Run (stateless Odoo container) + Cloud SQL for PostgreSQL — note Cloud Run's read-only filesystem means the Odoo filestore volume must move to Cloud Storage/GCS-fuse or a similar mount |

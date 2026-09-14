@@ -2,6 +2,68 @@
 
 Honest punch list. Nothing below was hidden or silently worked around.
 
+## `demo_gov_menu` is an incomplete module — confirmed pre-existing in production too
+
+**Problem**: `demo_gov_menu/__manifest__.py` (and the original
+`port_said_menu/__manifest__.py` in `odoo_deployment_ar/` — verified
+identical) lists 8 data files (`views/menu_structure.xml`,
+`views/menu_dashboard.xml`, `views/menu_accts.xml`, and five more) and a
+menu ID `menu_ps_20_accts` that five other modules (`demo_gov_subsidiary_books`,
+`demo_gov_fixed_assets`, `demo_gov_form69`, `demo_gov_form75`,
+`demo_gov_special_funds`) parent their own menus under. None of those 8
+files, nor any definition of `menu_ps_20_accts`, exist anywhere in the
+repository — confirmed by a repo-wide filename search. The module
+directory contains only `__manifest__.py`. This means the "unified
+single-tab menu structure" feature described in the module's own summary
+cannot actually install in this state, in the Demo Edition or in
+production.
+**Root cause**: pre-existing, not introduced by anonymization — verified
+byte-for-byte identical structure in `odoo_deployment_ar/addons/port_said_menu/`.
+**How it was found**: discovered by actually attempting the install
+(`docker compose exec odoo ... -i demo_branding,demo_gov_seed_data,demo_gov_meno,...`)
+against a live Odoo 17 + Postgres instance — this is exactly the class of
+defect the "not tested against a live Odoo instance" limitation below
+warned could exist.
+**Severity**: High for the "unified menu" feature specifically; Low for
+everything else — none of the other modules in the recommended install
+set (`demo_branding`, `demo_gov_seed_data`, `l10n_eg_custody`,
+`l10n_eg_auction`, `procurement_committee`, `procurement_adjudication`,
+`stock_addition_permit`, `stock_stocktaking_eg`) require `demo_gov_menu`
+transitively, so it can simply be **omitted from the install list** and
+everything else installs and works with each module's own default Odoo
+Apps-menu entry instead of the unified single-tab layout.
+**Fix required**: write the 8 missing view files (menu structure design
+not present anywhere in the source — this needs the application owner's
+input, not something to fabricate from the anonymized code alone).
+**Recommendation**: `docs/demo/DEPLOYMENT.md` and `demo_edition/README.md`'s
+install commands should drop `demo_gov_menu` until this is fixed.
+
+## Circular module dependency through `general_ledger_ar`
+
+**Problem**: `general_ledger_ar -> demo_gov_subsidiary_books ->
+demo_gov_menu -> demo_gov_fixed_assets -> general_ledger_ar` (and two more
+cycles of the same shape through `demo_gov_budget_planning` and
+`l10n_eg_eta_invoice`) — Odoo refuses to install any of these with
+`Recursion error in modules dependencies!`.
+**Root cause**: pre-existing, confirmed identical in
+`odoo_deployment_ar/addons/port_said_fixed_assets/__manifest__.py` etc.
+`general_ledger_ar` has no Python models and only four generic menu
+items — nothing in `demo_gov_fixed_assets` actually references it (zero
+grep hits), so its `depends` entry was dead weight.
+**Fixed**: removed the spurious `general_ledger_ar` dependency from
+`demo_gov_fixed_assets/__manifest__.py` — this one had zero technical
+justification and breaks cleanly. **Not fixed**: the same spurious-looking
+edge in `demo_gov_budget_planning`, `demo_gov_stock_finance_bridge`, and
+`l10n_eg_eta_invoice` — these three actually do need transitive access to
+`demo_gov_subsidiary_books.menu_subsidiary_root` (their own menu XML
+parents on it), which they currently only reach via `general_ledger_ar`.
+Fixing these properly requires resolving the `demo_gov_menu` gap above
+first (since `demo_gov_subsidiary_books` itself sits under
+`demo_gov_menu` in the dependency graph, simply pointing them at
+`demo_gov_subsidiary_books` directly recreates the same cycle) — recorded
+here rather than worked around blindly. None of these three are in the
+recommended minimal install list either.
+
 ## Not tested against a live Odoo instance
 
 **Root cause**: the build environment had no cloud account and no
