@@ -4,7 +4,7 @@
     'version': '17.0.1.0.0',
     'author': 'Enterprise Solutions Demo',
     'license': 'LGPL-3',
-    'depends': ['account', 'mail', 'demo_gov_commitment'],
+    'depends': ['account', 'mail', 'demo_gov_commitment', 'demo_branding'],
     'data': [
         'security/ir.model.access.csv',
         'views/special_funds_views.xml',

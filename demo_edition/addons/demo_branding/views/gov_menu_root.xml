@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- Single top-level app grouping every government-suite module. The
+       ~13 modules that used to register their own standalone root app
+       now nest under one of the four category menus below instead. -->
+  <menuitem id="menu_gov_root"
+            name="الخدمات الحكومية التجريبية"
+            sequence="5"/>
+
+  <menuitem id="menu_gov_accounts"
+            name="الحسابات"
+            parent="menu_gov_root"
+            sequence="10"/>
+
+  <menuitem id="menu_gov_purchases"
+            name="المشتريات"
+            parent="menu_gov_root"
+            sequence="20"/>
+
+  <menuitem id="menu_gov_warehouses"
+            name="المخازن والمستودعات"
+            parent="menu_gov_root"
+            sequence="30"/>
+
+  <menuitem id="menu_gov_reports"
+            name="التقارير الحكومية"
+            parent="menu_gov_root"
+            sequence="40"/>
+
+</odoo>

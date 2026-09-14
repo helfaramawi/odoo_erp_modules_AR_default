@@ -67,5 +67,6 @@
   <menuitem id="menu_ps_form75"
             name="استمارة 75 — الإغلاق الشهري"
             action="demo_gov_form75.action_form75"
+            parent="demo_branding.menu_gov_accounts"
             sequence="21"/>
 </odoo>

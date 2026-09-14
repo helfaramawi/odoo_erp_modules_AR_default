@@ -24,6 +24,7 @@
         'data/demo_branding_data.xml',
         'views/demo_branding_config_views.xml',
         'views/webclient_templates.xml',
+        'views/gov_menu_root.xml',
     ],
     'installable': True,
     'application': False,

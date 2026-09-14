@@ -3,6 +3,7 @@
 
   <menuitem id="menu_ps_fixed_assets_root"
             name="الاصول الثابتة"
+            parent="demo_branding.menu_gov_accounts"
             sequence="50"/>
 
   <menuitem id="menu_ps_fa_list"

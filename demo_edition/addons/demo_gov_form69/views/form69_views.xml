@@ -137,5 +137,6 @@
   <menuitem id="menu_ps_form69"
             name="استمارة 69 — الحسبة اليومية"
             action="demo_gov_form69.action_form69"
+            parent="demo_branding.menu_gov_accounts"
             sequence="20"/>
 </odoo>

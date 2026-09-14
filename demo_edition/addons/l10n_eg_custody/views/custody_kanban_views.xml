@@ -228,6 +228,7 @@ action = {
   <menuitem id="menu_ps_custody_main"
             name="إدارة العهد"
             action="l10n_eg_custody.action_custody_assignment_main"
+            parent="demo_branding.menu_gov_warehouses"
             sequence="44"/>
 
   <menuitem id="menu_ps_custody_records" name="سجلات العهد"

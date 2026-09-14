@@ -15,6 +15,7 @@
         'demo_gov_fixed_assets',
         'demo_gov_commitment',
         'demo_gov_daftar55',  # مؤقت: لازم علشان الـ daftar55_id field لسه موجود
+        'demo_branding',
         # demo_gov_daftar55 dependency removed:
         # دفتر 55 ع.ح هو سجل مدفوعات للموردين وليس له علاقة بأذونات الصرف المخزونية.
         # سجل حركات الصرف المخزوني (stock.issue.register.line) مُعرَّف في هذه الوحدة.

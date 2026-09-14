@@ -6,7 +6,7 @@
     'author': 'Enterprise Solutions Demo',
     'license': 'LGPL-3',
     'depends': ['purchase', 'demo_gov_commitment', 'mail',
-        'uom'],
+        'uom', 'demo_branding'],
     'data': [
         'security/ir.model.access.csv',
         'data/sequence_data.xml',

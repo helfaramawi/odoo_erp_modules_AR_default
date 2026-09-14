@@ -29,6 +29,7 @@
         'base', 'mail', 'account',
         'demo_gov_daftar55',     # مرجعية لدفتر 55
         'demo_gov_daftar224',    # مرجعية ليومية 224
+        'demo_branding',
     ],
     'data': [
         'security/security_groups.xml',

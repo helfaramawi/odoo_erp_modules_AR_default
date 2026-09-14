@@ -1324,5 +1324,6 @@
   <menuitem id="menu_ps_adjudication"
             name="البت الفني والمالي"
             action="procurement_adjudication.action_adjudication"
+            parent="demo_branding.menu_gov_purchases"
             sequence="32"/>
 </odoo>

@@ -10,8 +10,7 @@
         'demo_gov_daftar55',
         'demo_gov_daftar224',
         'demo_gov_commitment',
-        'l10n_eg_auction',
-    ],
+        'l10n_eg_auction', 'demo_branding',],
     'data': [
         'security/ir.model.access.csv',
         'views/report_wizard_views.xml',

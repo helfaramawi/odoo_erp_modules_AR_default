@@ -71,6 +71,7 @@
   <menuitem id="menu_ps_warehouse"
             name="المستودعات والمخازن"
             action="demo_gov_scm_warehouse.action_inspection"
+            parent="demo_branding.menu_gov_warehouses"
             sequence="41"/>
 
   <menuitem id="menu_ps_warehouse_addition" name="أذونات الإضافة (نموذج 1)"

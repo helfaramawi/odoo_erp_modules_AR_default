@@ -49,12 +49,69 @@ list, so they were deliberately left under their existing `Extra
 Tools` category rather than folded into one of the four groups.
 `demo_gov_dashboard` and `demo_gov_menu` are excluded from install
 (see their own sections below) so their category doesn't affect the
-live demo either way. This only changes the `category` field in each
-manifest — the module's actual menu structure, actions, and views are
-untouched (each module's own top-level menu, added in the "13 modules
-pointed at a broken parent menu" fix below, is unchanged; the Settings
-→ Apps category sidebar is a separate grouping from the main app menu
-tree).
+live demo either way.
+
+### Update: the `category` fix above only changed the Settings → Apps page — the real navigation sidebar needed the menu tree itself restructured
+
+After the `category` fix shipped, live testing showed the actual
+always-visible app-switcher/navigation sidebar (the persistent list of
+apps on the side of every page, not the Settings → Apps management
+kanban) was completely unaffected — it still listed ~13 separate
+government apps with no grouping. That sidebar is populated purely
+from root `ir.ui.menu` records (any `<menuitem>` with no `parent`),
+which has nothing to do with a module's manifest `category` — the two
+are unrelated Odoo mechanisms that happen to both live under the word
+"Apps". The `category` fix above was still correct/worth keeping (it
+does clean up the Settings → Apps management page), but it wasn't
+what the user was pointing at, and didn't address the actual request.
+
+Tracing every module's menu file found exactly **13 modules** that
+each registered their own standalone root `<menuitem>` (no `parent`)
+— the same 13 uncovered by the earlier "13 modules pointed at a broken
+parent menu" fix further below, when their `parent="demo_gov_menu.…"`
+references were stripped rather than repointed at a working parent.
+Eleven more modules (`demo_gov_cash_books`, `demo_gov_cash_transfers`,
+`demo_gov_cheques`, `demo_gov_revenue_books`,
+`demo_gov_insurance_subsidiary`, `demo_gov_penalties`,
+`demo_gov_budget_planning`, `demo_gov_gl_reports`,
+`general_ledger_ar`, `l10n_eg_eta_invoice`) already nested correctly
+under `demo_gov_subsidiary_books`'s root menu, so re-parenting that one
+root menu carried all eleven of them along for free — they needed no
+changes of their own.
+
+**Fixed**: added one new file,
+`demo_branding/views/gov_menu_root.xml`, defining a single root app
+menu (`menu_gov_root`, "الخدمات الحكومية التجريبية") with four child
+menus matching the same four functional groups as the category fix —
+`menu_gov_accounts` (الحسابات), `menu_gov_purchases` (المشتريات),
+`menu_gov_warehouses` (المخازن والمستودعات), and `menu_gov_reports`
+(التقارير الحكومية). `demo_branding` is the natural home for this
+since it's already the one module every part of the Demo Edition
+treats as central infrastructure, and it depends on nothing beyond
+`base`/`web` so there's no risk of a dependency cycle.
+
+Each of the 13 modules' own root `<menuitem>` then got a `parent="demo_branding.menu_gov_<category>"`
+attribute added (previously absent, which is exactly what made it a
+standalone root app), and `demo_branding` was added to that module's
+manifest `depends` so install/upgrade order guarantees the parent menu
+exists first:
+
+| Module | Category |
+|---|---|
+| `demo_gov_subsidiary_books`, `demo_gov_fixed_assets`, `demo_gov_form69`, `demo_gov_form75`, `demo_gov_special_funds` | الحسابات |
+| `demo_gov_scm_requisition`, `procurement_adjudication` | المشتريات |
+| `demo_gov_scm_issue`, `demo_gov_scm_warehouse`, `l10n_eg_custody`, `stock_addition_permit`, `stock_stocktaking_eg` | المخازن والمستودعات |
+| `demo_gov_reports` | التقارير الحكومية |
+
+Verified with a repo-wide AST trace of every `<menuitem>`'s parent
+chain (resolving cross-module `module.xmlid` references) confirming
+these 13 are the only remaining root nodes among the government-suite
+modules, and a manifest dependency-graph cycle check confirming adding
+`demo_branding` to all 13 introduces no circular dependency. Since
+`demo_branding` was already installed before this change, picking it
+up requires an actual module **upgrade** (`-u`), not just a restart —
+plain source-file changes to an already-installed module's `data`
+files aren't re-read until the module is reinstalled/upgraded.
 
 ## `demo_branding`'s Settings-page XML inheritance was wrong — fixed
 

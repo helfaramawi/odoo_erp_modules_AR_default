@@ -65,6 +65,7 @@
   <menuitem id="menu_ps_reports_gov"
             name="📋 التقارير الحكومية"
             action="action_demo_gov_report_wizard"
+            parent="demo_branding.menu_gov_reports"
             sequence="5"/>
 
 </odoo>

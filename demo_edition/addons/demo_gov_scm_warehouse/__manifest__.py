@@ -5,7 +5,7 @@
     "version": "17.0.1.0.0",
     "author": "Enterprise Solutions Demo",
     "license": "LGPL-3",
-    "depends": ["stock","purchase","uom","demo_gov_scm_purchase_bridge","demo_gov_dossier"],
+    "depends": ["stock","purchase","uom","demo_gov_scm_purchase_bridge","demo_gov_dossier", "demo_branding"],
     "data": [
         "security/ir.model.access.csv",
         "data/sequence_data.xml",

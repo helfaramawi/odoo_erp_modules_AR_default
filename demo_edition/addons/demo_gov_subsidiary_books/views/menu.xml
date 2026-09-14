@@ -2,6 +2,7 @@
 <odoo>
   <menuitem id="menu_subsidiary_root"
             name="الدفاتر المساعدة"
+            parent="demo_branding.menu_gov_accounts"
             sequence="45"/>
   <menuitem id="menu_folio"
             name="الفوليوهات"
