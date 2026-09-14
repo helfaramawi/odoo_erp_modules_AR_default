@@ -175,6 +175,40 @@ first (since `demo_gov_subsidiary_books` itself sits under
 here rather than worked around blindly. None of these three are in the
 recommended minimal install list either.
 
+## `general_ledger_ar`'s menu shortcuts pointed at three actions Odoo no longer ships
+
+**Problem**: `general_ledger_ar/views/menu_views.xml` — a thin, models-free
+module that only adds four shortcut menu items under the "subsidiary
+books" menu — referenced `account.action_account_ledger`,
+`account.action_account_receivable_from_account`, and
+`account.action_account_payable_from_account`. None of those three exist
+in this Odoo 17 build (`account.action_move_journal_line`, the fourth
+one, does). Install failed with `External ID not found in the system:
+account.action_account_ledger`.
+**Root cause**: this Odoo build's `account` module has moved General
+Ledger / Partner Ledger reporting onto a different, newer mechanism
+(no `ir.actions.act_window`/`ir.actions.client` record under `account`
+matches "ledger", "receivable", or "payable" at all — confirmed by
+querying `ir_model_data` directly against the live database) — those
+three classic action names were presumably valid when
+`general_ledger_ar` was originally written against an earlier Odoo 17
+point release, and no longer are in this one.
+**How it was found and fixed**: rather than guess a fourth time in a
+row, queried the live database directly for the actual list of
+`account`-module actions, then remapped by real functional match:
+General Ledger → `account.action_move_line_select` (Journal Items — the
+underlying general-ledger data); both the Customer and Vendor ledger
+shortcuts → `account.action_account_moves_ledger_partner` (the modern,
+unified Partner Ledger report — which is exactly why separate
+receivable/payable ledger actions no longer exist as distinct actions).
+Confirmed via repo-wide grep this was the only file referencing any of
+the three broken action names.
+**Recommendation for a real deployment**: if this module needs to run
+against a different Odoo 17 patch level, re-verify these four action
+names against that instance the same way (query `ir_model_data`) rather
+than assuming this mapping is portable — it's specific to the exact
+Odoo build this Demo Edition was tested against.
+
 ## Not tested against a live Odoo instance
 
 **Root cause**: the build environment had no cloud account and no
