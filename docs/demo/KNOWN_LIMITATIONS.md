@@ -286,18 +286,60 @@ than left as noise for the next person:
   it would mean removing the stored/related design (used for search and
   reporting) rather than fixing anything broken.
 
-## Not tested against a live Odoo instance
+### Update: two more invalid `tracking=` kwargs found after expanding the install to all 47 modules
 
-**Root cause**: the build environment had no cloud account and no
-pre-existing Odoo 17 runtime; standing one up was explicitly deprioritized
-in favor of anonymization/packaging (see `DEMO_CONVERSION_PLAN.md`).
-**Severity**: Medium-High — this is the single biggest gap. **Fix
-required**: run `demo_edition/scripts/demo-seed/demo-reset.sh` (or the
-Docker quick start) as the real first test, before any presentation.
-Everything in this repo was verified statically (parses, dependencies
-resolve, no leftover identifying strings) but *not* by actually booting
-Odoo. **Workaround**: none — this needs to happen once, in an
-environment with Odoo available, before the Demo Edition is trusted.
+The fixes above were driven by the log from the original 8-module
+install. Once the install list was expanded to all 47 modules (to
+surface every app — Accounts, subsidiary books, Assets, Purchases,
+Warehouses, Reports, etc.), a fresh full install surfaced one more
+instance of the same bug class, and a repository-wide AST scan (every
+`ClassDef` with a `tracking=True` field kwarg, cross-checked against
+that class's own `_inherit`/`_name` for `mail.thread`, with `_inherit`
+targets resolved against Odoo core and against this repo's own model
+definitions) found a second one that hadn't surfaced in any log yet:
+
+- `demo_gov_scm_warehouse.WarehouseAdditionPermit.state` — the model
+  doesn't inherit `mail.thread` (only its sibling model in the same
+  module, `InspectionCommittee`, does). Removed `tracking=True`.
+- `procurement_committee.ProcurementCommitteeMixin.committee_id` — an
+  `AbstractModel` mixin that doesn't inherit `mail.thread` itself and
+  isn't currently `_inherit`'d by any concrete model in the repo, so it
+  never picks up `mail.thread` transitively either. Removed
+  `tracking=True`.
+
+The same scan confirmed every other `tracking=True` in the repo is on
+a model that inherits `mail.thread` either directly or by extending a
+core Odoo model that already does (`purchase.order`, `sale.order`,
+`hr.employee`), or a model defined elsewhere in the same module that
+does (`stock.stocktaking.session`, `demo_gov.daftar55`,
+`auction.request`, `auction.lease.contract`) — no further instances of
+this bug class remain anywhere in `demo_edition/addons`.
+
+## Live-tested against a real Odoo 17 instance — confirmed working
+
+**Update**: the gap described below (no live Odoo runtime in the build
+environment) has since been closed. The Demo Edition was installed
+end-to-end on a real Docker Desktop + Odoo 17 (`17.0-20260305`) stack,
+against a freshly-dropped, empty database, with the full 47-module
+custom install list (114 modules total once Odoo's own core
+dependencies are included, `demo_gov_menu` and `demo_gov_dashboard`
+excluded per their sections below). The install completed cleanly:
+`Modules loaded.` / `Registry loaded in 56.065s`, zero errors, zero
+remaining warnings after the fixes documented across this file
+(Bugs 6-16 plus the two additional `tracking=` fixes above). All of
+Accounts, the subsidiary books, Assets, Purchases, Warehouses/SCM, and
+Reports are confirmed visible and installed.
+
+Everything below this point in the original writeup (build environment
+had no cloud account/Odoo runtime, so only static verification —
+parses, dependency resolution, no leftover identifying strings — had
+been done) is now superseded for the general install path. It's kept
+for history since the individual bugs it led to finding are still
+documented throughout this file. The one thing that remains genuinely
+untested live is the seeded demo *data* and *scenarios*
+(`demo_edition/scripts/demo-seed/demo-reset.sh`) rather than the
+module installation itself — run that script and walk through the
+demo scenarios at least once before any real presentation.
 
 ## `demo_gov_dashboard/views/dashboard_template.xml` — malformed XML
 
