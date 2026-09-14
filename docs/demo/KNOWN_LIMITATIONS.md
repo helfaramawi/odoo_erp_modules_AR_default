@@ -183,6 +183,82 @@ dependency-graph cycle check and cross-module XML-ID reference scan used
 for the earlier fixes above: 49 modules, zero cycles, zero missing
 dependencies.
 
+### Update: same audit repeated for المشتريات / المخازن والمستودعات / التقارير الحكومية
+
+Requested as a direct follow-up once الحسابات was fixed: same check
+(action exists, no `<menuitem>` reaches it — or reaches it only
+partially) run against the other three category groups. A repo-wide
+scan (`ir.actions.act_window` count vs `<menuitem>` count per module,
+then read every module that didn't match 1:1) found four more real
+instances, all confirmed pre-existing in the `port_said_*`/
+`odoo_deployment_ar` production equivalents where a menu file exists at
+all:
+
+- **`procurement_committee`** (المشتريات, `application: True`) — the
+  module's own `views/committee_views.xml` had a literal `<!-- Menus -->`
+  placeholder comment where the menu was clearly meant to go, followed
+  by nothing. `action_procurement_committee` (اللجان) was completely
+  unreachable. **Fixed**: added the menuitem at the placeholder, parented
+  at `demo_branding.menu_gov_purchases` (same root
+  `procurement_adjudication`/`demo_gov_scm_requisition` already use),
+  plus `demo_branding` to `depends`.
+- **`l10n_eg_auction`** (المشتريات, `application: True`, "CRITICAL (full
+  custom)" per the root README) — zero menu files anywhere despite two
+  real actions (`action_auction_request` — المزادات,
+  `action_auction_lease_contract` — عقود الإيجار). **Fixed**: new
+  `views/menu.xml` with a root menu and both actions as children,
+  parented at `demo_branding.menu_gov_purchases`; added `demo_branding`
+  to `depends` and the new file to `data` (after both view files that
+  define the actions it references).
+- **`demo_gov_acct_reports`** (التقارير الحكومية) — `action_acct_report_wizard`
+  (ميزان المراجعة / كشوف الحسابات) had no menu, unlike its sibling
+  `demo_gov_gl_reports`/`demo_gov_reports` which do. **Fixed**: added the
+  menuitem directly in `views/wizard_views.xml` (same file as the
+  action), parented at `demo_branding.menu_gov_reports` like
+  `demo_gov_reports`'s own entry; added `demo_branding` to `depends`.
+- **`stock_addition_permit`** (المخازن والمستودعات, `application: True`) —
+  had 2 actions but only 1 menuitem: `action_addition_permit` (أذونات
+  الإضافة) was reachable, `action_inspection_report` (محاضر الفحص) was
+  not, even though the module's own `help` text on the addition-permit
+  action says the addition permit "يُنشأ تلقائياً بعد اعتماد محضر
+  الفحص" (auto-created once the inspection report is approved) — i.e.
+  the unreachable action was step 1 of the two-step workflow, so there
+  was no way to start it from the UI. **Fixed**: added a sibling
+  menuitem next to the existing one, same parent
+  (`demo_branding.menu_gov_warehouses`), no manifest change needed (the
+  action was already defined in the same file).
+
+One more was found by the same scan but judged not a bug and left
+alone: `demo_gov_scm_purchase_bridge` has zero actions and zero menus,
+but it's a pure `purchase.order` form inheritance (auto-generates a
+Form 50/Daftar 55 entry from an existing PO) with no standalone model
+of its own to browse — nothing to link a menu to.
+
+**Not exhaustive by design**: a handful of modules had *more* actions
+than menu items (`demo_gov_scm_issue`: 8 vs 5, `l10n_eg_custody`: 7 vs
+6 before this pass). In each case the gap turned out to be dead-code
+duplicate action definitions (e.g. `demo_gov_scm_issue`'s menu file
+redefines its own `..._2`-suffixed copies of actions already defined,
+unused, in the model's own view file) rather than a genuinely
+unreachable feature — confirmed by checking each orphaned action's
+`res_model` against the ones already wired into a menu. One real
+instance *was* found this way and fixed: `l10n_eg_custody`'s
+`action_gafi_custody_audit` ("تقرير GAFI - أرباب العهد", the GAFI
+compliance audit report the root README flags as
+"CRITICAL (GAFI-audited)") had no menu entry — added as a sixth child
+of `menu_ps_custody_main`, no manifest change needed. Its sibling
+`action_custody_assignment` (a duplicate of the already-menu'd
+`action_custody_assignment_main`) and `action_open_new_custody_wizard_main`
+(an `ir.actions.server` bound to the list/kanban view's own gear-menu,
+not meant to have a standalone menu item) were left alone — cleaning up
+dead duplicate action definitions is a separate, lower-severity
+cleanup, not an unreachable-app bug.
+
+Verified with the same repo-wide dependency-cycle scan, extended to
+also confirm every `<menuitem action="...">` reference resolves to a
+real `ir.actions.*` record: 49 modules, zero cycles, zero missing
+manifest dependencies, zero dangling action references.
+
 ## `demo_branding`'s Settings-page XML inheritance was wrong — fixed
 
 **Problem**: the first version of `demo_branding` added its config fields

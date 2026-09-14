@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <menuitem id="menu_auction_root"
+            name="المزايدات"
+            parent="demo_branding.menu_gov_purchases"
+            sequence="30"/>
+
+  <menuitem id="menu_auction_request"
+            name="المزادات"
+            parent="menu_auction_root"
+            action="action_auction_request"
+            sequence="10"/>
+
+  <menuitem id="menu_auction_lease_contract"
+            name="عقود الإيجار"
+            parent="menu_auction_root"
+            action="action_auction_lease_contract"
+            sequence="20"/>
+</odoo>

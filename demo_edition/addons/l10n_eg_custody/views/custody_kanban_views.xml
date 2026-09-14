@@ -246,4 +246,7 @@ action = {
   <menuitem id="menu_ps_custody_overdue" name="⚠ العهد المتأخرة"
             parent="menu_ps_custody_main"
             action="l10n_eg_custody.action_custody_overdue" sequence="5"/>
+  <menuitem id="menu_ps_custody_gafi_audit" name="تقرير GAFI - أرباب العهد"
+            parent="menu_ps_custody_main"
+            action="l10n_eg_custody.action_gafi_custody_audit" sequence="6"/>
 </odoo>

@@ -4,7 +4,7 @@
     'category': 'الخدمات الحكومية التجريبية/التقارير الحكومية',
     'author': 'Enterprise Solutions Demo',
     'license': 'LGPL-3',
-    'depends': ['base', 'account', 'demo_gov_daftar55'],
+    'depends': ['base', 'account', 'demo_gov_daftar55', 'demo_branding'],
     'data': [
         'security/ir.model.access.csv',
         'views/wizard_views.xml',

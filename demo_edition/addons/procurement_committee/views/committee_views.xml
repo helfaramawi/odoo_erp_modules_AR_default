@@ -213,6 +213,12 @@
 
     <!-- Menus -->
 
+    <menuitem id="menu_procurement_committee"
+              name="اللجان"
+              parent="demo_branding.menu_gov_purchases"
+              action="action_procurement_committee"
+              sequence="10"/>
+
 
     <!-- ══════════════════════════════════════════════════════════════════════
          النماذج الحكومية — 3 نماذج مطابقة للأصل
