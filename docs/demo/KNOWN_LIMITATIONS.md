@@ -222,6 +222,23 @@ before the menu that references it.
 loads later per the manifest's `data` order) — zero further instances
 found anywhere in the 49-module repository.
 
+**Update — the reorder alone wasn't the whole fix.** Once installed
+live, a second error surfaced at the same module:
+`wizard/print_wizard_views.xml` turned out to have its *own*, exact
+duplicate `menu_revenue_print` menuitem (same id, same content) in
+addition to the one already correctly defined in `views/menu.xml` — and
+that copy referenced `menu_revenue_root`, which is defined in
+`views/menu.xml`, i.e. the file loading *after* it. Reordering the
+files to fix the first error broke this second, duplicate menuitem
+instead. Root cause: the duplicate itself, not the ordering — removed
+the redundant copy from `wizard/print_wizard_views.xml`, keeping the
+one that was always the canonical definition in `views/menu.xml`.
+Extended the load-order static check to also cover `parent=` menu
+references (not just `action=`), and separately checked for any other
+exact-duplicate `menuitem` id defined in more than one file within the
+same module — zero further instances of either anywhere in the
+repository.
+
 ## Cleaned up every warning surfaced during the live install
 
 None of these blocked installation, but since a live install was
