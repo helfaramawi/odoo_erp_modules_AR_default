@@ -321,7 +321,64 @@ Re-verified with the same repo-wide cycle/dependency/dangling-action
 scan: 49 modules, zero cycles, zero missing deps, zero dangling action
 references.
 
-## `demo_branding`'s Settings-page XML inheritance was wrong — fixed
+### Update: the real cause of "دفاتر النقدية والبنك والتأمينات والفوليوهات still missing" — nobody is ever granted the custom security group that gates them
+
+After the `demo_gov_stock_finance_bridge` fix above shipped and the user
+upgraded, `دفتر 55`/`دفتر 224`/الاضابير/الارتباطات/السلف all appeared
+correctly — but `demo_gov_subsidiary_books`'s own menu items
+(الفوليوهات، تعريف الدفاتر، تصنيفات الحسابات) and every module nested
+under the same `menu_subsidiary_root` (`demo_gov_cash_books`,
+`demo_gov_insurance_subsidiary`, `demo_gov_penalties`, and by
+extension `demo_gov_cash_transfers`, `demo_gov_cheques`,
+`demo_gov_revenue_books`) still didn't show, even after confirming all
+four were genuinely `Installed`. This was never a menu-definition bug
+at all (the earlier audits of these exact modules, above, were
+correct) — it's a **security-group bug**: seven modules
+(`demo_gov_subsidiary_books`, `demo_gov_cash_books`,
+`demo_gov_cash_transfers`, `demo_gov_cheques`, `demo_gov_revenue_books`,
+`demo_gov_insurance_subsidiary`, `demo_gov_penalties`) each define
+their own bespoke `group_*_user`/`group_*_manager` pair and gate every
+one of their models behind it in `ir.model.access.csv`, but **no data
+file anywhere in the repo ever adds any user — not even the demo
+Administrator — to any of those seven groups**. Confirmed by grepping
+every `groups_id`/`(4, ref(...))` assignment in the repo: the only
+group-seeding file, `l10n_eg_custody/data/demo_users.xml`, wires its 7
+`demo.*` personas into `l10n_eg_custody`/`procurement_committee`/
+`procurement_adjudication`/`stock_addition_permit`/
+`stock_stocktaking_eg`/`l10n_eg_auction`'s groups, but was never
+extended to cover these seven accounting-book modules (probably
+because they were added to the suite later). Odoo's menu loader
+silently hides a `<menuitem>` when the current user has zero access
+rows for its action's model — no error, just an invisible menu item —
+which is exactly the symptom reported, and explains why it looked
+identical to a missing-menuitem bug from the outside.
+
+By contrast, `demo_gov_daftar55`/`demo_gov_daftar224`/`demo_gov_dossier`/
+`demo_gov_commitment`/`demo_gov_advances` (and the
+`demo_gov_stock_finance_bridge` bridge log fixed above) all grant
+access via the *standard* `account.group_account_user`/
+`account.group_account_manager` groups instead of a bespoke one — and
+the demo Administrator account already carries
+`account.group_account_manager` by default (standard Odoo behavior
+once Accounting is installed), which is why those five became visible
+immediately after their menus were fixed, with no separate group
+issue to hit.
+
+**Fixed**: added one `<record id="base.user_admin" model="res.users">`
+block to each of the seven modules' own `security/security_groups.xml`
+(not `noupdate`, so it re-applies on every future upgrade — unlike
+`l10n_eg_custody/data/demo_users.xml`, which is `noupdate="1"` and
+wouldn't have retroactively applied to an already-installed database),
+adding the Administrator to that module's own `_manager` group via
+`(4, ref('group_*_manager'))` — which, thanks to each group's existing
+`implied_ids` chain, also grants the underlying `_user` group and the
+standard `account.group_account_*` groups in the same write. Scoped to
+`base.user_admin` specifically (not all 7 `demo.*` personas) since none
+of those personas represents an accounting role and extending
+`l10n_eg_custody/data/demo_users.xml` would have required adding a
+cross-category dependency from a custody/warehouse module onto seven
+unrelated accounting modules.
+
 
 **Problem**: the first version of `demo_branding` added its config fields
 by XML-inheriting into `base_setup.res_config_settings_view_form` at

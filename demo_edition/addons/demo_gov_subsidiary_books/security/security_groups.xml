@@ -11,4 +11,11 @@
     <field name="category_id" ref="base.module_category_accounting_accounting"/>
     <field name="implied_ids" eval="[(4, ref('group_subsidiary_user')), (4, ref('account.group_account_manager'))]"/>
   </record>
+
+  <!-- Without this, nobody — not even the demo Administrator — is ever
+       added to group_subsidiary_manager, so its menus (الفوليوهات،
+       تعريف الدفاتر، تصنيفات الحسابات) stay invisible to every demo user. -->
+  <record id="base.user_admin" model="res.users">
+    <field name="groups_id" eval="[(4, ref('group_subsidiary_manager'))]"/>
+  </record>
 </odoo>
