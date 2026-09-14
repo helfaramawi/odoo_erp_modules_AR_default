@@ -5,11 +5,12 @@
     'version': '17.0.1.0.0',
     'author': 'Enterprise Solutions Demo',
     'license': 'LGPL-3',
-    'depends': ['demo_gov_daftar55'],
+    'depends': ['demo_gov_daftar55', 'demo_branding'],
     'data': [
         'security/ir.model.access.csv',
         'data/sequence_data.xml',
         'views/dossier_views.xml',
+        'views/menu.xml',
         'reports/dossier_report.xml',
         'reports/dossier_template.xml',
     ],

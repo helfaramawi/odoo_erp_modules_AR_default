@@ -1,3 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+  <menuitem id="menu_advances_root"
+            name="السلف والضمانات البنكية"
+            parent="demo_branding.menu_gov_accounts"
+            sequence="25"/>
+
+  <menuitem id="menu_advances"
+            name="السلف الحكومية"
+            parent="menu_advances_root"
+            action="action_advances"
+            sequence="10"/>
+
+  <menuitem id="menu_advances_overdue"
+            name="السلف المتأخرة"
+            parent="menu_advances_root"
+            action="action_advances_overdue"
+            sequence="20"/>
+
+  <menuitem id="menu_bank_guarantees"
+            name="خطابات الضمان"
+            parent="menu_advances_root"
+            action="action_bank_guarantees"
+            sequence="30"/>
+
+  <menuitem id="menu_guarantees_expiring"
+            name="خطابات تنتهي قريباً"
+            parent="menu_advances_root"
+            action="action_guarantees_expiring"
+            sequence="40"/>
 </odoo>

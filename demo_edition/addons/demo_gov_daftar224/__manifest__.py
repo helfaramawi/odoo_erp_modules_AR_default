@@ -5,11 +5,12 @@
     'category': 'الخدمات الحكومية التجريبية/الحسابات',
     'author': 'Enterprise Solutions Demo',
     'license': 'LGPL-3',
-    'depends': ['account', 'mail', 'demo_gov_daftar55'],
+    'depends': ['account', 'mail', 'demo_gov_daftar55', 'demo_branding'],
     'data': [
         'security/ir.model.access.csv',
         'data/sequence_data.xml',
         'views/daftar224_views.xml',
+        'views/menu.xml',
         'reports/daftar224_report.xml',
         'reports/daftar224_template.xml',
     ],

@@ -141,6 +141,48 @@ need its own app icon. Confirmed (via a repo-wide grep) this was the
 only `web_icon` usage anywhere in `demo_edition/addons`, so none of
 the other 12 re-parented modules have the same issue.
 
+### Update: five apps under الحسابات had an action but no menu at all — fixed
+
+**Problem**: reported by the user testing Settings → Apps: several
+`demo_gov_*` modules already carried `'category': 'الخدمات الحكومية
+التجريبية/الحسابات'` and each defined a working `ir.actions.act_window`,
+but had **zero `<menuitem>`** anywhere in the module — not even a
+standalone root one. `demo_gov_daftar55` (دفتر 55 ع.ح), `demo_gov_daftar224`
+(دفتر 224 ع.ح), `demo_gov_dossier` (الاضابير/الفوليوهات), and
+`demo_gov_commitment` (الارتباطات) had no `menuitem` in any file at all;
+`demo_gov_advances` (السلف وخطابات الضمان) shipped a `views/menu.xml`
+that was a literal empty `<odoo></odoo>` stub, already wired into the
+manifest's `data` list but with nothing in it. Unlike the `demo_gov_menu`
+breakage documented above, these five never had a working menu to begin
+with in *either* edition — confirmed byte-for-byte identical (same empty
+`menu.xml`, same total absence of any menu file for the other four) in
+`odoo_deployment_ar/addons/port_said_daftar55`, `port_said_daftar224`,
+`port_said_dossier`, `port_said_commitment`, `port_said_advances`, so
+this is pre-existing in production too, not something anonymization
+introduced. All five were correctly categorized on the Settings → Apps
+page and would even show up as installed successfully, but there was
+literally no click-path anywhere in the UI to reach the underlying "دفتر
+55", "دفتر 224", "الاضابير", "الارتباطات", or "السلف/خطابات الضمان"
+records — exactly the "app doesn't exist" symptom reported.
+**Fixed** (in `demo_edition/` only, matching the "13 modules" fix's
+scope — the equivalent production fix needs `port_said_menu`'s own gap
+resolved first, same as documented above): added a `views/menu.xml` to
+each of `demo_gov_daftar55`, `demo_gov_daftar224`, `demo_gov_dossier`,
+and `demo_gov_commitment` (and filled in the empty stub in
+`demo_gov_advances`), each with a `<menuitem>` parented directly at
+`demo_branding.menu_gov_accounts` — the same root the already-working
+`demo_gov_form69`/`demo_gov_form75`/`demo_gov_special_funds`/
+`demo_gov_fixed_assets` menus use — with `demo_branding` added to each
+module's manifest `depends` so the parent menu is guaranteed to exist at
+install/upgrade time. `demo_gov_advances` additionally got its own root
+menu (`menu_advances_root`) with four children (السلف الحكومية, السلف
+المتأخرة, خطابات الضمان, خطابات تنتهي قريباً) since it exposes two
+separate models (`demo_gov.advance`, `demo_gov.bank.guarantee`) each
+with two actions. Verified with the same repo-wide manifest
+dependency-graph cycle check and cross-module XML-ID reference scan used
+for the earlier fixes above: 49 modules, zero cycles, zero missing
+dependencies.
+
 ## `demo_branding`'s Settings-page XML inheritance was wrong — fixed
 
 **Problem**: the first version of `demo_branding` added its config fields
