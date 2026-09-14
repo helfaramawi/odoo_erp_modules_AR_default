@@ -946,7 +946,7 @@ untested live is the seeded demo *data* and *scenarios*
 module installation itself — run that script and walk through the
 demo scenarios at least once before any real presentation.
 
-## `demo_gov_dashboard/views/dashboard_template.xml` — malformed XML
+## `demo_gov_dashboard/views/dashboard_template.xml` — malformed XML — fixed, and turned out to be dead code anyway
 
 **Problem**: line 302 embeds raw HTML tags inside a JS string literal
 inside (what should be) a `<script>` block, without a `CDATA` wrapper —
@@ -954,15 +954,77 @@ breaks strict XML parsing (confirmed with Python's `xml.etree`).
 **Root cause**: pre-existing in the original production code
 (`odoo_deployment_ar/addons/portsaid_dashboard/views/dashboard_template.xml`
 has the identical defect) — not introduced by this conversion.
-**Severity**: Low-Medium — may or may not affect the dashboard at
-runtime depending on how Odoo's own QWeb/asset loader handles it (it may
-be more lenient than a strict parser); unverified without a live
-instance. **Fix required**: wrap the inline JS block in `<![CDATA[ ... ]]>`
-or escape the embedded HTML string. Not fixed here — it's a
-business-logic-adjacent code change, out of the anonymization/packaging
-scope this pass was scoped to. **Recommendation**: fix before relying on
-this dashboard in a presentation; verify Step 8 of `DEMO_SCRIPT.md`
-against a real instance first regardless.
+**Fixed**: wrapped the whole `<script>` block's JS in `<![CDATA[ ... ]]>`
+(the block runs from line 273 to 768, so one wrap covers it rather than
+chasing individual `<`/`>` characters); confirmed it now parses cleanly
+with `xml.etree`.
+
+**Found while fixing it: this file was never actually loaded or
+rendered by anything.** It wasn't in the module's manifest `data` list,
+and `dashboard_main_template`'s only reference anywhere in the repo is
+its own `<template id="...">` definition — no action, no route, no
+`t-call`. The page the controller (`controllers/dashboard.py`) actually
+serves at `/demo_gov/dashboard` is a *different*, plain HTML file
+(`static/src/dashboard.html`), read directly off disk and returned with
+a JS data placeholder string-replaced in — QWeb never enters the
+picture. So this specific fix, while correct and worth keeping (matches
+the earlier "fix required" recommendation, and the file should be valid
+XML regardless), was not what was actually blocking the dashboard from
+working. Left the file unloaded (not added to manifest `data`) since
+nothing calls it — adding a dependency-free, unused QWeb template to
+`data` would be pure clutter.
+
+**What was actually blocking it**, found once the search moved to what
+the controller and menu genuinely depend on:
+
+1. **`views/dashboard_menu.xml` parented its one menuitem at
+   `general_ledger_ar.menu_general_ledger_root`** — an xmlid that
+   doesn't exist anywhere in the repo (`general_ledger_ar`'s own menu
+   file defines four leaf items directly under
+   `demo_gov_subsidiary_books.menu_subsidiary_root`, no root of its
+   own by that name). Same bug class as every other "menu references a
+   parent that was never defined" fix earlier in this document — would
+   have failed install with `External ID not found in the system:
+   general_ledger_ar.menu_general_ledger_root`. **Fixed**: re-parented
+   at `demo_branding.menu_gov_root` — the dashboard is a cross-cutting
+   executive summary over all four category groups (its `depends`
+   spans procurement, warehouses, custody, auctions, and daftar55 /
+   commitment from الحسابات), so it belongs as its own top-level entry
+   next to the four category menus rather than nested inside one of
+   them; added `demo_branding` to `depends` accordingly and gave the
+   category string the same `الخدمات الحكومية التجريبية` convention the
+   rest of the suite uses (it previously had an unrelated
+   `Dashboard/Egypt Government` category, outside that convention).
+2. **`controllers/dashboard.py`'s `get_dashboard_data()` had a broken
+   fallback path.** If `_collect_data()` (the method that actually
+   queries every model) ever raised, the `except` block fell through
+   into ~50 lines of leftover, apparently copy-pasted "Finance &
+   Accounting KPIs" code that referenced `env`, `sc`, `pyo`, `pypa`,
+   `pyp`, and `pypr` — none of which are defined anywhere in that
+   method (those names only exist inside `_collect_data()`'s own local
+   scope). Every one of those references would raise `NameError`; the
+   final `return {'error': str(e), ...}` line then referenced `e`
+   *after* Python 3 had already unbound it at the end of the
+   `except Exception as e:` block that caught it, raising
+   `UnboundLocalError` on top of that. In practice `_collect_data()`
+   mostly self-protects with a `try/except: pass` around each KPI
+   section, so this landmine may rarely trigger — but any exception
+   escaping it would have crashed the endpoint instead of degrading
+   gracefully. **Fixed**: replaced the entire broken fallback with the
+   two lines it was clearly meant to be —
+   `except Exception as e: return {'error': str(e), **self._empty_data()}`.
+3. **`_empty_data()` had the identical dead code duplicated a second
+   time**, same undefined-name bugs, wrapped in its own
+   `try/except: pass` — silently swallowed every time, and its results
+   were discarded anyway since the method's actual `return` statement
+   builds its own hardcoded `finance` dict a few lines later. Pure
+   copy-paste debris with no effect either way. **Fixed**: deleted it.
+
+Re-verified with the same repo-wide cycle/dependency scan (now covering
+`demo_gov_dashboard` too): 49 modules, zero cycles, zero missing
+dependencies. Still needs a fresh `-i demo_gov_dashboard` (a genuinely
+new install, not `-u`, since it was never installed before) to reach a
+live database.
 
 ## `demo_gov_form50_print` — not installable
 
