@@ -35,10 +35,16 @@ structure at all: a plain JSON endpoint (`/demo_branding/info`) plus a
 small vanilla-JS snippet (`demo_banner.js`) that inserts the banner via
 `document.body.prepend(...)`, loaded through `web.assets_frontend`/
 `web.assets_backend`'s own root (`position="inside"` on `.` — safe,
-doesn't reference any internal class name). This is the more robust
-pattern going forward for anything that needs to touch Odoo's own pages;
-prefer it over inheriting into core view internals when there isn't a
-live instance available to verify the exact markup against.
+doesn't reference any internal class name). A third, related failure followed immediately: even the safe-looking
+`position="inside"` on `.` against `web.assets_frontend`/
+`web.assets_backend` failed too — `External ID not found in the system:
+web.assets_frontend`. This specific Odoo 17 build doesn't have those
+QWeb template IDs at all (Odoo's asset bundle mechanism has moved on).
+Final fix: register the CSS/JS as `ir.asset` records instead
+(`bundle` is a plain string match at render time, not an XML-ID
+reference, so it can't fail this way). This is the modern,
+template-independent way to add assets and should be preferred over
+QWeb bundle-template inheritance generally, live-instance or not.
 
 ## `demo_gov_menu` is an incomplete module — confirmed pre-existing in production too
 
