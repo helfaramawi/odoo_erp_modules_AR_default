@@ -4,8 +4,10 @@
 
 The Demo Edition ships a `demo_branding` module (`demo_edition/addons/demo_branding/`)
 as the single source of truth for identity strings, instead of each
-report/screen hard-coding them. Backed by `ir.config_parameter`, editable
-at **Settings > General Settings > Demo Branding**:
+report/screen hard-coding them. Backed by a dedicated `demo.branding.config`
+record, editable at **Settings > Demo Branding** (a standalone screen
+rather than an addition to Odoo's own General Settings page — see
+`KNOWN_LIMITATIONS.md` for why):
 
 ```json
 {

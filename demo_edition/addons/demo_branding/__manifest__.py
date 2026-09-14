@@ -5,23 +5,24 @@
         Centralizes the identity shown across the Demo Edition: application name,
         organization name, environment label, and support contact.
 
-        Values are stored as ir.config_parameter entries (editable from
-        Settings > General Settings > Demo Branding) so that reports, the
-        login screen, and other modules read one source of truth instead of
-        hard-coded strings.
+        Values live on a single demo.branding.config record (editable from
+        Settings > Demo Branding) so that reports, the login screen, and
+        other modules read one source of truth instead of hard-coded
+        strings.
 
         Also shows a small, non-intrusive "DEMO ENVIRONMENT" banner on the
-        login screen when demo_branding.environment is set to 'demo'.
+        login screen when the environment is set to 'demo'.
     """,
     'version': '17.0.1.0.0',
     'category': 'Extra Tools',
     'author': 'Enterprise Solutions Demo',
     'website': 'https://example.com',
     'license': 'LGPL-3',
-    'depends': ['base', 'base_setup', 'web'],
+    'depends': ['base', 'web'],
     'data': [
+        'security/ir.model.access.csv',
         'data/demo_branding_data.xml',
-        'views/res_config_settings_views.xml',
+        'views/demo_branding_config_views.xml',
         'views/webclient_templates.xml',
     ],
     'installable': True,

@@ -2,6 +2,30 @@
 
 Honest punch list. Nothing below was hidden or silently worked around.
 
+## `demo_branding`'s Settings-page XML inheritance was wrong — fixed
+
+**Problem**: the first version of `demo_branding` added its config fields
+by XML-inheriting into `base_setup.res_config_settings_view_form` at
+`//div[hasclass('settings')]`. That element doesn't exist in this Odoo
+17 build's actual settings page markup — install failed with `Element
+'<xpath expr="//div[hasclass('settings')]">' cannot be located in parent
+view`.
+**Root cause**: this was new code written for the Demo Edition (not
+pre-existing), and inheriting into Odoo core's settings page layout
+without a live instance to verify against was exactly the kind of risk
+flagged as untested elsewhere in this document.
+**Fixed**: replaced it with a plain, standalone `demo.branding.config`
+model with its own form view and its own menu item under Settings (`base.menu_administration`)
+— no inheritance into any Odoo core view, so nothing about Odoo's
+internal settings page structure can break it. Branding values moved
+from `ir.config_parameter` keys to fields on this model;
+`self.env['demo.branding'].get_all()` / `get_value()` /
+`is_demo_environment()` keep the same external interface other code
+already used, so nothing else needed to change.
+**How it was found**: caught immediately on the first real install
+attempt against a live Odoo 17 + Postgres instance — see `demo_gov_menu`
+below for the same theme.
+
 ## `demo_gov_menu` is an incomplete module — confirmed pre-existing in production too
 
 **Problem**: `demo_gov_menu/__manifest__.py` (and the original
