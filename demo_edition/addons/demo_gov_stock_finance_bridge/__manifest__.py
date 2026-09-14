@@ -12,7 +12,7 @@
         # وليس له علاقة مباشرة بمحرك الربط المحاسبي للمخزون
         'c5_financial_dimensions',
         'stock_addition_permit',
-        'general_ledger_ar',
+        'demo_gov_subsidiary_books',
     ],
     'data': [
         'security/ir.model.access.csv',

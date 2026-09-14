@@ -35,7 +35,6 @@
         'hr',                            # for employee subject
         'demo_gov_daftar55',           # integration with payment orders
         'demo_gov_subsidiary_books',   # memo classifications
-        'demo_gov_menu',
         'general_ledger_ar',
     ],
     'data': [

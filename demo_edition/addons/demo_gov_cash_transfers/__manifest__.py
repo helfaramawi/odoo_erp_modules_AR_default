@@ -32,7 +32,6 @@
         'hr',                          # for custody holders (employees)
         'demo_gov_cash_books',        # sibling - shares cash.book infrastructure
         'demo_gov_daftar55',          # integration with payment orders
-        'demo_gov_menu',
         'general_ledger_ar',
     ],
     'data': [

@@ -33,7 +33,6 @@
         'demo_gov_daftar224',
         'demo_gov_budget_planning',  # مصدر تعريف budget_line
         'demo_gov_subsidiary_books', # نمشي على نفس النمط
-        'demo_gov_menu',
         'general_ledger_ar',
     ],
     'data': [

@@ -8,7 +8,7 @@
     'depends': [
         'base', 'mail', 'account',
         'demo_gov_daftar55',
-        'general_ledger_ar',
+        'demo_gov_subsidiary_books',
     ],
     'external_dependencies': {
         'python': ['requests'],

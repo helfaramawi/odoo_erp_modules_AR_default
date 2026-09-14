@@ -35,7 +35,6 @@
         'demo_gov_cash_books',    # يعتمد على نموذج الشيك الأساسي
         'demo_gov_daftar55',      # ربط مع أذون الصرف
         'demo_gov_daftar224',     # ربط مع اليومية العامة
-        'demo_gov_menu',
         'general_ledger_ar',
     ],
     'data': [

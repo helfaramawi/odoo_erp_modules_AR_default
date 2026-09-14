@@ -42,7 +42,6 @@
         'demo_gov_daftar55',
         'demo_gov_daftar224',
         'demo_gov_subsidiary_books',
-        'demo_gov_menu',
         'general_ledger_ar',
     ],
     'data': [

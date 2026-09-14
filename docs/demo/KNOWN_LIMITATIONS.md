@@ -123,10 +123,31 @@ module's declared dependencies — zero further instances found in that
 scope. This class of bug (a data file referencing another module's XML
 ID without a matching manifest dependency) is exactly the kind of thing
 Odoo's own tooling doesn't catch until literal install time in
-whatever order the topological sort happens to pick; the same static
-scan, run against the full ~50-module repository rather than just the
-8-module recommended set, would be worth doing before expanding the
-install list.
+whatever order the topological sort happens to pick.
+
+**Update — extended to the full repository, and the full module set now
+installs.** Once the 8-module set above was confirmed working live, the
+same fix was extended to the rest of the repository: 7 more modules
+(`demo_gov_cash_books`, `demo_gov_cash_transfers`, `demo_gov_cheques`,
+`demo_gov_insurance_subsidiary`, `demo_gov_penalties`,
+`demo_gov_revenue_books`, `demo_gov_subsidiary_books`) had `demo_gov_menu`
+in their manifest `depends` with no remaining technical need for it
+(their only reference was the menuitem `parent=` already stripped
+earlier) — removed. That in turn broke the last of the
+`general_ledger_ar` circular-dependency chains from the earlier finding
+above (`demo_gov_budget_planning`, `demo_gov_stock_finance_bridge`,
+`l10n_eg_eta_invoice`), so those three were re-pointed at
+`demo_gov_subsidiary_books` directly — what their own menu XML actually
+needed all along.
+
+A repository-wide cycle check (all 49 modules) now reports zero cycles,
+and the missing-dependency scan (`ref()` / `parent=` / `ir.model.access.csv`),
+extended from the original 8-module scope to all 49 modules, reports
+zero issues. The recommended install list is now every module **except**
+`demo_gov_menu` itself (still incomplete — see above) and
+`demo_gov_dashboard` (the pre-existing unrelated XML defect above) — 47
+modules — pending confirmation this installs cleanly end-to-end against
+a live instance the same way the original 8 did.
 
 ## Circular module dependency through `general_ledger_ar`
 

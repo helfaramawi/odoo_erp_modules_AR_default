@@ -38,7 +38,6 @@
         'demo_gov_advances',        # النموذج الأساسي bank.guarantee
         'demo_gov_cash_books',      # cheque model للإيداع بشيك
         'demo_gov_subsidiary_books',# تصنيف الحسابات النظامية
-        'demo_gov_menu',
         'general_ledger_ar',
     ],
     'data': [
