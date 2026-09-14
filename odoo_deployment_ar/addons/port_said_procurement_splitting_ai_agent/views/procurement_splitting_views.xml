@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_procurement_splitting_alert_tree" model="ir.ui.view">
+        <field name="name">port_said.procurement.splitting.alert.tree</field>
+        <field name="model">port_said.procurement.splitting.alert</field>
+        <field name="arch" type="xml">
+            <tree string="تنبيهات تجزئة المشتريات"
+                  decoration-danger="risk_level in ('critical','high')"
+                  decoration-warning="risk_level == 'medium'"
+                  decoration-success="state in ('justified','closed')">
+                <field name="name"/>
+                <field name="risk_score"/>
+                <field name="risk_level"/>
+                <field name="supplier_id"/>
+                <field name="order_count"/>
+                <field name="total_amount"/>
+                <field name="threshold_amount"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="detection_type"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_procurement_splitting_alert_form" model="ir.ui.view">
+        <field name="name">port_said.procurement.splitting.alert.form</field>
+        <field name="model">port_said.procurement.splitting.alert</field>
+        <field name="arch" type="xml">
+            <form string="تنبيه تجزئة مشتريات محتملة">
+                <header>
+                    <button name="action_review" type="object" string="بدء المراجعة" class="btn-secondary"
+                            invisible="state != 'new'"/>
+                    <button name="action_escalate" type="object" string="تصعيد" class="btn-danger"
+                            invisible="state in ('escalated','closed','cancelled')"/>
+                    <button name="action_justify" type="object" string="مبرر" class="btn-warning"
+                            invisible="state in ('justified','closed','cancelled')"/>
+                    <button name="action_close" type="object" string="إغلاق" class="btn-success"
+                            invisible="state == 'closed'"/>
+                    <button name="action_open_source" type="object" string="فتح السجل المصدر" class="btn-primary"
+                            invisible="not source_model or not source_res_id"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="new,under_review,escalated,justified,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+
+                    <group>
+                        <group string="بيانات الاشتباه">
+                            <field name="supplier_id"/>
+                            <field name="department_name"/>
+                            <field name="detection_type"/>
+                            <field name="risk_score"/>
+                            <field name="risk_level"/>
+                        </group>
+                        <group string="القيم والفترة">
+                            <field name="threshold_amount"/>
+                            <field name="lower_limit_amount"/>
+                            <field name="total_amount"/>
+                            <field name="order_count"/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="window_days"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+
+                    <group string="السجل المصدر">
+                        <field name="source_model"/>
+                        <field name="source_res_id"/>
+                        <field name="source_display_name"/>
+                    </group>
+
+                    <notebook>
+                        <page string="أوامر الشراء المرتبطة">
+                            <field name="purchase_order_ids" readonly="1">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="partner_id"/>
+                                    <field name="date_order"/>
+                                    <field name="amount_total"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="الأصناف المتكررة">
+                            <field name="suspected_product_names" nolabel="1" readonly="1"/>
+                        </page>
+                        <page string="سبب الاشتباه">
+                            <field name="reason" nolabel="1" readonly="1"/>
+                        </page>
+                        <page string="التوصية الرقابية">
+                            <field name="recommendation" nolabel="1" readonly="1"/>
+                        </page>
+                        <page string="ملاحظات المراجعة">
+                            <field name="review_notes" nolabel="1"/>
+                            <group>
+                                <field name="reviewed_by"/>
+                                <field name="reviewed_date"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_procurement_splitting_alert_search" model="ir.ui.view">
+        <field name="name">port_said.procurement.splitting.alert.search</field>
+        <field name="model">port_said.procurement.splitting.alert</field>
+        <field name="arch" type="xml">
+            <search string="بحث تنبيهات تجزئة المشتريات">
+                <field name="name"/>
+                <field name="supplier_id"/>
+                <field name="department_name"/>
+                <filter string="حرجة/مرتفعة" name="high_risk" domain="[('risk_level','in',('critical','high'))]"/>
+                <filter string="جديدة" name="new" domain="[('state','=','new')]"/>
+                <filter string="لم تغلق" name="open" domain="[('state','not in',('closed','cancelled'))]"/>
+                <group expand="0" string="تجميع حسب">
+                    <filter string="المورد" name="grp_supplier" context="{'group_by':'supplier_id'}"/>
+                    <filter string="مستوى الخطورة" name="grp_risk" context="{'group_by':'risk_level'}"/>
+                    <filter string="نوع الاشتباه" name="grp_detection" context="{'group_by':'detection_type'}"/>
+                    <filter string="الحالة" name="grp_state" context="{'group_by':'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_procurement_splitting_alerts" model="ir.actions.act_window">
+        <field name="name">تنبيهات تجزئة المشتريات</field>
+        <field name="res_model">port_said.procurement.splitting.alert</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_procurement_splitting_alert_search"/>
+        <field name="context">{'search_default_open': 1}</field>
+    </record>
+
+    <record id="action_procurement_splitting_run_scan" model="ir.actions.server">
+        <field name="name">تشغيل فحص تجزئة المشتريات الآن</field>
+        <field name="model_id" ref="model_port_said_procurement_splitting_engine"/>
+        <field name="state">code</field>
+        <field name="code">action = env['port_said.procurement.splitting.engine'].sudo().action_run_full_scan()</field>
+    </record>
+
+    <menuitem id="menu_procurement_splitting_root"
+              name="وكيل مراقبة تجزئة المشتريات"
+              sequence="53"
+              groups="base.group_user"/>
+
+    <menuitem id="menu_procurement_splitting_alerts"
+              name="تنبيهات تجزئة المشتريات"
+              parent="menu_procurement_splitting_root"
+              action="action_procurement_splitting_alerts"
+              sequence="10"
+              groups="base.group_user"/>
+
+    <menuitem id="menu_procurement_splitting_run_scan"
+              name="تشغيل فحص تجزئة المشتريات الآن"
+              parent="menu_procurement_splitting_root"
+              action="action_procurement_splitting_run_scan"
+              sequence="20"
+              groups="base.group_system"/>
+</odoo>

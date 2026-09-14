@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="param_vendor_quality_min_purchase_score" model="ir.config_parameter">
+        <field name="key">port_said_vendor_quality.min_purchase_score</field>
+        <field name="value">60</field>
+    </record>
+
+    <record id="param_vendor_quality_block_purchase_confirmation" model="ir.config_parameter">
+        <field name="key">port_said_vendor_quality.block_purchase_confirmation</field>
+        <field name="value">1</field>
+    </record>
+
+    <record id="ir_cron_weekly_vendor_quality_scan" model="ir.cron">
+        <field name="name">وكيل جودة الموردين - فحص أسبوعي</field>
+        <field name="model_id" ref="model_port_said_vendor_data_quality_engine"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_weekly_vendor_quality_scan()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">weeks</field>
+        <field name="numbercall">-1</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

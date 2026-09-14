@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_budget_reallocation_recommendation" model="ir.sequence">
+        <field name="name">تسلسل توصيات إعادة توزيع الاعتمادات</field>
+        <field name="code">port_said.budget.reallocation.recommendation</field>
+        <field name="prefix">BRR/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="param_budget_reallocation_transfer_ratio" model="ir.config_parameter">
+        <field name="key">port_said_budget_reallocation.transfer_ratio</field>
+        <field name="value">0.80</field>
+    </record>
+
+    <record id="param_budget_reallocation_min_recommendation_amount" model="ir.config_parameter">
+        <field name="key">port_said_budget_reallocation.min_recommendation_amount</field>
+        <field name="value">1000</field>
+    </record>
+
+    <record id="param_budget_reallocation_min_surplus_amount" model="ir.config_parameter">
+        <field name="key">port_said_budget_reallocation.min_surplus_amount</field>
+        <field name="value">10000</field>
+    </record>
+
+    <record id="ir_cron_monthly_budget_reallocation_recommendation" model="ir.cron">
+        <field name="name">وكيل إعادة توزيع الاعتمادات - فحص شهري</field>
+        <field name="model_id" ref="model_port_said_budget_reallocation_engine"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_monthly_budget_reallocation_recommendation()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">months</field>
+        <field name="numbercall">-1</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

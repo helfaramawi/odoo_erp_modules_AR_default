@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_vendor_performance_score_user,access.vendor.performance.score.user,model_port_said_vendor_performance_score,base.group_user,1,0,0,0
+access_vendor_performance_score_manager,access.vendor.performance.score.manager,model_port_said_vendor_performance_score,base.group_system,1,1,1,0
+access_vendor_performance_engine_manager,access.vendor.performance.engine.manager,model_port_said_vendor_performance_engine,base.group_system,1,1,1,0

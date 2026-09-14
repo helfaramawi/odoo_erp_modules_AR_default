@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_ai_agents_root"
+              name="مجموعة وكلاء AI"
+              sequence="64"
+              groups="base.group_user"/>
+
+    <menuitem id="menu_ai_agents_admin"
+              name="إدارة مجموعة وكلاء AI"
+              parent="menu_ai_agents_root"
+              sequence="900"
+              groups="base.group_system"/>
+
+    <record id="action_refresh_ai_agents_menu" model="ir.actions.server">
+        <field name="name">تحديث قائمة وكلاء AI</field>
+        <field name="model_id" ref="model_port_said_ai_agents_menu_manager"/>
+        <field name="state">code</field>
+        <field name="code">action = env['port_said.ai.agents.menu.manager'].sudo().action_refresh_ai_agents_menu()</field>
+    </record>
+
+    <menuitem id="menu_refresh_ai_agents_menu"
+              name="تحديث قائمة وكلاء AI"
+              parent="menu_ai_agents_admin"
+              action="action_refresh_ai_agents_menu"
+              sequence="10"
+              groups="base.group_system"/>
+</odoo>

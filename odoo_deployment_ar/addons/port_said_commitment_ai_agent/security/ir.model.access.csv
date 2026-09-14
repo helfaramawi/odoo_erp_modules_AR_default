@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_port_said_commitment_agent_log_user,access.port.said.commitment.agent.log.user,model_port_said_commitment_agent_log,base.group_user,1,1,1,0
+access_port_said_commitment_agent_log_admin,access.port.said.commitment.agent.log.admin,model_port_said_commitment_agent_log,base.group_system,1,1,1,1

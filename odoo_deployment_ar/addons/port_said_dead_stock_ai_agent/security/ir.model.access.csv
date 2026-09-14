@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_dead_stock_alert_user,access.dead.stock.alert.user,model_port_said_dead_stock_alert,base.group_user,1,0,0,0
+access_dead_stock_alert_manager,access.dead.stock.alert.manager,model_port_said_dead_stock_alert,base.group_system,1,1,1,0
+access_dead_stock_engine_manager,access.dead.stock.engine.manager,model_port_said_dead_stock_engine,base.group_system,1,1,1,0
