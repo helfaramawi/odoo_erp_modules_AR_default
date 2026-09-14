@@ -60,6 +60,7 @@
             'demo_gov_cheques/static/src/css/cheques_register.css',
         ],
     },
+    'post_init_hook': 'post_init_hook',
     'installable': True,
     'application': False,
 }

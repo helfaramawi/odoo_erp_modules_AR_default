@@ -581,6 +581,76 @@ granted only the `_user` tier would no longer get baseline accounting
 read access bundled in; would need `account.group_account_user`
 granted separately if that scenario ever arises.
 
+### Update: that fix *also* didn't work — the XML `<record id="base.user_admin">` pattern itself never persists
+
+Re-tested live a fourth time (`implied_ids` now `base.group_user` on
+all six, `category_id` explicitly cleared): still zero rows. At this
+point every plausible *content* difference between
+`demo_gov_subsidiary_books`'s groups and `demo_gov_penalties`'s had
+been eliminated or tried, so the investigation stopped guessing at
+`res.groups` semantics and went one level down, isolating variables
+one at a time against the live database:
+
+1. **Upgraded `demo_gov_subsidiary_books` completely alone** (`-u
+   demo_gov_subsidiary_books`, no other five modules in the same run)
+   — still zero rows. Rules out any cross-module interaction; the
+   module fails to grant the group even on its own.
+2. **Verified the group and the admin user both resolve correctly**:
+   `ir_model_data` confirms `group_subsidiary_manager` = gid 78 and
+   `base.user_admin` = uid 2 (matching `login='admin'`), and the group
+   has *zero* members total — not just zero for admin. The write
+   genuinely never lands for anyone.
+3. **Wrote the exact same `(4, ref(...))` command by hand through
+   `odoo shell`** (`env['res.users'].browse(2).write({'groups_id':
+   [(4, group.id)]})`, then `env.cr.commit()`) — this worked
+   immediately (`IS MEMBER: True`), and the grant **survived** a
+   subsequent `-u demo_gov_subsidiary_books` re-run of the exact same
+   XML that had just failed to create it in the first place.
+4. **Verified the container was actually running the current source**
+   (`docker exec ... cat .../security_groups.xml` inside the running
+   container matched the latest commit byte-for-byte) — ruled out a
+   stale Docker build-cache layer.
+5. **Grepped the full upgrade log for any warning or error mentioning
+   the record** — found none. The `<record id="base.user_admin">`
+   block loads with no error and produces no observable failure; it
+   simply has no effect.
+
+**Conclusion**: on this specific Odoo 17 build, a `<record
+id="base.user_admin" model="res.users">` block that only sets
+`groups_id` via `eval="[(4, ref(...))]"` silently fails to persist
+when loaded as module data (`-i`/`-u`), for reasons not fully
+root-caused (a plausible Odoo-core safeguard against modules quietly
+escalating the superuser's own privileges through ordinary data files
+— speculative, not confirmed against Odoo's source, since this repo
+doesn't vendor Odoo core). The identical `write()` call through the
+ORM directly (a `post_init_hook`, or an interactive `odoo shell`
+session) has no such restriction and persists normally, including
+across later upgrades.
+
+**Fixed for real this time**: moved the admin-group grant out of XML
+entirely and into a `post_init_hook(env)` in each of the six modules'
+`__init__.py`, registered via `'post_init_hook': 'post_init_hook'` in
+each manifest — the same mechanism `l10n_eg_custody` already uses
+elsewhere in this repo for its own post-install setup. Removed the
+now-dead `<record id="base.user_admin">` blocks (and the two
+disproven "no category_id" explanatory comments) from all six
+`security/security_groups.xml` files.
+
+**Important caveat for anyone applying this to an already-installed
+database** (as opposed to a fresh install): `post_init_hook` only
+fires when a module's state transitions *to* `installed` — on first
+install, or when installing a module for the first time as part of a
+larger `-i` run. It does **not** re-fire on a plain `-u` upgrade of a
+module that's already installed. On the six live databases already
+running this Demo Edition before this fix shipped, the hook will not
+retroactively grant the group on its own; the same one-off `odoo
+shell` commands used to diagnose this (step 3 above) are the correct
+remedy for an existing installation, once per group, and only need to
+be run once — the grant then persists indefinitely (verified surviving
+repeated `-u` re-runs). A genuinely fresh install (a new database, or
+`-i` on a database where these six modules were never installed
+before) picks up the fix automatically with no manual step.
+
 ## `demo_gov_menu` is an incomplete module — confirmed pre-existing in production too
 
 **Problem**: `demo_gov_menu/__manifest__.py` (and the original

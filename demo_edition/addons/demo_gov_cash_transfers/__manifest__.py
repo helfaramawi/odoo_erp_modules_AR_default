@@ -52,6 +52,7 @@
             'demo_gov_cash_transfers/static/src/css/transfer_register.css',
         ],
     },
+    'post_init_hook': 'post_init_hook',
     'installable': True,
     'application': False,
 }
