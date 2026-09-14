@@ -26,6 +26,20 @@ already used, so nothing else needed to change.
 attempt against a live Odoo 17 + Postgres instance — see `demo_gov_menu`
 below for the same theme.
 
+A second, identical-shaped bug followed right after: the DEMO ENVIRONMENT
+banner was originally implemented by XML-inheriting into `web.login_layout`
+at `//div[hasclass('o_database_list')]/..`, which also didn't match this
+build's actual markup. After two guessed-XPath failures in a row, the
+banner was rebuilt without any dependency on Odoo's internal page
+structure at all: a plain JSON endpoint (`/demo_branding/info`) plus a
+small vanilla-JS snippet (`demo_banner.js`) that inserts the banner via
+`document.body.prepend(...)`, loaded through `web.assets_frontend`/
+`web.assets_backend`'s own root (`position="inside"` on `.` — safe,
+doesn't reference any internal class name). This is the more robust
+pattern going forward for anything that needs to touch Odoo's own pages;
+prefer it over inheriting into core view internals when there isn't a
+live instance available to verify the exact markup against.
+
 ## `demo_gov_menu` is an incomplete module — confirmed pre-existing in production too
 
 **Problem**: `demo_gov_menu/__manifest__.py` (and the original

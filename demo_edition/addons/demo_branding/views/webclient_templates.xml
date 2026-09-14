@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <template id="login_layout_demo_banner" inherit_id="web.login_layout">
-        <xpath expr="//div[hasclass('o_database_list')]/.." position="inside">
-            <t t-set="demo_branding" t-value="request.env['demo.branding'].sudo().get_all()"/>
-            <div t-if="demo_branding.get('environment') == 'demo'" class="o_demo_branding_banner">
-                DEMO ENVIRONMENT — <t t-esc="demo_branding.get('application_name')"/> — Sample data only, not for production use
-            </div>
-        </xpath>
-    </template>
+    <!-- The DEMO ENVIRONMENT banner is injected by demo_banner.js via
+         plain DOM insertion (document.body.prepend), not by inheriting
+         into Odoo's login/webclient page templates — two earlier
+         attempts at the latter broke on internal markup that didn't
+         match this Odoo build. Appending assets inside a template's own
+         root ("position inside" on ".") is safe: it doesn't depend on
+         any internal class names. -->
 
     <template id="assets_frontend_demo_banner" inherit_id="web.assets_frontend">
         <xpath expr="." position="inside">
             <link rel="stylesheet" type="text/css" href="/demo_branding/static/src/css/demo_banner.css"/>
+            <script type="text/javascript" src="/demo_branding/static/src/js/demo_banner.js"/>
         </xpath>
     </template>
 
     <template id="assets_backend_demo_banner" inherit_id="web.assets_backend">
         <xpath expr="." position="inside">
             <link rel="stylesheet" type="text/css" href="/demo_branding/static/src/css/demo_banner.css"/>
+            <script type="text/javascript" src="/demo_branding/static/src/js/demo_banner.js"/>
         </xpath>
     </template>
 
