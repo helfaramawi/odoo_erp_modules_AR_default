@@ -1,0 +1,19 @@
+# Secrets — never commit these
+.env
+*.env
+Demo Password.txt
+**/Demo Password.txt
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# Logs
+*.log
+install_log.txt
+upgrade_log.txt
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
