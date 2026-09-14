@@ -259,6 +259,68 @@ also confirm every `<menuitem action="...">` reference resolves to a
 real `ir.actions.*` record: 49 modules, zero cycles, zero missing
 manifest dependencies, zero dangling action references.
 
+### Update: same audit run against الدفاتر المساعدة and الفوليوهات themselves
+
+Requested as a direct follow-up: check `demo_gov_subsidiary_books`
+(الدفاتر المساعدة) and every "folio" concept in the repo
+(`demo_gov_subsidiary_books`'s generic folio, `demo_gov_cash_books`'s
+cash/bank folio, `demo_gov_insurance_subsidiary`'s insurance folio) for
+the same "action with no click-path" bug, then extended the check to
+every remaining module still categorized الحسابات that hadn't been
+read line-by-line yet.
+
+This pass used a stricter script instead of eyeballing counts: for
+every `ir.actions.act_window` in each module, check whether it's
+referenced by a `<menuitem action=...>`, a `<button action=...>`, or
+`binding_model_id` (Odoo's own List-view gear-menu binding, which needs
+no menu). A first run flagged `demo_gov_cash_books`'s five actions as
+"orphaned" — a false positive: that module's `views/menu.xml` uses
+single-quoted `action='...'` attributes throughout, which the first
+version of the regex didn't match. Once fixed to accept both quote
+styles, `demo_gov_subsidiary_books` (الفوليوهات، تعريف الدفاتر،
+تصنيفات الحسابات — all 3), `demo_gov_cash_books` (فوليوهات النقدية
+والبنك and its other 5 actions), and `demo_gov_insurance_subsidiary`
+(الفوليوهات، الإيداعات، الحركات، توليد فولية، plus its two
+`binding_model_id`-bound bulk-release wizards) all came back clean —
+every action in all three is genuinely reachable.
+
+One real orphan turned up in a module that hadn't been read yet:
+**`demo_gov_stock_finance_bridge`**'s `action_bridge_log` (سجل القيود
+المحاسبية — the audit log of accounting entries auto-posted from stock
+movements, including failed/`error`-state ones). This one was worse
+than a missing menuitem: `views/bridge_log_views.xml` — the file
+defining the model's list view, its action, *and* the only place
+`stock.finance.bridge.log` is referenced anywhere in the module's
+XML — wasn't in the manifest's `data` list at all, so neither the view
+nor the action were ever loaded into the database, and
+`security/ir.model.access.csv` had no access-right row for the model
+either (so even a direct URL to the model would have 403'd for every
+non-superuser). **Fixed**: added `views/bridge_log_views.xml` to
+`data` (after `journal_entry_views.xml`, before `menu.xml`, matching
+load order for its dependents), added `access_bridge_log_user`/`_mgr`
+rows to the access CSV (read-only for `account.group_account_user`,
+full CRUD for `account.group_account_manager` — same pattern as the
+module's other three models), and added a `menu_sfb_bridge_log`
+menuitem under the existing `menu_sfb_root`.
+
+The same script's disk-vs-manifest check (every `.xml` file under each
+module's directory cross-referenced against that module's own `data`
+list) found three more files never loaded, all pre-existing and
+already accounted for elsewhere in this document: `demo_gov_menu`'s 8
+missing view files (see its own section above — the module is excluded
+from install), `demo_gov_dashboard/views/dashboard_template.xml` (the
+malformed-XML module also excluded from install, see below), and the
+dead `demo_gov_subsidiary_books/views/menu_____.xml` stub (superseded
+by `views/menu.xml`, left in place rather than deleted since it was
+out of scope for this pass and isn't loaded either way). A fourth,
+`c1_purchase_approval_matrix/data/mail_template.xml`, belongs to a
+generic (`category: Purchase`) module outside the government-suite
+category set entirely and was left alone.
+
+Re-verified with the same repo-wide cycle/dependency/dangling-action
+scan: 49 modules, zero cycles, zero missing deps, zero dangling action
+references.
+
 ## `demo_branding`'s Settings-page XML inheritance was wrong — fixed
 
 **Problem**: the first version of `demo_branding` added its config fields

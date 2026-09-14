@@ -20,6 +20,7 @@
         'views/account_rule_views.xml',
         'views/dimension_rule_views.xml',
         'views/journal_entry_views.xml',
+        'views/bridge_log_views.xml',
         'views/stock_permit_extensions.xml',
         'views/menu.xml',
     ],
