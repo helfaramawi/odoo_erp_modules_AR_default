@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hr_employee_permit_inherit" model="ir.ui.view">
+        <field name="name">hr.employee.addition.permit.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_addition_permits" type="object"
+                    class="oe_stat_button" icon="fa-plus-square"
+                    invisible="addition_permit_count == 0">
+                    <div class="o_stat_info">
+                        <field name="addition_permit_count" class="o_stat_value"/>
+                        <span class="o_stat_text">إذن إضافة</span>
+                    </div>
+                </button>
+                <button name="action_view_inspections" type="object"
+                    class="oe_stat_button" icon="fa-clipboard"
+                    invisible="inspection_report_count == 0">
+                    <div class="o_stat_info">
+                        <field name="inspection_report_count" class="o_stat_value"/>
+                        <span class="o_stat_text">محضر فحص</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_addition_permit_hr_inherit" model="ir.ui.view">
+        <field name="name">stock.addition.permit.hr.inherit</field>
+        <field name="model">stock.addition.permit</field>
+        <field name="inherit_id" ref="stock_addition_permit.view_addition_permit_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='storekeeper_id']" position="after">
+                <field name="storekeeper_job"  readonly="1" invisible="not storekeeper_job"/>
+                <field name="storekeeper_dept" readonly="1" invisible="not storekeeper_dept"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_inspection_report_hr_inherit" model="ir.ui.view">
+        <field name="name">stock.inspection.report.hr.inherit</field>
+        <field name="model">stock.inspection.report</field>
+        <field name="inherit_id" ref="stock_addition_permit.view_inspection_report_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='inspector_id']" position="after">
+                <field name="inspector_job"  readonly="1" invisible="not inspector_job"/>
+                <field name="inspector_dept" readonly="1" invisible="not inspector_dept"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

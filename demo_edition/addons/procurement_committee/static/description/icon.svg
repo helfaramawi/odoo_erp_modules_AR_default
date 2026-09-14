@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#375623;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#375623CC;stop-opacity:1"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  
+  <!-- Background rounded square -->
+  <rect width="100" height="100" rx="18" ry="18" fill="url(#bgGrad)"/>
+  
+  <!-- Icon shape -->
+  
+        <circle cx="38" cy="36" r="12" fill="#FFFFFF"/>
+        <path d="M16 70 Q38 56 60 70" stroke="#FFFFFF" stroke-width="8" fill="none" stroke-linecap="round"/>
+        <circle cx="60" cy="38" r="9" fill="#FFFFFF" opacity="0.7"/>
+        <path d="M44 72 Q60 60 76 72" stroke="#FFFFFF" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.7"/>
+        
+  
+  <!-- Arabic label at bottom -->
+  <text x="50" y="92" 
+        font-family="Arial, sans-serif" 
+        font-size="11"
+        font-weight="bold"
+        fill="#FFFFFF"
+        text-anchor="middle"
+        opacity="0.85">لجان</text>
+</svg>

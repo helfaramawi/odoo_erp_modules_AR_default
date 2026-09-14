@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_sale_order_contract" model="ir.ui.view">
+    <field name="name">sale.order.line.contract</field>
+    <field name="model">sale.order</field>
+    <field name="inherit_id" ref="sale.view_order_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='order_line']/tree//field[@name='price_unit']" position="after">
+        <field name="x_contract_price_applied" optional="show" string="Contract / عقد"
+               widget="boolean_toggle"/>
+        <field name="x_contract_price_id" optional="hide" string="Contract Ref / مرجع العقد"/>
+      </xpath>
+    </field>
+  </record>
+</odoo>

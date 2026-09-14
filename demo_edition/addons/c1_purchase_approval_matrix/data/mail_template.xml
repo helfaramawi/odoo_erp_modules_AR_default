@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Approval Request Notification -->
+    <record id="mail_template_po_approval" model="mail.template">
+        <field name="name">PO Approval Request / طلب اعتماد أمر شراء</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="subject">ACTION REQUIRED: PO Approval — {{ object.name }} / مطلوب إجراء: اعتماد أمر شراء</field>
+        <field name="body_html"><![CDATA[
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+    <div style="background: #1F4E79; padding: 24px; border-radius: 8px 8px 0 0;">
+        <h2 style="color: #ffffff; margin: 0; font-size: 18px;">
+            Purchase Order Approval Required<br/>
+            <span style="font-size: 14px; font-weight: normal; direction: rtl;">
+                مطلوب اعتماد أمر الشراء
+            </span>
+        </h2>
+    </div>
+    <div style="background: #f8f9fa; padding: 24px; border: 1px solid #dee2e6;">
+        <p>Dear {{ ctx.get('approver', object.create_uid).name }},</p>
+        <p>A purchase order requires your approval at <strong>Tier {{ ctx.get('tier', '') }}</strong>.</p>
+        <p style="direction: rtl; text-align: right;">
+            أمر شراء يتطلب اعتمادك في <strong>المستوى {{ ctx.get('tier', '') }}</strong>.
+        </p>
+        <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
+            <tr style="background: #e9ecef;">
+                <td style="padding: 8px 12px; font-weight: bold; border: 1px solid #dee2e6;">PO Reference / المرجع</td>
+                <td style="padding: 8px 12px; border: 1px solid #dee2e6;">{{ object.name }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px 12px; font-weight: bold; border: 1px solid #dee2e6;">Vendor / المورد</td>
+                <td style="padding: 8px 12px; border: 1px solid #dee2e6;">{{ object.partner_id.name }}</td>
+            </tr>
+            <tr style="background: #e9ecef;">
+                <td style="padding: 8px 12px; font-weight: bold; border: 1px solid #dee2e6;">Amount / المبلغ</td>
+                <td style="padding: 8px 12px; border: 1px solid #dee2e6;">
+                    {{ '{:,.2f}'.format(object.amount_total) }} {{ object.currency_id.name }}
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 8px 12px; font-weight: bold; border: 1px solid #dee2e6;">Requested by / طلب بواسطة</td>
+                <td style="padding: 8px 12px; border: 1px solid #dee2e6;">{{ object.create_uid.name }}</td>
+            </tr>
+        </table>
+        <p style="color: #6c757d; font-size: 12px;">
+            Please log in to Odoo to approve or reject this purchase order.<br/>
+            <span style="direction: rtl; display: block; text-align: right;">
+                يرجى تسجيل الدخول إلى أوذو للاعتماد أو الرفض.
+            </span>
+        </p>
+    </div>
+</div>
+        ]]></field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+    <!-- Rejection Notification -->
+    <record id="mail_template_po_rejection" model="mail.template">
+        <field name="name">PO Rejection Notification / إشعار رفض أمر شراء</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="email_to">{{ object.create_uid.email }}</field>
+        <field name="subject">Purchase Order Rejected — {{ object.name }} / رُفض أمر الشراء</field>
+        <field name="body_html"><![CDATA[
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+    <div style="background: #C00000; padding: 24px; border-radius: 8px 8px 0 0;">
+        <h2 style="color: #ffffff; margin: 0; font-size: 18px;">
+            Purchase Order Rejected<br/>
+            <span style="font-size: 14px; font-weight: normal; direction: rtl;">
+                رُفض أمر الشراء
+            </span>
+        </h2>
+    </div>
+    <div style="background: #f8f9fa; padding: 24px; border: 1px solid #dee2e6;">
+        <p>Dear {{ object.create_uid.name }},</p>
+        <p>Your purchase order <strong>{{ object.name }}</strong> has been rejected.</p>
+        <p style="direction: rtl; text-align: right;">
+            تم رفض أمر الشراء الخاص بك <strong>{{ object.name }}</strong>.
+        </p>
+        <div style="background: #fff3cd; border: 1px solid #ffc107; padding: 12px; border-radius: 4px; margin: 16px 0;">
+            <strong>Rejection Reason / سبب الرفض:</strong><br/>
+            {{ ctx.get('rejection_comment', '') }}
+        </div>
+        <p style="color: #6c757d; font-size: 12px;">
+            Rejected by: {{ ctx.get('rejected_by', '') }}<br/>
+            رُفض بواسطة: {{ ctx.get('rejected_by', '') }}
+        </p>
+    </div>
+</div>
+        ]]></field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+</odoo>

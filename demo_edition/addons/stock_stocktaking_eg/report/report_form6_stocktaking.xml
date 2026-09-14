@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_form6" model="ir.actions.report">
+        <field name="name">محضر جرد أصناف — نموذج 6 مخازن حكومية</field>
+        <field name="model">stock.stocktaking.session</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">stock_stocktaking_eg.report_form6_template</field>
+        <field name="print_report_name">'نموذج 6 جرد - ' + (object.name or '')</field>
+        <field name="binding_model_id" ref="model_stock_stocktaking_session"/>
+<field name="paperformat_id" ref="stock_stocktaking_eg.paperformat_gov_a4"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_form6_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                
+                    <t t-call="web.external_layout">
+                
+                    <div class="page" style="direction:rtl;font-family:'Arial',sans-serif;font-size:10pt;">
+<style>
+    /* Hide ALL Odoo company header/footer elements */
+    .o_company_logo { display:none!important; }
+    .o_address_name { display:none!important; }
+    .o_report_layout_header { display:none!important; }
+    header.o_report_layout_header { display:none!important; }
+    .odoo-header { display:none!important; }
+    .header-content { display:none!important; }
+    footer { display:none!important; }
+    .footer { display:none!important; }
+    .o_footer { display:none!important; }
+    /* Force page to start at top */
+    .page { margin-top:0!important; padding-top:0!important; }
+</style>
+
+
+                        <!-- رأس نموذج 6 الحكومي -->
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:8px;border-bottom:2px solid #000;padding-bottom:6px;">
+                            <tr>
+                                <td style="width:78px;text-align:center;vertical-align:top;">
+                                    &#160;
+                                </td>
+                                <td style="text-align:center;vertical-align:middle;">
+                                    <div style="font-size:13pt;font-weight:bold;">جمهورية مصر العربية</div>
+                                    <div style="font-size:12pt;font-weight:bold;">المحافظة التجريبية</div>
+                                    <div style="font-size:11pt;">الإدارة العامة للشؤون المالية والإدارية</div>
+                                    <div style="font-size:11pt;font-weight:bold;">إدارة المخازن</div>
+                                </td>
+                                <td style="width:78px;text-align:center;vertical-align:middle;">
+                                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAIHElEQVR4nO3d2XHcOhCF4dYt56E8lIxjczLOQ5HoPrimRI+HIAH0Cvzfu0dY+rBBzmIRAAAAAAAAAAAAAADw7S16ADt5//j5pfVan79/sXcOWGRlmiEYRXj0sJATMoThLkIzhkXrVCkUZwjLfSzUhRUCcYXAnGNhTuwQjGcE5V8syMGOoThDWP5gEYRgtOwelG0nTyj67RiW7SZMMObtFJRtJpolGBrFtdJcslt+ghHFFFk4u83X2rITE/ErlswFwhrMWXJS1kVRuRhYmz5LTUbErgBW23gR1uqOZSZisdkrbfQV1u+18hMQ0d/cFTZ2FGv5t9KD5wtItljfwgHR2jzvjdMYd8Uxi9QMSbkBi9QoshXfj6iw7tpKDTbzlSzLu9tHmedZJSglBimS7+qVMRBXss2/QkjSD1BkfjO0NiJLUWQZh8ZYsock9eBEcmzAyBgiNj5qnBn2yEragYnMLbz3xmfcZO/xR++XhZSDEold7Lt/O+umvuI1p9VCkm5AInGLfOfvZtzEXtbzXCkkqQYjMr64BKNf1qBkWus0AxHxX9Crv5dpo6xZrUX1kKQYhIjvQhKMcxZrUzkk4QMQyROODBuShfY6VQ3Jf5F/XIRwZNVaD8/3W6I/sRBaFF4LTTDmZOgmUftU6tc3NDeDYPTTXMsqIQk/Yt1FOOKdrVuVYh8REhDrc+X7x88vwmGjFRKPfbV8/VeW+0AdwfCjsdbZu49rByEca9E4cnk+Mh6R+h6EcOQXFRIvbgHpTT3hqCMiJF5dxKWAvMNBMOLM7odlrYxIfcS6QjjyebX+0e+GzzAPiNUVgXDkNROSbEct04AQjn2tEpI0RywKHEdZ6sFsEJW6R+UzsjWLtZ3Z6xaLUJl0kErhgK3qR63wIxbhWJ9nSLSpB4T/Ew+veO2Xdv2FdhCrsyhqqNBFVANiUcgcrdbh9Sai5muGdZA7RU441jMakqh9/6H1Qh6f3oxYpB0C6X2E/fz96230qw93/937x88vjb0Lf4p1hvuOvWTdb/eAVOoesFOlDlQCop3+rFcT2MpYR64dpMpVAz4q1MN0QKxTTzjW9ry/2bpI2pt0IAO3gIy870H32MNIF/GqjamAcDONCmbq1KWD0D1wJWsXGQ4I3QOVjNZript0woZXMtSFeUBG2iDHqz1lrJXwDpLhKoG8outjKCCWg6Z77M1y/0fq1rSDUOzwYFlnoUes6PaJGiLrpDsgHK9gLdMxK/wmHcjMLCB0A3iyqrewDsJHS9Bi/TH4uzhiAQ1dAeGpE1bQU8cmHYTjEiKU+XX3K9x/4I4M9yHcgwANar+suCruu/ZGBwEaCAjQcDsgHDWwkrv1rN5Brp5I8QQLPXqfZGnXEzfpF3YIMKeDc9yDAA0EBGggIEADAQEaCAjQQECABgICNBAQoIGAAA0EBGggIEADAQEaCAjQQECABgICNKgHpPcLLXwXAS29X7DTrqfbAdnhi0PYx9165ogFNBAQoIHvpF/gHmlvdBCgISQgPMnCHRl+IsokIBQ8IljUXVdAeNSLFfTUMTfpF3a4KNDxz4XdpHMfgpYM9x8ihgGh4OHJqt54zAs0dAfEstXRdSBiWwe99RvaQXa4Aca8yDoxDQgdAR4s62woIByzYCXT8UokwU06xyy0RNeHeUBGrgh0kT1lrJXwDiISf5VAThnqYjggGQYP3DVary4d5E4b5KMnexv5aIlHjUwFhC6CCmbq1O0ehC6CM1m7h0iSm3Qgq+mAaB+z6CJ7sf5Y++zruXaQ0WInJGuqUA8qAcmWetSUsY7c70EqXDVgr0odpL1Jp4vsJet+qw6qJ92jj/IsFpLudM5rvbUf7WqNO6yDjLwvcvffIS+PcGhSDYjF1YaQrMPrRKD5mqH3IHcLPev5FHPu7mvkBVE9IF7FTBepxWu/tOsv/CnWTBchJDXMHK2i99gkIL0pJiTr8gyHxenF9Dhk9VjO62YPc2b3KeKx7rPwI9YDnQBHWerBNCActfZV/Wj1YN5BCMl+VgmHSKIj1ghCks9q94duA7e8Mpy9duWNqUZjD7J1DxHHDmJ11Gq9Nt3Ex6rhEEl+xCIk+UWEw5NrQEZST0jyigqH59E55IxuvSit1+e+ZJ7W+mYPh0jQEct6kp+/f73RTWy0uobHvlq+/iup70GONK82hGSM5tPCKnsQetzwarEcueZor1+Fo9VDeHGMXkkIir0MwRj9W1rCj1ijk9e+ClVp+V4Ixx9prppZOsnoa67CYm2qhkMkUUBE/BeSoHyzWovK4RBJFhCRmAUd/Qmi6qznXT0cIgkDIjJ3P0BQrmUNxuzftZBqMEeRi7zizxF5zWmlcIgkDohI/GJn+E70DO/xR++XhZSDOpp9/Bq18REbHjXODHtkJe3AjrJsgMZ7JRkKUmscGmPJHA6RIgERyVUUIjXfWMw2/+zhECkUEBG9otzlv1DIPM8K4RApFpCHCleviMBUmFOVYDyUGuxR1StZxSKrutYayg34SPMqXXHzrLG+xQPyoH2cqbqZGljLv5Ue/JHFmb/65vZg/V4rP4FnVjfHK2z2M9bq2jITObJ+glS5AFibPktN5lnV//ZLE2swZ8lJHa34fkTLbvO1tuzEnmV5pzvLZ7E0rByMh+Un+CxLcVW2QzAetpnoM4LSb6dgPGw34VcIy7kdQ3G09eSfEZRvuwfjgUU4sWNYCMW/WJALOwSFYJxjYTqtEBgCcR8LNaFSWAjFGBZNWYbQEAY9LKQjvoAEAAAAAAAAAAAAAAX8D2Zm4y9yBja5AAAAAElFTkSuQmCC"
+                                         style="width:70px;height:70px;object-fit:contain;"
+                                         alt="المحافظة التجريبية"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div style="border-top:3px double #000;border-bottom:3px double #000;
+                                    padding:6px 0;text-align:center;margin-bottom:12px;">
+                            <span style="font-size:13pt;font-weight:bold;">
+                                محضر جرد أصناف نموذج 6 مخازن حكومية
+                            </span>
+                        </div>
+
+                        <!-- بيانات المحضر -->
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:10px;font-size:10pt;">
+                            <tr>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;width:18%;">رقم المحضر</td>
+                                <td style="border:1px solid #000;padding:5px 8px;width:15%;font-weight:bold;"><t t-esc="doc.name"/></td>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;width:15%;">تاريخ الجرد</td>
+                                <td style="border:1px solid #000;padding:5px 8px;width:15%;"><t t-esc="doc.stocktaking_date"/></td>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;width:15%;">السنة المالية</td>
+                                <td style="border:1px solid #000;padding:5px 8px;width:22%;font-weight:bold;"><t t-esc="doc.fiscal_year"/></td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;">المخزن</td>
+                                <td style="border:1px solid #000;padding:5px 8px;" colspan="3"><t t-esc="doc.warehouse_id.name"/></td>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;">الموقع</td>
+                                <td style="border:1px solid #000;padding:5px 8px;"><t t-esc="doc.location_id.complete_name if doc.location_id else '—'"/></td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;">رئيس لجنة الجرد</td>
+                                <td style="border:1px solid #000;padding:5px 8px;" colspan="3">
+                                    <t t-esc="doc.committee_chairman_id.name if doc.committee_chairman_id else '—'"/>
+                                </td>
+                                <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;">أمين المخزن</td>
+                                <td style="border:1px solid #000;padding:5px 8px;">
+                                    <t t-esc="doc.storekeeper_id.name if doc.storekeeper_id else '—'"/>
+                                </td>
+                            </tr>
+                            <t t-if="doc.committee_members">
+                                <tr>
+                                    <td style="border:1px solid #000;padding:5px 8px;background:#f5f5f5;font-weight:bold;">أعضاء اللجنة</td>
+                                    <td style="border:1px solid #000;padding:5px 8px;" colspan="5"><t t-esc="doc.committee_members"/></td>
+                                </tr>
+                            </t>
+                        </table>
+
+                        <!-- جدول أصناف الجرد — النموذج 6 الرسمي -->
+                        <table style="width:100%;border-collapse:collapse;font-size:9pt;margin-bottom:14px;">
+                            <thead>
+                                <tr style="background:#d9d9d9;">
+                                    <th style="border:1px solid #000;padding:5px;text-align:center;width:4%;">م</th>
+                                    <th style="border:1px solid #000;padding:5px;text-align:center;width:8%;">كود الصنف</th>
+                                    <th style="border:1px solid #000;padding:5px;text-align:center;width:22%;">اسم الصنف / البيان</th>
+                                    <th style="border:1px solid #000;padding:5px;text-align:center;width:7%;">الوحدة</th>
+                                    <th style="border:1px solid #000;padding:5px;text-align:center;width:10%;">الكمية بالسجلات</th>
+                                    <th style="border:1px solid #000;padding:5px;text-align:center;width:10%;">الكمية الفعلية</th>
+                                    <th style="border:1px solid #000;padding:5px;text-align:center;width:9%;">الفرق</th>
+                                    <th style="border:1px solid #000;padding:5px;text-align:center;width:8%;">نوع الفرق</th>
+                                    <th style="border:1px solid #000;padding:5px;text-align:center;width:9%;">سعر الوحدة</th>
+                                    <th style="border:1px solid #000;padding:5px;text-align:center;width:10%;">قيمة الفرق</th>
+                                    <th style="border:1px solid #000;padding:5px;text-align:center;width:3%;">ملاحظات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc.line_ids" t-as="line">
+                                    <tr t-att-style="
+                                        'background:#e8f5e9;' if line.difference_type == 'surplus'
+                                        else ('background:#ffebee;' if line.difference_type == 'deficit' else '')">
+                                        <td style="border:1px solid #000;padding:4px;text-align:center;"><t t-esc="line_index + 1"/></td>
+                                        <td style="border:1px solid #000;padding:4px;text-align:center;font-size:8pt;">
+                                            <t t-esc="line.product_code or '—'"/>
+                                        </td>
+                                        <td style="border:1px solid #000;padding:4px;"><t t-esc="line.product_id.name"/></td>
+                                        <td style="border:1px solid #000;padding:4px;text-align:center;">
+                                            <t t-esc="line.uom_id.name if line.uom_id else ''"/>
+                                        </td>
+                                        <td style="border:1px solid #000;padding:4px;text-align:center;">
+                                            <t t-esc="'{:,.2f}'.format(line.system_qty)"/>
+                                        </td>
+                                        <td style="border:1px solid #000;padding:4px;text-align:center;font-weight:bold;">
+                                            <t t-esc="'{:,.2f}'.format(line.physical_qty)"/>
+                                        </td>
+                                        <td style="border:1px solid #000;padding:4px;text-align:center;font-weight:bold;">
+                                            <t t-if="line.difference_qty &gt; 0">
+                                                <span style="color:green;">+<t t-esc="'{:,.2f}'.format(line.difference_qty)"/></span>
+                                            </t>
+                                            <t t-elif="line.difference_qty &lt; 0">
+                                                <span style="color:red;"><t t-esc="'{:,.2f}'.format(line.difference_qty)"/></span>
+                                            </t>
+                                            <t t-else="">—</t>
+                                        </td>
+                                        <td style="border:1px solid #000;padding:4px;text-align:center;font-size:8pt;font-weight:bold;">
+                                            <t t-if="line.difference_type == 'surplus'"><span style="color:green;">زيادة</span></t>
+                                            <t t-elif="line.difference_type == 'deficit'"><span style="color:red;">عجز</span></t>
+                                            <t t-else="">—</t>
+                                        </td>
+                                        <td style="border:1px solid #000;padding:4px;text-align:center;">
+                                            <t t-esc="'{:,.2f}'.format(line.standard_cost)"/>
+                                        </td>
+                                        <td style="border:1px solid #000;padding:4px;text-align:center;font-weight:bold;">
+                                            <t t-if="line.difference_value != 0">
+                                                <t t-esc="'{:,.2f}'.format(abs(line.difference_value))"/>
+                                            </t>
+                                            <t t-else="">—</t>
+                                        </td>
+                                        <td style="border:1px solid #000;padding:4px;font-size:8pt;">
+                                            <t t-esc="line.notes or ''"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                            <!-- صف الإجماليات -->
+                            <tfoot>
+                                <tr style="background:#e0e0e0;font-weight:bold;">
+                                    <td style="border:1px solid #000;padding:5px;text-align:center;" colspan="4">الإجمالي</td>
+                                    <td style="border:1px solid #000;padding:5px;text-align:center;">
+                                        <t t-esc="'{:,.2f}'.format(sum(doc.line_ids.mapped('system_qty')))"/>
+                                    </td>
+                                    <td style="border:1px solid #000;padding:5px;text-align:center;">
+                                        <t t-esc="'{:,.2f}'.format(sum(doc.line_ids.mapped('physical_qty')))"/>
+                                    </td>
+                                    <td style="border:1px solid #000;padding:5px;"></td>
+                                    <td style="border:1px solid #000;padding:5px;"></td>
+                                    <td style="border:1px solid #000;padding:5px;"></td>
+                                    <td style="border:1px solid #000;padding:5px;text-align:center;color:green;">
+                                        <t t-esc="'{:,.2f}'.format(doc.total_surplus_value)"/>
+                                    </td>
+                                    <td style="border:1px solid #000;padding:5px;"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <!-- ملخص الزيادة والعجز -->
+                        <table style="width:60%;border-collapse:collapse;margin-bottom:14px;font-size:10pt;margin-right:auto;">
+                            <tr style="background:#d9d9d9;font-weight:bold;">
+                                <th style="border:1px solid #000;padding:6px;width:40%;">البيان</th>
+                                <th style="border:1px solid #000;padding:6px;text-align:center;width:20%;">عدد الأصناف</th>
+                                <th style="border:1px solid #000;padding:6px;text-align:center;width:40%;">القيمة (جنيه)</th>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #000;padding:5px;">أصناف بها زيادة</td>
+                                <td style="border:1px solid #000;padding:5px;text-align:center;color:green;font-weight:bold;">
+                                    <t t-esc="doc.total_surplus_items"/>
+                                </td>
+                                <td style="border:1px solid #000;padding:5px;text-align:center;color:green;font-weight:bold;">
+                                    <t t-esc="'{:,.2f}'.format(doc.total_surplus_value)"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #000;padding:5px;">أصناف بها عجز</td>
+                                <td style="border:1px solid #000;padding:5px;text-align:center;color:red;font-weight:bold;">
+                                    <t t-esc="doc.total_deficit_items"/>
+                                </td>
+                                <td style="border:1px solid #000;padding:5px;text-align:center;color:red;font-weight:bold;">
+                                    <t t-esc="'{:,.2f}'.format(doc.total_deficit_value)"/>
+                                </td>
+                            </tr>
+                            <tr style="background:#f5f5f5;font-weight:bold;">
+                                <td style="border:1px solid #000;padding:5px;">إجمالي الأصناف</td>
+                                <td style="border:1px solid #000;padding:5px;text-align:center;">
+                                    <t t-esc="doc.total_items"/>
+                                </td>
+                                <td style="border:1px solid #000;padding:5px;"></td>
+                            </tr>
+                        </table>
+
+                        <!-- ملاحظات -->
+                        <div t-if="doc.notes"
+                             style="border:1px solid #000;padding:8px;margin-bottom:14px;">
+                            <strong>ملاحظات: </strong><t t-esc="doc.notes"/>
+                        </div>
+
+                        <!-- توقيعات لجنة الجرد -->
+                        <table style="width:100%;border-collapse:collapse;font-size:10pt;margin-top:14px;">
+                            <tr>
+                                <td style="border:1px solid #000;padding:14px;text-align:center;width:25%;vertical-align:top;">
+                                    <p style="font-weight:bold;margin:0 0 4px 0;">رئيس لجنة الجرد</p>
+                                    <p style="font-size:10pt;margin:0 0 2px 0;">
+                                        <t t-esc="doc.committee_chairman_id.name if doc.committee_chairman_id else '........................'"/>
+                                    </p>
+                                    <p style="color:#555;margin-top:20px;">التوقيع: .........................</p>
+                                    <p style="color:#555;">التاريخ: <t t-esc="doc.stocktaking_date"/></p>
+                                </td>
+                                <td style="border:1px solid #000;padding:14px;text-align:center;width:25%;vertical-align:top;">
+                                    <p style="font-weight:bold;margin:0 0 4px 0;">أعضاء اللجنة</p>
+                                    <p style="color:#555;margin-top:20px;">التوقيع: .........................</p>
+                                    <p style="color:#555;">التوقيع: .........................</p>
+                                    <p style="color:#555;">التوقيع: .........................</p>
+                                </td>
+                                <td style="border:1px solid #000;padding:14px;text-align:center;width:25%;vertical-align:top;">
+                                    <p style="font-weight:bold;margin:0 0 4px 0;">أمين المخزن</p>
+                                    <p style="font-size:10pt;margin:0 0 2px 0;">
+                                        <t t-esc="doc.storekeeper_id.name if doc.storekeeper_id else '........................'"/>
+                                    </p>
+                                    <p style="color:#555;margin-top:20px;">التوقيع: .........................</p>
+                                    <p style="color:#555;">التاريخ: .........................</p>
+                                </td>
+                                <td style="border:1px solid #000;padding:14px;text-align:center;width:25%;vertical-align:top;">
+                                    <p style="font-weight:bold;margin:0 0 4px 0;">مدير إدارة المخازن</p>
+                                    <p style="color:#555;margin-top:20px;">التوقيع: .........................</p>
+                                    <p style="color:#555;">التاريخ: .........................</p>
+                                    <p style="color:#555;">الختم الرسمي</p>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- تذييل -->
+                        <div style="margin-top:8px;font-size:8pt;color:#777;
+                                    border-top:1px solid #ccc;padding-top:5px;
+                                    display:flex;justify-content:space-between;">
+                            <span>نموذج 6 مخازن حكومية</span>
+                            <span>الديوان العام للمحافظة التجريبية — إدارة المخازن</span>
+                            <span><t t-esc="doc.name"/> — <t t-esc="doc.stocktaking_date"/></span>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

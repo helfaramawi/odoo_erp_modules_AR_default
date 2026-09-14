@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo><!-- placeholder — main views in inspection_report_views.xml -->
+</odoo>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     Override Odoo company header in ALL PDF reports for this system.
+     Replaces "Your logo + company address" with NOTHING.
+     The government form templates already have their own headers.
+═══════════════════════════════════════════════════════════════════════ -->

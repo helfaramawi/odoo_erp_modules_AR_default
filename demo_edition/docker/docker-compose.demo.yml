@@ -1,0 +1,64 @@
+# Demo Edition — isolated stack (Odoo + Postgres only).
+#
+# Nothing in this stack talks to production: no production DB host, no
+# production SMTP, no production ERP/API endpoints. All connection info
+# comes from .env (copy .env.example -> .env and fill in demo-only
+# values before running).
+#
+# Usage:
+#   cp .env.example .env
+#   docker compose -f docker-compose.demo.yml up -d --build
+#   docker compose -f docker-compose.demo.yml exec odoo \
+#       odoo -d "$DEMO_DB_NAME" -i demo_branding,demo_gov_seed_data,demo_gov_menu --stop-after-init
+
+services:
+  db:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: ${DEMO_DB_USER:-demo_odoo}
+      POSTGRES_PASSWORD: ${DEMO_DB_PASSWORD:?set DEMO_DB_PASSWORD in .env}
+    volumes:
+      - demo_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DEMO_DB_USER:-demo_odoo}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [demo_net]
+
+  odoo:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      HOST: db
+      PORT: 5432
+      USER: ${DEMO_DB_USER:-demo_odoo}
+      PASSWORD: ${DEMO_DB_PASSWORD:?set DEMO_DB_PASSWORD in .env}
+      DEMO_USERS_PASSWORD: ${DEMO_USERS_PASSWORD:?set DEMO_USERS_PASSWORD in .env}
+      APP_ENV: demo
+    ports:
+      - "${DEMO_HTTP_PORT:-8069}:8069"
+    volumes:
+      - demo_odoo_filestore:/var/lib/odoo
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8069/api/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 60s
+      retries: 5
+    networks: [demo_net]
+
+volumes:
+  demo_pg_data:
+  demo_odoo_filestore:
+
+networks:
+  demo_net:
+    driver: bridge

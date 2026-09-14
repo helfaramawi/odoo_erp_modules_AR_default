@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_auction_bid_list" model="ir.ui.view">
+        <field name="name">auction.bid.list</field>
+        <field name="model">auction.bid</field>
+        <field name="arch" type="xml">
+            <tree string="العروض المقدمة" decoration-success="state=='accepted'" decoration-danger="state=='rejected'">
+                <field name="auction_request_id"/>
+                <field name="partner_id"/>
+                <field name="amount"/>
+                <field name="deposit_paid"/>
+                <field name="deposit_receipt_ref"/>
+                <field name="state" widget="badge" decoration-success="state=='accepted'" decoration-danger="state=='rejected'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_auction_bid_form" model="ir.ui.view">
+        <field name="name">auction.bid.form</field>
+        <field name="model">auction.bid</field>
+        <field name="arch" type="xml">
+            <form string="عرض مزاد">
+                <header>
+                    <button name="action_accept" groups="l10n_eg_auction.group_auction_manager" string="قبول" type="object" invisible="state != 'submitted'" class="btn-primary"/>
+                    <button name="action_reject" string="رفض" type="object" invisible="state != 'submitted'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="submitted,accepted,rejected"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="auction_request_id"/>
+                            <field name="partner_id"/>
+                            <field name="amount"/>
+                        </group>
+                        <group>
+                            <field name="deposit_paid"/>
+                            <field name="deposit_receipt_ref"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="rejection_reason" invisible="state != 'rejected'"/>
+                        <field name="notes"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

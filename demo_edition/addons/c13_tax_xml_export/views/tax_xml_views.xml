@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_tax_xml_wizard_form" model="ir.ui.view">
+    <field name="name">tax.xml.wizard.form</field>
+    <field name="model">tax.xml.wizard</field>
+    <field name="arch" type="xml">
+      <form string="Tax Filing XML Export / تصدير ملف XML الضريبي">
+        <div class="alert alert-info" role="alert">
+          Generates XML compliant with Government Portal schema v3.2.
+          Certificate stored as ir.attachment is used for PKCS7 signing.<br/>
+          <span style="direction:rtl;display:block;">
+            ينشئ XML متوافقاً مع مخطط بوابة الحكومة الإصدار 3.2.
+            يُستخدم المرفق لتوقيع PKCS7.
+          </span>
+        </div>
+        <group>
+          <group string="Period / الفترة">
+            <field name="period_type"/>
+            <field name="date_from"/>
+            <field name="date_to"/>
+            <field name="company_id" groups="base.group_multi_company"/>
+          </group>
+          <group string="Options / الخيارات">
+            <field name="include_zero_tax"/>
+            <field name="certificate_attachment_id"/>
+          </group>
+        </group>
+        <footer>
+          <button name="action_generate_xml" string="Generate &amp; Download XML / توليد وتنزيل XML"
+                  type="object" class="btn-primary"/>
+          <button string="Cancel / إلغاء" special="cancel"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+  <record id="action_tax_xml_wizard" model="ir.actions.act_window">
+    <field name="name">Tax Filing XML / ملف XML الضريبي</field>
+    <field name="res_model">tax.xml.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+  </record>
+  <menuitem id="menu_tax_xml_export" name="Tax Filing XML / ملف XML الضريبي"
+    parent="account.menu_finance_reports" action="action_tax_xml_wizard" sequence="90"/>
+</odoo>

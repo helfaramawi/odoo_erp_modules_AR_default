@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_adj_readonly,adjudication readonly,model_procurement_adjudication,base.group_user,1,0,0,0
+access_adj_member,adjudication member,model_procurement_adjudication,procurement_adjudication.group_adjudication_member,1,1,1,0
+access_adj_chairman,adjudication chairman,model_procurement_adjudication,procurement_adjudication.group_adjudication_chairman,1,1,1,0
+access_adj_director,adjudication director,model_procurement_adjudication,procurement_adjudication.group_adjudication_director,1,1,1,1
+access_adj_line_readonly,adjudication line readonly,model_adjudication_supplier_line,base.group_user,1,0,0,0
+access_adj_line_member,adjudication line member,model_adjudication_supplier_line,procurement_adjudication.group_adjudication_member,1,1,1,0
+access_adj_line_director,adjudication line director,model_adjudication_supplier_line,procurement_adjudication.group_adjudication_director,1,1,1,1

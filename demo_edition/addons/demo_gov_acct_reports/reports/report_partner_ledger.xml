@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="rpt_acct_partner_ledger">
+  <t t-call="web.html_container">
+    <t t-foreach="docs" t-as="doc">
+      <t t-call="web.external_layout">
+        <div class="page" style="direction:rtl;font-size:10.5pt;">
+<style>.o_company_logo,.o_address_name,.o_report_layout_header,header.o_report_layout_header,.odoo-header,.header-content,footer,.footer,.o_footer{display:none!important;}.page{margin-top:0!important;padding-top:0!important;}body{font-family:'Amiri', 'Noto Naskh Arabic', Arial, sans-serif;direction:rtl;}</style>
+<table style="width:100%;border-collapse:collapse;margin-bottom:8px;border-bottom:2px solid #000;padding-bottom:6px;"><tr><td style="width:78px;text-align:center;">&#160;</td><td style="text-align:center;"><div style="font-size:13pt;font-weight:bold;">جمهورية مصر العربية</div><div style="font-size:12pt;font-weight:bold;">المحافظة التجريبية</div><div style="font-size:11pt;">الإدارة العامة للشؤون المالية والإدارية</div><div style="font-size:11pt;font-weight:bold;">إدارة الحسابات</div></td><td style="width:78px;text-align:center;"><img src="data:image/png;base64,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" style="width:68px;height:68px;object-fit:contain;"/></td></tr></table>
+
+          <div style="text-align:center;border-top:3px double #000;border-bottom:3px double #000;padding:5px 0;margin-bottom:10px;">
+            <span style="font-size:14pt;font-weight:bold;">كشف حساب
+              <t t-if="doc.partner_type == 'supplier'">الموردين</t>
+              <t t-elif="doc.partner_type == 'customer'">العملاء</t>
+              <t t-else="">الموردين والعملاء</t>
+            </span>
+          </div>
+          <table style="width:100%;margin-bottom:10px;font-size:10pt;">
+            <tr>
+              <td style="border:1px solid #000;padding:5px;background:#f5f5f5;font-weight:bold;width:14%;">الفترة</td>
+              <td style="border:1px solid #000;padding:5px;width:36%;"><t t-esc="doc.date_from"/> — <t t-esc="doc.date_to"/></td>
+              <td style="border:1px solid #000;padding:5px;background:#f5f5f5;font-weight:bold;width:14%;">الجهة</td>
+              <td style="border:1px solid #000;padding:5px;width:36%;"><t t-esc="doc.company_id.name"/></td>
+            </tr>
+          </table>
+          <t t-set="rows" t-value="doc._get_partner_ledger_data()"/>
+          <table style="width:100%;font-size:9.5pt;margin-bottom:12px;">
+            <thead>
+              <tr style="background:#1F3864;color:white;">
+                <th style="padding:5px;border:1px solid #ccc;width:5%;text-align:center;">#</th>
+                <th style="padding:5px;border:1px solid #ccc;width:35%;">اسم الشريك</th>
+                <th style="padding:5px;border:1px solid #ccc;width:15%;">الرقم الضريبي</th>
+                <th style="padding:5px;border:1px solid #ccc;width:13%;text-align:left;">مدين</th>
+                <th style="padding:5px;border:1px solid #ccc;width:13%;text-align:left;">دائن</th>
+                <th style="padding:5px;border:1px solid #ccc;width:10%;text-align:left;">الرصيد</th>
+                <th style="padding:5px;border:1px solid #ccc;width:9%;text-align:center;">طبيعة</th>
+              </tr>
+            </thead>
+            <tbody>
+              <t t-foreach="rows" t-as="row">
+                <tr t-attf-style="background:{{ '#f9f9f9' if row_index % 2 == 0 else 'white' }};">
+                  <td style="padding:4px;border:1px solid #ddd;text-align:center;"><t t-esc="row_index + 1"/></td>
+                  <td style="padding:4px;border:1px solid #ddd;font-weight:bold;"><t t-esc="row['partner_name']"/></td>
+                  <td style="padding:4px;border:1px solid #ddd;"><t t-esc="row['partner_vat'] or '—'"/></td>
+                  <td style="padding:4px;border:1px solid #ddd;text-align:left;"><t t-esc="'%s' % '{:,.2f}'.format(row['debit'])"/></td>
+                  <td style="padding:4px;border:1px solid #ddd;text-align:left;"><t t-esc="'%s' % '{:,.2f}'.format(row['credit'])"/></td>
+                  <td style="padding:4px;border:1px solid #ddd;text-align:left;font-weight:bold;"
+                      t-attf-style="color:{{ '#C00000' if row['balance'] &lt; 0 else '#1F3864' }};">
+                    <t t-esc="'%s' % '{:,.2f}'.format(abs(row['balance']))"/>
+                  </td>
+                  <td style="padding:4px;border:1px solid #ddd;text-align:center;font-size:8.5pt;font-weight:bold;">
+                    <t t-if="row['balance'] &gt; 0"><span style="color:#375623;">مدين</span></t>
+                    <t t-elif="row['balance'] &lt; 0"><span style="color:#C00000;">دائن</span></t>
+                    <t t-else=""><span style="color:#888;">متوازن</span></t>
+                  </td>
+                </tr>
+              </t>
+            </tbody>
+            <tfoot>
+              <tr style="background:#1F3864;color:white;font-weight:bold;">
+                <td colspan="3" style="padding:5px;border:1px solid #ddd;text-align:center;"><t t-esc="len(rows)"/> شريك</td>
+                <td style="padding:5px;border:1px solid #ddd;text-align:left;"><t t-esc="'%s' % '{:,.2f}'.format(sum(r['debit'] for r in rows))"/></td>
+                <td style="padding:5px;border:1px solid #ddd;text-align:left;"><t t-esc="'%s' % '{:,.2f}'.format(sum(r['credit'] for r in rows))"/></td>
+                <td colspan="2" style="padding:5px;border:1px solid #ddd;text-align:left;"><t t-esc="'%s' % '{:,.2f}'.format(sum(r['balance'] for r in rows))"/></td>
+              </tr>
+            </tfoot>
+          </table>
+<table style="width:100%;border-collapse:collapse;margin-top:16px;"><tr><td style="width:33%;text-align:center;padding:10px;border:1px solid #ccc;"><div style="font-weight:bold;color:#1F3864;">رئيس قسم الحسابات</div><div style="margin-top:20px;border-top:1px solid #999;padding-top:4px;font-size:8pt;">الاسم والتوقيع</div></td><td style="width:33%;text-align:center;padding:10px;border:1px solid #ccc;"><div style="font-weight:bold;color:#1F3864;">مدير الشؤون المالية</div><div style="margin-top:20px;border-top:1px solid #999;padding-top:4px;font-size:8pt;">الاسم والتوقيع</div></td><td style="width:33%;text-align:center;padding:10px;border:1px solid #ccc;"><div style="font-weight:bold;color:#1F3864;">رئيس الديوان</div><div style="margin-top:20px;border-top:1px solid #999;padding-top:4px;font-size:8pt;">الاسم والختم</div></td></tr></table>
+<div style="margin-top:10px;font-size:8pt;color:#555;text-align:center;border-top:1px solid #ccc;padding-top:4px;">Enterprise Solutions Demo — طُبع بتاريخ: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%Y %H:%M')"/> — المحافظة التجريبية</div>
+        </div>
+      </t>
+    </t>
+  </t>
+</template>
+</odoo>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<record id="view_eta_config_form" model="ir.ui.view">
+  <field name="name">eta.config.form</field>
+  <field name="model">eta.config</field>
+  <field name="arch" type="xml">
+    <form string="اعدادات الفاتورة الالكترونية ETA">
+      <header>
+        <field name="is_connected" widget="boolean" readonly="1"/>
+      </header>
+      <sheet>
+        <div class="o_field_widget" style="margin-bottom:12px;">
+          <button name="action_test_connection" string="اختبار الاتصال"
+                  type="object" class="btn btn-primary btn-sm"/>
+          <button name="action_clear_token_cache" string="تجديد Token"
+                  type="object" class="btn btn-secondary btn-sm"/>
+        </div>
+
+        <div class="alert alert-warning" role="alert"
+             invisible="environment != 'production'">
+          <strong>بيئة الانتاج:</strong> الفواتير المرسلة ملزمة قانونياً.
+        </div>
+        <div class="alert alert-info" role="alert"
+             invisible="environment != 'preproduction'">
+          <strong>بيئة الاختبار:</strong> اختبر قبل الانتقال للانتاج.
+        </div>
+
+        <group string="الاعدادات الاساسية">
+          <group>
+            <field name="company_id"/>
+            <field name="environment" widget="radio"/>
+          </group>
+          <group>
+            <field name="last_token_date" readonly="1"/>
+          </group>
+        </group>
+
+        <group string="بيانات الاعتماد ETA Portal">
+          <field name="client_id" placeholder="Client ID من بوابة ETA"/>
+          <field name="client_secret" password="True" placeholder="Client Secret"/>
+        </group>
+
+        <group string="بيانات الجهة">
+          <group>
+            <field name="branch_id"/>
+            <field name="activity_code" placeholder="مثال: 8412"/>
+          </group>
+        </group>
+      </sheet>
+    </form>
+  </field>
+</record>
+
+<record id="view_eta_config_list" model="ir.ui.view">
+  <field name="name">eta.config.list</field>
+  <field name="model">eta.config</field>
+  <field name="arch" type="xml">
+    <tree string="اعدادات ETA">
+      <field name="company_id"/>
+      <field name="environment" widget="badge"
+             decoration-warning="environment == 'preproduction'"
+             decoration-danger="environment == 'production'"/>
+      <field name="is_connected" widget="boolean"/>
+      <field name="last_token_date"/>
+    </tree>
+  </field>
+</record>
+
+<record id="action_eta_config" model="ir.actions.act_window">
+  <field name="name">اعدادات ETA</field>
+  <field name="res_model">eta.config</field>
+  <field name="view_mode">list,form</field>
+</record>
+
+</odoo>

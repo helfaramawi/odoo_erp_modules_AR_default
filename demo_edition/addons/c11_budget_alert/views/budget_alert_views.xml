@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_project_budget_form" model="ir.ui.view">
+    <field name="name">project.project.budget.form</field>
+    <field name="model">project.project</field>
+    <field name="inherit_id" ref="project.edit_project"/>
+    <field name="arch" type="xml">
+      <xpath expr="//notebook" position="inside">
+        <page string="Budget / الميزانية">
+          <group>
+            <group string="Budget Settings / إعدادات الميزانية">
+              <field name="x_budget_amount"/>
+              <field name="x_budget_alert_threshold"/>
+            </group>
+            <group string="Budget Status / حالة الميزانية">
+              <field name="x_budget_spent" readonly="1"/>
+              <field name="x_budget_remaining" readonly="1"/>
+              <field name="x_budget_pct" readonly="1" widget="percentage"
+                     decoration-danger="x_budget_pct >= 100"
+                     decoration-warning="x_budget_pct >= x_budget_alert_threshold"/>
+            </group>
+          </group>
+        </page>
+      </xpath>
+    </field>
+  </record>
+</odoo>

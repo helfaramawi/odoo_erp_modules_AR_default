@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="action_report_dossier" model="ir.actions.report">
+    <field name="name">استمارة 101 ساير — الاضابير</field>
+    <field name="model">demo_gov.dossier</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">demo_gov_dossier.report_dossier_template</field>
+    <field name="report_file">demo_gov_dossier.report_dossier_template</field>
+    <field name="binding_model_id" ref="model_demo_gov_dossier"/>
+    <field name="binding_type">report</field>
+  </record>
+</odoo>

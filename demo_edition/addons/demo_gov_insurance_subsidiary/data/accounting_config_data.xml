@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+  <!--
+    لا يُمكن تعيين حسابات افتراضية عند التثبيت لأنها تعتمد على
+    دليل الحسابات المحدد في شركة المحافظة. يجب تعيينها يدوياً من:
+
+    Settings → Insurance Accounts
+
+    الحسابات المطلوبة:
+    - insurance_cash_asset_account_id (حساب خزينة التأمينات)
+    - insurance_cash_liability_account_id (التزام إرجاع التأمينات)
+    - guarantee_memo_dr_account_id (نظامي مدين - خطابات ضمان)
+    - guarantee_memo_cr_account_id (نظامي دائن - خطابات ضمان)
+    - insurance_forfeiture_revenue_account_id (إيرادات المصادرة)
+
+    الوحدة تعمل بدون هذه الإعدادات — لكن القيود المحاسبية لن تُنشأ
+    تلقائياً، وسيُسجَّل تحذير في chatter السجل.
+  -->
+</odoo>

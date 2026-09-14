@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- One hr.employee per demo.* user (see l10n_eg_custody/data/demo_users.xml).
+         Fully synthetic — no real person is represented. -->
+
+    <record id="employee_director_general" model="hr.employee">
+        <field name="name">EMP-0001 — Director General (Demo)</field>
+        <field name="user_id" ref="l10n_eg_custody.user_director_general"/>
+        <field name="job_title">Director General</field>
+        <field name="work_email">demo.admin@demo-gov.example</field>
+    </record>
+
+    <record id="employee_contracts_manager" model="hr.employee">
+        <field name="name">EMP-0002 — Contracts Manager (Demo)</field>
+        <field name="user_id" ref="l10n_eg_custody.user_contracts_manager"/>
+        <field name="job_title">Contracts Manager</field>
+        <field name="work_email">demo.contracts_manager@demo-gov.example</field>
+    </record>
+
+    <record id="employee_contracts_officer" model="hr.employee">
+        <field name="name">EMP-0003 — Contracts Officer (Demo)</field>
+        <field name="user_id" ref="l10n_eg_custody.user_contracts_officer"/>
+        <field name="job_title">Contracts Officer</field>
+        <field name="work_email">demo.contracts_officer@demo-gov.example</field>
+    </record>
+
+    <record id="employee_adjudication_chairman" model="hr.employee">
+        <field name="name">EMP-0004 — Adjudication Committee Chairman (Demo)</field>
+        <field name="user_id" ref="l10n_eg_custody.user_adjudication_chairman"/>
+        <field name="job_title">Adjudication Committee Chairman</field>
+        <field name="work_email">demo.adjudication_chairman@demo-gov.example</field>
+    </record>
+
+    <record id="employee_warehouse_manager" model="hr.employee">
+        <field name="name">EMP-0005 — Warehouse Manager (Demo)</field>
+        <field name="user_id" ref="l10n_eg_custody.user_warehouse_manager"/>
+        <field name="job_title">Warehouse Manager</field>
+        <field name="work_email">demo.warehouse_manager@demo-gov.example</field>
+    </record>
+
+    <record id="employee_storekeeper" model="hr.employee">
+        <field name="name">EMP-0006 — Storekeeper (Demo)</field>
+        <field name="user_id" ref="l10n_eg_custody.user_storekeeper"/>
+        <field name="job_title">Storekeeper</field>
+        <field name="work_email">demo.storekeeper@demo-gov.example</field>
+    </record>
+
+    <record id="employee_inspector" model="hr.employee">
+        <field name="name">EMP-0007 — Warehouse Inspector (Demo)</field>
+        <field name="user_id" ref="l10n_eg_custody.user_inspector"/>
+        <field name="job_title">Warehouse Inspector</field>
+        <field name="work_email">demo.inspector@demo-gov.example</field>
+    </record>
+
+</odoo>

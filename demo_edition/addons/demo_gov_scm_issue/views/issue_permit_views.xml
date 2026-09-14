@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     سجل حركات الصرف المخزوني — عرض القائمة والنموذج
+     ملاحظة: هذا النموذج منفصل عن دفتر 55 ع.ح (سجل مدفوعات الموردين)
+     ═══════════════════════════════════════════════════════════════ -->
+
+<record id="view_issue_register_line_form" model="ir.ui.view">
+  <field name="name">stock.issue.register.line.form</field>
+  <field name="model">stock.issue.register.line</field>
+  <field name="arch" type="xml">
+    <form string="قيد سجل الصرف المخزوني">
+      <sheet>
+        <div class="oe_title">
+          <h1><field name="sequence_number" readonly="1"/></h1>
+          <h3>
+            <field name="fiscal_year" readonly="1"/>
+          </h3>
+        </div>
+        <group>
+          <group string="بيانات الصرف">
+            <field name="issue_date" readonly="1"/>
+            <field name="issue_type" readonly="1"/>
+            <field name="form50_ref" readonly="1" string="رقم استمارة 50"/>
+            <field name="purpose" readonly="1"/>
+          </group>
+          <group string="الجهة والمستودع">
+            <field name="requesting_dept" readonly="1"/>
+            <field name="warehouse_id" readonly="1"/>
+            <field name="storekeeper_id" readonly="1"/>
+            <field name="total_value" readonly="1"/>
+          </group>
+        </group>
+        <group string="الروابط">
+          <group>
+            <field name="issue_permit_id" readonly="1"/>
+            <field name="journal_entry_id" readonly="1"/>
+          </group>
+        </group>
+        <field name="notes" string="ملاحظات"/>
+      </sheet>
+      <chatter/>
+    </form>
+  </field>
+</record>
+
+<record id="view_issue_register_line_list" model="ir.ui.view">
+  <field name="name">stock.issue.register.line.list</field>
+  <field name="model">stock.issue.register.line</field>
+  <field name="arch" type="xml">
+    <tree string="سجل حركات الصرف المخزوني" create="false" delete="false"
+          decoration-success="journal_entry_id != False">
+      <field name="sequence_number"/>
+      <field name="fiscal_year"/>
+      <field name="issue_date"/>
+      <field name="form50_ref" string="استمارة 50"/>
+      <field name="requesting_dept"/>
+      <field name="warehouse_id"/>
+      <field name="issue_type"/>
+      <field name="total_value" sum="الإجمالي"/>
+      <field name="journal_entry_id" string="القيد المحاسبي" optional="show"/>
+    </tree>
+  </field>
+</record>
+
+<record id="action_issue_register_lines" model="ir.actions.act_window">
+  <field name="name">سجل حركات الصرف المخزوني</field>
+  <field name="res_model">stock.issue.register.line</field>
+  <field name="view_mode">list,form</field>
+</record>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     إذن الصرف — النموذج الرئيسي
+     ═══════════════════════════════════════════════════════════════ -->
+
+<record id="view_issue_permit_form" model="ir.ui.view">
+  <field name="name">stock.issue.permit.form</field>
+  <field name="model">stock.issue.permit</field>
+  <field name="arch" type="xml">
+    <form string="إذن الصرف — نموذج 2 مخازن / 111 ع.ح">
+      <header>
+        <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved,posted"/>
+      </header>
+      <sheet>
+        <div class="o_field_widget" style="margin-bottom:10px;">
+          <button name="action_submit" string="تقديم للاعتماد" type="object"
+                  class="btn btn-primary btn-sm" invisible="state != 'draft'"/>
+          <button name="action_approve" string="اعتماد" type="object"
+                  class="btn btn-success btn-sm" invisible="state != 'submitted'"
+                  groups="stock.group_stock_manager"/>
+          <button name="action_post" string="ترحيل — تنفيذ الصرف" type="object"
+                  class="btn btn-primary btn-sm" invisible="state != 'approved'"
+                  groups="stock.group_stock_manager"/>
+          <button name="action_cancel" string="إلغاء" type="object"
+                  class="btn btn-danger btn-sm"
+                  invisible="state in ('posted','cancelled')"
+                  groups="stock.group_stock_manager"/>
+          <!-- زر إنشاء القيد — يظهر فقط بعد الترحيل (يُعرَّف في bridge module) -->
+          <button name="action_view_register_line" string="عرض سجل الصرف" type="object"
+                  class="btn btn-info btn-sm"
+                  invisible="not issue_register_line_id"/>
+        </div>
+        <div class="oe_title">
+          <h1><field name="name" readonly="1"/></h1>
+        </div>
+        <group>
+          <group string="بيانات الإذن">
+            <field name="issue_date"/>
+            <field name="issue_type"/>
+            <field name="fiscal_year"/>
+            <!-- استمارة 50: رقم الطلب المعتمد — إلزامي قبل التقديم -->
+            <field name="reference_no" string="رقم استمارة 50"
+                   placeholder="مثال: F50/2026/0001 — إلزامي قبل التقديم"/>
+          </group>
+          <group string="الطالب والمستلم">
+            <field name="requesting_dept"/>
+            <field name="requesting_employee_id"/>
+            <field name="receiving_employee_id"/>
+            <field name="purpose"/>
+          </group>
+        </group>
+        <group string="بيانات المخزن">
+          <group>
+            <field name="warehouse_id"/>
+            <field name="location_id"/>
+            <field name="location_dest_id"/>
+            <field name="storekeeper_id"/>
+          </group>
+          <group>
+            <field name="commitment_id"/>
+            <!-- قيد سجل الصرف: يُملأ تلقائياً عند الترحيل — للقراءة فقط -->
+            <field name="issue_register_line_id" readonly="1"
+                   string="قيد سجل الصرف"
+                   invisible="not issue_register_line_id"/>
+            <field name="issue_register_serial" readonly="1"
+                   string="رقم مسلسل سجل الصرف"
+                   invisible="not issue_register_serial"/>
+          </group>
+        </group>
+        <notebook>
+          <page string="الأصناف المطلوبة" name="lines">
+            <field name="line_ids">
+              <tree editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="product_id"/>
+                <field name="product_code" optional="show"/>
+                <field name="uom_id" optional="show"/>
+                <field name="qty_available" readonly="1" decoration-danger="qty_available == 0"/>
+                <field name="qty_requested"/>
+                <field name="qty_issued"/>
+                <field name="unit_price"/>
+                <field name="total_value" readonly="1" sum="الإجمالي"/>
+                <field name="custody_assignment_id" optional="hide"/>
+                <field name="fixed_asset_id" optional="hide"/>
+                <field name="notes" optional="show"/>
+              </tree>
+            </field>
+            <group class="oe_subtotal_footer">
+              <field name="total_lines" readonly="1" string="عدد الأصناف"/>
+              <field name="total_value" readonly="1" string="القيمة الإجمالية"/>
+            </group>
+          </page>
+          <page string="التتبع والملاحظات">
+            <field name="notes"/>
+            <group>
+              <field name="picking_id" readonly="1"/>
+              <field name="journal_entry_id" readonly="1"/>
+              <field name="journal_entry_state" readonly="1" string="حالة القيد"/>
+              <field name="approved_by" readonly="1"/>
+              <field name="approval_date" readonly="1"/>
+            </group>
+          </page>
+        </notebook>
+      </sheet>
+      <chatter/>
+    </form>
+  </field>
+</record>
+
+<record id="view_issue_permit_list" model="ir.ui.view">
+  <field name="name">stock.issue.permit.list</field>
+  <field name="model">stock.issue.permit</field>
+  <field name="arch" type="xml">
+    <tree string="أذونات الصرف"
+          decoration-success="state == 'posted'"
+          decoration-warning="state == 'submitted'"
+          decoration-danger="state == 'cancelled'"
+          decoration-primary="state == 'approved'">
+      <field name="name"/>
+      <field name="issue_date"/>
+      <field name="issue_type"/>
+      <field name="reference_no" string="استمارة 50" optional="show"/>
+      <field name="requesting_dept"/>
+      <field name="warehouse_id"/>
+      <field name="total_lines" string="أصناف"/>
+      <field name="total_value" sum="الإجمالي"/>
+      <field name="issue_register_serial" string="سجل الصرف" optional="show"/>
+      <field name="state" widget="badge"/>
+    </tree>
+  </field>
+</record>
+
+<record id="action_issue_permits" model="ir.actions.act_window">
+  <field name="name">أذونات الصرف</field>
+  <field name="res_model">stock.issue.permit</field>
+  <field name="view_mode">list,form</field>
+  <field name="domain">[("state","!=","cancelled")]</field>
+</record>
+
+</odoo>
