@@ -303,6 +303,44 @@ full CRUD for `account.group_account_manager` — same pattern as the
 module's other three models), and added a `menu_sfb_bridge_log`
 menuitem under the existing `menu_sfb_root`.
 
+### Update: that fix crashed the next live upgrade — the model itself was never registered
+
+Live-testing the fix above (`-u demo_gov_stock_finance_bridge`)
+immediately failed: `No matching record found for external id
+'model_stock_finance_bridge_log' in field 'Model'` while loading
+`security/ir.model.access.csv`, aborting the whole registry load.
+Root cause, one level deeper than the earlier fix reached:
+`models/__init__.py` only has `from . import account_rule`,
+`dimension_rule`, `stock_bridge` — **`models/bridge_log.py` was never
+imported**, so the `StockFinanceBridgeLog` class was never registered
+with the ORM and Odoo never auto-created an `ir.model` row for
+`stock.finance.bridge.log` (hence no `model_stock_finance_bridge_log`
+xmlid for the access-rule rows to point at). The view/action/access/menu
+fix above was necessary but not sufficient — the model underneath all
+of it was dead code. **Fixed**: added `from . import bridge_log` to
+`models/__init__.py`.
+
+**Found but deliberately not fixed while investigating this**: the
+module actually ships *two* separate implementations of "auto-post a
+journal entry from a stock permit" — the active one,
+`models/stock_bridge.py` (imported, and whose `action_create_journal_entry`
+methods are what the permit form buttons actually call), and a second,
+more elaborate one in `models/bridge_engine.py` (never imported, whose
+own `action_create_journal_entry` methods on the same models are
+therefore always shadowed/dead) that also happens to be the *only*
+place in the module that writes to `stock.finance.bridge.log`. Net
+effect: the bridge log view/menu fixed above will load correctly and
+is reachable, but will stay **permanently empty** in practice, because
+the code path that actually runs (`stock_bridge.py`) never writes to
+it — only the dead one (`bridge_engine.py`) does. Importing
+`bridge_engine.py` alongside `stock_bridge.py` was not attempted here:
+both define `action_create_journal_entry` on what look like the same
+models, so which one Odoo resolves to depends on MRO/inheritance
+order, and picking wrong could silently change which journal entries
+get posted from a live permit — not a call to make without reading
+both implementations in full and testing the posting behavior end to
+end. Recorded here rather than worked around blindly.
+
 The same script's disk-vs-manifest check (every `.xml` file under each
 module's directory cross-referenced against that module's own `data`
 list) found three more files never loaded, all pre-existing and
