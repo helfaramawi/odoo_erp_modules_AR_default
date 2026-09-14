@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+  <!-- No category_id: see demo_gov_subsidiary_books/security/security_groups.xml
+       for why — sharing a category across independently-defined groups
+       made Odoo silently strip every one of them from the demo
+       Administrator's group membership. -->
   <record id="group_cheques_user" model="res.groups">
     <field name="name">دفتر الشيكات — مستخدم</field>
-    <field name="category_id" ref="base.module_category_accounting_accounting"/>
     <field name="implied_ids" eval="[(4, ref('demo_gov_cash_books.group_cash_user'))]"/>
   </record>
 
   <record id="group_cheques_manager" model="res.groups">
     <field name="name">دفتر الشيكات — مدير</field>
-    <field name="category_id" ref="base.module_category_accounting_accounting"/>
     <field name="implied_ids" eval="[(4, ref('group_cheques_user')), (4, ref('demo_gov_cash_books.group_cash_manager'))]"/>
   </record>
 

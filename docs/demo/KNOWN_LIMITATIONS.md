@@ -460,6 +460,57 @@ reference, so it can't fail this way). This is the modern,
 template-independent way to add assets and should be preferred over
 QWeb bundle-template inheritance generally, live-instance or not.
 
+### Update: the security-group fix above still didn't work live — Odoo silently strips group membership when groups share a `category_id`
+
+Live-testing the `base.user_admin` grants above (`-u` on all seven
+modules, confirmed zero errors in the log) still left every menu but
+`demo_gov_penalties`'s invisible. Direct SQL against the running
+Postgres container (`res_groups_users_rel` joined through
+`ir_model_data`) proved it conclusively: the demo Administrator was
+a member of `group_penalty_user`/`group_penalty_manager`, but of
+**none** of the other twelve groups
+(`demo_gov_subsidiary_books`, `demo_gov_cash_books`,
+`demo_gov_cash_transfers`, `demo_gov_cheques`,
+`demo_gov_revenue_books`, `demo_gov_insurance_subsidiary` — user and
+manager variants of each) — even though the exact same `<record
+id="base.user_admin">` pattern was used in all seven modules and all
+seven loaded cleanly.
+
+**Root cause**: all six of the non-penalty modules set
+`category_id="base.module_category_accounting_accounting"` on both
+their `_user` and `_manager` groups — the *same* category shared
+across all six modules. `demo_gov_penalties` used a different
+category (`base.module_category_human_resources`) and was the only
+one left untouched. Odoo treats every `res.groups` record sharing one
+non-empty `category_id` as a single mutually-exclusive "access level"
+selection for that category (the same mechanism that renders Sales'
+None/User/Manager as one radio button on a user's form) — it isn't
+only a form-widget cosmetic, it silently prunes a user's actual
+`groups_id` down to keep the category consistent. Six independent
+module-specific hierarchies (subsidiary/cash/transfer/cheques/revenue/
+insurance, each its own `_user` → `_manager` chain) crammed into one
+shared category collapsed against each other the moment more than one
+was granted to the same user, and none of the six survived — not even
+the last one loaded, ruling out a simple last-write-wins explanation
+and pointing at Odoo actively normalizing the category down to
+whatever it considers canonical (here, none of the custom ones).
+
+**Fixed**: removed `category_id` entirely from all twelve groups
+across the six modules (`demo_gov_penalties` untouched — it already
+works). A category is purely a Settings → Groups list organizer; it's
+not required for a group to function, and leaving it unset is a
+common, valid pattern for single-purpose custom groups that shouldn't
+compete with anything else. Confirmed via a repo-wide grep that no
+other module reuses this same category alongside a competing
+custom-group hierarchy.
+
+**Lesson for any future module in this suite that defines its own
+`_user`/`_manager` group pair**: either leave `category_id` unset, or
+give it a category unique to that module — never share
+`base.module_category_accounting_accounting` (or any other shared
+category) with another module's independent group hierarchy, or the
+same silent-strip will recur.
+
 ## `demo_gov_menu` is an incomplete module — confirmed pre-existing in production too
 
 **Problem**: `demo_gov_menu/__manifest__.py` (and the original
