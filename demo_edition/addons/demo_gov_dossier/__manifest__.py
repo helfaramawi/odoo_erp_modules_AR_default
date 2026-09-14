@@ -1,5 +1,6 @@
 {
     'name': 'الاضابير - نظام الأرشفة (استمارة 101 ساير)',
+    'category': 'الخدمات الحكومية التجريبية/الحسابات',
     'summary': 'C-FM-08: Dossier Archive System – Form 101 ساير with 9-attachment enforcement',
     'version': '17.0.1.0.0',
     'author': 'Enterprise Solutions Demo',

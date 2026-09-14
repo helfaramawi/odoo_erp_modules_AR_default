@@ -2,7 +2,7 @@
     'name': 'دفتر 224 ع.ح — السجل اليومي المزدوج',
     'summary': 'C-FM-02: Daftar 224 Dual Daily Register (صرفيات + تسويات)',
     'version': '17.0.1.0.0',
-    'category': 'Accounting',
+    'category': 'الخدمات الحكومية التجريبية/الحسابات',
     'author': 'Enterprise Solutions Demo',
     'license': 'LGPL-3',
     'depends': ['account', 'mail', 'demo_gov_daftar55'],

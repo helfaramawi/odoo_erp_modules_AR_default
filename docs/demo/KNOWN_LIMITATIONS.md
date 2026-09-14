@@ -2,6 +2,60 @@
 
 Honest punch list. Nothing below was hidden or silently worked around.
 
+## Apps page was a flat list of ~30 separate government modules — grouped
+
+**Problem**: every `demo_gov_*` module (plus the closely related
+`l10n_eg_auction`, `l10n_eg_custody`, `l10n_eg_eta_invoice`,
+`procurement_committee`, `procurement_adjudication`,
+`stock_addition_permit`, `stock_stocktaking_eg`, and
+`general_ledger_ar`) either had no `category` set in its manifest, or
+had a generic core category (`Accounting`, `Purchase`, `Inventory`)
+shared with unrelated Odoo apps. In Settings → Apps, each module with
+no category (or a category unique to it) got its own row in the
+category sidebar — about 30 of them, one per module, with no grouping.
+
+**Fixed**: every module in that list now sets
+`'category': 'الخدمات الحكومية التجريبية/<subcategory>'`, using Odoo's
+standard `Parent/Child` category-string convention. That puts all of
+them under one parent group, **الخدمات الحكومية التجريبية** (Demo
+Government Services), with four subcategories matching the site's real
+functional areas:
+
+- **الحسابات** (Accounts) — general ledger, all subsidiary/cash/bank
+  books, budgets, advances, fixed assets, special funds, archiving,
+  e-invoicing (`general_ledger_ar`, `demo_gov_subsidiary_books`,
+  `demo_gov_cash_books`, `demo_gov_cash_transfers`, `demo_gov_cheques`,
+  `demo_gov_revenue_books`, `demo_gov_insurance_subsidiary`,
+  `demo_gov_commitment`, `demo_gov_daftar224`, `demo_gov_daftar55`,
+  `demo_gov_advances`, `demo_gov_budget_planning`, `demo_gov_penalties`,
+  `demo_gov_special_funds`, `demo_gov_dossier`, `demo_gov_form69`,
+  `demo_gov_form75`, `demo_gov_fixed_assets`,
+  `demo_gov_stock_finance_bridge`, `l10n_eg_eta_invoice`).
+- **المشتريات** (Purchases) — committees, adjudication, requisitions,
+  the purchase↔Form-50 bridge, auctions (`procurement_committee`,
+  `procurement_adjudication`, `demo_gov_scm_requisition`,
+  `demo_gov_scm_purchase_bridge`, `l10n_eg_auction`).
+- **المخازن والمستودعات** (Warehouses & Stores) — inspection/warehouse
+  forms, issue/return/transfer permits, addition permits, stocktaking,
+  custody (`demo_gov_scm_warehouse`, `demo_gov_scm_issue`,
+  `stock_addition_permit`, `stock_stocktaking_eg`, `l10n_eg_custody`).
+- **التقارير الحكومية** (Government Reports) — the report wizard,
+  trial-balance/statement reports, the GL report engine
+  (`demo_gov_reports`, `demo_gov_acct_reports`, `demo_gov_gl_reports`).
+
+`demo_branding` and `demo_gov_seed_data` are infrastructure/admin
+modules, not a business function a demo user would pick from this
+list, so they were deliberately left under their existing `Extra
+Tools` category rather than folded into one of the four groups.
+`demo_gov_dashboard` and `demo_gov_menu` are excluded from install
+(see their own sections below) so their category doesn't affect the
+live demo either way. This only changes the `category` field in each
+manifest — the module's actual menu structure, actions, and views are
+untouched (each module's own top-level menu, added in the "13 modules
+pointed at a broken parent menu" fix below, is unchanged; the Settings
+→ Apps category sidebar is a separate grouping from the main app menu
+tree).
+
 ## `demo_branding`'s Settings-page XML inheritance was wrong — fixed
 
 **Problem**: the first version of `demo_branding` added its config fields

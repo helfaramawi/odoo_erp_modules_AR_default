@@ -2,7 +2,7 @@
     'name': 'الموازنة التقديرية وتحليل الانحرافات — المحافظة التجريبية',
     'summary': 'FR-S-01: موازنة تقديرية + تنفيذ فعلي + انحرافات + ربط ببنود الميزانية',
     'version': '17.0.2.0.0',
-    'category': 'Accounting/Egypt Government',
+    'category': 'الخدمات الحكومية التجريبية/الحسابات',
     'author': 'Enterprise Solutions Demo',
     'license': 'LGPL-3',
     'depends': [

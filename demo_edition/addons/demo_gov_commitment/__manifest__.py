@@ -1,5 +1,6 @@
 {
     'name': 'الارتباطات والتسميح - رقابة الموازنة',
+    'category': 'الخدمات الحكومية التجريبية/الحسابات',
     'summary': 'C-FM-06: Budget Commitment & Clearance (ارتباط → تجنيب → تسميح)',
     'version': '17.0.1.0.0',
     'author': 'Enterprise Solutions Demo',

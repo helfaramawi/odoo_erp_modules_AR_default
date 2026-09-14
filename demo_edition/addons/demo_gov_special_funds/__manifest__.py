@@ -1,5 +1,5 @@
 {
-    'name': 'الصناديق والحسابات الخاصة',
+    'name': 'الصناديق والحسابات الخاصة', 'category': 'الخدمات الحكومية التجريبية/الحسابات',
     'summary': 'C-FM-07: Special Funds Accounting – Ring-Fenced Fund Management (وحدة الصناديق والحسابات الخاصة)',
     'version': '17.0.1.0.0',
     'author': 'Enterprise Solutions Demo',

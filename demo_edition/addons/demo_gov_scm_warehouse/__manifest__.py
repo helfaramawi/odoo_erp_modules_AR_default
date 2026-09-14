@@ -1,5 +1,6 @@
 {
     "name": "لجنة الفحص والمخازن",
+    "category": "الخدمات الحكومية التجريبية/المخازن والمستودعات",
     "summary": "C-SCM-03: Inspection Committee + Warehouse Forms (نموذج 12 + نموذج 1)",
     "version": "17.0.1.0.0",
     "author": "Enterprise Solutions Demo",

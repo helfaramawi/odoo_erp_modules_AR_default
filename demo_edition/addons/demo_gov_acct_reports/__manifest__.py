@@ -1,7 +1,7 @@
 {
     'name': 'التقارير المحاسبية — ميزان مراجعة وكشوف حسابات',
     'version': '17.0.1.0.0',
-    'category': 'Accounting/Egypt Government',
+    'category': 'الخدمات الحكومية التجريبية/التقارير الحكومية',
     'author': 'Enterprise Solutions Demo',
     'license': 'LGPL-3',
     'depends': ['base', 'account', 'demo_gov_daftar55'],

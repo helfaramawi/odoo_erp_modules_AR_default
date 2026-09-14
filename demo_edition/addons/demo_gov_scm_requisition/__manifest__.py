@@ -1,5 +1,6 @@
 {
     'name': 'طلب الاحتياج — التدبير والمشتريات',
+    'category': 'الخدمات الحكومية التجريبية/المشتريات',
     'summary': 'C-SCM-01: Purchase Requisition with Budget Commitment Auto-Integration',
     'version': '17.0.1.0.0',
     'author': 'Enterprise Solutions Demo',

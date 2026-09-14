@@ -2,7 +2,7 @@
     'name': 'التقارير المحاسبية الحكومية — ميزان مراجعة وكشوف حسابات',
     'summary': 'ميزان المراجعة الحكومي + كشف حساب مورد/عميل + تقرير الأستاذ العام',
     'version': '17.0.2.0.0',
-    'category': 'Accounting/Egypt Government',
+    'category': 'الخدمات الحكومية التجريبية/التقارير الحكومية',
     'author': 'Enterprise Solutions Demo',
     'license': 'LGPL-3',
     'depends': [

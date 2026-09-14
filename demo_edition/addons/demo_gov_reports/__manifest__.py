@@ -2,7 +2,7 @@
     'name': 'التقارير الحكومية — المحافظة التجريبية',
     'summary': 'مجموعة التقارير الحكومية الرسمية: مالية، محاسبية، إدارية',
     'version': '17.0.1.0.0',
-    'category': 'Accounting/Egypt Government',
+    'category': 'الخدمات الحكومية التجريبية/التقارير الحكومية',
     'author': 'Enterprise Solutions Demo',
     'license': 'LGPL-3',
     'depends': [

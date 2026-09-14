@@ -21,7 +21,7 @@
         — السنة المالية تبدأ 1 يوليو حسب التقويم المالي الحكومي المصري
     """,
     'version': '17.0.1.0.0',
-    'category': 'Accounting/Egypt Government',
+    'category': 'الخدمات الحكومية التجريبية/الحسابات',
     'author': 'Enterprise Solutions Demo',
     'website': 'https://example.com',
     'license': 'LGPL-3',

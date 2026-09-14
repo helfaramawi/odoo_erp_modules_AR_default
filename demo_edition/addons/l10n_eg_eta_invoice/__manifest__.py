@@ -2,7 +2,7 @@
     'name': 'الفاتورة الإلكترونية ETA — المحافظة التجريبية',
     'summary': 'تكامل منظومة الفاتورة الإلكترونية مع هيئة الضرائب المصرية — B2B/B2G',
     'version': '17.0.1.0.0',
-    'category': 'Accounting/Egypt Government',
+    'category': 'الخدمات الحكومية التجريبية/الحسابات',
     'author': 'Enterprise Solutions Demo',
     'license': 'LGPL-3',
     'depends': [

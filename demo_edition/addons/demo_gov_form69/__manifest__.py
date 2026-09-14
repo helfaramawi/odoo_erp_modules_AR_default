@@ -1,5 +1,6 @@
 {
     'name': 'استمارة 69 - الحسبة اليومية',
+    'category': 'الخدمات الحكومية التجريبية/الحسابات',
     'summary': 'C-FM-03: Form 69 Daily Reckoning (الحسبة اليومية)',
     'version': '17.0.1.2.0',
     'author': 'Enterprise Solutions Demo',

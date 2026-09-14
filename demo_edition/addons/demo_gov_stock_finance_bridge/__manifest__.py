@@ -2,7 +2,7 @@
     'name': 'ربط المخزون بالحسابات — المحافظة التجريبية',
     'summary': 'قيود محاسبية تلقائية + أبعاد مالية لكل حركة مخزنية',
     'version': '17.0.1.1.0',
-    'category': 'Accounting/Egypt Government',
+    'category': 'الخدمات الحكومية التجريبية/الحسابات',
     'author': 'Enterprise Solutions Demo',
     'license': 'LGPL-3',
     'depends': [

@@ -26,7 +26,7 @@
         السنة المالية: 1 يوليو – 30 يونيو
     """,
     'version': '17.0.1.0.0',
-    'category': 'Accounting/Egypt Government',
+    'category': 'الخدمات الحكومية التجريبية/الحسابات',
     'author': 'Enterprise Solutions Demo',
     'website': 'https://example.com',
     'license': 'LGPL-3',
