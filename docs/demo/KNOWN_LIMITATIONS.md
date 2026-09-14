@@ -2,6 +2,20 @@
 
 Honest punch list. Nothing below was hidden or silently worked around.
 
+## DEMO ENVIRONMENT banner covered Odoo's own top menu bar — fixed
+
+**Problem**: `demo_branding`'s banner (`static/src/js/demo_banner.js`,
+`static/src/css/demo_banner.css`) is `position: fixed; top: 0` so it
+doesn't interfere with Odoo's own layout calculations, but nothing
+reserved space for it — it just sat on top of whatever was already at
+the top of the page, which is Odoo's own menu bar (company selector,
+top app tabs). **Fixed**: after inserting the banner, JS now measures
+its real rendered height (`offsetHeight`, not a hard-coded value,
+since the banner text wraps to two lines on narrow screens) and sets
+`body.style.paddingTop` to match, re-measuring on window resize since
+wrapping can change the height. The banner still overlays nothing now
+— the whole page is pushed down by exactly the banner's height.
+
 ## Apps page was a flat list of ~30 separate government modules — grouped
 
 **Problem**: every `demo_gov_*` module (plus the closely related
