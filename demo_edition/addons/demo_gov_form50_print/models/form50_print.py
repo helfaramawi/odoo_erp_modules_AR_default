@@ -301,8 +301,12 @@ class Form50PrintLayer(models.Model):
 
     # ── المرفقات الديناميكية ─────────────────────────────────────────────
     required_attachments_info = fields.Text(compute='_compute_required_attachments_info')
-    missing_attachments_count = fields.Integer(compute='_compute_attachment_readiness', store=True)
-    attachments_complete      = fields.Boolean(compute='_compute_attachment_readiness', store=True)
+    # لا يجوز store=True هنا: القيمة تعتمد على بحث في demo_gov.dossier/
+    # demo_gov.dossier.attachment (سجلات خارجية لا تظهر في @api.depends)،
+    # فتخزينها كان يجعلها تتجمّد على "لا توجد اضبارة" حتى بعد إنشاء واحدة —
+    # لازم تُحسب من جديد في كل قراءة.
+    missing_attachments_count = fields.Integer(compute='_compute_attachment_readiness')
+    attachments_complete      = fields.Boolean(compute='_compute_attachment_readiness')
 
     @api.depends('transaction_type')
     def _compute_required_attachments_info(self):
