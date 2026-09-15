@@ -106,12 +106,18 @@ class IrActionsReportForm50Direct(models.Model):
         else:
             html_str = css_root_reset + html_str
 
-        # Replace HTTP URL for background image with local file:// path
-        html_str = _re.sub(
-            r'http://[^"\']+/port_said_form50_print/static/',
-            'file:///mnt/extra-addons/port_said_form50_print/static/',
-            html_str,
-        )
+        # Replace HTTP URL for background image with a local file:// path,
+        # resolved dynamically from the module's real on-disk location
+        # rather than a hardcoded addons_path (fixes the same bug found in
+        # demo_gov_form50_print, where a different addons_path broke this).
+        from odoo.modules.module import get_module_resource
+        bg_path = get_module_resource('port_said_form50_print', 'static', 'img', 'form50_bg.png')
+        if bg_path:
+            html_str = _re.sub(
+                r'http://[^"\']+/port_said_form50_print/static/img/form50_bg\.png',
+                'file://' + bg_path,
+                html_str,
+            )
 
         html_bytes = html_str.encode('utf-8')
 
