@@ -1026,19 +1026,76 @@ dependencies. Still needs a fresh `-i demo_gov_dashboard` (a genuinely
 new install, not `-u`, since it was never installed before) to reach a
 live database.
 
-## `demo_gov_form50_print` — not installable
+## `demo_gov_form50_print` — not installable — fixed, complete source found and ported
 
-**Problem**: ships `models/form50_print.py` (398 lines, extends the
-Daftar 55 model with a print-only layer) but no `__manifest__.py`.
-**Root cause**: pre-existing — same in production
-(`port_said_form50_print/`). Not referenced by any other module.
-**Severity**: Informational — Odoo silently ignores a directory with no
-manifest, so this doesn't break anything; the code inside is simply dead.
-**Fix required**: either give it a manifest (if the print layer it
-implements is wanted) or delete the directory. Left as-is because it's
-unclear from source alone whether this was abandoned intentionally or is
-missing a file. **Recommendation**: ask whoever owns the production
-codebase before doing either.
+**Problem**: shipped only `models/form50_print.py` (398 lines, extends
+the Daftar 55 model with a print-only layer) with no `__manifest__.py`,
+`__init__.py`, views, reports, security, or wizard — Odoo silently
+ignores a directory with no manifest, so the module was entirely dead
+code in both editions.
+**Root cause**: pre-existing — same incomplete state in production
+(`port_said_form50_print/`). Not the same thing as never having been
+built: the user confirmed this print layer (a background-image-stamped
+official Form 50, with preview/final print distinction and a
+readiness-check gate) has been in real use in production for some time
+— but the complete source (821-line `models/form50_print.py`, plus
+`models/form50_layout.py`, `reports/`, `security/`, `views/`,
+`wizards/`, and the 672KB `static/img/form50_bg.png` background image)
+existed only in the user's local filesystem backup, never committed to
+either `odoo_deployment_ar/` or `demo_edition/` — confirmed via the
+absent-`__pycache__` check used elsewhere in this document to prove a
+module never actually ran.
+**Fixed**: the user copied the complete module tree from their backup
+into `odoo_deployment_ar/addons/port_said_form50_print/` and pushed it
+(raw, matching this repo's "push raw for review, then anonymize"
+pattern). From there, anonymized and ported into
+`demo_edition/addons/demo_gov_form50_print/`, replacing the incomplete
+stub: `port_said.daftar55`/`port_said_daftar55` → `demo_gov.daftar55`/
+`demo_gov_daftar55` (model inherit, view `inherit_id` refs, the
+reprint wizard's `daftar55_id` field), `port_said.form50.invoice.line`
+→ `demo_gov.form50.invoice.line`, `port_said.dossier`/
+`port_said.dossier.attachment` → `demo_gov.dossier`/
+`demo_gov.dossier.attachment` (the two lookups in the attachment-
+readiness/print-readiness compute methods), the module's own
+self-references (`env.ref('port_said_form50_print.action_report_form50_*')`,
+the wkhtmltopdf background-image URL-rewrite regex and the QWeb
+template's `<img src>`) → `demo_gov_form50_print`, and
+`'author': 'Paradise Integrated Solutions'` →
+`'Enterprise Solutions Demo'`. `stock.addition.permit` (referenced for
+the inventory-purchase readiness check) needed no rename — it was
+never `port_said`-prefixed in production either. The 75-entry
+percentage-coordinate `FIELD_POSITIONS` table in `form50_layout.py` is
+pure calibration data (numeric positions + Arabic field labels, no
+client identity) and the background PNG is a generic official form
+template, so both were copied unchanged — the PNG copy was verified
+byte-identical via `md5sum` against the production original.
+**Deliberate deviation from a raw port**: dropped the
+`l10n_eg_custody` manifest dependency. It's declared in production's
+manifest but nothing in this module's own code (Python or XML)
+actually references any model, view, or action from it, and
+`l10n_eg_custody` itself has no `demo_edition` port yet — keeping the
+dependency would have made `demo_gov_form50_print` uninstallable for a
+reason unrelated to anything it actually does.
+**Verified before commit**: every field name the print layer's
+`_form50_field_models()`/readiness-check logic reads
+(`sequence_number`, `department_name`, `vendor_id`, `amount_gross`,
+`daftar224_sequence`, etc.) exists with an identical name on
+`demo_gov.daftar55`; the view `inherit_id` targets
+(`view_daftar55_form`, `view_daftar55_list`) exist with identical
+xmlids in `demo_gov_daftar55`; `demo_gov.dossier`/
+`demo_gov.dossier.attachment` carry the `daftar55_id`/`dossier_id`/
+`attachment_id` fields the readiness checks query; identity-leak grep
+(`بورسعيد|port.?said|paradise`) came back clean; `py_compile` and XML
+well-formedness passed on every file. Full dependency/cycle/dangling-
+reference re-scan not yet re-run against the expanded module count.
+**Not yet live-tested** — needs `-i demo_gov_form50_print` against the
+demo instance, then a manual check of all three print paths (preview,
+gated final print, the reprint wizard) on a real `demo_gov.daftar55`
+record, plus visual confirmation that the field overlay still lines up
+against the background image (the coordinate table was calibrated
+against production's exact background PNG, which is now used
+unchanged here, so alignment should hold, but hasn't been confirmed
+rendered).
 
 ## Report branding is static text, not dynamically config-driven
 
