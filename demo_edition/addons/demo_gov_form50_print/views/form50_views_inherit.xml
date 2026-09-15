@@ -17,6 +17,9 @@
                   groups="account.group_account_manager" invisible="not is_final_printed"
                   title="إعادة الطباعة مع تسجيل السبب"/>
           <button name="action_validate_for_print" string="فحص جاهزية الطباعة" type="object" class="btn-secondary"/>
+          <button name="action_print_calibration" string="معاينة بالتظبيط" type="object" class="btn-link"
+                  groups="account.group_account_manager"
+                  title="نسخة تشخيصية: رقم/حدود لكل حقل فوق الصورة — لضبط الإحداثيات فقط"/>
         </button>
 
         <!-- حقول مخفية + سطور الفواتير -->

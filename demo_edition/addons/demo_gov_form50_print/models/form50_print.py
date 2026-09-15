@@ -393,6 +393,15 @@ class Form50PrintLayer(models.Model):
         self.message_post(body=msg)
         return self.env.ref('demo_gov_form50_print.action_report_form50_final').report_action(self)
 
+    def action_print_calibration(self):
+        """معاينة استمارة 50 بوضع المعايرة — نقاط/أرقام/حدود لكل حقل، لضبط
+        الإحداثيات على الصورة الرسمية. لا يُحتسب كطباعة نهائية ولا يستلزم
+        استيفاء شروط الجاهزية."""
+        self.ensure_one()
+        action = self.env.ref('demo_gov_form50_print.action_report_form50_final').report_action(self)
+        action['context'] = dict(action.get('context') or {}, form50_calibration=True)
+        return action
+
     def action_open_reprint_wizard(self):
         self.ensure_one()
         if not self.is_final_printed:
