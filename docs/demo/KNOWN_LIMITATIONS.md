@@ -1221,3 +1221,83 @@ already exists, the new `DEMO_DB_PASSWORD` won't match the role's
 actual stored password (Postgres only applies it on first volume
 init) — fixed with `ALTER USER demo_odoo WITH PASSWORD '...'` run
 via `psql` inside the `db` container, no data loss.
+
+## `arabic_government_uat_demo` — a UAT tooling module with a destructive
+cleanup wizard, anonymized and hardened as `demo_gov_uat_tools`
+
+Another local-only, never-committed, un-anonymized production module
+surfaced during the general folder-cleanup review
+(`odoo_deployment_ar/addons/arabic_government_uat_demo`). Unlike the 20
+AI-agent modules, this one is not an end-user app — it's an internal
+QA tool with two wizards: one generates ~150 synthetic UAT records
+across every module (budget, commitments, dossiers, daftar55/224,
+payment orders, cheques, advances, bank guarantees, custody, auctions,
+penalties, stocktaking, fixed assets) tagged with a shared batch
+reference; the other deletes transactional data, in either a "UAT
+batch only" or "all transactions" scope.
+
+**Real safety gap found and fixed.** The cleanup wizard shipped with
+*no* database-identity guard at all — unlike
+`scripts/demo-seed/demo-reset.sh`, which refuses to run unless
+`APP_ENV=demo` and the DB name starts with `demo_`. Its only gates
+were a `dry_run` toggle (default on) and a `confirm_cleanup`
+checkbox; with those two flipped and scope set to `all_transactions`,
+it deletes every row (`domain = []`) across budgets, commitments,
+dossiers, daftar55/224, payment orders, cheques, bank guarantees,
+advances, and `account.move` — and for `daftar55`/`daftar224`
+specifically, `_force_delete()` bypasses Odoo's `unlink()`
+business-logic guard with raw SQL `DELETE`, deliberately circumventing
+whatever protection normally stops deletion of those two legally
+mandated government financial registers. Fixed by adding a
+`_check_demo_environment()` guard — identical logic to
+`demo-reset.sh` — as the first line of both wizards' entry points
+(`action_run_cleanup` and `action_generate`), raising `UserError`
+unless the current database name starts with `demo_` and
+`APP_ENV=demo` is set. This is unconditional (applies even in
+`dry_run` mode) since there's no legitimate reason for this tool to
+touch anything but a demo database.
+
+**Anonymization scope.** Deliberately minimal, not a full rewrite:
+- Renamed the ~25 `port_said.*` model references (in
+  `uat_data_generator.py`, `uat_cleanup.py`,
+  `wizard/uat_cleanup_wizard.py`) to the `demo_gov.*` names actually
+  registered in `demo_edition` — required for the tool to find its
+  target models at all, not just cosmetic. Two of these aren't a
+  plain prefix swap: production's `port_said.inspection_committee`
+  and `port_said.warehouse_addition` became `demo_gov.inspection.committee`
+  and `demo_gov.warehouse.addition` (dot instead of underscore) in the
+  already-anonymized `demo_gov_scm_warehouse` module, verified by
+  grepping every `_name =` declaration across `demo_edition/addons`
+  before writing the mapping.
+- Replaced identity text: author `محافظة بورسعيد - فريق نظم
+  المعلومات` → `Enterprise Solutions Demo` (matching every other
+  demo_edition module's author field); `بورسعيد`/`Port Said` mentions
+  in vendor names, scenario descriptions, and README → `المحافظة
+  التجريبية`.
+- Manifest `depends` updated to the anonymized module names
+  (`port_said_commitment` → `demo_gov_commitment`, etc.), verified
+  each target module actually exists in `demo_edition/addons`.
+- **Deliberately left unchanged**: the module's own internal model
+  namespace (`arabic.government.uat.*`) and the `UAT-AR-GOV-2026`
+  batch-reference constant — neither identifies the real client, and
+  touching either would mean editing ~15 interdependent files (model
+  names, every XML view's `res_model`, the security CSV's
+  `model_id:id` column) for zero anonymization benefit, for real risk
+  of a typo breaking install.
+- Module directory renamed `arabic_government_uat_demo` →
+  `demo_gov_uat_tools` (production copy left as-is, untouched, still
+  local-only and un-anonymized — out of scope).
+
+Most of the generator's per-model `create()` calls degrade gracefully
+already (wrapped in per-record `try/except` with `_logger.warning`,
+plus an outer per-category `try/except` with a savepoint in
+`generate_all`'s `run()` helper) — so if any `demo_gov.*` model's
+field shape has drifted from what this generator code assumes (it was
+written against the raw production schema, and demo_edition's
+anonymized modules are independent rewrites in places, not pure
+text-substituted copies), the worst case is that category logs "0
+records created" with a warning in the generation log, not a crash.
+**Not yet live-tested** — needs a fresh `-i demo_gov_uat_tools`
+against the demo instance, then run the generation wizard once and
+check its generation-log summary for any category showing 0 records,
+which would flag a field-shape mismatch worth fixing.
