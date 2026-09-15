@@ -201,20 +201,20 @@
                        style="position:absolute;top:0;left:0;opacity:0.18;">
                     <!-- خطوط رأسية كل 10% -->
                     <t t-foreach="[10,20,30,40,50,60,70,80,90]" t-as="xv">
-                      <line t-att-x1="'%d%%' % xv" y1="0"
-                            t-att-x2="'%d%%' % xv" y2="100%"
+                      <line t-att-x1="str(xv) + '%'" y1="0"
+                            t-att-x2="str(xv) + '%'" y2="100%"
                             stroke="#0066cc" stroke-width="0.3"/>
-                      <text t-att-x="'%d%%' % xv" y="12"
+                      <text t-att-x="str(xv) + '%'" y="12"
                             font-size="5" fill="#0066cc" text-anchor="middle">
                         <t t-esc="xv"/>%
                       </text>
                     </t>
                     <!-- خطوط أفقية كل 5% -->
                     <t t-foreach="[5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95]" t-as="yv">
-                      <line x1="0" t-att-y1="'%d%%' % yv"
-                            x2="100%" t-att-y2="'%d%%' % yv"
+                      <line x1="0" t-att-y1="str(yv) + '%'"
+                            x2="100%" t-att-y2="str(yv) + '%'"
                             stroke="#cc3300" stroke-width="0.3"/>
-                      <text x="2" t-att-y="'%d%%' % yv"
+                      <text x="2" t-att-y="str(yv) + '%'"
                             font-size="4" fill="#cc3300">
                         <t t-esc="yv"/>%
                       </text>
