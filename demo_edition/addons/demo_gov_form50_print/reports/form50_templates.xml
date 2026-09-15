@@ -166,7 +166,7 @@
           <div class="form50-page">
             <!-- ── صورة الخلفية ──────────────────────────────────────────── -->
             <img class="form50-bg"
-                 src="http://127.0.0.1:8069/demo_gov_form50_print/static/img/form50_bg.png"
+                 t-att-src="o._form50_bg_data_uri()"
                  alt="form50-background"/>
 
             <!-- ── طبقة الحقول ────────────────────────────────────────────── -->

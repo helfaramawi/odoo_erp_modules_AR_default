@@ -106,20 +106,6 @@ class IrActionsReportForm50Direct(models.Model):
         else:
             html_str = css_root_reset + html_str
 
-        # Replace HTTP URL for background image with a local file:// path,
-        # resolved dynamically from the module's real on-disk location
-        # rather than a hardcoded addons_path (production mounts custom
-        # addons at /mnt/extra-addons; this demo image mounts them at
-        # /mnt/demo-addons — hardcoding either one breaks the other).
-        from odoo.modules.module import get_module_resource
-        bg_path = get_module_resource('demo_gov_form50_print', 'static', 'img', 'form50_bg.png')
-        if bg_path:
-            html_str = _re.sub(
-                r'http://[^"\']+/demo_gov_form50_print/static/img/form50_bg\.png',
-                'file://' + bg_path,
-                html_str,
-            )
-
         html_bytes = html_str.encode('utf-8')
 
         wk = find_in_path('wkhtmltopdf')
@@ -438,6 +424,23 @@ class Form50PrintLayer(models.Model):
         raise UserError(_('الاستمارة غير جاهزة:\n\n%s') % self.print_readiness_notes)
 
     # ── helpers للـ QWeb ─────────────────────────────────────────────────
+    def _form50_bg_data_uri(self):
+        """يرجّع صورة خلفية الاستمارة كـ data URI مضمّن مباشرة في الـ HTML.
+
+        نتجنّب أي رابط HTTP ذاتي (self-referential) أو مسار file:// مبني
+        على افتراض addons_path معيّن — الطريقتان فشلتا فعلياً في بيئة
+        wkhtmltopdf (نفس الأسلوب المستخدم بالفعل لشعار الشركة في
+        demo_gov_daftar55.report_daftar55_template).
+        """
+        import base64
+        from odoo.modules.module import get_module_resource
+        bg_path = get_module_resource('demo_gov_form50_print', 'static', 'img', 'form50_bg.png')
+        if not bg_path:
+            return ''
+        with open(bg_path, 'rb') as f:
+            data = base64.b64encode(f.read()).decode('ascii')
+        return 'data:image/png;base64,%s' % data
+
     def _get_amount_pounds_piasters(self, amount):
         if not amount:
             return 0, 0
