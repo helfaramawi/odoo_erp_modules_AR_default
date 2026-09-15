@@ -12,8 +12,9 @@
         - مرجع دفعة الاختبار: UAT-AR-GOV-2026
 
         ملاحظة أمان: أداة التنظيف الفعلي مقيّدة بقواعد بيانات نسخة العرض
-        التجريبي فقط (اسم قاعدة البيانات يبدأ بـ demo\_ و APP_ENV=demo) —
-        نفس القيد المطبق في scripts/demo-seed/demo-reset.sh.
+        التجريبي فقط (اسم قاعدة البيانات يبدأ بالبادئة ``demo_`` ومتغير
+        البيئة APP_ENV يساوي demo) — نفس القيد المطبق في
+        scripts/demo-seed/demo-reset.sh.
     """,
     'author': 'Enterprise Solutions Demo',
     'website': 'https://example.com',
