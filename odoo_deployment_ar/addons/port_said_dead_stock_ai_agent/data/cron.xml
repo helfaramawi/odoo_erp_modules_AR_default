@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_dead_stock_alert" model="ir.sequence">
+        <field name="name">تسلسل تنبيهات المخزون الراكد</field>
+        <field name="code">port_said.dead.stock.alert</field>
+        <field name="prefix">DSTK/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="param_dead_stock_slow_days" model="ir.config_parameter">
+        <field name="key">port_said_dead_stock.slow_days</field>
+        <field name="value">180</field>
+    </record>
+
+    <record id="param_dead_stock_dead_days" model="ir.config_parameter">
+        <field name="key">port_said_dead_stock.dead_days</field>
+        <field name="value">365</field>
+    </record>
+
+    <record id="param_dead_stock_high_value_threshold" model="ir.config_parameter">
+        <field name="key">port_said_dead_stock.high_value_threshold</field>
+        <field name="value">10000</field>
+    </record>
+
+    <record id="param_dead_stock_overstock_months" model="ir.config_parameter">
+        <field name="key">port_said_dead_stock.overstock_months</field>
+        <field name="value">24</field>
+    </record>
+
+    <record id="ir_cron_monthly_dead_stock_scan" model="ir.cron">
+        <field name="name">وكيل المخزون الراكد - فحص شهري</field>
+        <field name="model_id" ref="model_port_said_dead_stock_engine"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_monthly_dead_stock_scan()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">months</field>
+        <field name="numbercall">-1</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

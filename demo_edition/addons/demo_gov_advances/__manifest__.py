@@ -10,6 +10,7 @@
         'demo_gov_daftar55',
         'demo_gov_commitment',
         'demo_gov_dossier',
+        'demo_branding',
     ],
     'data': [
         'security/ir.model.access.csv',

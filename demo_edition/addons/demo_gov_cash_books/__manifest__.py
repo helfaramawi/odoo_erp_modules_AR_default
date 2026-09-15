@@ -68,6 +68,7 @@
             'demo_gov_cash_books/static/src/css/cash_register.css',
         ],
     },
+    'post_init_hook': 'post_init_hook',
     'installable': True,
     'application': False,
 }

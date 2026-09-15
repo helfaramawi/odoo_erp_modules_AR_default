@@ -2,13 +2,15 @@
 <odoo>
   <record id="group_insurance_user" model="res.groups">
     <field name="name">دفاتر التأمينات — مستخدم</field>
-    <field name="category_id" ref="base.module_category_accounting_accounting"/>
-    <field name="implied_ids" eval="[(4, ref('account.group_account_user'))]"/>
+    <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
   </record>
 
   <record id="group_insurance_manager" model="res.groups">
     <field name="name">دفاتر التأمينات — مدير</field>
-    <field name="category_id" ref="base.module_category_accounting_accounting"/>
     <field name="implied_ids" eval="[(4, ref('group_insurance_user')), (4, ref('account.group_account_manager'))]"/>
   </record>
+
+  <!-- Granting the demo Administrator this group happens in
+       __init__.py's post_init_hook, not here - see
+       demo_gov_subsidiary_books/__init__.py for why. -->
 </odoo>

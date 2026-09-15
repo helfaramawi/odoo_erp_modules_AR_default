@@ -1,4 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_form50_invoice_line_user,demo_gov.form50.invoice.line user,model_demo_gov_form50_invoice_line,account.group_account_user,1,1,1,1
-access_form50_invoice_line_manager,demo_gov.form50.invoice.line manager,model_demo_gov_form50_invoice_line,account.group_account_manager,1,1,1,1
-access_form50_reprint_wizard,form50.reprint.wizard,model_form50_reprint_wizard,account.group_account_manager,1,1,1,1
+access_form50_invoice_line_user,access.form50.invoice.line.user,model_demo_gov_form50_invoice_line,base.group_user,1,1,1,1
+access_form50_reprint_wizard_user,access.form50.reprint.wizard.user,model_form50_reprint_wizard,base.group_user,1,1,1,1

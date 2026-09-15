@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_vendor_performance_score_tree" model="ir.ui.view">
+        <field name="name">port_said.vendor.performance.score.tree</field>
+        <field name="model">port_said.vendor.performance.score</field>
+        <field name="arch" type="xml">
+            <tree string="تقييم كفاءة الموردين"
+                  decoration-danger="rating == 'risky'"
+                  decoration-warning="rating == 'average'"
+                  decoration-success="rating in ('excellent','good')">
+                <field name="period_date"/>
+                <field name="partner_id"/>
+                <field name="final_score"/>
+                <field name="rating"/>
+                <field name="quality_score"/>
+                <field name="delay_score"/>
+                <field name="penalty_score"/>
+                <field name="volume_score"/>
+                <field name="purchase_order_count"/>
+                <field name="penalty_count"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_vendor_performance_score_form" model="ir.ui.view">
+        <field name="name">port_said.vendor.performance.score.form</field>
+        <field name="model">port_said.vendor.performance.score</field>
+        <field name="arch" type="xml">
+            <form string="تقييم كفاءة المورد">
+                <header>
+                    <button name="action_recompute" type="object" string="إعادة حساب" class="btn-primary"/>
+                    <button name="action_review" type="object" string="اعتماد المراجعة" class="btn-secondary"
+                            invisible="state == 'reviewed'"/>
+                    <button name="action_open_vendor" type="object" string="فتح المورد" class="btn-secondary"/>
+                    <field name="state" widget="statusbar" statusbar_visible="computed,reviewed,archived"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+
+                    <group>
+                        <group string="المورد والفترة">
+                            <field name="partner_id"/>
+                            <field name="period_date"/>
+                            <field name="final_score"/>
+                            <field name="rating"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="مكونات التقييم">
+                            <field name="quality_score"/>
+                            <field name="delay_score"/>
+                            <field name="penalty_score"/>
+                            <field name="volume_score"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="التوريد والكميات">
+                            <field name="accepted_qty"/>
+                            <field name="received_qty"/>
+                            <field name="rejected_qty"/>
+                            <field name="delivery_count"/>
+                            <field name="delayed_delivery_count"/>
+                            <field name="average_delay_days"/>
+                        </group>
+                        <group string="الشراء والجزاءات">
+                            <field name="purchase_order_count"/>
+                            <field name="successful_purchase_value"/>
+                            <field name="total_purchase_value"/>
+                            <field name="penalty_count"/>
+                            <field name="open_penalty_count"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="أوامر الشراء">
+                            <field name="purchase_order_ids" readonly="1">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="date_order"/>
+                                    <field name="amount_total"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="استلامات المخزون">
+                            <field name="picking_ids" readonly="1">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="scheduled_date"/>
+                                    <field name="date_done"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="التوصية">
+                            <field name="recommendation" nolabel="1" readonly="1"/>
+                        </page>
+                        <page string="تفاصيل الحساب">
+                            <field name="calculation_details" nolabel="1" readonly="1"/>
+                        </page>
+                        <page string="ملاحظات المراجعة">
+                            <field name="review_notes" nolabel="1"/>
+                            <group>
+                                <field name="reviewed_by"/>
+                                <field name="reviewed_date"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_vendor_performance_score_search" model="ir.ui.view">
+        <field name="name">port_said.vendor.performance.score.search</field>
+        <field name="model">port_said.vendor.performance.score</field>
+        <field name="arch" type="xml">
+            <search string="بحث تقييم كفاءة الموردين">
+                <field name="partner_id"/>
+                <field name="period_date"/>
+                <filter string="عالي المخاطر" name="risky" domain="[('rating','=','risky')]"/>
+                <filter string="ممتاز" name="excellent" domain="[('rating','=','excellent')]"/>
+                <filter string="آخر 90 يوم" name="last_90_days" domain="[('period_date','&gt;=', (context_today() - relativedelta(days=90)).strftime('%Y-%m-%d'))]"/>
+                <group expand="0" string="تجميع حسب">
+                    <filter string="المورد" name="grp_partner" context="{'group_by':'partner_id'}"/>
+                    <filter string="التصنيف" name="grp_rating" context="{'group_by':'rating'}"/>
+                    <filter string="الشهر" name="grp_period" context="{'group_by':'period_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_vendor_performance_scores" model="ir.actions.act_window">
+        <field name="name">تقييم كفاءة الموردين</field>
+        <field name="res_model">port_said.vendor.performance.score</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_vendor_performance_score_search"/>
+        <field name="context">{'search_default_risky': 1}</field>
+    </record>
+
+    <record id="action_vendor_performance_run_scan" model="ir.actions.server">
+        <field name="name">تشغيل تقييم كفاءة الموردين الآن</field>
+        <field name="model_id" ref="model_port_said_vendor_performance_engine"/>
+        <field name="state">code</field>
+        <field name="code">action = env['port_said.vendor.performance.engine'].sudo().action_run_monthly_scan()</field>
+    </record>
+
+    <record id="view_partner_form_vendor_performance_inherit" model="ir.ui.view">
+        <field name="name">res.partner.form.vendor.performance.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/notebook" position="before">
+                <field name="supplier_rank" invisible="1"/>
+            </xpath>
+
+            <xpath expr="//sheet/notebook" position="inside">
+                <page string="تقييم كفاءة المورد" invisible="supplier_rank == 0">
+                    <group>
+                        <field name="vendor_latest_performance_score"/>
+                        <field name="vendor_latest_performance_rating"/>
+                    </group>
+                    <button name="action_recompute_vendor_performance" type="object" string="إعادة حساب تقييم المورد" class="btn-primary"/>
+                    <field name="vendor_performance_score_ids" readonly="1">
+                        <tree>
+                            <field name="period_date"/>
+                            <field name="final_score"/>
+                            <field name="rating"/>
+                            <field name="quality_score"/>
+                            <field name="delay_score"/>
+                            <field name="penalty_score"/>
+                            <field name="volume_score"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <menuitem id="menu_vendor_performance_root"
+              name="وكيل تقييم كفاءة الموردين"
+              sequence="55"
+              groups="base.group_user"/>
+
+    <menuitem id="menu_vendor_performance_scores"
+              name="تقييم كفاءة الموردين"
+              parent="menu_vendor_performance_root"
+              action="action_vendor_performance_scores"
+              sequence="10"
+              groups="base.group_user"/>
+
+    <menuitem id="menu_vendor_performance_run_scan"
+              name="تشغيل تقييم كفاءة الموردين الآن"
+              parent="menu_vendor_performance_root"
+              action="action_vendor_performance_run_scan"
+              sequence="20"
+              groups="base.group_system"/>
+</odoo>

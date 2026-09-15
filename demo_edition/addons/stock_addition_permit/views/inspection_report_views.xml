@@ -395,6 +395,12 @@
 
 
 
+  <menuitem id="menu_ps_inspection_report"
+            name="محاضر الفحص"
+            action="stock_addition_permit.action_inspection_report"
+            parent="demo_branding.menu_gov_warehouses"
+            sequence="41"/>
+
   <menuitem id="menu_ps_addition"
             name="أذونات الإضافة"
             action="stock_addition_permit.action_addition_permit"

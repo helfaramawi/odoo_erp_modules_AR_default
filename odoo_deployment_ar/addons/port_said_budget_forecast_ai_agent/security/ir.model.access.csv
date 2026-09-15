@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_budget_forecast_user,access.budget.forecast.user,model_port_said_budget_forecast,base.group_user,1,1,1,0
+access_budget_forecast_line_user,access.budget.forecast.line.user,model_port_said_budget_forecast_line,base.group_user,1,1,1,0

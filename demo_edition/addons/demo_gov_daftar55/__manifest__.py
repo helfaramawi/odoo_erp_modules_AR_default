@@ -6,11 +6,12 @@
     'author': 'Enterprise Solutions Demo',
     'website': 'https://example.com',
     'license': 'LGPL-3',
-    'depends': ['account', 'base', 'mail'],
+    'depends': ['account', 'base', 'mail', 'demo_branding'],
     'data': [
         'security/ir.model.access.csv',
         'data/sequence_data.xml',
         'views/daftar55_views.xml',
+        'views/menu.xml',
         'reports/daftar55_report.xml',
         'reports/daftar55_template.xml',
     ],

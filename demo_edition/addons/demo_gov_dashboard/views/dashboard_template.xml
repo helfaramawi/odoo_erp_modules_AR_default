@@ -271,6 +271,7 @@ html,body{height:100%;overflow:hidden}
             </div>
 
             <script>
+            <![CDATA[
 // ── Helpers ─────────────────────────────────────────────────────
 const SC = {
   'نشطة':'#27AE60','نشط':'#27AE60','مرحّل':'#27AE60','مكتمل':'#27AE60','ساري':'#27AE60',
@@ -765,6 +766,7 @@ function closeDrill() { document.getElementById('drill-ov').classList.remove('op
 // ── Boot ─────────────────────────────────────────────────────────
 fetchData();
 setInterval(fetchData, 300000); // refresh every 5 min
+            ]]>
             </script>
         </t>
     </template>

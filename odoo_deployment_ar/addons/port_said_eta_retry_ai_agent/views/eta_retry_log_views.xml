@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_eta_retry_agent_log_tree" model="ir.ui.view">
+        <field name="name">eta.retry.agent.log.tree</field>
+        <field name="model">eta.retry.agent.log</field>
+        <field name="arch" type="xml">
+            <tree string="سجل وكيل ETA" decoration-danger="error_category in ('data_error','signature','auth')" decoration-warning="error_category in ('network','eta_service')">
+                <field name="name"/>
+                <field name="eta_invoice_id"/>
+                <field name="state_before"/>
+                <field name="state_after"/>
+                <field name="error_category"/>
+                <field name="retry_performed"/>
+                <field name="retry_success"/>
+                <field name="retry_attempt_no"/>
+                <field name="next_retry_at"/>
+                <field name="affected_field"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_eta_retry_agent_log_form" model="ir.ui.view">
+        <field name="name">eta.retry.agent.log.form</field>
+        <field name="model">eta.retry.agent.log</field>
+        <field name="arch" type="xml">
+            <form string="سجل وكيل ETA">
+                <header>
+                    <button name="action_open_eta_invoice" type="object" string="فتح فاتورة ETA" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="الفاتورة">
+                            <field name="eta_invoice_id" readonly="1"/>
+                            <field name="move_id" readonly="1"/>
+                            <field name="company_id" readonly="1"/>
+                            <field name="eta_uuid" readonly="1"/>
+                            <field name="state_before" readonly="1"/>
+                            <field name="state_after" readonly="1"/>
+                        </group>
+                        <group string="قرار الوكيل">
+                            <field name="error_category" readonly="1"/>
+                            <field name="decision" readonly="1"/>
+                            <field name="retry_performed" readonly="1"/>
+                            <field name="retry_success" readonly="1"/>
+                            <field name="retry_attempt_no" readonly="1"/>
+                            <field name="next_retry_at" readonly="1"/>
+                            <field name="affected_field" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="الشرح العربي">
+                            <field name="arabic_message" readonly="1" nolabel="1"/>
+                        </page>
+                        <page string="التصحيح المقترح">
+                            <field name="suggested_fix" readonly="1" nolabel="1"/>
+                        </page>
+                        <page string="رسالة ETA الفنية">
+                            <field name="technical_error" readonly="1" nolabel="1"/>
+                        </page>
+                        <page string="ملاحظات">
+                            <field name="notes" readonly="1" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_eta_retry_agent_log_search" model="ir.ui.view">
+        <field name="name">eta.retry.agent.log.search</field>
+        <field name="model">eta.retry.agent.log</field>
+        <field name="arch" type="xml">
+            <search string="بحث سجل وكيل ETA">
+                <field name="name"/>
+                <field name="eta_invoice_id"/>
+                <field name="technical_error"/>
+                <field name="arabic_message"/>
+                <filter string="أخطاء بيانات" name="data_error" domain="[('error_category','=','data_error')]"/>
+                <filter string="أخطاء شبكة" name="network" domain="[('error_category','=','network')]"/>
+                <filter string="أخطاء توقيع" name="signature" domain="[('error_category','in',['signature','auth'])]"/>
+                <filter string="تمت إعادة المحاولة" name="retried" domain="[('retry_performed','=',True)]"/>
+                <group expand="0" string="تجميع">
+                    <filter string="التصنيف" name="group_category" context="{'group_by':'error_category'}"/>
+                    <filter string="القرار" name="group_decision" context="{'group_by':'decision'}"/>
+                    <filter string="الشركة" name="group_company" context="{'group_by':'company_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_eta_retry_agent_log" model="ir.actions.act_window">
+        <field name="name">سجل وكيل ETA</field>
+        <field name="res_model">eta.retry.agent.log</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_eta_retry_agent_log_search"/>
+    </record>
+
+    <record id="action_eta_needs_correction" model="ir.actions.act_window">
+        <field name="name">فواتير ETA تحتاج تصحيح</field>
+        <field name="res_model">eta.invoice</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('state','=','needs_correction')]</field>
+    </record>
+
+    <record id="action_eta_retry_agent_run_now" model="ir.actions.server">
+        <field name="name">تشغيل وكيل ETA الآن</field>
+        <field name="model_id" ref="l10n_eg_eta_invoice.model_eta_invoice"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_run_eta_retry_now()</field>
+    </record>
+
+    <menuitem id="menu_eta_retry_agent_root"
+              name="وكيل ETA لإعادة المحاولة"
+              sequence="49"
+              groups="base.group_user"/>
+
+    <menuitem id="menu_eta_retry_agent_logs"
+              name="سجل محاولات ETA الذكية"
+              parent="menu_eta_retry_agent_root"
+              action="action_eta_retry_agent_log"
+              sequence="1"
+              groups="base.group_user"/>
+
+    <menuitem id="menu_eta_retry_agent_needs_correction"
+              name="فواتير تحتاج تصحيح"
+              parent="menu_eta_retry_agent_root"
+              action="action_eta_needs_correction"
+              sequence="2"
+              groups="base.group_user"/>
+
+    <menuitem id="menu_eta_retry_agent_run_now"
+              name="تشغيل إعادة المحاولة الآن"
+              parent="menu_eta_retry_agent_root"
+              action="action_eta_retry_agent_run_now"
+              sequence="3"
+              groups="base.group_user"/>
+</odoo>

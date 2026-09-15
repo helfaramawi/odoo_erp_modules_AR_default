@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_dead_stock_alert_tree" model="ir.ui.view">
+        <field name="name">port_said.dead.stock.alert.tree</field>
+        <field name="model">port_said.dead.stock.alert</field>
+        <field name="arch" type="xml">
+            <tree string="تنبيهات المخزون الراكد"
+                  decoration-danger="risk_level in ('critical','high')"
+                  decoration-warning="risk_level == 'medium'"
+                  decoration-success="state == 'resolved'">
+                <field name="name"/>
+                <field name="product_id"/>
+                <field name="categ_id"/>
+                <field name="qty_available"/>
+                <field name="stock_value"/>
+                <field name="days_no_movement"/>
+                <field name="last_outgoing_date"/>
+                <field name="alert_type"/>
+                <field name="risk_level"/>
+                <field name="recommendation_type"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_dead_stock_alert_form" model="ir.ui.view">
+        <field name="name">port_said.dead.stock.alert.form</field>
+        <field name="model">port_said.dead.stock.alert</field>
+        <field name="arch" type="xml">
+            <form string="تنبيه مخزون راكد أو بطيء الحركة">
+                <field name="last_outgoing_move_id" invisible="1"/>
+                <header>
+                    <button name="action_review" type="object" string="بدء المراجعة" class="btn-secondary"
+                            invisible="state != 'new'"/>
+                    <button name="action_plan" type="object" string="وضع إجراء" class="btn-warning"
+                            invisible="state in ('action_planned','resolved','ignored','cancelled')"/>
+                    <button name="action_resolve" type="object" string="تمت المعالجة" class="btn-success"
+                            invisible="state == 'resolved'"/>
+                    <button name="action_ignore" type="object" string="تجاهل" class="btn-secondary"
+                            invisible="state in ('ignored','resolved','cancelled')"/>
+                    <button name="action_open_product" type="object" string="فتح الصنف" class="btn-primary"/>
+                    <button name="action_open_last_move" type="object" string="آخر حركة صرف" class="btn-secondary"
+                            invisible="not last_outgoing_move_id"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="new,under_review,action_planned,resolved"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+
+                    <group>
+                        <group string="الصنف">
+                            <field name="product_id"/>
+                            <field name="default_code"/>
+                            <field name="categ_id"/>
+                            <field name="uom_id"/>
+                        </group>
+                        <group string="التنبيه">
+                            <field name="alert_type"/>
+                            <field name="risk_level"/>
+                            <field name="recommendation_type"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="الرصيد والقيمة">
+                            <field name="qty_available"/>
+                            <field name="standard_price"/>
+                            <field name="stock_value"/>
+                        </group>
+                        <group string="الحركة">
+                            <field name="last_outgoing_date"/>
+                            <field name="last_incoming_date"/>
+                            <field name="days_no_movement"/>
+                            <field name="movement_count_6m"/>
+                            <field name="movement_count_12m"/>
+                            <field name="outgoing_qty_12m"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="سبب التنبيه">
+                            <field name="reason" nolabel="1" readonly="1"/>
+                        </page>
+                        <page string="التوصية">
+                            <field name="recommendation" nolabel="1" readonly="1"/>
+                        </page>
+                        <page string="أصناف متشابهة">
+                            <field name="duplicate_product_ids" readonly="1">
+                                <tree>
+                                    <field name="default_code"/>
+                                    <field name="name"/>
+                                    <field name="categ_id"/>
+                                    <field name="qty_available"/>
+                                    <field name="standard_price"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="ملاحظات المراجعة">
+                            <field name="review_notes" nolabel="1"/>
+                            <group>
+                                <field name="reviewed_by"/>
+                                <field name="reviewed_date"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dead_stock_alert_search" model="ir.ui.view">
+        <field name="name">port_said.dead.stock.alert.search</field>
+        <field name="model">port_said.dead.stock.alert</field>
+        <field name="arch" type="xml">
+            <search string="بحث المخزون الراكد">
+                <field name="product_id"/>
+                <field name="categ_id"/>
+                <field name="default_code"/>
+                <filter string="حرجة/مرتفعة" name="high_risk" domain="[('risk_level','in',('critical','high'))]"/>
+                <filter string="راكد 12 شهر" name="dead_12m" domain="[('alert_type','=','dead_12m')]"/>
+                <filter string="راكد عالي القيمة" name="high_value_dead" domain="[('alert_type','=','high_value_dead')]"/>
+                <filter string="بطيء الحركة" name="slow_6m" domain="[('alert_type','=','slow_6m')]"/>
+                <filter string="لم تتم المعالجة" name="open" domain="[('state','not in',('resolved','ignored','cancelled'))]"/>
+                <group expand="0" string="تجميع حسب">
+                    <filter string="الفئة" name="grp_category" context="{'group_by':'categ_id'}"/>
+                    <filter string="نوع التنبيه" name="grp_alert_type" context="{'group_by':'alert_type'}"/>
+                    <filter string="مستوى الخطورة" name="grp_risk" context="{'group_by':'risk_level'}"/>
+                    <filter string="الحالة" name="grp_state" context="{'group_by':'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_dead_stock_alerts" model="ir.actions.act_window">
+        <field name="name">تنبيهات المخزون الراكد</field>
+        <field name="res_model">port_said.dead.stock.alert</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_dead_stock_alert_search"/>
+        <field name="context">{'search_default_open': 1}</field>
+    </record>
+
+    <record id="action_dead_stock_run_scan" model="ir.actions.server">
+        <field name="name">تشغيل فحص المخزون الراكد الآن</field>
+        <field name="model_id" ref="model_port_said_dead_stock_engine"/>
+        <field name="state">code</field>
+        <field name="code">action = env['port_said.dead.stock.engine'].sudo().action_run_full_scan()</field>
+    </record>
+
+    <record id="view_product_template_form_dead_stock_inherit" model="ir.ui.view">
+        <field name="name">product.template.form.dead.stock.inherit</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_open_dead_stock_alerts"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-exclamation-triangle"
+                        invisible="dead_stock_alert_count == 0">
+                    <field name="dead_stock_alert_count" widget="statinfo" string="مخزون راكد"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <menuitem id="menu_dead_stock_root"
+              name="وكيل المخزون الراكد وبطيء الحركة"
+              sequence="56"
+              groups="base.group_user"/>
+
+    <menuitem id="menu_dead_stock_alerts"
+              name="تنبيهات المخزون الراكد"
+              parent="menu_dead_stock_root"
+              action="action_dead_stock_alerts"
+              sequence="10"
+              groups="base.group_user"/>
+
+    <menuitem id="menu_dead_stock_run_scan"
+              name="تشغيل فحص المخزون الراكد الآن"
+              parent="menu_dead_stock_root"
+              action="action_dead_stock_run_scan"
+              sequence="20"
+              groups="base.group_system"/>
+</odoo>

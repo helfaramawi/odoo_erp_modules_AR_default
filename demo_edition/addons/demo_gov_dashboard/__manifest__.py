@@ -1,12 +1,13 @@
 {
     'name': 'لوحة القيادة التنفيذية — المحافظة التجريبية',
     'version': '17.0.2.0.0',
-    'category': 'Dashboard/Egypt Government',
+    'category': 'الخدمات الحكومية التجريبية',
     'summary': 'Executive Dashboard for Demo Governorate — Real-time KPIs with Financial & Accounting section',
     'author': 'Enterprise Solutions Demo',
     'license': 'LGPL-3',
     'depends': [
         'base', 'web', 'mail',
+        'demo_branding',
         'procurement_committee',
         'stock_addition_permit',
         'stock_stocktaking_eg',

@@ -62,6 +62,7 @@
             'demo_gov_insurance_subsidiary/static/src/css/insurance_register.css',
         ],
     },
+    'post_init_hook': 'post_init_hook',
     'installable': True,
     'application': False,
 }

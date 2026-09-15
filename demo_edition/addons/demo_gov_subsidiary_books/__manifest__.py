@@ -54,6 +54,7 @@
             'demo_gov_subsidiary_books/static/src/css/arabic_register.css',
         ],
     },
+    'post_init_hook': 'post_init_hook',
     'installable': True,
     'application': False,
 }

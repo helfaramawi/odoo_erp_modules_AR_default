@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_demo_gov_commitment_agent_log_user,access.demo.gov.commitment.agent.log.user,model_demo_gov_commitment_agent_log,base.group_user,1,1,1,0
+access_demo_gov_commitment_agent_log_admin,access.demo.gov.commitment.agent.log.admin,model_demo_gov_commitment_agent_log,base.group_system,1,1,1,1

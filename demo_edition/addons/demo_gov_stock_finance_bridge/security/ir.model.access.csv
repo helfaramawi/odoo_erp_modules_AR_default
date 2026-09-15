@@ -5,3 +5,5 @@ access_dimension_rule_user,stock.finance.dimension.rule user,model_stock_finance
 access_dimension_rule_mgr,stock.finance.dimension.rule manager,model_stock_finance_dimension_rule,account.group_account_manager,1,1,1,1
 access_journal_entry_user,stock.finance.journal.entry user,model_stock_finance_journal_entry,account.group_account_user,1,1,1,0
 access_journal_entry_mgr,stock.finance.journal.entry manager,model_stock_finance_journal_entry,account.group_account_manager,1,1,1,1
+access_bridge_log_user,stock.finance.bridge.log user,model_stock_finance_bridge_log,account.group_account_user,1,0,0,0
+access_bridge_log_mgr,stock.finance.bridge.log manager,model_stock_finance_bridge_log,account.group_account_manager,1,1,1,1

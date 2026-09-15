@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_eta_invoice_form_retry_agent" model="ir.ui.view">
+        <field name="name">eta.invoice.form.retry.agent</field>
+        <field name="model">eta.invoice</field>
+        <field name="inherit_id" ref="l10n_eg_eta_invoice.view_eta_invoice_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_eta_agent_analyze_error"
+                        type="object"
+                        string="🤖 تحليل خطأ ETA"
+                        class="btn-secondary"
+                        invisible="state not in ['invalid','failed','needs_correction']"/>
+            </xpath>
+            <xpath expr="//sheet" position="inside">
+                <notebook>
+                    <page string="وكيل ETA لإعادة المحاولة">
+                        <group>
+                            <group string="تصنيف الخطأ">
+                                <field name="eta_error_category" readonly="1"/>
+                                <field name="eta_affected_field" readonly="1"/>
+                                <field name="eta_retry_count" readonly="1"/>
+                                <field name="eta_last_retry_at" readonly="1"/>
+                                <field name="eta_next_retry_at" readonly="1"/>
+                                <field name="eta_retry_blocked"/>
+                            </group>
+                            <group string="الشرح والتصحيح">
+                                <field name="eta_error_arabic" readonly="1"/>
+                                <field name="eta_suggested_fix" readonly="1"/>
+                            </group>
+                        </group>
+                        <field name="eta_retry_log_ids" readonly="1">
+                            <tree>
+                                <field name="name"/>
+                                <field name="error_category"/>
+                                <field name="state_before"/>
+                                <field name="state_after"/>
+                                <field name="retry_performed"/>
+                                <field name="retry_success"/>
+                                <field name="retry_attempt_no"/>
+                                <field name="next_retry_at"/>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+            </xpath>
+        </field>
+    </record>
+</odoo>

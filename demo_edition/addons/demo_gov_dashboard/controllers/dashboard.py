@@ -45,55 +45,7 @@ class PortSaidDashboard(http.Controller):
         try:
             return self._collect_data()
         except Exception as e:
-            pass
-
-        # ── Finance & Accounting KPIs ──────────────────────────────
-        finance = {}
-        try:
-            # دفتر 55
-            D55 = env['demo_gov.daftar55'].sudo()
-            d55_states = ['draft','received','reviewed','cleared','posted','archived']
-            for s in d55_states:
-                finance[f'd55_{s}'] = sc('demo_gov.daftar55', [('state','=',s)])
-            finance['daftar55_count'] = sum(finance[f'd55_{s}'] for s in d55_states)
-            top_recs = D55.search([('state','in',['posted','archived','cleared'])], limit=10, order='amount_gross desc')
-            finance['total_payments'] = sum(r.amount_gross or 0 for r in D55.search([('state','in',['posted','archived'])]))
-            finance['top_payments'] = [{'seq': r.sequence_number, 'dept': r.department_name or '—',
-                'amount': r.amount_gross or 0, 'state': r.state} for r in top_recs]
-        except Exception:
-            pass
-
-        try:
-            # الارتباطات
-            COM = env['demo_gov.commitment'].sudo()
-            c_states = ['draft','submitted','approved','reserved','cleared','paid']
-            for s in c_states:
-                finance[f'c_{s}'] = sc('demo_gov.commitment', [('state','=',s)])
-            finance['commitments_total'] = sum(finance[f'c_{s}'] for s in c_states)
-            finance['commitments_approved'] = finance.get('c_approved', 0) + finance.get('c_reserved', 0) + finance.get('c_cleared', 0)
-            finance['commitments_reserved'] = finance.get('c_reserved', 0)
-            active_coms = COM.search([('state','in',['approved','reserved','cleared'])])
-            finance['commitments_amount'] = sum(r.amount_requested or 0 for r in active_coms)
-            finance['available_balance'] = sum(r.available_balance or 0 for r in active_coms)
-        except Exception:
-            pass
-
-        try:
-            # عقود الإيجار والمزادات
-            leases = env['auction.lease.contract'].sudo().search([('state','=','active')])
-            finance['lease_active'] = len(leases)
-            finance['lease_collected'] = sum(r.total_collected or 0 for r in leases)
-            finance['lease_outstanding'] = sum(r.total_outstanding or 0 for r in leases)
-            finance['auction_revenue'] = sum(r.contract_value or 0 for r in leases)
-            finance['overdue_payments'] = pyo
-            finance['py_paid'] = pypa
-            finance['py_pending'] = pyp
-            finance['py_overdue'] = pyo
-            finance['py_partial'] = pypr
-        except Exception:
-            pass
-
-        return {'error': str(e), **self._empty_data()}
+            return {'error': str(e), **self._empty_data()}
 
     def _safe_count(self, model, domain):
         try:
@@ -105,52 +57,6 @@ class PortSaidDashboard(http.Controller):
         empty_states = {s: 0 for s in
             ['draft','technical_open','financial_open','adjudicated',
              'awarded','po_created','cancelled']}
-        # ── Finance & Accounting KPIs ──────────────────────────────
-        finance = {}
-        try:
-            # دفتر 55
-            D55 = env['demo_gov.daftar55'].sudo()
-            d55_states = ['draft','received','reviewed','cleared','posted','archived']
-            for s in d55_states:
-                finance[f'd55_{s}'] = sc('demo_gov.daftar55', [('state','=',s)])
-            finance['daftar55_count'] = sum(finance[f'd55_{s}'] for s in d55_states)
-            top_recs = D55.search([('state','in',['posted','archived','cleared'])], limit=10, order='amount_gross desc')
-            finance['total_payments'] = sum(r.amount_gross or 0 for r in D55.search([('state','in',['posted','archived'])]))
-            finance['top_payments'] = [{'seq': r.sequence_number, 'dept': r.department_name or '—',
-                'amount': r.amount_gross or 0, 'state': r.state} for r in top_recs]
-        except Exception:
-            pass
-
-        try:
-            # الارتباطات
-            COM = env['demo_gov.commitment'].sudo()
-            c_states = ['draft','submitted','approved','reserved','cleared','paid']
-            for s in c_states:
-                finance[f'c_{s}'] = sc('demo_gov.commitment', [('state','=',s)])
-            finance['commitments_total'] = sum(finance[f'c_{s}'] for s in c_states)
-            finance['commitments_approved'] = finance.get('c_approved', 0) + finance.get('c_reserved', 0) + finance.get('c_cleared', 0)
-            finance['commitments_reserved'] = finance.get('c_reserved', 0)
-            active_coms = COM.search([('state','in',['approved','reserved','cleared'])])
-            finance['commitments_amount'] = sum(r.amount_requested or 0 for r in active_coms)
-            finance['available_balance'] = sum(r.available_balance or 0 for r in active_coms)
-        except Exception:
-            pass
-
-        try:
-            # عقود الإيجار والمزادات
-            leases = env['auction.lease.contract'].sudo().search([('state','=','active')])
-            finance['lease_active'] = len(leases)
-            finance['lease_collected'] = sum(r.total_collected or 0 for r in leases)
-            finance['lease_outstanding'] = sum(r.total_outstanding or 0 for r in leases)
-            finance['auction_revenue'] = sum(r.contract_value or 0 for r in leases)
-            finance['overdue_payments'] = pyo
-            finance['py_paid'] = pypa
-            finance['py_pending'] = pyp
-            finance['py_overdue'] = pyo
-            finance['py_partial'] = pypr
-        except Exception:
-            pass
-
         return {
             'committees':   {'total':0,'active':0,'draft':0,'closed':0,'detail':[]},
             'adjudication': {'total':0,'by_state':empty_states,'total_estimated':0,
