@@ -1193,9 +1193,31 @@ which had no prefix to rename): `ai_agents_menu`, `arabic_ai_assistant`,
 Re-verified with the repo-wide cycle/dependency/dangling-action scan
 extended to cover all of `demo_edition/addons/` (69 modules now, up
 from 49): zero cycles, zero missing manifest dependencies, zero
-dangling action references. **Not yet done**: these 20 were never
-installed against a live Odoo instance in this pass (no live instance
-available here) — the user needs to run a fresh `-i` (not `-u`, since
-none of these were ever installed before) the same way every other
-fix in this document was live-verified, and report back anything that
-still doesn't load cleanly.
+dangling action references.
+
+**Update — live-installed and verified.** The user ran a fresh `-i`
+of all 20 modules against a real Odoo 17 instance (`demo_gov_erp`,
+port 8070). Install log: 135 modules loaded, 0 errors, 0 tracebacks —
+only cosmetic warnings (`no translation for language ar_001`,
+Postgres constraint-name truncation over 63 chars, one RST title-
+underline notice from a README docstring), none functional.
+`demo_gov_dashboard` (see previous section) was also picked up and
+installed in the same run, since it was already flagged
+`to install` from an earlier attempt. Confirmed in the browser: the
+"مجموعة وكلاء AI" aggregator menu renders correctly with all 20 agent
+modules nested under it (the menu-parent fix above holds), and the
+dashboard page (`/demo_gov/dashboard`) loads cleanly with no error —
+all metrics read zero, which is expected for a fresh demo database
+with no seeded operational records in those specific states, not a
+bug.
+
+Two setup gotchas hit during this install, unrelated to the module
+code itself, worth recording in case they recur: (1) the Docker
+Compose stack's default host port 8069 can collide with an unrelated
+local Odoo instance — fixed by setting `DEMO_HTTP_PORT` in `.env` to
+a free port (8070) instead of touching the other stack; (2) if `.env`
+gets regenerated from `.env.example` after the Postgres data volume
+already exists, the new `DEMO_DB_PASSWORD` won't match the role's
+actual stored password (Postgres only applies it on first volume
+init) — fixed with `ALTER USER demo_odoo WITH PASSWORD '...'` run
+via `psql` inside the `db` container, no data loss.
