@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="action_report_form50_preview" model="ir.actions.report">
+    <field name="name">استمارة 50 ع.ح - معاينة</field>
+    <field name="model">demo_gov.daftar55</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">demo_gov_form50_print.report_form50_template</field>
+    <field name="report_file">demo_gov_form50_print.report_form50_template</field>
+    <field name="print_report_name">'معاينة استمارة 50 - ' + (object.sequence_number or '')</field>
+    <field name="attachment_use">False</field>
+  </record>
+
+  <record id="action_report_form50_final" model="ir.actions.report">
+    <field name="name">استمارة 50 ع.ح - طباعة نهائية</field>
+    <field name="model">demo_gov.daftar55</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">demo_gov_form50_print.report_form50_template</field>
+    <field name="report_file">demo_gov_form50_print.report_form50_template</field>
+    <field name="print_report_name">'استمارة 50 - ' + (object.sequence_number or '')</field>
+    <field name="attachment_use">False</field>
+  </record>
+</odoo>

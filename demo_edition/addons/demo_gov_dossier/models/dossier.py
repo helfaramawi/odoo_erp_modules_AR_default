@@ -101,3 +101,29 @@ class Dossier(models.Model):
 
     def action_print_dossier(self):
         return self.env.ref('demo_gov_dossier.action_report_dossier').report_action(self)
+
+
+class Daftar55DossierExt(models.Model):
+    """يضيف زر إنشاء/فتح الاضبارة إلى دفتر 55 — مطلوب لاستيفاء شرط
+    'أنشئ اضبارة وأضف المرفقات' في فحص جاهزية الطباعة."""
+    _inherit = 'demo_gov.daftar55'
+
+    def action_open_dossier(self):
+        self.ensure_one()
+        dossier = self.env['demo_gov.dossier'].search([('daftar55_id', '=', self.id)], limit=1)
+        if not dossier:
+            dossier = self.env['demo_gov.dossier'].create({
+                'budget_line':  self.budget_line,
+                'fiscal_year':  int(self.fiscal_year) if self.fiscal_year else fields.Date.today().year,
+                'daftar55_id':  self.id,
+            })
+            self.write({'dossier_ref': dossier.dossier_number})
+            self.message_post(body=_('📁 أُنشئت اضبارة رقم %s') % dossier.dossier_number)
+        return {
+            'type':      'ir.actions.act_window',
+            'name':      'الاضبارة',
+            'res_model': 'demo_gov.dossier',
+            'view_mode': 'form',
+            'res_id':    dossier.id,
+            'target':    'current',
+        }

@@ -498,19 +498,29 @@ scope this pass was scoped to. **Recommendation**: fix before relying on
 this dashboard in a presentation; verify Step 8 of `DEMO_SCRIPT.md`
 against a real instance first regardless.
 
-## `demo_gov_form50_print` — not installable
+## `demo_gov_form50_print` — now installable (fixed)
 
-**Problem**: ships `models/form50_print.py` (398 lines, extends the
-Daftar 55 model with a print-only layer) but no `__manifest__.py`.
-**Root cause**: pre-existing — same in production
-(`port_said_form50_print/`). Not referenced by any other module.
-**Severity**: Informational — Odoo silently ignores a directory with no
-manifest, so this doesn't break anything; the code inside is simply dead.
-**Fix required**: either give it a manifest (if the print layer it
-implements is wanted) or delete the directory. Left as-is because it's
-unclear from source alone whether this was abandoned intentionally or is
-missing a file. **Recommendation**: ask whoever owns the production
-codebase before doing either.
+**Was**: shipped only `models/form50_print.py` (398 lines, extends the
+Daftar 55 model with a print-only layer) with no `__manifest__.py`, no
+views, no security rules, and no report — the field-position calibration
+work (75 fields, several tuning commits) was never wired into an
+installable module, and the background scan it was calibrated against was
+never committed to this repo either. Same root cause in production
+(`port_said_form50_print/`), which is still unfixed.
+**Fix applied**: added `__init__.py`, `__manifest__.py`,
+`security/ir.model.access.csv`, `views/daftar55_form50_views.xml` (adds
+"فحص جاهزية الطباعة" / "معاينة استمارة 50" / "طباعة نهائية" / "إعادة
+طباعة" buttons, the بيانات الفواتير tab, and the reprint-reason wizard),
+and `reports/form50_report.xml` + `reports/form50_template.xml` (renders
+`_form50_render_fields()` absolutely-positioned over a background image at
+`static/img/form50_background.png`).
+**Still open**: the shipped background image
+(`static/img/form50_bg.png`) is a generated placeholder (hatched border),
+not the real scanned استمارة 50 — replace that one file with the official
+scan (same filename and path, no code change needed) to get a faithful
+print. `port_said_form50_print/` (production) has the identical gap and
+was not touched by this fix — port the same changes there once the real
+scan is available.
 
 ## Report branding is static text, not dynamically config-driven
 

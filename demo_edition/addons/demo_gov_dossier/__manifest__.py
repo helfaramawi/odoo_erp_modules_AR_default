@@ -10,6 +10,7 @@
         'security/ir.model.access.csv',
         'data/sequence_data.xml',
         'views/dossier_views.xml',
+        'views/daftar55_dossier_button_views.xml',
         'reports/dossier_report.xml',
         'reports/dossier_template.xml',
     ],
