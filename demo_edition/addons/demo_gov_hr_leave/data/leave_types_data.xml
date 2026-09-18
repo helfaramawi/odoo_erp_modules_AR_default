@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+  <!-- 9 أنواع الإجازات حسب قانون الخدمة المدنية 81/2016 — راجع الجدول
+       في مستند التحليل: سنوية، مرضية، بدون مرتب، أمومة، إصابة عمل،
+       اضطرارية، تفرغ نقابي، حج، عارضة. -->
+
+  <record id="hr_leave_type_annual" model="hr.leave.type">
+    <field name="name">إجازة سنوية</field>
+    <field name="color">4</field>
+    <field name="request_unit">day</field>
+    <field name="leave_validation_type">hr</field>
+    <field name="requires_allocation">yes</field>
+  </record>
+
+  <record id="hr_leave_type_sick" model="hr.leave.type">
+    <field name="name">إجازة مرضية</field>
+    <field name="color">1</field>
+    <field name="request_unit">day</field>
+    <field name="leave_validation_type">hr</field>
+    <field name="requires_allocation">no</field>
+  </record>
+
+  <record id="hr_leave_type_unpaid" model="hr.leave.type">
+    <field name="name">إجازة بدون مرتب</field>
+    <field name="color">8</field>
+    <field name="request_unit">day</field>
+    <field name="leave_validation_type">both</field>
+    <field name="requires_allocation">no</field>
+  </record>
+
+  <record id="hr_leave_type_maternity" model="hr.leave.type">
+    <field name="name">إجازة أمومة</field>
+    <field name="color">3</field>
+    <field name="request_unit">day</field>
+    <field name="leave_validation_type">hr</field>
+    <field name="requires_allocation">no</field>
+  </record>
+
+  <record id="hr_leave_type_work_injury" model="hr.leave.type">
+    <field name="name">إجازة إصابة عمل</field>
+    <field name="color">2</field>
+    <field name="request_unit">day</field>
+    <field name="leave_validation_type">hr</field>
+    <field name="requires_allocation">no</field>
+  </record>
+
+  <record id="hr_leave_type_emergency" model="hr.leave.type">
+    <field name="name">إجازة اضطرارية</field>
+    <field name="color">5</field>
+    <field name="request_unit">day</field>
+    <field name="leave_validation_type">manager</field>
+    <field name="requires_allocation">no</field>
+  </record>
+
+  <record id="hr_leave_type_union" model="hr.leave.type">
+    <field name="name">إجازة تفرغ نقابي</field>
+    <field name="color">6</field>
+    <field name="request_unit">day</field>
+    <field name="leave_validation_type">hr</field>
+    <field name="requires_allocation">no</field>
+  </record>
+
+  <record id="hr_leave_type_hajj" model="hr.leave.type">
+    <field name="name">إجازة حج</field>
+    <field name="color">7</field>
+    <field name="request_unit">day</field>
+    <field name="leave_validation_type">hr</field>
+    <field name="requires_allocation">no</field>
+  </record>
+
+  <record id="hr_leave_type_casual" model="hr.leave.type">
+    <field name="name">إجازة عارضة</field>
+    <field name="color">9</field>
+    <field name="request_unit">day</field>
+    <field name="leave_validation_type">manager</field>
+    <field name="requires_allocation">no</field>
+  </record>
+</odoo>

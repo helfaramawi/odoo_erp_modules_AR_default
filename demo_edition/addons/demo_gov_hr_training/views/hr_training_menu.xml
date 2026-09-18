@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <!-- فئة جديدة "الموارد البشرية" تحت الشجرة الحكومية الموحّدة —
+       إضافية فقط، لا تعدّل demo_branding نفسه. -->
+  <menuitem id="menu_gov_hr"
+            name="الموارد البشرية"
+            parent="demo_branding.menu_gov_root"
+            sequence="25"/>
+
+  <menuitem id="menu_hr_training_root"
+            name="التدريب"
+            parent="menu_gov_hr"
+            sequence="10"/>
+
+  <menuitem id="menu_hr_training_need"
+            name="الاحتياجات التدريبية"
+            parent="menu_hr_training_root"
+            action="action_hr_training_need"
+            sequence="10"/>
+
+  <menuitem id="menu_hr_training_course"
+            name="الدورات التدريبية"
+            parent="menu_hr_training_root"
+            action="action_hr_training_course"
+            sequence="20"/>
+
+  <menuitem id="menu_hr_training_registration"
+            name="تسجيلات الدورات"
+            parent="menu_hr_training_root"
+            action="action_hr_training_registration"
+            sequence="30"/>
+
+  <menuitem id="menu_hr_training_instructor"
+            name="المدربون"
+            parent="menu_hr_training_root"
+            action="action_hr_training_instructor"
+            sequence="40"/>
+</odoo>
