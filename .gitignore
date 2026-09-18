@@ -17,3 +17,7 @@ upgrade_log.txt
 # OS / editor cruft
 .DS_Store
 Thumbs.db
+
+# Local backups (database dumps, filestore archives) — never commit these
+demo_edition/backups/
+**/backups/
