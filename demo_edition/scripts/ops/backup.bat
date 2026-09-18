@@ -12,23 +12,25 @@ REM                              gives you one self-contained archive that
 REM                              restores everything, git or no git)
 REM
 REM Usage: run from anywhere; it locates demo_edition itself.
+REM This window stays open (press a key to close) so you can always
+REM read what happened, success or failure.
 REM ============================================================
 
 cd /d "%~dp0..\.."
 if not exist docker\docker-compose.demo.yml (
     echo [ERROR] docker\docker-compose.demo.yml not found under %cd%.
     echo         This script must live at demo_edition\scripts\ops\.
-    exit /b 1
+    goto :end
 )
 if not exist .env (
     echo [ERROR] .env not found in %cd%.
-    exit /b 1
+    goto :end
 )
 
 docker info >nul 2>&1
 if errorlevel 1 (
     echo [ERROR] Docker does not appear to be running. Start Docker Desktop and try again.
-    exit /b 1
+    goto :end
 )
 
 REM ---- read DEMO_DB_NAME / DEMO_DB_USER from .env (with safe fallbacks) ----
@@ -41,28 +43,12 @@ for /f "usebackq tokens=1,* delims==" %%A in (".env") do (
 if not defined DB_NAME set "DB_NAME=demo_gov_erp"
 if not defined DB_USER set "DB_USER=demo_odoo"
 
-REM ---- confirm the stack is actually up (containers must be running to exec into) ----
-docker compose --env-file .env -f docker\docker-compose.demo.yml ps --status running --services > "%TEMP%\demo_running_services.txt" 2>nul
-findstr /i "db" "%TEMP%\demo_running_services.txt" >nul
-if errorlevel 1 (
-    echo [ERROR] The "db" service is not running. Start the stack first (start.bat).
-    del "%TEMP%\demo_running_services.txt" >nul 2>&1
-    exit /b 1
-)
-findstr /i "odoo" "%TEMP%\demo_running_services.txt" >nul
-if errorlevel 1 (
-    echo [ERROR] The "odoo" service is not running. Start the stack first (start.bat).
-    del "%TEMP%\demo_running_services.txt" >nul 2>&1
-    exit /b 1
-)
-del "%TEMP%\demo_running_services.txt" >nul 2>&1
-
 REM ---- timestamp (locale-independent, via PowerShell) ----
 set "TS="
 for /f %%T in ('powershell -NoProfile -Command "Get-Date -Format yyyyMMdd_HHmmss"') do set "TS=%%T"
 if not defined TS (
     echo [ERROR] Could not generate a timestamp.
-    exit /b 1
+    goto :end
 )
 
 set "OUTDIR=backups\%TS%"
@@ -73,30 +59,33 @@ echo  Demo Edition - full backup - %TS%
 echo  Database: %DB_NAME%  (user: %DB_USER%)
 echo  Output:   %OUTDIR%\
 echo ============================================================
-
 echo.
+echo If the next step fails with a connection/container error, the
+echo stack probably isn't running yet - run start.bat first.
+echo.
+
 echo [1/3] Dumping database ...
 docker compose --env-file .env -f docker\docker-compose.demo.yml exec -T db ^
     pg_dump -U %DB_USER% -Fc %DB_NAME% > "%OUTDIR%\database.dump"
 if errorlevel 1 (
-    echo [ERROR] pg_dump failed.
-    exit /b 1
+    echo [ERROR] pg_dump failed - see output above. Is the stack running? ^(start.bat^)
+    goto :end
 )
 
 echo [2/3] Archiving filestore ...
 docker compose --env-file .env -f docker\docker-compose.demo.yml exec -T odoo ^
     tar czf - -C /var/lib/odoo . > "%OUTDIR%\filestore.tar.gz"
 if errorlevel 1 (
-    echo [ERROR] filestore archive failed.
-    exit /b 1
+    echo [ERROR] filestore archive failed - see output above.
+    goto :end
 )
 
 echo [3/3] Archiving config + addons (.env, docker\, addons\) ...
 powershell -NoProfile -Command ^
     "Compress-Archive -Path '.env','docker','addons' -DestinationPath '%OUTDIR%\config_and_addons.zip' -Force"
 if errorlevel 1 (
-    echo [ERROR] config/addons archive failed.
-    exit /b 1
+    echo [ERROR] config/addons archive failed - see output above.
+    goto :end
 )
 
 echo.
@@ -107,4 +96,8 @@ echo ============================================================
 echo  To restore this backup later, run:
 echo    restore.bat %TS%
 echo ============================================================
+
+:end
+echo.
+pause
 endlocal

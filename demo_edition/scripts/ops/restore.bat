@@ -16,22 +16,25 @@ REM config_and_addons.zip from that backup is NOT auto-applied over
 REM your live code (that could silently clobber newer local edits) -
 REM it is only extracted alongside for you to review/copy from by hand,
 REM at backups\<timestamp>\_extracted_config\.
+REM
+REM This window stays open (press a key to close) so you can always
+REM read what happened, success or failure.
 REM ============================================================
 
 cd /d "%~dp0..\.."
 if not exist docker\docker-compose.demo.yml (
     echo [ERROR] docker\docker-compose.demo.yml not found under %cd%.
-    exit /b 1
+    goto :end
 )
 if not exist .env (
     echo [ERROR] .env not found in %cd%.
-    exit /b 1
+    goto :end
 )
 
 docker info >nul 2>&1
 if errorlevel 1 (
     echo [ERROR] Docker does not appear to be running. Start Docker Desktop and try again.
-    exit /b 1
+    goto :end
 )
 
 set "TS=%~1"
@@ -44,17 +47,17 @@ if not defined TS (
 )
 if not defined TS (
     echo [ERROR] No timestamp given.
-    exit /b 1
+    goto :end
 )
 
 set "SRC=backups\%TS%"
 if not exist "%SRC%\database.dump" (
     echo [ERROR] %SRC%\database.dump not found.
-    exit /b 1
+    goto :end
 )
 if not exist "%SRC%\filestore.tar.gz" (
     echo [ERROR] %SRC%\filestore.tar.gz not found.
-    exit /b 1
+    goto :end
 )
 
 REM ---- read DEMO_DB_NAME / DEMO_DB_USER from .env (with safe fallbacks) ----
@@ -77,7 +80,7 @@ echo ============================================================
 set /p "CONFIRM=Type YES (all caps) to continue: "
 if not "%CONFIRM%"=="YES" (
     echo Aborted - nothing was changed.
-    exit /b 0
+    goto :end
 )
 
 echo.
@@ -85,7 +88,7 @@ echo [1/6] Stopping Odoo (keeping the database service up) ...
 docker compose --env-file .env -f docker\docker-compose.demo.yml stop odoo
 if errorlevel 1 (
     echo [ERROR] Could not stop the odoo service.
-    exit /b 1
+    goto :end
 )
 
 echo [2/6] Dropping and recreating database "%DB_NAME%" ...
@@ -93,13 +96,13 @@ docker compose --env-file .env -f docker\docker-compose.demo.yml exec -T db ^
     dropdb -U %DB_USER% --if-exists %DB_NAME%
 if errorlevel 1 (
     echo [ERROR] dropdb failed.
-    exit /b 1
+    goto :end
 )
 docker compose --env-file .env -f docker\docker-compose.demo.yml exec -T db ^
     createdb -U %DB_USER% -O %DB_USER% %DB_NAME%
 if errorlevel 1 (
     echo [ERROR] createdb failed.
-    exit /b 1
+    goto :end
 )
 
 echo [3/6] Restoring database from %SRC%\database.dump ...
@@ -115,7 +118,7 @@ docker compose --env-file .env -f docker\docker-compose.demo.yml exec -T odoo ^
     sh -c "find /var/lib/odoo -mindepth 1 -delete"
 if errorlevel 1 (
     echo [ERROR] Could not clear the existing filestore.
-    exit /b 1
+    goto :end
 )
 
 echo [5/6] Restoring filestore from %SRC%\filestore.tar.gz ...
@@ -123,14 +126,14 @@ docker compose --env-file .env -f docker\docker-compose.demo.yml exec -T odoo ^
     tar xzf - -C /var/lib/odoo < "%SRC%\filestore.tar.gz"
 if errorlevel 1 (
     echo [ERROR] Filestore restore failed.
-    exit /b 1
+    goto :end
 )
 
 echo [6/6] Rebuilding and starting Odoo back up ...
 docker compose --env-file .env -f docker\docker-compose.demo.yml up -d --build odoo
 if errorlevel 1 (
     echo [ERROR] Could not start odoo back up.
-    exit /b 1
+    goto :end
 )
 
 if exist "%SRC%\config_and_addons.zip" (
@@ -146,4 +149,8 @@ echo.
 echo ============================================================
 echo  Restore complete from backup: %TS%
 echo ============================================================
+
+:end
+echo.
+pause
 endlocal
