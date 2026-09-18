@@ -20,6 +20,7 @@
               <field name="appointment_decision_date"/>
             </group>
           </group>
+          <field name="documents_complete" invisible="1"/>
           <div class="alert alert-warning" role="alert" invisible="documents_complete">
             <strong>⚠ مستندات ناقصة: </strong>
             <field name="missing_documents" readonly="1"/>
