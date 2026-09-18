@@ -45,6 +45,67 @@
     <field name="view_mode">tree,form</field>
   </record>
 
+  <!-- ══ تسجيلات الدورات ═══════════════════════════════════════════════ -->
+  <!-- معرَّفة هنا قبل نموذج الدورة لأن زر الإحصائيات في نموذج الدورة
+       يشير إلى action_hr_training_registration عبر %(xmlid)d، وهذا
+       يتطلب أن يكون السجل موجودًا فعليًا وقت تحليل الملف. -->
+  <record id="view_hr_training_registration_form" model="ir.ui.view">
+    <field name="name">demo_gov.hr.training.registration.form</field>
+    <field name="model">demo_gov.hr.training.registration</field>
+    <field name="arch" type="xml">
+      <form string="تسجيل تدريبي">
+        <header>
+          <button name="action_request" string="طلب" type="object" class="btn-primary" invisible="state != 'draft'"/>
+          <button name="action_manager_approve" string="اعتماد المدير" type="object" class="btn-primary" invisible="state != 'requested'"/>
+          <button name="action_confirm_by_training_dept" string="تأكيد قسم التدريب" type="object" class="btn-primary" invisible="state != 'manager_approved'"/>
+          <button name="action_complete" string="إتمام الدورة" type="object" class="btn-success" invisible="state != 'confirmed'"/>
+          <button name="action_cancel" string="إلغاء" type="object" invisible="state in ('completed','cancelled')"/>
+          <field name="state" widget="statusbar" statusbar_visible="draft,requested,manager_approved,confirmed,completed"/>
+        </header>
+        <sheet>
+          <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
+          <group>
+            <group>
+              <field name="course_id"/>
+              <field name="employee_id"/>
+              <field name="manager_id" readonly="1"/>
+            </group>
+          </group>
+          <group string="قياس أثر التدريب" invisible="state != 'completed'">
+            <group>
+              <field name="performance_before"/>
+              <field name="performance_after"/>
+            </group>
+            <group>
+              <field name="impact_notes"/>
+            </group>
+          </group>
+        </sheet>
+        <chatter/>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_hr_training_registration_list" model="ir.ui.view">
+    <field name="name">demo_gov.hr.training.registration.list</field>
+    <field name="model">demo_gov.hr.training.registration</field>
+    <field name="arch" type="xml">
+      <tree string="تسجيلات الدورات" decoration-success="state=='completed'" decoration-muted="state=='cancelled'">
+        <field name="name"/>
+        <field name="course_id"/>
+        <field name="employee_id"/>
+        <field name="manager_id"/>
+        <field name="state" widget="badge"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="action_hr_training_registration" model="ir.actions.act_window">
+    <field name="name">تسجيلات الدورات</field>
+    <field name="res_model">demo_gov.hr.training.registration</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
   <!-- ══ الدورات التدريبية ═════════════════════════════════════════════ -->
   <record id="view_hr_training_course_form" model="ir.ui.view">
     <field name="name">demo_gov.hr.training.course.form</field>
@@ -152,64 +213,6 @@
     <field name="res_model">demo_gov.hr.training.need</field>
     <field name="view_mode">tree,form</field>
     <field name="context">{'search_default_this_year': 1}</field>
-  </record>
-
-  <!-- ══ تسجيلات الدورات ═══════════════════════════════════════════════ -->
-  <record id="view_hr_training_registration_form" model="ir.ui.view">
-    <field name="name">demo_gov.hr.training.registration.form</field>
-    <field name="model">demo_gov.hr.training.registration</field>
-    <field name="arch" type="xml">
-      <form string="تسجيل تدريبي">
-        <header>
-          <button name="action_request" string="طلب" type="object" class="btn-primary" invisible="state != 'draft'"/>
-          <button name="action_manager_approve" string="اعتماد المدير" type="object" class="btn-primary" invisible="state != 'requested'"/>
-          <button name="action_confirm_by_training_dept" string="تأكيد قسم التدريب" type="object" class="btn-primary" invisible="state != 'manager_approved'"/>
-          <button name="action_complete" string="إتمام الدورة" type="object" class="btn-success" invisible="state != 'confirmed'"/>
-          <button name="action_cancel" string="إلغاء" type="object" invisible="state in ('completed','cancelled')"/>
-          <field name="state" widget="statusbar" statusbar_visible="draft,requested,manager_approved,confirmed,completed"/>
-        </header>
-        <sheet>
-          <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
-          <group>
-            <group>
-              <field name="course_id"/>
-              <field name="employee_id"/>
-              <field name="manager_id" readonly="1"/>
-            </group>
-          </group>
-          <group string="قياس أثر التدريب" invisible="state != 'completed'">
-            <group>
-              <field name="performance_before"/>
-              <field name="performance_after"/>
-            </group>
-            <group>
-              <field name="impact_notes"/>
-            </group>
-          </group>
-        </sheet>
-        <chatter/>
-      </form>
-    </field>
-  </record>
-
-  <record id="view_hr_training_registration_list" model="ir.ui.view">
-    <field name="name">demo_gov.hr.training.registration.list</field>
-    <field name="model">demo_gov.hr.training.registration</field>
-    <field name="arch" type="xml">
-      <tree string="تسجيلات الدورات" decoration-success="state=='completed'" decoration-muted="state=='cancelled'">
-        <field name="name"/>
-        <field name="course_id"/>
-        <field name="employee_id"/>
-        <field name="manager_id"/>
-        <field name="state" widget="badge"/>
-      </tree>
-    </field>
-  </record>
-
-  <record id="action_hr_training_registration" model="ir.actions.act_window">
-    <field name="name">تسجيلات الدورات</field>
-    <field name="res_model">demo_gov.hr.training.registration</field>
-    <field name="view_mode">tree,form</field>
   </record>
 
 </odoo>
