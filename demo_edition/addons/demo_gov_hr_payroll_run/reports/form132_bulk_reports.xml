@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="action_report_form132_bulk" model="ir.actions.report">
+    <field name="name">استمارة 132 إجمالي</field>
+    <field name="model">demo_gov.hr.payroll.run</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">demo_gov_hr_payroll_run.report_form132_bulk_template</field>
+    <field name="report_file">demo_gov_hr_payroll_run.report_form132_bulk_template</field>
+    <field name="binding_model_id" ref="model_demo_gov_hr_payroll_run"/>
+    <field name="binding_type">report</field>
+    <field name="attachment_use">False</field>
+  </record>
+</odoo>

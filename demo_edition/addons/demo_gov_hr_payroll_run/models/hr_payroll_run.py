@@ -27,6 +27,18 @@ class HrPayrollRun(models.Model):
     payslip_ids = fields.One2many('demo_gov.hr.payroll.payslip', 'run_id', string='كشوف المرتبات')
     payslip_count = fields.Integer(compute='_compute_payslip_count')
 
+    # شباك الإجماليات — استمارة 132 إجمالي (المتطلب الوظيفي 11-4)
+    total_gross = fields.Float(compute='_compute_totals', string='إجمالي الاستحقاقات')
+    total_employee_insurance = fields.Float(compute='_compute_totals',
+                                             string='إجمالي حصة الموظفين - تأمينات')
+    total_income_tax = fields.Float(compute='_compute_totals', string='إجمالي ضريبة الدخل')
+    total_stamp_duty = fields.Float(compute='_compute_totals', string='إجمالي ضريبة الدمغة')
+    total_manual_deductions = fields.Float(compute='_compute_totals',
+                                            string='إجمالي الاستقطاعات اليدوية')
+    total_transaction_adjustment = fields.Float(compute='_compute_totals',
+                                                 string='إجمالي التأثيرات الاستثنائية')
+    total_net = fields.Float(compute='_compute_totals', string='إجمالي الصافي (GP)')
+
     state = fields.Selection([
         ('draft', 'مسودة'),
         ('computed', 'محسوبة'),
@@ -50,6 +62,21 @@ class HrPayrollRun(models.Model):
     def _compute_payslip_count(self):
         for rec in self:
             rec.payslip_count = len(rec.payslip_ids)
+
+    @api.depends('payslip_ids.gross_earnings', 'payslip_ids.employee_insurance_share',
+                 'payslip_ids.income_tax_monthly', 'payslip_ids.stamp_duty',
+                 'payslip_ids.manual_deductions', 'payslip_ids.transaction_adjustment',
+                 'payslip_ids.net_salary')
+    def _compute_totals(self):
+        for rec in self:
+            slips = rec.payslip_ids
+            rec.total_gross = sum(slips.mapped('gross_earnings'))
+            rec.total_employee_insurance = sum(slips.mapped('employee_insurance_share'))
+            rec.total_income_tax = sum(slips.mapped('income_tax_monthly'))
+            rec.total_stamp_duty = sum(slips.mapped('stamp_duty'))
+            rec.total_manual_deductions = sum(slips.mapped('manual_deductions'))
+            rec.total_transaction_adjustment = sum(slips.mapped('transaction_adjustment'))
+            rec.total_net = sum(slips.mapped('net_salary'))
 
     def action_compute_payslips(self):
         salary_model = self.env['demo_gov.hr.employee.salary']
