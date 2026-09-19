@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_uat_generate_wizard_form_hr" model="ir.ui.view">
+        <field name="name">arabic.government.uat.generate.wizard.form.hr</field>
+        <field name="model">arabic.government.uat.generate.wizard</field>
+        <field name="inherit_id" ref="demo_gov_uat_tools.view_uat_generate_wizard_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[field[@name='generate_hr_cases']]/.." position="after">
+                <separator string="الموارد البشرية والرواتب (الحزمة الحكومية الكاملة)"/>
+                <group>
+                    <group string="الأنظمة الوظيفية">
+                        <field name="generate_hr_leave_cases" widget="boolean_toggle"/>
+                        <field name="generate_hr_training_cases" widget="boolean_toggle"/>
+                        <field name="generate_hr_recruitment_cases" widget="boolean_toggle"/>
+                        <field name="generate_hr_performance_cases" widget="boolean_toggle"/>
+                        <field name="generate_hr_transfer_cases" widget="boolean_toggle"/>
+                    </group>
+                    <group string="الرواتب والمزايا">
+                        <field name="generate_hr_payroll_cases" widget="boolean_toggle"/>
+                        <field name="generate_hr_takaful_cases" widget="boolean_toggle"/>
+                        <field name="generate_hr_pension_cases" widget="boolean_toggle"/>
+                        <field name="generate_hr_disclosure_cases" widget="boolean_toggle"/>
+                        <field name="generate_hr_positions_cases" widget="boolean_toggle"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
