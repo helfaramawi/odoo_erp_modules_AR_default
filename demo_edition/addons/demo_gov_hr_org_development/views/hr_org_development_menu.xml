@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <menuitem id="menu_hr_org_development_root"
+            name="التطوير المؤسسي"
+            parent="demo_gov_hr_training.menu_gov_hr"
+            sequence="60"/>
+
+  <menuitem id="menu_hr_job_evaluation"
+            name="تقييمات الوظائف"
+            parent="menu_hr_org_development_root"
+            action="action_hr_job_evaluation"
+            sequence="10"/>
+
+  <menuitem id="menu_hr_position_budget"
+            name="موازنة الوظائف (استمارة 5)"
+            parent="menu_hr_org_development_root"
+            action="action_hr_position_budget"
+            sequence="20"/>
+</odoo>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_hr_job_form_gov_inherit" model="ir.ui.view">
+    <field name="name">hr.job.form.gov.inherit</field>
+    <field name="model">hr.job</field>
+    <field name="inherit_id" ref="hr.view_hr_job_form"/>
+    <field name="arch" type="xml">
+      <notebook position="inside">
+        <page string="بطاقة الوصف الوظيفي" name="gov_job_description">
+          <group>
+            <group>
+              <field name="reporting_to"/>
+              <field name="min_grade"/>
+              <field name="max_grade"/>
+            </group>
+          </group>
+          <group string="المهام والاشتراطات">
+            <field name="job_duties" placeholder="المهام والواجبات..."/>
+            <field name="job_requirements" placeholder="الاشتراطات..."/>
+            <field name="job_qualifications" placeholder="المؤهلات المطلوبة..."/>
+          </group>
+          <separator string="تقييمات الوظيفة"/>
+          <field name="evaluation_ids">
+            <tree>
+              <field name="evaluation_date"/>
+              <field name="evaluated_grade"/>
+              <field name="evaluator_id"/>
+              <field name="state" widget="badge"/>
+            </tree>
+          </field>
+          <separator string="موازنات الوظيفة (استمارة 5)"/>
+          <field name="budget_ids">
+            <tree>
+              <field name="fiscal_year"/>
+              <field name="budgeted_positions"/>
+              <field name="filled_positions"/>
+              <field name="vacant_positions"/>
+              <field name="movements_in"/>
+              <field name="movements_out"/>
+            </tree>
+          </field>
+        </page>
+      </notebook>
+    </field>
+  </record>
+
+</odoo>
