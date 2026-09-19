@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="seq_hr_transfer" model="ir.sequence">
+    <field name="name">حركة نقل/ندب/إعارة - رقم متسلسل</field>
+    <field name="code">demo_gov.hr.transfer</field>
+    <field name="prefix">TRF/%(year)s/</field>
+    <field name="padding">4</field>
+    <field name="use_date_range">True</field>
+    <field name="company_id" eval="False"/>
+  </record>
+
+  <record id="seq_hr_promotion" model="ir.sequence">
+    <field name="name">حركة ترقية - رقم متسلسل</field>
+    <field name="code">demo_gov.hr.promotion</field>
+    <field name="prefix">PRM/%(year)s/</field>
+    <field name="padding">4</field>
+    <field name="use_date_range">True</field>
+    <field name="company_id" eval="False"/>
+  </record>
+</odoo>

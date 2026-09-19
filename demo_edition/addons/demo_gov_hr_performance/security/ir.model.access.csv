@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_performance_appraisal_all,demo_gov.hr.performance.appraisal all employees,model_demo_gov_hr_performance_appraisal,base.group_user,1,0,0,0
+access_hr_performance_appraisal_manager,demo_gov.hr.performance.appraisal manager,model_demo_gov_hr_performance_appraisal,hr.group_hr_manager,1,1,1,1
+access_hr_performance_grievance_all,demo_gov.hr.performance.grievance all employees,model_demo_gov_hr_performance_grievance,base.group_user,1,1,1,0
+access_hr_performance_grievance_manager,demo_gov.hr.performance.grievance manager,model_demo_gov_hr_performance_grievance,hr.group_hr_manager,1,1,1,1

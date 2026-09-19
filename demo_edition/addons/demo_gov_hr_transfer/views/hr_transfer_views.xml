@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_hr_transfer_form" model="ir.ui.view">
+    <field name="name">demo_gov.hr.transfer.form</field>
+    <field name="model">demo_gov.hr.transfer</field>
+    <field name="arch" type="xml">
+      <form string="حركة نقل / ندب / إعارة">
+        <header>
+          <button name="action_approve" string="اعتماد" type="object" class="btn-primary" invisible="state != 'draft'"/>
+          <button name="action_activate" string="تفعيل" type="object" class="btn-primary" invisible="state != 'approved'"/>
+          <button name="action_renew" string="تجديد" type="object" invisible="state != 'active'"/>
+          <button name="action_end" string="إنهاء" type="object" invisible="state != 'active'"/>
+          <button name="action_cancel" string="إلغاء" type="object" invisible="state in ('ended','cancelled')"/>
+          <field name="state" widget="statusbar" statusbar_visible="draft,approved,active,ended"/>
+        </header>
+        <sheet>
+          <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
+          <group>
+            <group>
+              <field name="employee_id"/>
+              <field name="transfer_type"/>
+              <field name="from_entity"/>
+              <field name="to_entity_name"/>
+            </group>
+            <group>
+              <field name="start_date"/>
+              <field name="end_date"/>
+              <field name="renewal_count" readonly="1"/>
+              <field name="decision_number"/>
+              <field name="decision_date"/>
+            </group>
+          </group>
+          <field name="is_settlement" invisible="1"/>
+          <group string="موافقات التسوية" invisible="not is_settlement">
+
+            <field name="central_agency_approved"/>
+            <field name="finance_ministry_approved"/>
+          </group>
+        </sheet>
+        <chatter/>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_hr_transfer_list" model="ir.ui.view">
+    <field name="name">demo_gov.hr.transfer.list</field>
+    <field name="model">demo_gov.hr.transfer</field>
+    <field name="arch" type="xml">
+      <tree string="حركات النقل والندب والإعارة" decoration-warning="state=='active'" decoration-muted="state in ('ended','cancelled')">
+        <field name="name"/>
+        <field name="employee_id"/>
+        <field name="transfer_type"/>
+        <field name="to_entity_name"/>
+        <field name="start_date"/>
+        <field name="end_date"/>
+        <field name="state" widget="badge"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="action_hr_transfer" model="ir.actions.act_window">
+    <field name="name">النقل والندب والإعارة</field>
+    <field name="res_model">demo_gov.hr.transfer</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+</odoo>

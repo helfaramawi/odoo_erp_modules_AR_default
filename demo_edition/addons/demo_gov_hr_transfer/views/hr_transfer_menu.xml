@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <menuitem id="menu_hr_transfer_root"
+            name="النقل والندب والترقيات"
+            parent="demo_gov_hr_training.menu_gov_hr"
+            sequence="40"/>
+
+  <menuitem id="menu_hr_transfer"
+            name="النقل والندب والإعارة"
+            parent="menu_hr_transfer_root"
+            action="action_hr_transfer"
+            sequence="10"/>
+
+  <menuitem id="menu_hr_promotion"
+            name="الترقيات"
+            parent="menu_hr_transfer_root"
+            action="action_hr_promotion"
+            sequence="20"/>
+</odoo>
