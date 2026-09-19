@@ -121,6 +121,7 @@ html,body{height:100%;overflow:hidden;background:#0D1B2A}
     <button class="nb" data-pg="cu">🔑 العهد <span class="nbdot" id="nb-c" style="background:rgba(33,150,243,.2);color:#90CAF9"></span></button>
     <button class="nb" data-pg="au">🏛️ المزايدات <span class="nbdot" id="nb-au" style="background:rgba(192,57,43,.2);color:#E74C3C"></span></button>
     <button class="nb" data-pg="fn">💰 الحسابات والمالية</button>
+    <button class="nb" data-pg="hr">👥 الموارد البشرية والرواتب <span class="nbdot" id="nb-hr" style="background:rgba(192,57,43,.2);color:#E74C3C"></span></button>
     <button class="nb" data-pg="al">🔔 التنبيهات <span class="nbdot" id="nb-al" style="background:rgba(192,57,43,.3);color:#E74C3C"></span></button>
   </div>
   <div id="main">
@@ -196,6 +197,7 @@ function init(){
   document.getElementById('nb-c').textContent=D.custody.active||'';
   document.getElementById('nb-au').textContent=((D.auction.by_state.session_open||0)+(D.auction.by_state.bidding||0))||'';
   document.getElementById('nb-al').textContent=(D.alerts||[]).length||'';
+  document.getElementById('nb-hr').textContent=((D.hr?.disclosure_overdue||0)+(D.hr?.transfers_ending_soon||0))||'';
   rp('ov');
   document.querySelectorAll('.nb').forEach(b=>{
     b.addEventListener('click',()=>{
@@ -213,7 +215,7 @@ function rp(pg){
 }
 
 function bp(pg){
-  switch(pg){case'ov':return pOv();case'fn':return pFn();case'ct':return pCt();case'wh':return pWh();case'cu':return pCu();case'au':return pAu();case'al':return pAl();default:return pOv()}
+  switch(pg){case'ov':return pOv();case'fn':return pFn();case'hr':return pHr();case'ct':return pCt();case'wh':return pWh();case'cu':return pCu();case'au':return pAu();case'al':return pAl();default:return pOv()}
 }
 
 function kpi(ic,vl,lb,cl,sb,dr){
@@ -452,6 +454,104 @@ function pFn(){
 </div>`;
 }
 
+function pHr(){
+  const h=D.hr||{};
+  const pl=h.payroll_latest;
+
+  const scorecard=[
+    kpi('👥', h.employees_active||0, 'الموظفون النشطون', '#2196F3',
+        h.documents_incomplete?h.documents_incomplete+' ملف ناقص المستندات':'كل الملفات مكتملة', 'hr_employees_detail'),
+    kpi('📅', h.leave_total_year||0, 'طلبات إجازة هذا العام', '#27A99A',
+        (h.leave_pending||0)+' بانتظار الاعتماد | '+(h.leave_work_injury||0)+' إصابة عمل', 'hr_leave_detail'),
+    kpi('🔁', h.transfers_active||0, 'ندب / إعارة سارية', h.transfers_ending_soon?'#E74C3C':'#F39C12',
+        h.transfers_ending_soon?h.transfers_ending_soon+' تنتهي خلال 30 يوم':'لا يوجد قرب انتهاء', 'hr_transfers_detail'),
+    kpi('💰', pl?fmt(pl.total_net):'0', 'صافي آخر صرف رواتب', '#27AE60',
+        pl?('دورة '+pl.name+' | '+pl.payslip_count+' موظف'):'لا توجد دورة مرحّلة بعد', 'hr_payroll_detail'),
+    kpi('🏛️', fmt(h.takaful_fund_balance||0), 'رصيد صندوق التكافل', '#C9A84C',
+        (h.takaful_members||0)+' عضو نشط | '+(h.takaful_pending_payouts||0)+' طلب صرف معلّق', 'hr_takaful_detail'),
+    kpi('📁', h.disclosure_overdue||0, 'إقرارات ذمة متأخرة', h.disclosure_overdue?'#E74C3C':'#27AE60',
+        (h.disclosure_due_soon||0)+' قريب الاستحقاق | '+(h.disclosure_approved_year||0)+' معتمد هذا العام', 'hr_disclosure_detail'),
+    kpi('⭐', h.appraisals_year||0, 'تقييمات الأداء هذا العام', '#2196F3',
+        (h.grievances_open||0)+' تظلم مفتوح', 'hr_performance_detail'),
+    kpi('🧑‍💼', h.recruitment_projects_open||0, 'مشاريع تعيين مفتوحة', '#F39C12',
+        (h.recruitment_applicants||0)+' متقدم | '+(h.terminations_year||0)+' إنهاء خدمة هذا العام', 'hr_recruitment_detail'),
+  ];
+
+  const empColors=['#2196F3','#27A99A','#F39C12','#C9A84C','#9BAAB8','#E74C3C'];
+  const entColors=['#2196F3','#27A99A','#F39C12'];
+  const trColors=['#2196F3','#27A99A','#F39C12','#9BAAB8','#E74C3C'];
+  const rtColors=['#27AE60','#2196F3','#C9A84C','#F39C12','#E74C3C'];
+
+  const extras=[
+    ['👤', h.payroll_employee_count||0, 'موظف على كشف الرواتب'],
+    ['💵', fmt(h.payroll_ytd_net||0)+' ج.م', 'صافي المصروف هذا العام'],
+    ['🏦', h.pension_enrollments_active||0, 'اشتراك معاش/تأمين نشط'],
+    ['📜', h.pension_settlements_year||0, 'تسوية معاش معتمدة هذا العام'],
+    ['🎖️', h.public_service_active||0, 'خريجة خدمة عامة نشطة'],
+    ['✅', h.recruitment_applicants||0, 'متقدم للتوظيف'],
+  ];
+
+  return`<div class="pg on">
+  <div class="sec">👥 الموارد البشرية والرواتب — لوحة القيادة</div>
+
+  <div class="kgrid">${scorecard.join('')}</div>
+
+  <div class="row3" style="grid-template-columns:1fr 1fr 1fr">
+    <div class="pnl"><div class="ptl">🧑‍🤝‍🧑 توزيع نوع التعيين</div>
+      ${sbars(Object.entries(h.by_employment_type||{}).map(([l,n],i)=>({l,n,c:empColors[i%empColors.length]})))}
+    </div>
+    <div class="pnl"><div class="ptl">🏢 توزيع الجهة</div>
+      ${sbars(Object.entries(h.by_entity||{}).map(([l,n],i)=>({l,n,c:entColors[i%entColors.length]})))}
+    </div>
+    <div class="pnl"><div class="ptl">📅 حالة الإجازات</div>
+      ${sbars([
+        {l:'بانتظار الاعتماد',n:h.leave_pending||0,c:'#F39C12'},
+        {l:'معتمدة',n:h.leave_validated||0,c:'#27AE60'},
+        {l:'إصابة عمل',n:h.leave_work_injury||0,c:'#E74C3C'},
+        {l:'بانتظار قسم الإجازات',n:h.leave_awaiting_dept||0,c:'#9BAAB8'},
+      ])}
+    </div>
+  </div>
+
+  <div class="row3" style="grid-template-columns:1fr 1fr 1fr">
+    <div class="pnl"><div class="ptl">⭐ توزيع تقديرات الأداء</div>
+      ${Object.keys(h.by_rating||{}).length?donut(Object.entries(h.by_rating).map(([l,v],i)=>({l,v,c:rtColors[i%rtColors.length]}))):'<div style="text-align:center;color:var(--muted);padding:20px;font-size:12px">لا توجد تقييمات مسجَّلة بعد</div>'}
+    </div>
+    <div class="pnl"><div class="ptl">🔁 أنواع الحركات السارية</div>
+      ${sbars(Object.entries(h.by_transfer_type||{}).map(([l,n],i)=>({l,n,c:trColors[i%trColors.length]})))}
+    </div>
+    <div class="pnl"><div class="ptl">🎓 التدريب</div>
+      ${sbars([
+        {l:'احتياجات مسجَّلة',n:h.training_needs_total||0,c:'#2196F3'},
+        {l:'مُدرَجة بالخطة',n:h.training_needs_planned||0,c:'#27AE60'},
+        {l:'دورات',n:h.training_courses||0,c:'#C9A84C'},
+        {l:'تسجيلات مكتملة',n:h.training_completed||0,c:'#27A99A'},
+      ])}
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="pnl"><div class="ptl">📊 موازنة الوظائف (السنة الحالية)</div>
+      ${sbars([
+        {l:'معتمدة',n:h.positions_budgeted||0,c:'#2196F3'},
+        {l:'مشغولة',n:h.positions_filled||0,c:'#27AE60'},
+        {l:'شاغرة',n:h.positions_vacant||0,c:'#E74C3C'},
+      ])}
+    </div>
+    <div class="pnl"><div class="ptl">🧾 مؤشرات إضافية</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        ${extras.map(([ic,v,l])=>`
+        <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:16px">${ic}</div>
+          <div style="font-family:'Cairo',sans-serif;font-size:18px;font-weight:900;color:var(--gold2)">${v}</div>
+          <div style="font-size:10px;color:var(--muted)">${l}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>
+</div>`;
+}
+
 
 function pCt(){
   const a=D.adjudication,c=D.committees;
@@ -575,6 +675,14 @@ const DR={
   leases_detail:()=>({title:'🏛️ تفاصيل عقود الإيجار',kpis:[{v:D.finance.lease_active||0,l:'عقد ساري'},{v:fmt(D.finance.lease_collected||0),l:'محصّل (ج.م)'},{v:fmt(D.finance.lease_outstanding||0),l:'متبقي (ج.م)'}],headers:['البيان','القيمة'],rows:[['عقد إيجار ساري',D.finance.lease_active||0],['إجمالي قيمة العقود (ج.م)',fmt(D.finance.auction_revenue||0)],['إجمالي المحصّل (ج.م)',fmt(D.finance.lease_collected||0)],['إجمالي المتبقي (ج.م)',fmt(D.finance.lease_outstanding||0)],['دفعات متأخرة',D.finance.overdue_payments||0],['دفعات مدفوعة',D.auction?.payments?.paid||0],['دفعات جزئية',D.finance.py_partial||0],['دفعات قيد الانتظار',D.finance.py_pending||0]]}),
   overdue_detail:()=>({title:'⚠️ تفاصيل الدفعات المتأخرة',kpis:[{v:D.finance.py_overdue||0,l:'دفعة متأخرة'},{v:D.finance.py_partial||0,l:'مدفوعة جزئياً'},{v:fmt(D.finance.lease_outstanding||0),l:'إجمالي المتبقي (ج.م)'}],headers:['البيان','العدد'],rows:[['دفعة متأخرة',D.finance.py_overdue||0],['مدفوع جزئياً',D.finance.py_partial||0],['قيد الانتظار',D.finance.py_pending||0],['مدفوع',D.finance.py_paid||0],['إجمالي متبقي (ج.م)',fmt(D.finance.lease_outstanding||0)]]}),
   auctions:()=>({title:'🏛️ تفاصيل المزادات',kpis:[{v:(D.auction.by_state.session_open||0)+(D.auction.by_state.bidding||0),l:'نشط'},{v:D.auction.by_state.done,l:'مكتمل'},{v:D.auction.lease.active,l:'عقد إيجار'}],headers:['المرجع','الاسم','النوع','الحالة','التقديري','الترسية'],rows:(D.auction.detail||[]).map(r=>[`<span style="color:#FAC775;font-weight:700">${r.ref}</span>`,r.name,r.type,bdg(r.state),r.estimated?r.estimated.toLocaleString()+' ج.م':'—',r.awarded?r.awarded.toLocaleString()+' ج.م':'—'])}),
+  hr_employees_detail:()=>({title:'👥 تفاصيل الموظفين',kpis:[{v:D.hr.employees_active||0,l:'نشط'},{v:D.hr.documents_incomplete||0,l:'ملف ناقص'},{v:D.hr.public_service_active||0,l:'خدمة عامة'}],headers:['الاسم','الإدارة','نوع التعيين','الدرجة','حالة المستندات'],rows:(D.hr.detail||[]).map(r=>[r.name,r.department,r.type,r.grade,r.docs==='مكتمل'?`<span style="color:#27AE60;font-weight:700">مكتمل</span>`:`<span style="color:#E74C3C;font-weight:700">ناقص</span>`])}),
+  hr_leave_detail:()=>({title:'📅 تفاصيل الإجازات',kpis:[{v:D.hr.leave_total_year||0,l:'إجمالي هذا العام'},{v:D.hr.leave_pending||0,l:'بانتظار الاعتماد'},{v:D.hr.leave_work_injury||0,l:'إصابة عمل'}],headers:['البيان','العدد'],rows:[['إجمالي طلبات الإجازة هذا العام',D.hr.leave_total_year||0],['بانتظار اعتماد المدير',D.hr.leave_pending||0],['معتمدة',D.hr.leave_validated||0],['إجازات إصابة عمل',D.hr.leave_work_injury||0],['بانتظار تأكيد قسم الإجازات',D.hr.leave_awaiting_dept||0]]}),
+  hr_transfers_detail:()=>({title:'🔁 تفاصيل النقل والندب والإعارة',kpis:[{v:D.hr.transfers_active||0,l:'سارية'},{v:D.hr.transfers_ending_soon||0,l:'تنتهي خلال 30 يوم'},{v:D.hr.promotions_year||0,l:'ترقية معتمدة هذا العام'}],headers:['نوع الحركة','العدد'],rows:Object.entries(D.hr.by_transfer_type||{}).map(([l,n])=>[l,n])}),
+  hr_payroll_detail:()=>{const p=D.hr.payroll_latest;return{title:'💰 تفاصيل آخر دورة رواتب مرحّلة',kpis:[{v:p?fmt(p.total_net):0,l:'صافي الدورة (ج.م)'},{v:p?p.payslip_count:0,l:'عدد الموظفين'},{v:fmt(D.hr.payroll_ytd_net||0),l:'إجمالي الصافي هذا العام (ج.م)'}],headers:['البيان','القيمة'],rows:p?[['اسم الدورة',p.name],['إجمالي الاستحقاقات (ج.م)',fmt(p.total_gross)],['إجمالي ضريبة الدخل (ج.م)',fmt(p.total_income_tax)],['إجمالي حصة التأمينات (ج.م)',fmt(p.total_employee_insurance)],['صافي الدورة (ج.م)',fmt(p.total_net)],['عدد الموظفين',p.payslip_count],['إجمالي الصافي هذا العام (ج.م)',fmt(D.hr.payroll_ytd_net||0)],['موظفون على كشف الرواتب',D.hr.payroll_employee_count||0]]:[['لا توجد دورة رواتب مرحّلة بعد','—']]};},
+  hr_takaful_detail:()=>({title:'🏛️ تفاصيل صندوق التكافل',kpis:[{v:D.hr.takaful_members||0,l:'عضو نشط'},{v:fmt(D.hr.takaful_fund_balance||0),l:'رصيد الصندوق (ج.م)'},{v:D.hr.takaful_pending_payouts||0,l:'طلب صرف معلّق'}],headers:['البيان','القيمة'],rows:[['عدد الأعضاء النشطين',D.hr.takaful_members||0],['رصيد الصندوق الإجمالي (ج.م)',fmt(D.hr.takaful_fund_balance||0)],['طلبات صرف معلّقة (مسودة/معتمدة)',D.hr.takaful_pending_payouts||0]]}),
+  hr_disclosure_detail:()=>({title:'📁 تفاصيل إقرارات الذمة المالية',kpis:[{v:D.hr.disclosure_overdue||0,l:'متأخر'},{v:D.hr.disclosure_due_soon||0,l:'قريب الاستحقاق'},{v:D.hr.disclosure_approved_year||0,l:'معتمد هذا العام'}],headers:['البيان','العدد'],rows:[['إقرارات متأخرة',D.hr.disclosure_overdue||0],['إقرارات قريبة من الاستحقاق (تم الإشعار)',D.hr.disclosure_due_soon||0],['إقرارات معتمدة هذا العام',D.hr.disclosure_approved_year||0]]}),
+  hr_performance_detail:()=>({title:'⭐ تفاصيل تقييمات الأداء',kpis:[{v:D.hr.appraisals_year||0,l:'تقييم هذا العام'},{v:D.hr.grievances_open||0,l:'تظلم مفتوح'},{v:(D.hr.by_rating&&D.hr.by_rating['ممتاز'])||0,l:'تقدير ممتاز'}],headers:['التقدير','العدد'],rows:Object.entries(D.hr.by_rating||{}).map(([l,n])=>[l,n])}),
+  hr_recruitment_detail:()=>({title:'🧑‍💼 تفاصيل التوظيف والتأهيل',kpis:[{v:D.hr.recruitment_projects_open||0,l:'مشروع مفتوح'},{v:D.hr.recruitment_applicants||0,l:'متقدم'},{v:D.hr.terminations_year||0,l:'إنهاء خدمة هذا العام'}],headers:['البيان','العدد'],rows:[['مشاريع تعيين مفتوحة',D.hr.recruitment_projects_open||0],['إجمالي المتقدمين',D.hr.recruitment_applicants||0],['حالات إنهاء خدمة هذا العام',D.hr.terminations_year||0]]}),
 };
 
 function oD(k){

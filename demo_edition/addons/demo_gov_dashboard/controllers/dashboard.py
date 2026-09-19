@@ -89,6 +89,26 @@ class PortSaidDashboard(http.Controller):
                 'py_paid':0,'py_pending':0,'py_overdue':0,'py_partial':0,
                 'top_payments':[],
             },
+            'hr': {
+                'employees_active':0,'by_employment_type':{},'by_entity':{},
+                'documents_incomplete':0,
+                'leave_total_year':0,'leave_pending':0,'leave_validated':0,
+                'leave_work_injury':0,'leave_awaiting_dept':0,
+                'training_needs_total':0,'training_needs_planned':0,'training_courses':0,
+                'training_registrations':0,'training_completed':0,
+                'recruitment_projects_open':0,'recruitment_applicants':0,
+                'terminations_year':0,
+                'appraisals_year':0,'by_rating':{},'grievances_open':0,
+                'transfers_active':0,'transfers_ending_soon':0,'by_transfer_type':{},
+                'promotions_year':0,
+                'payroll_latest':None,'payroll_ytd_net':0,'payroll_employee_count':0,
+                'takaful_members':0,'takaful_fund_balance':0,'takaful_pending_payouts':0,
+                'pension_settlements_year':0,'pension_enrollments_active':0,
+                'disclosure_overdue':0,'disclosure_due_soon':0,'disclosure_approved_year':0,
+                'positions_budgeted':0,'positions_filled':0,'positions_vacant':0,
+                'public_service_active':0,
+                'detail':[],
+            },
             'alerts':       [],
             'meta':         {'date': str(date.today()), 'total_ops': 0},
         }
@@ -377,6 +397,179 @@ class PortSaidDashboard(http.Controller):
         except Exception:
             pass
 
+        # ── الموارد البشرية والرواتب ─────────────────────────────
+        hr = {}
+        try:
+            Emp = env['hr.employee'].sudo()
+            active_emp = Emp.search([('active', '=', True)])
+            hr['employees_active'] = len(active_emp)
+            et_labels = {'permanent':'دائم','temporary':'مؤقت','seconded':'منتدب',
+                         'loaned':'معار','contracted':'متعاقد',
+                         'public_service':'خدمة عامة'}
+            hr['by_employment_type'] = {et_labels.get(k, k): sc('hr.employee',
+                [('active','=',True),('gov_employment_type','=',k)]) for k in et_labels}
+            en_labels = {'diwan_general':'الديوان العام','districts':'الأحياء',
+                         'port_fouad':'المدينة الثانية'}
+            hr['by_entity'] = {en_labels.get(k, k): sc('hr.employee',
+                [('active','=',True),('gov_entity','=',k)]) for k in en_labels}
+            hr['documents_incomplete'] = sc('hr.employee',
+                [('active','=',True),('documents_complete','=',False)])
+            hr['public_service_active'] = sc('hr.employee',
+                [('active','=',True),('gov_employment_type','=','public_service'),
+                 ('public_service_ended','=',False)])
+        except Exception:
+            pass
+
+        try:
+            year_start = f'{today.year}-01-01'
+            hr['leave_total_year'] = sc('hr.leave', [('date_from','>=',year_start)])
+            hr['leave_pending'] = sc('hr.leave', [('state','=','confirm')])
+            hr['leave_validated'] = sc('hr.leave',
+                [('state','=','validate'),('date_from','>=',year_start)])
+            hr['leave_work_injury'] = sc('hr.leave',
+                [('is_work_injury','=',True),('date_from','>=',year_start)])
+            hr['leave_awaiting_dept'] = sc('hr.leave',
+                [('state','=','validate'),('leave_dept_confirmed','=',False)])
+        except Exception:
+            pass
+
+        try:
+            hr['training_needs_total'] = sc('demo_gov.hr.training.need',
+                [('fiscal_year','=',str(today.year))])
+            hr['training_needs_planned'] = sc('demo_gov.hr.training.need',
+                [('state','=','planned')])
+            hr['training_courses'] = sc('demo_gov.hr.training.course', [])
+            hr['training_registrations'] = sc('demo_gov.hr.training.registration', [])
+            hr['training_completed'] = sc('demo_gov.hr.training.registration',
+                [('state','=','completed')])
+        except Exception:
+            pass
+
+        try:
+            hr['recruitment_projects_open'] = sc('demo_gov.hr.recruitment.project',
+                [('state','!=','closed')])
+            hr['recruitment_applicants'] = sc('hr.applicant',
+                [('recruitment_project_id','!=',False)])
+            hr['terminations_year'] = sc('hr.employee',
+                [('termination_date','>=',f'{today.year}-01-01')])
+        except Exception:
+            pass
+
+        try:
+            hr['appraisals_year'] = sc('demo_gov.hr.performance.appraisal',
+                [('fiscal_year','=',str(today.year))])
+            rt_labels = {'excellent':'ممتاز','very_good':'جيد جداً','good':'جيد',
+                         'acceptable':'مقبول','weak':'ضعيف'}
+            hr['by_rating'] = {rt_labels.get(k, k): sc('demo_gov.hr.performance.appraisal',
+                [('rating','=',k),('fiscal_year','=',str(today.year))]) for k in rt_labels}
+            hr['grievances_open'] = sc('demo_gov.hr.performance.grievance',
+                [('state','!=','resolved')])
+        except Exception:
+            pass
+
+        try:
+            tt_labels = {'secondment':'ندب','loan':'إعارة',
+                         'internal_transfer':'نقل داخلي','external_transfer':'نقل خارجي',
+                         'settlement':'تسوية'}
+            hr['by_transfer_type'] = {tt_labels.get(k, k): sc('demo_gov.hr.transfer',
+                [('state','=','active'),('transfer_type','=',k)]) for k in tt_labels}
+            hr['transfers_active'] = sum(hr['by_transfer_type'].values())
+            hr['transfers_ending_soon'] = sc('demo_gov.hr.transfer', [
+                ('state','=','active'), ('end_date','!=',False),
+                ('end_date','<=', str(today + timedelta(days=30))),
+                ('end_date','>=', str(today)),
+            ])
+            hr['promotions_year'] = sc('demo_gov.hr.promotion', [
+                ('state','=','approved'),
+                ('decision_date','>=', f'{today.year}-01-01'),
+            ])
+        except Exception:
+            pass
+
+        try:
+            Run = env['demo_gov.hr.payroll.run'].sudo()
+            latest = Run.search([('state','=','posted')], limit=1, order='year desc, month desc')
+            if latest:
+                hr['payroll_latest'] = {
+                    'name': latest.name, 'total_net': latest.total_net,
+                    'payslip_count': latest.payslip_count,
+                    'total_gross': latest.total_gross,
+                    'total_income_tax': latest.total_income_tax,
+                    'total_employee_insurance': latest.total_employee_insurance,
+                }
+            posted_year = Run.search([('state','=','posted'),('year','=',str(today.year))])
+            hr['payroll_ytd_net'] = sum(r.total_net for r in posted_year)
+            hr['payroll_employee_count'] = sc('demo_gov.hr.employee.salary', [])
+        except Exception:
+            pass
+
+        try:
+            members = env['demo_gov.hr.takaful.member'].sudo().search(
+                [('member_status','=','active')])
+            hr['takaful_members'] = len(members)
+            hr['takaful_fund_balance'] = sum(m.fund_balance for m in members)
+            hr['takaful_pending_payouts'] = sc('demo_gov.hr.takaful.payout',
+                [('state','in',['draft','approved'])])
+        except Exception:
+            pass
+
+        try:
+            hr['pension_settlements_year'] = sc('demo_gov.hr.pension.settlement', [
+                ('state','in',['approved','form15_issued']),
+                ('settlement_date','>=', f'{today.year}-01-01'),
+            ])
+            hr['pension_enrollments_active'] = sc('demo_gov.hr.pension.enrollment',
+                [('state','=','active')])
+        except Exception:
+            pass
+
+        try:
+            hr['disclosure_overdue'] = sc('demo_gov.hr.disclosure', [('state','=','overdue')])
+            hr['disclosure_due_soon'] = sc('demo_gov.hr.disclosure', [('state','=','notified')])
+            hr['disclosure_approved_year'] = sc('demo_gov.hr.disclosure', [
+                ('state','=','approved'),
+                ('review_date','>=', f'{today.year}-01-01'),
+            ])
+        except Exception:
+            pass
+
+        try:
+            budgets = env['demo_gov.hr.position.budget'].sudo().search(
+                [('fiscal_year','=',str(today.year))])
+            hr['positions_budgeted'] = sum(b.budgeted_positions for b in budgets)
+            hr['positions_filled'] = sum(b.filled_positions for b in budgets)
+            hr['positions_vacant'] = sum(b.vacant_positions for b in budgets)
+        except Exception:
+            pass
+
+        try:
+            hr['detail'] = [{
+                'name': e.name,
+                'department': e.department_id.name if e.department_id else '—',
+                'type': et_labels.get(e.gov_employment_type, e.gov_employment_type or '—'),
+                'grade': e.civil_service_grade or '—',
+                'docs': 'مكتمل' if e.documents_complete else 'ناقص',
+            } for e in active_emp[:20]]
+        except Exception:
+            hr['detail'] = []
+
+        if hr.get('disclosure_overdue'):
+            alerts.append({'type':'danger', 'icon':'📁',
+                'title':f'{hr["disclosure_overdue"]} إقرار ذمة مالية متأخر',
+                'desc':'تجاوز موعد التجديد القانوني'})
+        if hr.get('transfers_ending_soon'):
+            alerts.append({'type':'warning', 'icon':'🔁',
+                'title':f'{hr["transfers_ending_soon"]} حركة ندب/إعارة تنتهي خلال 30 يوم',
+                'desc':'مطلوب قرار تجديد أو إنهاء'})
+        if hr.get('documents_incomplete'):
+            alerts.append({'type':'warning', 'icon':'🗂️',
+                'title':f'{hr["documents_incomplete"]} ملف موظف ناقص المستندات',
+                'desc':'مستندات التعيين غير مكتملة'})
+        if hr.get('leave_awaiting_dept'):
+            alerts.append({'type':'info', 'icon':'📅',
+                'title':f'{hr["leave_awaiting_dept"]} إجازة بانتظار تأكيد قسم الإجازات',
+                'desc':'معتمدة من المدير ولم تُؤكَّد بعد'})
+
         return {
             'committees':   {'total':ca+cd+cc,'active':ca,'draft':cd,
                              'closed':cc,'detail':c_detail},
@@ -400,6 +593,7 @@ class PortSaidDashboard(http.Controller):
                                          'overdue':pyo,'partial':pypr},
                              'detail':au_d},
             'finance':      finance,
+            'hr':           hr,
             'monthly':      monthly,
             'alerts':       alerts,
             'meta':         {'date':str(today),'total_ops':total},
