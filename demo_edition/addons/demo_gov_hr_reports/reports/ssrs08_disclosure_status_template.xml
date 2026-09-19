@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <template id="report_ssrs08_disclosure_status_template">
+    <t t-call="web.html_container">
+      <div style="direction:rtl; font-family:Amiri,'Noto Naskh Arabic',Arial,sans-serif; padding:20px;">
+        <h2 style="text-align:center;">تقرير حالة إقرارات الذمة المالية</h2>
+        <h4 style="text-align:center;">SSRS-08</h4>
+        <table style="width:100%; border-collapse:collapse; font-size:9pt; margin-top:16px;">
+          <tr style="background:#eee;">
+            <td style="font-weight:bold; padding:4px; border:1px solid #999;">الموظف</td>
+            <td style="font-weight:bold; padding:4px; border:1px solid #999;">تاريخ آخر إقرار</td>
+            <td style="font-weight:bold; padding:4px; border:1px solid #999;">تاريخ الاستحقاق</td>
+            <td style="font-weight:bold; padding:4px; border:1px solid #999;">الحالة</td>
+            <td style="font-weight:bold; padding:4px; border:1px solid #999;">الأيام المتبقية</td>
+          </tr>
+          <t t-foreach="docs" t-as="o">
+            <t t-set="row_color" t-value="'#c6f6d5' if o.state == 'approved' else ('#fed7d7' if o.state == 'overdue' else '#fefcbf')"/>
+            <tr t-att-style="'background:%s' % row_color">
+              <td style="padding:4px; border:1px solid #999;"><t t-esc="o.employee_id.name"/></td>
+              <td style="padding:4px; border:1px solid #999;"><t t-esc="o.declaration_date"/></td>
+              <td style="padding:4px; border:1px solid #999;"><t t-esc="o.renewal_due_date"/></td>
+              <td style="padding:4px; border:1px solid #999;">
+                <t t-esc="dict(o._fields['state'].selection).get(o.state, '')"/>
+              </td>
+              <td style="padding:4px; border:1px solid #999;">
+                <t t-if="o.renewal_due_date" t-esc="(o.renewal_due_date - datetime.date.today()).days"/>
+              </td>
+            </tr>
+          </t>
+        </table>
+        <p style="margin-top:12px; font-size:8pt;">أخضر = معتمَد | أصفر = قريب من الاستحقاق | أحمر = متأخر</p>
+      </div>
+    </t>
+  </template>
+</odoo>

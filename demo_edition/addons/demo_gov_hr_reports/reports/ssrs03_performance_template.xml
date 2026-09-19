@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <template id="report_ssrs03_performance_template">
+    <t t-call="web.html_container">
+      <div style="direction:rtl; font-family:Amiri,'Noto Naskh Arabic',Arial,sans-serif; padding:20px;">
+        <h2 style="text-align:center;">تقرير كفاءة الأداء السنوي</h2>
+        <h4 style="text-align:center;">SSRS-03</h4>
+        <table style="width:100%; border-collapse:collapse; font-size:9pt; margin-top:16px;">
+          <tr style="background:#eee;">
+            <td style="font-weight:bold; padding:4px; border:1px solid #999;">الموظف</td>
+            <td style="font-weight:bold; padding:4px; border:1px solid #999;">الإدارة</td>
+            <td style="font-weight:bold; padding:4px; border:1px solid #999;">الدرجة</td>
+            <td style="font-weight:bold; padding:4px; border:1px solid #999;">السنة</td>
+            <td style="font-weight:bold; padding:4px; border:1px solid #999;">التقدير</td>
+            <td style="font-weight:bold; padding:4px; border:1px solid #999;">ملاحظات الرئيس</td>
+            <td style="font-weight:bold; padding:4px; border:1px solid #999;">التوقيع</td>
+          </tr>
+          <t t-foreach="docs" t-as="o">
+            <tr>
+              <td style="padding:4px; border:1px solid #999;"><t t-esc="o.employee_id.name"/></td>
+              <td style="padding:4px; border:1px solid #999;"><t t-esc="o.department_id.name"/></td>
+              <td style="padding:4px; border:1px solid #999;"><t t-esc="o.employee_id.civil_service_grade"/></td>
+              <td style="padding:4px; border:1px solid #999;"><t t-esc="o.fiscal_year"/></td>
+              <td style="padding:4px; border:1px solid #999;">
+                <t t-esc="dict(o._fields['rating'].selection).get(o.rating, '')"/>
+              </td>
+              <td style="padding:4px; border:1px solid #999;"><t t-esc="o.goals_text"/></td>
+              <td style="padding:4px; border:1px solid #999;"></td>
+            </tr>
+          </t>
+        </table>
+      </div>
+    </t>
+  </template>
+</odoo>

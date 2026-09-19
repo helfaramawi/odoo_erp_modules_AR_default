@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="action_report_ssrs08_disclosure_status" model="ir.actions.report">
+    <field name="name">SSRS-08: تقرير حالة إقرارات الذمة المالية</field>
+    <field name="model">demo_gov.hr.disclosure</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">demo_gov_hr_reports.report_ssrs08_disclosure_status_template</field>
+    <field name="report_file">demo_gov_hr_reports.report_ssrs08_disclosure_status_template</field>
+    <field name="binding_model_id" ref="demo_gov_hr_disclosure.model_demo_gov_hr_disclosure"/>
+    <field name="binding_type">report</field>
+    <field name="attachment_use">False</field>
+  </record>
+</odoo>

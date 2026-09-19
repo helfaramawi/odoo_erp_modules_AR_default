@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <template id="report_ssrs01_work_injury_template">
+    <t t-call="web.html_container">
+      <t t-foreach="docs" t-as="o">
+        <div style="direction:rtl; font-family:Amiri,'Noto Naskh Arabic',Arial,sans-serif; padding:20px; page-break-after:always;">
+          <h2 style="text-align:center;">نموذج القومسيون — إصابة العمل</h2>
+          <h4 style="text-align:center;">SSRS-01</h4>
+          <table style="width:100%; border-collapse:collapse; font-size:10pt; margin-top:16px;">
+            <tr>
+              <td style="width:30%; font-weight:bold; padding:4px; border:1px solid #999;">اسم الموظف</td>
+              <td style="padding:4px; border:1px solid #999;"><t t-esc="o.employee_id.name"/></td>
+            </tr>
+            <tr>
+              <td style="font-weight:bold; padding:4px; border:1px solid #999;">الإدارة</td>
+              <td style="padding:4px; border:1px solid #999;"><t t-esc="o.employee_id.department_id.name"/></td>
+            </tr>
+            <tr>
+              <td style="font-weight:bold; padding:4px; border:1px solid #999;">تاريخ الإصابة</td>
+              <td style="padding:4px; border:1px solid #999;"><t t-esc="o.injury_date"/></td>
+            </tr>
+            <tr>
+              <td style="font-weight:bold; padding:4px; border:1px solid #999;">نوع الإصابة</td>
+              <td style="padding:4px; border:1px solid #999;"><t t-esc="o.injury_type"/></td>
+            </tr>
+            <tr>
+              <td style="font-weight:bold; padding:4px; border:1px solid #999;">رقم محضر القومسيون الطبي</td>
+              <td style="padding:4px; border:1px solid #999;"><t t-esc="o.medical_committee_ref"/></td>
+            </tr>
+            <tr>
+              <td style="font-weight:bold; padding:4px; border:1px solid #999;">فترة الإجازة</td>
+              <td style="padding:4px; border:1px solid #999;">
+                من <t t-esc="o.date_from"/> إلى <t t-esc="o.date_to"/>
+              </td>
+            </tr>
+          </table>
+
+          <div style="margin-top:60px;">
+            <table style="width:100%; border-collapse:collapse; font-size:10pt;">
+              <tr>
+                <td style="width:33%; text-align:center; padding-top:40px; border-top:1px solid #333;">توقيع الطبيب المعالج</td>
+                <td style="width:33%; text-align:center; padding-top:40px; border-top:1px solid #333;">توقيع رئيس اللجنة الطبية</td>
+                <td style="width:33%; text-align:center; padding-top:40px; border-top:1px solid #333;">اعتماد الإدارة</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </t>
+    </t>
+  </template>
+</odoo>

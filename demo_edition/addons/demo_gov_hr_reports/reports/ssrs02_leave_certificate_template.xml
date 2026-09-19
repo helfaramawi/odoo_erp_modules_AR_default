@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <template id="report_ssrs02_leave_certificate_template">
+    <t t-call="web.html_container">
+      <t t-foreach="docs" t-as="o">
+        <div style="direction:rtl; font-family:Amiri,'Noto Naskh Arabic',Arial,sans-serif; padding:20px; page-break-after:always;">
+          <h2 style="text-align:center;">شهادة استحقاق رصيد الإجازات</h2>
+          <h4 style="text-align:center;">SSRS-02</h4>
+          <table style="width:100%; border-collapse:collapse; font-size:10pt; margin-top:16px;">
+            <tr>
+              <td style="width:30%; font-weight:bold; padding:4px; border:1px solid #999;">اسم الموظف</td>
+              <td style="padding:4px; border:1px solid #999;"><t t-esc="o.name"/></td>
+            </tr>
+            <tr>
+              <td style="font-weight:bold; padding:4px; border:1px solid #999;">الإدارة</td>
+              <td style="padding:4px; border:1px solid #999;"><t t-esc="o.department_id.name"/></td>
+            </tr>
+            <tr>
+              <td style="font-weight:bold; padding:4px; border:1px solid #999;">سنوات الخدمة</td>
+              <td style="padding:4px; border:1px solid #999;"><t t-esc="o.years_of_service"/></td>
+            </tr>
+            <tr>
+              <td style="font-weight:bold; padding:4px; border:1px solid #999;">رصيد الإجازة السنوية المستحق (يوم/سنة)</td>
+              <td style="padding:4px; border:1px solid #999;"><t t-esc="o.annual_leave_entitlement_days"/></td>
+            </tr>
+            <tr>
+              <td style="font-weight:bold; padding:4px; border:1px solid #999;">المبلغ المستحق</td>
+              <td style="padding:4px; border:1px solid #999;">........................ (يُحسَب بمعرفة قسم الرواتب)</td>
+            </tr>
+            <tr>
+              <td style="font-weight:bold; padding:4px; border:1px solid #999;">صادرة بتاريخ</td>
+              <td style="padding:4px; border:1px solid #999;"><t t-esc="datetime.date.today()"/></td>
+            </tr>
+          </table>
+          <div style="margin-top:60px; text-align:left; width:250px; float:left;">
+            <div style="text-align:center; padding-top:40px; border-top:1px solid #333;">توقيع السكرتير العام</div>
+          </div>
+        </div>
+      </t>
+    </t>
+  </template>
+</odoo>

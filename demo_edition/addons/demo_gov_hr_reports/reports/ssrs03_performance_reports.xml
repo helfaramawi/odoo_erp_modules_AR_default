@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="action_report_ssrs03_performance" model="ir.actions.report">
+    <field name="name">SSRS-03: تقرير كفاءة الأداء السنوي</field>
+    <field name="model">demo_gov.hr.performance.appraisal</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">demo_gov_hr_reports.report_ssrs03_performance_template</field>
+    <field name="report_file">demo_gov_hr_reports.report_ssrs03_performance_template</field>
+    <field name="binding_model_id" ref="demo_gov_hr_performance.model_demo_gov_hr_performance_appraisal"/>
+    <field name="binding_type">report</field>
+    <field name="attachment_use">False</field>
+  </record>
+</odoo>
