@@ -8,7 +8,7 @@
 -->
 <odoo noupdate="1">
   <record id="insurance_bracket_current_year" model="demo_gov.hr.payroll.insurance.bracket">
-    <field name="year" eval="str(datetime.date.today().year)"/>
+    <field name="year" eval="time.strftime('%Y')"/>
     <field name="min_insurable_wage">1000.0</field>
     <field name="max_insurable_wage">15000.0</field>
     <field name="employee_contribution_pct">11.0</field>
