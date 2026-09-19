@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  قيم توضيحية فقط لتشغيل الديمو — الحد الأدنى/الأقصى لأجر الاشتراك ونسب
+  التوزيع بين الموظف والجهة يتغيرون فعلياً كل عام في 1/1 وفقاً لقانون
+  التأمينات الاجتماعية والمعاشات 148/2019 وتعديلاته. لازم الإدارة المالية
+  تراجع وتحدّث هذه الأرقام بالقيم الرسمية المعتمدة للسنة الحالية قبل أي
+  استخدام فعلي في صرف الرواتب.
+-->
+<odoo noupdate="1">
+  <record id="insurance_bracket_current_year" model="demo_gov.hr.payroll.insurance.bracket">
+    <field name="year" eval="str(datetime.date.today().year)"/>
+    <field name="min_insurable_wage">1000.0</field>
+    <field name="max_insurable_wage">15000.0</field>
+    <field name="employee_contribution_pct">11.0</field>
+    <field name="employer_contribution_pct">18.75</field>
+  </record>
+</odoo>

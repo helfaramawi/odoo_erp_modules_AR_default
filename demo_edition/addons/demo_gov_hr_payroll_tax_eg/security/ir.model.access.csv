@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_payroll_tax_category_user,demo_gov.hr.payroll.tax.category user,model_demo_gov_hr_payroll_tax_category,hr.group_hr_user,1,0,0,0
+access_hr_payroll_tax_category_manager,demo_gov.hr.payroll.tax.category manager,model_demo_gov_hr_payroll_tax_category,hr.group_hr_manager,1,1,1,1
+access_hr_payroll_tax_bracket_user,demo_gov.hr.payroll.tax.bracket user,model_demo_gov_hr_payroll_tax_bracket,hr.group_hr_user,1,0,0,0
+access_hr_payroll_tax_bracket_manager,demo_gov.hr.payroll.tax.bracket manager,model_demo_gov_hr_payroll_tax_bracket,hr.group_hr_manager,1,1,1,1
+access_hr_payroll_stamp_bracket_user,demo_gov.hr.payroll.stamp.bracket user,model_demo_gov_hr_payroll_stamp_bracket,hr.group_hr_user,1,0,0,0
+access_hr_payroll_stamp_bracket_manager,demo_gov.hr.payroll.stamp.bracket manager,model_demo_gov_hr_payroll_stamp_bracket,hr.group_hr_manager,1,1,1,1
+access_hr_payroll_tax_settings_user,demo_gov.hr.payroll.tax.settings user,model_demo_gov_hr_payroll_tax_settings,hr.group_hr_user,1,0,0,0
+access_hr_payroll_tax_settings_manager,demo_gov.hr.payroll.tax.settings manager,model_demo_gov_hr_payroll_tax_settings,hr.group_hr_manager,1,1,1,1

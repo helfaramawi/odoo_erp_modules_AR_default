@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_hr_payroll_insurance_bracket_form" model="ir.ui.view">
+    <field name="name">demo_gov.hr.payroll.insurance.bracket.form</field>
+    <field name="model">demo_gov.hr.payroll.insurance.bracket</field>
+    <field name="arch" type="xml">
+      <form string="إعدادات التأمينات الاجتماعية">
+        <sheet>
+          <div class="oe_title"><h1><field name="year"/></h1></div>
+          <group>
+            <group>
+              <field name="min_insurable_wage"/>
+              <field name="max_insurable_wage"/>
+            </group>
+            <group>
+              <field name="employee_contribution_pct"/>
+              <field name="employer_contribution_pct"/>
+            </group>
+          </group>
+          <group string="أكواد الحسابات">
+            <group string="حصة الموظف">
+              <field name="employee_debit_account_id"/>
+              <field name="employee_credit_account_id"/>
+            </group>
+            <group string="حصة الجهة">
+              <field name="employer_debit_account_id"/>
+              <field name="employer_credit_account_id"/>
+            </group>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_hr_payroll_insurance_bracket_list" model="ir.ui.view">
+    <field name="name">demo_gov.hr.payroll.insurance.bracket.list</field>
+    <field name="model">demo_gov.hr.payroll.insurance.bracket</field>
+    <field name="arch" type="xml">
+      <tree string="إعدادات التأمينات الاجتماعية">
+        <field name="year"/>
+        <field name="min_insurable_wage"/>
+        <field name="max_insurable_wage"/>
+        <field name="employee_contribution_pct"/>
+        <field name="employer_contribution_pct"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="action_hr_payroll_insurance_bracket" model="ir.actions.act_window">
+    <field name="name">التأمينات الاجتماعية</field>
+    <field name="res_model">demo_gov.hr.payroll.insurance.bracket</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+</odoo>

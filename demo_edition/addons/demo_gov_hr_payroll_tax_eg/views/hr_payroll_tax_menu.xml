@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <menuitem id="menu_hr_payroll_tax_category"
+            name="فئات وشرائح ضريبة الدخل"
+            parent="demo_gov_hr_payroll_structure.menu_hr_payroll_structure_root"
+            action="action_hr_payroll_tax_category"
+            sequence="20"/>
+
+  <menuitem id="menu_hr_payroll_stamp_bracket"
+            name="شرائح ضريبة الدمغة النسبية"
+            parent="demo_gov_hr_payroll_structure.menu_hr_payroll_structure_root"
+            action="action_hr_payroll_stamp_bracket"
+            sequence="30"/>
+
+  <menuitem id="menu_hr_payroll_tax_settings"
+            name="الإعدادات الضريبية العامة"
+            parent="demo_gov_hr_payroll_structure.menu_hr_payroll_structure_root"
+            action="action_hr_payroll_tax_settings"
+            sequence="40"/>
+</odoo>

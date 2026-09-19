@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <template id="report_form132_template">
+    <t t-call="web.html_container">
+      <t t-foreach="docs" t-as="o">
+        <div style="direction:rtl; font-family:Amiri,'Noto Naskh Arabic',Arial,sans-serif; padding:20px; page-break-after:always;">
+          <h2 style="text-align:center;">استمارة 132 ع.ح — كشف مرتب</h2>
+          <p style="text-align:center;">
+            شهر <t t-esc="o.month"/> / <t t-esc="o.year"/> —
+            <t t-esc="dict(o._fields['disbursement_entity'].selection).get(o.disbursement_entity, '')"/>
+          </p>
+
+          <table style="width:100%; border-collapse:collapse; font-size:10pt; margin-bottom:12px;">
+            <tr>
+              <td style="width:25%; font-weight:bold; padding:4px;">اسم الموظف</td>
+              <td style="padding:4px;"><t t-esc="o.employee_id.name"/></td>
+              <td style="width:25%; font-weight:bold; padding:4px;">الإدارة</td>
+              <td style="padding:4px;"><t t-esc="o.salary_id.department_id.name"/></td>
+            </tr>
+            <tr>
+              <td style="font-weight:bold; padding:4px;">فئة الموظف</td>
+              <td style="padding:4px;"><t t-esc="o.salary_id.employee_category"/></td>
+              <td style="font-weight:bold; padding:4px;">حالة الموظف</td>
+              <td style="padding:4px;"><t t-esc="o.salary_id.employee_status"/></td>
+            </tr>
+            <tr>
+              <td style="font-weight:bold; padding:4px;">رقم الصرف</td>
+              <td style="padding:4px;"><t t-esc="o.salary_id.disbursement_number"/></td>
+              <td style="font-weight:bold; padding:4px;">خاضع للضريبة / التأمينات</td>
+              <td style="padding:4px;">
+                <t t-esc="'نعم' if o.salary_id.is_taxable else 'لا'"/> /
+                <t t-esc="'نعم' if o.salary_id.is_insurable else 'لا'"/>
+              </td>
+            </tr>
+          </table>
+
+          <table style="width:100%; border-collapse:collapse; font-size:10pt; margin-bottom:12px;">
+            <tr style="background:#eee;">
+              <td style="font-weight:bold; padding:4px; border:1px solid #999;">البيان</td>
+              <td style="font-weight:bold; padding:4px; border:1px solid #999;">المبلغ (جنيه)</td>
+            </tr>
+            <tr>
+              <td style="padding:4px; border:1px solid #999;">إجمالي الاستحقاقات</td>
+              <td style="padding:4px; border:1px solid #999;"><t t-esc="'%.2f' % o.gross_earnings"/></td>
+            </tr>
+            <tr>
+              <td style="padding:4px; border:1px solid #999;">صافي التأثيرات الاستثنائية هذا الشهر</td>
+              <td style="padding:4px; border:1px solid #999;"><t t-esc="'%.2f' % o.transaction_adjustment"/></td>
+            </tr>
+            <tr>
+              <td style="padding:4px; border:1px solid #999;">حصة الموظف - التأمينات الاجتماعية</td>
+              <td style="padding:4px; border:1px solid #999;">-<t t-esc="'%.2f' % o.employee_insurance_share"/></td>
+            </tr>
+            <tr>
+              <td style="padding:4px; border:1px solid #999;">ضريبة الدخل الشهرية</td>
+              <td style="padding:4px; border:1px solid #999;">-<t t-esc="'%.2f' % o.income_tax_monthly"/></td>
+            </tr>
+            <tr>
+              <td style="padding:4px; border:1px solid #999;">ضريبة الدمغة النسبية</td>
+              <td style="padding:4px; border:1px solid #999;">-<t t-esc="'%.2f' % o.stamp_duty"/></td>
+            </tr>
+            <tr>
+              <td style="padding:4px; border:1px solid #999;">إجمالي الاستقطاعات اليدوية</td>
+              <td style="padding:4px; border:1px solid #999;">-<t t-esc="'%.2f' % o.manual_deductions"/></td>
+            </tr>
+            <tr style="font-weight:bold; background:#f5f5f5;">
+              <td style="padding:4px; border:1px solid #999;">صافي المرتب</td>
+              <td style="padding:4px; border:1px solid #999;"><t t-esc="'%.2f' % o.net_salary"/></td>
+            </tr>
+            <tr>
+              <td style="padding:4px; border:1px solid #999;">المرتب الصافي عن الشهر السابق (للمقارنة)</td>
+              <td style="padding:4px; border:1px solid #999;"><t t-esc="'%.2f' % o.previous_net_salary"/></td>
+            </tr>
+          </table>
+        </div>
+      </t>
+    </t>
+  </template>
+</odoo>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- نموذج كشف المرتب — بدون ir.actions.act_window خاص به؛ يُفتح تلقائياً
+       من أودو كنموذج افتراضي عند الضغط على سطر في جدول كشوف المرتبات
+       المضمَّن داخل نموذج الدورة، فلا داعي لأي مرجع %(xmlid)d هنا. -->
+  <record id="view_hr_payroll_payslip_form" model="ir.ui.view">
+    <field name="name">demo_gov.hr.payroll.payslip.form</field>
+    <field name="model">demo_gov.hr.payroll.payslip</field>
+    <field name="arch" type="xml">
+      <form string="كشف مرتب">
+        <header>
+          <button name="action_mark_completed" string="مكتمل" type="object" class="btn-primary" invisible="state == 'completed'"/>
+          <button name="action_mark_rejected" string="غير مكتمل" type="object" invisible="state == 'rejected'"/>
+          <field name="state" widget="statusbar" statusbar_visible="draft,completed,rejected"/>
+        </header>
+        <sheet>
+          <div class="oe_title"><h1><field name="employee_id" readonly="1"/></h1></div>
+          <group>
+            <group>
+              <field name="month" readonly="1"/>
+              <field name="year" readonly="1"/>
+              <field name="disbursement_entity" readonly="1"/>
+              <field name="salary_id" readonly="1"/>
+            </group>
+            <group>
+              <field name="gross_earnings" readonly="1"/>
+              <field name="manual_deductions" readonly="1"/>
+              <field name="transaction_adjustment" readonly="1"/>
+            </group>
+          </group>
+          <group string="التأمينات">
+            <field name="insurance_wage" readonly="1"/>
+            <field name="employee_insurance_share" readonly="1"/>
+            <field name="employer_insurance_share" readonly="1"/>
+          </group>
+          <group string="الضرائب">
+            <field name="annual_taxable_income" readonly="1"/>
+            <field name="income_tax_monthly" readonly="1"/>
+            <field name="stamp_duty" readonly="1"/>
+          </group>
+          <group string="الصافي">
+            <field name="net_salary" readonly="1"/>
+            <field name="previous_net_salary" readonly="1"/>
+          </group>
+          <field name="reviewer_notes" placeholder="ملاحظات المراجع..."/>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_hr_payroll_payslip_list" model="ir.ui.view">
+    <field name="name">demo_gov.hr.payroll.payslip.list</field>
+    <field name="model">demo_gov.hr.payroll.payslip</field>
+    <field name="arch" type="xml">
+      <tree string="كشوف المرتبات" decoration-success="state=='completed'" decoration-danger="state=='rejected'">
+        <field name="employee_id"/>
+        <field name="gross_earnings"/>
+        <field name="employee_insurance_share"/>
+        <field name="income_tax_monthly"/>
+        <field name="stamp_duty"/>
+        <field name="net_salary"/>
+        <field name="previous_net_salary"/>
+        <field name="state" widget="badge"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_hr_payroll_run_form" model="ir.ui.view">
+    <field name="name">demo_gov.hr.payroll.run.form</field>
+    <field name="model">demo_gov.hr.payroll.run</field>
+    <field name="arch" type="xml">
+      <form string="دورة رواتب شهرية">
+        <header>
+          <button name="action_compute_payslips" string="حساب كشوف المرتبات" type="object" class="btn-primary" invisible="state not in ('draft','computed')"/>
+          <button name="action_submit_for_review" string="إرسال للمراجعة" type="object" class="btn-primary" invisible="state != 'computed'"/>
+          <button name="action_approve" string="اعتماد" type="object" class="btn-primary" invisible="state != 'under_review'"/>
+          <button name="action_post" string="ترحيل" type="object" class="btn-success" invisible="state != 'approved'"/>
+          <button name="action_reset_to_draft" string="إرجاع لمسودة" type="object" invisible="state in ('draft','posted')"/>
+          <field name="state" widget="statusbar" statusbar_visible="draft,computed,under_review,approved,posted"/>
+        </header>
+        <sheet>
+          <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
+          <group>
+            <group>
+              <field name="month"/>
+              <field name="year"/>
+            </group>
+            <group>
+              <field name="disbursement_entity"/>
+              <field name="payslip_count"/>
+            </group>
+          </group>
+          <field name="payslip_ids">
+            <tree decoration-success="state=='completed'" decoration-danger="state=='rejected'" create="false" delete="false">
+              <field name="employee_id"/>
+              <field name="gross_earnings"/>
+              <field name="employee_insurance_share"/>
+              <field name="income_tax_monthly"/>
+              <field name="stamp_duty"/>
+              <field name="net_salary"/>
+              <field name="previous_net_salary"/>
+              <field name="state" widget="badge"/>
+            </tree>
+          </field>
+        </sheet>
+        <chatter/>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_hr_payroll_run_list" model="ir.ui.view">
+    <field name="name">demo_gov.hr.payroll.run.list</field>
+    <field name="model">demo_gov.hr.payroll.run</field>
+    <field name="arch" type="xml">
+      <tree string="دورات الرواتب الشهرية" decoration-success="state=='posted'">
+        <field name="name"/>
+        <field name="month"/>
+        <field name="year"/>
+        <field name="disbursement_entity"/>
+        <field name="payslip_count"/>
+        <field name="state" widget="badge"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="action_hr_payroll_run" model="ir.actions.act_window">
+    <field name="name">دورات الرواتب الشهرية</field>
+    <field name="res_model">demo_gov.hr.payroll.run</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+</odoo>

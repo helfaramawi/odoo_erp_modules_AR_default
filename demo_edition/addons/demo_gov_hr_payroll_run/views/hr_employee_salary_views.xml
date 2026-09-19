@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_hr_employee_salary_form" model="ir.ui.view">
+    <field name="name">demo_gov.hr.employee.salary.form</field>
+    <field name="model">demo_gov.hr.employee.salary</field>
+    <field name="arch" type="xml">
+      <form string="ملف مرتب الموظف">
+        <sheet>
+          <div class="oe_title"><h1><field name="employee_id"/></h1></div>
+          <group>
+            <group string="بيانات مسحوبة من الموارد البشرية">
+              <field name="department_id" readonly="1"/>
+              <field name="spouse_works" readonly="1"/>
+              <field name="num_dependents" readonly="1"/>
+              <field name="fund_subscription_amount" readonly="1"/>
+            </group>
+            <group string="تصنيف المرتب">
+              <field name="is_taxable"/>
+              <field name="is_insurable"/>
+              <field name="employee_category"/>
+              <field name="employee_status"/>
+              <field name="disbursement_number"/>
+              <field name="disbursement_entity"/>
+            </group>
+          </group>
+          <group>
+            <group string="بيانات مرجعية">
+              <field name="salary_30_6_2015"/>
+              <field name="special_allowances_pre_law"/>
+              <field name="job_wage"/>
+            </group>
+            <group string="جهة الصرف (البنك)">
+              <field name="bank_id"/>
+              <field name="bank_branch"/>
+              <field name="bank_address"/>
+              <field name="disbursement_method"/>
+              <field name="bank_account_number"/>
+            </group>
+          </group>
+          <group string="أجر الاشتراك التأميني">
+            <button name="action_compute_insurance_wage" string="حساب أجر الاشتراك التأميني"
+                    type="object" class="btn-secondary"/>
+            <field name="insurance_subscription_wage" readonly="1"/>
+          </group>
+          <field name="salary_line_ids">
+            <tree editable="bottom">
+              <field name="component_id"/>
+              <field name="component_type"/>
+              <field name="amount"/>
+              <field name="installment_start_date"/>
+              <field name="installment_end_date"/>
+              <field name="alimony_beneficiary_name"/>
+              <field name="alimony_beneficiary_address"/>
+            </tree>
+          </field>
+          <group>
+            <field name="total_earnings" readonly="1"/>
+            <field name="total_deductions" readonly="1"/>
+          </group>
+        </sheet>
+        <chatter/>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_hr_employee_salary_list" model="ir.ui.view">
+    <field name="name">demo_gov.hr.employee.salary.list</field>
+    <field name="model">demo_gov.hr.employee.salary</field>
+    <field name="arch" type="xml">
+      <tree string="ملفات مرتبات الموظفين">
+        <field name="employee_id"/>
+        <field name="department_id"/>
+        <field name="disbursement_entity"/>
+        <field name="job_wage"/>
+        <field name="total_earnings"/>
+        <field name="total_deductions"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="action_hr_employee_salary" model="ir.actions.act_window">
+    <field name="name">ملفات مرتبات الموظفين</field>
+    <field name="res_model">demo_gov.hr.employee.salary</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+</odoo>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_hr_payroll_tax_category_form" model="ir.ui.view">
+    <field name="name">demo_gov.hr.payroll.tax.category.form</field>
+    <field name="model">demo_gov.hr.payroll.tax.category</field>
+    <field name="arch" type="xml">
+      <form string="فئة ضريبة الدخل">
+        <sheet>
+          <div class="oe_title"><h1><field name="name"/></h1></div>
+          <group>
+            <field name="income_from"/>
+            <field name="income_to"/>
+          </group>
+          <field name="bracket_ids">
+            <tree editable="bottom">
+              <field name="income_from"/>
+              <field name="income_to"/>
+              <field name="rate"/>
+            </tree>
+          </field>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_hr_payroll_tax_category_list" model="ir.ui.view">
+    <field name="name">demo_gov.hr.payroll.tax.category.list</field>
+    <field name="model">demo_gov.hr.payroll.tax.category</field>
+    <field name="arch" type="xml">
+      <tree string="فئات ضريبة الدخل">
+        <field name="name"/>
+        <field name="income_from"/>
+        <field name="income_to"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="action_hr_payroll_tax_category" model="ir.actions.act_window">
+    <field name="name">فئات وشرائح ضريبة الدخل</field>
+    <field name="res_model">demo_gov.hr.payroll.tax.category</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+  <record id="view_hr_payroll_stamp_bracket_list" model="ir.ui.view">
+    <field name="name">demo_gov.hr.payroll.stamp.bracket.list</field>
+    <field name="model">demo_gov.hr.payroll.stamp.bracket</field>
+    <field name="arch" type="xml">
+      <tree string="شرائح ضريبة الدمغة النسبية" editable="bottom">
+        <field name="income_from"/>
+        <field name="income_to"/>
+        <field name="rate"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="action_hr_payroll_stamp_bracket" model="ir.actions.act_window">
+    <field name="name">شرائح ضريبة الدمغة النسبية</field>
+    <field name="res_model">demo_gov.hr.payroll.stamp.bracket</field>
+    <field name="view_mode">tree</field>
+  </record>
+
+  <record id="view_hr_payroll_tax_settings_form" model="ir.ui.view">
+    <field name="name">demo_gov.hr.payroll.tax.settings.form</field>
+    <field name="model">demo_gov.hr.payroll.tax.settings</field>
+    <field name="arch" type="xml">
+      <form string="الإعدادات الضريبية العامة">
+        <sheet>
+          <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
+          <group>
+            <group>
+              <field name="income_tax_exemption"/>
+              <field name="disability_additional_exemption"/>
+              <field name="stamp_duty_exemption"/>
+            </group>
+            <group>
+              <field name="flat_tax_rate_non_employees"/>
+              <field name="non_commercial_professions_tax_rate"/>
+            </group>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_hr_payroll_tax_settings_list" model="ir.ui.view">
+    <field name="name">demo_gov.hr.payroll.tax.settings.list</field>
+    <field name="model">demo_gov.hr.payroll.tax.settings</field>
+    <field name="arch" type="xml">
+      <tree string="الإعدادات الضريبية العامة">
+        <field name="name"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="action_hr_payroll_tax_settings" model="ir.actions.act_window">
+    <field name="name">الإعدادات الضريبية العامة</field>
+    <field name="res_model">demo_gov.hr.payroll.tax.settings</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+</odoo>

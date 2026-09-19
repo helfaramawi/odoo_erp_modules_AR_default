@@ -1,0 +1,12 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_employee_salary_user,demo_gov.hr.employee.salary user,model_demo_gov_hr_employee_salary,hr.group_hr_user,1,1,1,0
+access_hr_employee_salary_manager,demo_gov.hr.employee.salary manager,model_demo_gov_hr_employee_salary,hr.group_hr_manager,1,1,1,1
+access_hr_employee_salary_line_user,demo_gov.hr.employee.salary.line user,model_demo_gov_hr_employee_salary_line,hr.group_hr_user,1,1,1,1
+access_hr_payroll_reward_user,demo_gov.hr.payroll.reward user,model_demo_gov_hr_payroll_reward,hr.group_hr_user,1,1,1,0
+access_hr_payroll_reward_manager,demo_gov.hr.payroll.reward manager,model_demo_gov_hr_payroll_reward,hr.group_hr_manager,1,1,1,1
+access_hr_payroll_disbursement_line_user,demo_gov.hr.payroll.disbursement.line user,model_demo_gov_hr_payroll_disbursement_line,hr.group_hr_user,1,0,0,0
+access_hr_payroll_disbursement_line_manager,demo_gov.hr.payroll.disbursement.line manager,model_demo_gov_hr_payroll_disbursement_line,hr.group_hr_manager,1,1,1,0
+access_hr_payroll_run_user,demo_gov.hr.payroll.run user,model_demo_gov_hr_payroll_run,hr.group_hr_user,1,1,1,0
+access_hr_payroll_run_manager,demo_gov.hr.payroll.run manager,model_demo_gov_hr_payroll_run,hr.group_hr_manager,1,1,1,1
+access_hr_payroll_payslip_user,demo_gov.hr.payroll.payslip user,model_demo_gov_hr_payroll_payslip,hr.group_hr_user,1,1,1,0
+access_hr_payroll_payslip_manager,demo_gov.hr.payroll.payslip manager,model_demo_gov_hr_payroll_payslip,hr.group_hr_manager,1,1,1,1

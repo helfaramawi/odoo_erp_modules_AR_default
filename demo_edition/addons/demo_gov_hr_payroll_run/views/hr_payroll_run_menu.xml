@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <menuitem id="menu_hr_employee_salary"
+            name="ملفات مرتبات الموظفين"
+            parent="demo_gov_hr_payroll_structure.menu_gov_payroll"
+            action="action_hr_employee_salary"
+            sequence="15"/>
+
+  <menuitem id="menu_hr_payroll_run"
+            name="دورات الرواتب الشهرية"
+            parent="demo_gov_hr_payroll_structure.menu_gov_payroll"
+            action="action_hr_payroll_run"
+            sequence="25"/>
+
+  <menuitem id="menu_hr_payroll_reward"
+            name="مكافآت الموظفين"
+            parent="demo_gov_hr_payroll_structure.menu_gov_payroll"
+            action="action_hr_payroll_reward"
+            sequence="30"/>
+
+  <menuitem id="menu_hr_payroll_disbursement_line"
+            name="دفتر 129 سايرة"
+            parent="demo_gov_hr_payroll_structure.menu_gov_payroll"
+            action="action_hr_payroll_disbursement_line"
+            sequence="35"/>
+</odoo>

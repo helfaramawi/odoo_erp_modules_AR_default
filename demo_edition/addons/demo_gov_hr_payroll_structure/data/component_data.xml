@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+  <record id="component_basic" model="demo_gov.hr.payroll.component">
+    <field name="code">BASIC</field>
+    <field name="name">الأجر الأساسي</field>
+    <field name="component_type">earning</field>
+    <field name="computation_method">fixed</field>
+    <field name="sequence">10</field>
+  </record>
+  <record id="component_housing" model="demo_gov.hr.payroll.component">
+    <field name="code">HOUS</field>
+    <field name="name">بدل سكن</field>
+    <field name="component_type">earning</field>
+    <field name="computation_method">fixed</field>
+    <field name="sequence">20</field>
+  </record>
+  <record id="component_transport" model="demo_gov.hr.payroll.component">
+    <field name="code">TRANS</field>
+    <field name="name">بدل انتقال</field>
+    <field name="component_type">earning</field>
+    <field name="computation_method">fixed</field>
+    <field name="sequence">30</field>
+  </record>
+  <record id="component_work_nature" model="demo_gov.hr.payroll.component">
+    <field name="code">WNAT</field>
+    <field name="name">بدل طبيعة عمل</field>
+    <field name="component_type">earning</field>
+    <field name="computation_method">fixed</field>
+    <field name="sequence">40</field>
+  </record>
+  <record id="component_periodic_increment" model="demo_gov.hr.payroll.component">
+    <field name="code">PINC</field>
+    <field name="name">علاوة دورية</field>
+    <field name="component_type">earning</field>
+    <field name="computation_method">pct_basic</field>
+    <field name="sequence">50</field>
+  </record>
+  <record id="component_incentive_allowance" model="demo_gov.hr.payroll.component">
+    <field name="code">INCA</field>
+    <field name="name">علاوة تشجيعية</field>
+    <field name="component_type">earning</field>
+    <field name="computation_method">pct_basic</field>
+    <field name="sequence">60</field>
+  </record>
+  <record id="component_promotion_allowance" model="demo_gov.hr.payroll.component">
+    <field name="code">PROM</field>
+    <field name="name">علاوة ترقية</field>
+    <field name="component_type">earning</field>
+    <field name="computation_method">fixed</field>
+    <field name="sequence">70</field>
+  </record>
+  <record id="component_penalty_deduction" model="demo_gov.hr.payroll.component">
+    <field name="code">PEN</field>
+    <field name="name">خصم جزاءات</field>
+    <field name="component_type">deduction</field>
+    <field name="computation_method">fixed</field>
+    <field name="sequence">80</field>
+  </record>
+  <record id="component_installment_deduction" model="demo_gov.hr.payroll.component">
+    <field name="code">INST</field>
+    <field name="name">خصم أقساط</field>
+    <field name="component_type">deduction</field>
+    <field name="computation_method">fixed</field>
+    <field name="sequence">90</field>
+  </record>
+</odoo>
