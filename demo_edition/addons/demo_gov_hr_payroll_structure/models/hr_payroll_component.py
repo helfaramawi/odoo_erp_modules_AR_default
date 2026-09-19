@@ -19,7 +19,7 @@ class HrPayrollComponent(models.Model):
         ('pct_basic', 'نسبة من الأجر الأساسي'),
         ('pct_job_wage', 'نسبة من الأجر الوظيفي'),
     ], string='طريقة الاحتساب', default='fixed', required=True)
-    active = fields.Boolean(default=True)
+    active = fields.Boolean(string='نشط', default=True)
 
     _sql_constraints = [
         ('unique_code', 'unique(code)', 'هذا الكود مستخدم بالفعل لبند آخر.'),

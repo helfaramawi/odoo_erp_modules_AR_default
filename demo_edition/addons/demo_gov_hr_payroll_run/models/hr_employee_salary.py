@@ -40,7 +40,7 @@ class HrEmployeeSalary(models.Model):
     salary_30_6_2015 = fields.Float(string='المرتب في 2015/6/30')
     special_allowances_pre_law = fields.Float(string='العلاوات الخاصة قبل العمل بالقانون')
     disbursement_entity = fields.Selection([
-        ('diwan', 'ديوان محافظة بورسعيد'),
+        ('diwan', 'الديوان العام للمحافظة التجريبية'),
         ('funds', 'الصناديق'),
     ], string='جهة الصرف', default='diwan', required=True, tracking=True)
 
@@ -64,7 +64,7 @@ class HrEmployeeSalary(models.Model):
     insurance_subscription_wage = fields.Float(string='أجر الاشتراك التأميني', readonly=True,
                                                 tracking=True)
 
-    active = fields.Boolean(default=True)
+    active = fields.Boolean(string='نشط', default=True)
 
     _sql_constraints = [
         ('unique_employee', 'unique(employee_id)',

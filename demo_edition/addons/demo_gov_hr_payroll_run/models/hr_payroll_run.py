@@ -20,12 +20,12 @@ class HrPayrollRun(models.Model):
     year = fields.Char(string='السنة', required=True,
                         default=lambda s: str(fields.Date.today().year))
     disbursement_entity = fields.Selection([
-        ('diwan', 'ديوان محافظة بورسعيد'),
+        ('diwan', 'الديوان العام للمحافظة التجريبية'),
         ('funds', 'الصناديق'),
     ], string='جهة الصرف', default='diwan', required=True)
 
     payslip_ids = fields.One2many('demo_gov.hr.payroll.payslip', 'run_id', string='كشوف المرتبات')
-    payslip_count = fields.Integer(compute='_compute_payslip_count')
+    payslip_count = fields.Integer(compute='_compute_payslip_count', string='عدد كشوف المرتبات')
 
     # شباك الإجماليات — استمارة 132 إجمالي (المتطلب الوظيفي 11-4)
     total_gross = fields.Float(compute='_compute_totals', string='إجمالي الاستحقاقات')

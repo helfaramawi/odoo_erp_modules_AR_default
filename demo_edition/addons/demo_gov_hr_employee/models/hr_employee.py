@@ -15,7 +15,7 @@ GOV_EMPLOYMENT_TYPES = [
 GOV_ENTITIES = [
     ('diwan_general', 'الديوان العام'),
     ('districts', 'الأحياء'),
-    ('port_fouad', 'مدينة بورفؤاد'),
+    ('port_fouad', 'المدينة الثانية'),
 ]
 
 # المستندات المطلوبة عند التعيين — إجراء رقم 13 (فتح ملف لموظف) من الـ FRD

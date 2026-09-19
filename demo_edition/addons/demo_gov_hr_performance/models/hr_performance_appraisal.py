@@ -39,7 +39,7 @@ class HrPerformanceAppraisal(models.Model):
     incentive_allowance_pct = fields.Float(string='نسبة العلاوة التشجيعية %')
     grievance_ids = fields.One2many('demo_gov.hr.performance.grievance', 'appraisal_id',
                                      string='التظلمات')
-    grievance_count = fields.Integer(compute='_compute_grievance_count')
+    grievance_count = fields.Integer(compute='_compute_grievance_count', string='عدد التظلمات')
 
     state = fields.Selection([
         ('draft', 'مسودة'),

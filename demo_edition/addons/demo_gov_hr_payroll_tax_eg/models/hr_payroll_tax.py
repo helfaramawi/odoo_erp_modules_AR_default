@@ -71,7 +71,7 @@ class HrPayrollTaxSettings(models.Model):
     _name = 'demo_gov.hr.payroll.tax.settings'
     _description = 'إعدادات ضرائب الرواتب العامة — المتطلب الوظيفي 3-2/4-2/5-2'
 
-    name = fields.Char(default='الإعدادات الضريبية العامة', readonly=True)
+    name = fields.Char(string='الاسم', default='الإعدادات الضريبية العامة', readonly=True)
     income_tax_exemption = fields.Float(string='مبلغ الإعفاء من ضريبة الدخل (سنوي)')
     disability_additional_exemption = fields.Float(string='إعفاء إضافي لأصحاب الهمم')
     stamp_duty_exemption = fields.Float(string='مبلغ الإعفاء من ضريبة الدمغة النسبية')

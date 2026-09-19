@@ -18,7 +18,7 @@ class HrPayrollExternalSalary(models.Model):
     bank_account_number = fields.Char(string='رقم الحساب البنكي')
     amount = fields.Float(string='المبلغ الشهري')
     notes = fields.Char(string='ملاحظات')
-    active = fields.Boolean(default=True)
+    active = fields.Boolean(string='نشط', default=True)
 
     _sql_constraints = [
         ('unique_national_id', 'unique(national_id)',

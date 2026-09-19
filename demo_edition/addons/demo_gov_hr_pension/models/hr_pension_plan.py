@@ -16,4 +16,4 @@ class HrPensionPlan(models.Model):
     employee_contribution_pct = fields.Float(string='نسبة خصم الموظف %')
     employer_contribution_pct = fields.Float(string='نسبة خصم الجهة %')
     description = fields.Text(string='وصف الخطة')
-    active = fields.Boolean(default=True)
+    active = fields.Boolean(string='نشطة', default=True)

@@ -6,7 +6,7 @@ class HrTakafulParameters(models.Model):
     _name = 'demo_gov.hr.takaful.parameters'
     _description = 'إعدادات صندوق التكافل — أكواد الحسابات ومبالغ الاستحقاقات المرجعية'
 
-    name = fields.Char(default='إعدادات صندوق التكافل', readonly=True)
+    name = fields.Char(string='الاسم', default='إعدادات صندوق التكافل', readonly=True)
     fund_account_id = fields.Many2one('account.account', string='حساب رصيد الصندوق')
     income_account_id = fields.Many2one('account.account', string='حساب إيرادات الاشتراكات')
     expense_account_id = fields.Many2one('account.account', string='حساب مصروفات الصرف')

@@ -15,7 +15,7 @@ TRANSFER_TYPES = [
 ENTITY_CHOICES = [
     ('diwan_general', 'الديوان العام'),
     ('districts', 'الأحياء'),
-    ('port_fouad', 'مدينة بورفؤاد'),
+    ('port_fouad', 'المدينة الثانية'),
     ('external', 'جهة خارجية'),
 ]
 
