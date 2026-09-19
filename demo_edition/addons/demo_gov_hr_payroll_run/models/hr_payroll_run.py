@@ -38,6 +38,8 @@ class HrPayrollRun(models.Model):
     total_transaction_adjustment = fields.Float(compute='_compute_totals',
                                                  string='إجمالي التأثيرات الاستثنائية')
     total_net = fields.Float(compute='_compute_totals', string='إجمالي الصافي (GP)')
+    daftar55_id = fields.Many2one('demo_gov.daftar55', string='قيد دفتر 55 ع.ح', readonly=True,
+                                   copy=False)
 
     state = fields.Selection([
         ('draft', 'مسودة'),
@@ -108,6 +110,16 @@ class HrPayrollRun(models.Model):
                 raise UserError(_('لا يمكن اعتماد الدورة وبها كشوف "غير مكتملة" لم تُراجَع.'))
         self.write({'state': 'approved'})
 
+    def _get_payroll_disbursement_partner(self):
+        partner = self.env['res.partner'].search([
+            ('name', '=', 'صرف رواتب الموظفين'), ('is_company', '=', True),
+        ], limit=1)
+        if not partner:
+            partner = self.env['res.partner'].create({
+                'name': 'صرف رواتب الموظفين', 'is_company': True,
+            })
+        return partner
+
     def action_post(self):
         for rec in self:
             if rec.state != 'approved':
@@ -122,6 +134,21 @@ class HrPayrollRun(models.Model):
                     'net_amount': payslip.net_salary,
                     'source_reference': rec.name,
                 })
+            entity_label = dict(rec._fields['disbursement_entity'].selection).get(
+                rec.disbursement_entity, '')
+            daftar55 = self.env['demo_gov.daftar55'].create({
+                'is_payroll_entry': True,
+                'department_name': entity_label,
+                'form50_ref': 'رواتب %s' % rec.name,
+                'budget_bab': 'الباب الأول',
+                'budget_line': 'الأجور والمرتبات',
+                'date_received': fields.Date.today(),
+                'vendor_id': rec._get_payroll_disbursement_partner().id,
+                'amount_gross': rec.total_net,
+                'notes': _('قيد إجمالي لصافي رواتب دورة %s — %s موظف. راجع استمارة 132 إجمالي '
+                           'المطبوعة من الدورة لتفاصيل كل موظف.') % (rec.name, rec.payslip_count),
+            })
+            rec.daftar55_id = daftar55.id
         self.write({'state': 'posted'})
 
     def action_reset_to_draft(self):

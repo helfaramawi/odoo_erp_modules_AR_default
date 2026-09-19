@@ -89,6 +89,7 @@
             <group>
               <field name="disbursement_entity"/>
               <field name="payslip_count"/>
+              <field name="daftar55_id" invisible="not daftar55_id"/>
             </group>
           </group>
           <field name="payslip_ids">

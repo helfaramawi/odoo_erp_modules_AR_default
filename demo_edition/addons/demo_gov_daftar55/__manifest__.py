@@ -1,7 +1,7 @@
 {
     'name': 'دفتر 55 - سجل المدفوعات المتسلسل',
     'summary': 'C-FM-01: Daftar 55 Sequential Payment Register – Demo Governorate',
-    'version': '17.0.1.0.0',
+    'version': '17.0.1.1.0',
     'category': 'الخدمات الحكومية التجريبية/الحسابات',
     'author': 'Enterprise Solutions Demo',
     'website': 'https://example.com',

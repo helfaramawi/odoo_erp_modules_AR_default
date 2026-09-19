@@ -82,6 +82,12 @@ class Daftar55(models.Model):
     budget_fasle = fields.Char(string='فصل')
 
     # ── المبالغ والاستقطاعات ─────────────────────────────────────────────────
+    # يُستخدم عند إنشاء القيد من محرك الرواتب (demo_gov_hr_payroll_run) —
+    # المبلغ المُدخَل في amount_gross يكون بالفعل صافي المرتب بعد تطبيق
+    # التأمينات والضرائب داخل محرك الرواتب نفسه، فلا يصح تكرار خصومات
+    # الدمغة/ضريبة الأرباح التجارية (المُعدَّة أصلاً لمستحقات الموردين) عليه.
+    is_payroll_entry = fields.Boolean(string='قيد رواتب (بدون استقطاعات الموردين)',
+                                       default=False, readonly=True, copy=False)
     amount_gross = fields.Monetary(string='إجمالي الأصل', required=True, currency_field='currency_id')
     deductions_stamp_normal       = fields.Monetary(string='الدمغة العادية (1%)',    compute='_compute_deductions', store=True, currency_field='currency_id')
     deductions_stamp_extra        = fields.Monetary(string='الدمغة الإضافية (3×)',   compute='_compute_deductions', store=True, currency_field='currency_id')
@@ -120,10 +126,19 @@ class Daftar55(models.Model):
         ('archived', 'محفوظ'),
     ], default='draft', string='الحالة', tracking=True)
 
-    @api.depends('amount_gross')
+    @api.depends('amount_gross', 'is_payroll_entry')
     def _compute_deductions(self):
         for rec in self:
             g = rec.amount_gross or 0.0
+            if rec.is_payroll_entry:
+                rec.deductions_stamp_normal       = 0.0
+                rec.deductions_stamp_extra        = 0.0
+                rec.deductions_stamp_proportional = 0.0
+                rec.deductions_commercial_tax     = 0.0
+                rec.total_deductions              = 0.0
+                rec.amount_net                    = g
+                rec.amount_words                  = amount_to_words(g)
+                continue
             normal = round(g * 0.01, 2)
             extra  = round(normal * 3, 2)
             prop   = round(max(g - 50.0, 0) * 0.008, 2)

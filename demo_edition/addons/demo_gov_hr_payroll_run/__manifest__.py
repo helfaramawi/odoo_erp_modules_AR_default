@@ -1,11 +1,11 @@
 {
     'name': 'الرواتب الحكومية — دورة الصرف الشهرية',
     'summary': 'C-PR-04: Employee salary file, monthly payroll run, Form 132 ع.ح, rewards, register 129 سايرة (FR-8..15)',
-    'version': '17.0.1.2.0',
+    'version': '17.0.1.3.0',
     'category': 'الخدمات الحكومية التجريبية/الرواتب',
     'author': 'Enterprise Solutions Demo',
     'license': 'LGPL-3',
-    'depends': ['demo_gov_hr_payroll_tax_eg', 'demo_gov_hr_payroll_insurance_eg'],
+    'depends': ['demo_gov_hr_payroll_tax_eg', 'demo_gov_hr_payroll_insurance_eg', 'demo_gov_daftar55'],
     'data': [
         'security/ir.model.access.csv',
         'data/sequence_data.xml',
