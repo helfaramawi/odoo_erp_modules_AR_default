@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <menuitem id="menu_hr_takaful_root"
+            name="صندوق التكافل"
+            parent="demo_gov_hr_training.menu_gov_hr"
+            sequence="50"/>
+
+  <menuitem id="menu_hr_takaful_member"
+            name="أعضاء الصندوق"
+            parent="menu_hr_takaful_root"
+            action="action_hr_takaful_member"
+            sequence="10"/>
+
+  <menuitem id="menu_hr_takaful_contribution"
+            name="الاشتراكات"
+            parent="menu_hr_takaful_root"
+            action="action_hr_takaful_contribution"
+            sequence="20"/>
+
+  <menuitem id="menu_hr_takaful_payout"
+            name="طلبات الصرف"
+            parent="menu_hr_takaful_root"
+            action="action_hr_takaful_payout"
+            sequence="30"/>
+
+  <menuitem id="menu_hr_takaful_parameters"
+            name="إعدادات الصندوق"
+            parent="menu_hr_takaful_root"
+            action="action_hr_takaful_parameters"
+            sequence="40"/>
+</odoo>

@@ -1,0 +1,20 @@
+{
+    'name': 'المعاشات والتأمينات',
+    'summary': 'FDD-HR-08: Pension/health benefit plans, retirement settlement at 60, Form 15 for the National Authority for Insurance & Pensions',
+    'version': '17.0.1.0.0',
+    'category': 'الخدمات الحكومية التجريبية/الموارد البشرية',
+    'author': 'Enterprise Solutions Demo',
+    'license': 'LGPL-3',
+    'depends': ['demo_gov_hr_leave', 'demo_gov_hr_recruitment', 'demo_gov_hr_training'],
+    'data': [
+        'security/ir.model.access.csv',
+        'views/hr_pension_plan_views.xml',
+        'views/hr_pension_enrollment_views.xml',
+        'views/hr_pension_settlement_views.xml',
+        'views/hr_pension_menu.xml',
+        'reports/form15_reports.xml',
+        'reports/form15_template.xml',
+    ],
+    'installable': True,
+    'application': False,
+}

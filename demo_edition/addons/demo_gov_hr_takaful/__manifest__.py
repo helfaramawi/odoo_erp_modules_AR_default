@@ -1,0 +1,20 @@
+{
+    'name': 'صندوق التكافل',
+    'summary': 'C-01: Solidarity fund for Diwan/districts staff — membership, monthly contributions, payouts (marriage/birth/death/retirement)',
+    'version': '17.0.1.0.0',
+    'category': 'الخدمات الحكومية التجريبية/الموارد البشرية',
+    'author': 'Enterprise Solutions Demo',
+    'license': 'LGPL-3',
+    'depends': ['demo_gov_hr_employee', 'demo_gov_hr_training', 'account'],
+    'data': [
+        'security/ir.model.access.csv',
+        'data/sequence_data.xml',
+        'views/hr_takaful_parameters_views.xml',
+        'views/hr_takaful_member_views.xml',
+        'views/hr_takaful_contribution_views.xml',
+        'views/hr_takaful_payout_views.xml',
+        'views/hr_takaful_menu.xml',
+    ],
+    'installable': True,
+    'application': False,
+}

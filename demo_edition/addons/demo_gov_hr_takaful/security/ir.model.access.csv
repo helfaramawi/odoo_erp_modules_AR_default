@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_takaful_parameters_user,demo_gov.hr.takaful.parameters user,model_demo_gov_hr_takaful_parameters,hr.group_hr_user,1,0,0,0
+access_hr_takaful_parameters_manager,demo_gov.hr.takaful.parameters manager,model_demo_gov_hr_takaful_parameters,hr.group_hr_manager,1,1,1,1
+access_hr_takaful_member_user,demo_gov.hr.takaful.member user,model_demo_gov_hr_takaful_member,hr.group_hr_user,1,1,1,0
+access_hr_takaful_member_manager,demo_gov.hr.takaful.member manager,model_demo_gov_hr_takaful_member,hr.group_hr_manager,1,1,1,1
+access_hr_takaful_contribution_user,demo_gov.hr.takaful.contribution user,model_demo_gov_hr_takaful_contribution,hr.group_hr_user,1,1,1,0
+access_hr_takaful_contribution_manager,demo_gov.hr.takaful.contribution manager,model_demo_gov_hr_takaful_contribution,hr.group_hr_manager,1,1,1,1
+access_hr_takaful_payout_user,demo_gov.hr.takaful.payout user,model_demo_gov_hr_takaful_payout,hr.group_hr_user,1,1,1,0
+access_hr_takaful_payout_manager,demo_gov.hr.takaful.payout manager,model_demo_gov_hr_takaful_payout,hr.group_hr_manager,1,1,1,1

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_hr_takaful_parameters_form" model="ir.ui.view">
+    <field name="name">demo_gov.hr.takaful.parameters.form</field>
+    <field name="model">demo_gov.hr.takaful.parameters</field>
+    <field name="arch" type="xml">
+      <form string="إعدادات صندوق التكافل">
+        <sheet>
+          <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
+          <group string="أكواد الحسابات (للتوثيق فقط — الترحيل الفعلي غير مُفعَّل بعد)">
+            <field name="fund_account_id"/>
+            <field name="income_account_id"/>
+            <field name="expense_account_id"/>
+          </group>
+          <group string="مبالغ الاستحقاقات المرجعية (توضيحية — تُخصَّص فعلياً بالاتفاق مع الجهة)">
+            <field name="marriage_payout"/>
+            <field name="birth_payout"/>
+            <field name="death_payout"/>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_hr_takaful_parameters_list" model="ir.ui.view">
+    <field name="name">demo_gov.hr.takaful.parameters.list</field>
+    <field name="model">demo_gov.hr.takaful.parameters</field>
+    <field name="arch" type="xml">
+      <tree string="إعدادات صندوق التكافل">
+        <field name="name"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="action_hr_takaful_parameters" model="ir.actions.act_window">
+    <field name="name">إعدادات صندوق التكافل</field>
+    <field name="res_model">demo_gov.hr.takaful.parameters</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+</odoo>

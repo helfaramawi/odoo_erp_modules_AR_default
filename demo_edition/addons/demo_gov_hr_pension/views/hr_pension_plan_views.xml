@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_hr_pension_plan_form" model="ir.ui.view">
+    <field name="name">demo_gov.hr.pension.plan.form</field>
+    <field name="model">demo_gov.hr.pension.plan</field>
+    <field name="arch" type="xml">
+      <form string="خطة معاش أو تأمين">
+        <sheet>
+          <div class="oe_title"><h1><field name="name"/></h1></div>
+          <group>
+            <group>
+              <field name="plan_type"/>
+              <field name="active"/>
+            </group>
+            <group>
+              <field name="employee_contribution_pct"/>
+              <field name="employer_contribution_pct"/>
+            </group>
+          </group>
+          <field name="description" placeholder="وصف الخطة..."/>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_hr_pension_plan_list" model="ir.ui.view">
+    <field name="name">demo_gov.hr.pension.plan.list</field>
+    <field name="model">demo_gov.hr.pension.plan</field>
+    <field name="arch" type="xml">
+      <tree string="خطط المعاشات والتأمينات">
+        <field name="name"/>
+        <field name="plan_type"/>
+        <field name="employee_contribution_pct"/>
+        <field name="employer_contribution_pct"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="action_hr_pension_plan" model="ir.actions.act_window">
+    <field name="name">خطط المعاشات والتأمينات</field>
+    <field name="res_model">demo_gov.hr.pension.plan</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+</odoo>

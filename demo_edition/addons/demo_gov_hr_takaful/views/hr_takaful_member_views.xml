@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_hr_takaful_member_form" model="ir.ui.view">
+    <field name="name">demo_gov.hr.takaful.member.form</field>
+    <field name="model">demo_gov.hr.takaful.member</field>
+    <field name="arch" type="xml">
+      <form string="عضو صندوق التكافل">
+        <header>
+          <field name="member_status" widget="statusbar" statusbar_visible="active,suspended,ended"/>
+        </header>
+        <sheet>
+          <div class="oe_title"><h1><field name="employee_id"/></h1></div>
+          <group>
+            <group>
+              <field name="department_id" readonly="1"/>
+              <field name="enrollment_date"/>
+              <field name="end_date"/>
+            </group>
+            <group>
+              <field name="monthly_contribution"/>
+              <field name="total_contributions" readonly="1"/>
+              <field name="total_payouts" readonly="1"/>
+              <field name="fund_balance" readonly="1"/>
+            </group>
+          </group>
+          <notebook>
+            <page string="الاشتراكات">
+              <field name="contribution_ids">
+                <tree editable="bottom" create="true">
+                  <field name="name" readonly="1"/>
+                  <field name="trans_date"/>
+                  <field name="amount"/>
+                  <field name="state" widget="badge"/>
+                  <button name="action_post" type="object" string="ترحيل" icon="fa-check"
+                          invisible="state == 'posted'"/>
+                </tree>
+              </field>
+            </page>
+            <page string="طلبات الصرف">
+              <field name="payout_ids">
+                <tree create="false">
+                  <field name="name"/>
+                  <field name="payout_reason"/>
+                  <field name="request_date"/>
+                  <field name="amount"/>
+                  <field name="state" widget="badge"/>
+                </tree>
+              </field>
+            </page>
+          </notebook>
+        </sheet>
+        <chatter/>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_hr_takaful_member_list" model="ir.ui.view">
+    <field name="name">demo_gov.hr.takaful.member.list</field>
+    <field name="model">demo_gov.hr.takaful.member</field>
+    <field name="arch" type="xml">
+      <tree string="أعضاء صندوق التكافل" decoration-muted="member_status=='ended'">
+        <field name="employee_id"/>
+        <field name="department_id"/>
+        <field name="monthly_contribution"/>
+        <field name="total_contributions"/>
+        <field name="total_payouts"/>
+        <field name="fund_balance"/>
+        <field name="member_status" widget="badge"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="action_hr_takaful_member" model="ir.actions.act_window">
+    <field name="name">أعضاء صندوق التكافل</field>
+    <field name="res_model">demo_gov.hr.takaful.member</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+</odoo>
