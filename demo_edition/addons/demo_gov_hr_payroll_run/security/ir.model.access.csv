@@ -10,3 +10,11 @@ access_hr_payroll_run_user,demo_gov.hr.payroll.run user,model_demo_gov_hr_payrol
 access_hr_payroll_run_manager,demo_gov.hr.payroll.run manager,model_demo_gov_hr_payroll_run,hr.group_hr_manager,1,1,1,1
 access_hr_payroll_payslip_user,demo_gov.hr.payroll.payslip user,model_demo_gov_hr_payroll_payslip,hr.group_hr_user,1,1,1,0
 access_hr_payroll_payslip_manager,demo_gov.hr.payroll.payslip manager,model_demo_gov_hr_payroll_payslip,hr.group_hr_manager,1,1,1,1
+access_hr_payroll_external_salary_user,demo_gov.hr.payroll.external.salary user,model_demo_gov_hr_payroll_external_salary,hr.group_hr_user,1,1,1,0
+access_hr_payroll_external_salary_manager,demo_gov.hr.payroll.external.salary manager,model_demo_gov_hr_payroll_external_salary,hr.group_hr_manager,1,1,1,1
+access_hr_payroll_non_employee_reward_user,demo_gov.hr.payroll.non.employee.reward user,model_demo_gov_hr_payroll_non_employee_reward,hr.group_hr_user,1,1,1,0
+access_hr_payroll_non_employee_reward_manager,demo_gov.hr.payroll.non.employee.reward manager,model_demo_gov_hr_payroll_non_employee_reward,hr.group_hr_manager,1,1,1,1
+access_hr_payroll_allowance_increment_user,demo_gov.hr.payroll.allowance.increment user,model_demo_gov_hr_payroll_allowance_increment,hr.group_hr_user,1,1,1,0
+access_hr_payroll_allowance_increment_manager,demo_gov.hr.payroll.allowance.increment manager,model_demo_gov_hr_payroll_allowance_increment,hr.group_hr_manager,1,1,1,1
+access_hr_payroll_tax_settlement_user,demo_gov.hr.payroll.tax.settlement user,model_demo_gov_hr_payroll_tax_settlement,hr.group_hr_user,1,0,0,0
+access_hr_payroll_tax_settlement_manager,demo_gov.hr.payroll.tax.settlement manager,model_demo_gov_hr_payroll_tax_settlement,hr.group_hr_manager,1,1,1,1

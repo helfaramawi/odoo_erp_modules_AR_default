@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_hr_payroll_external_salary_list" model="ir.ui.view">
+    <field name="name">demo_gov.hr.payroll.external.salary.list</field>
+    <field name="model">demo_gov.hr.payroll.external.salary</field>
+    <field name="arch" type="xml">
+      <tree string="مرتب العاملين بالخارج" editable="bottom">
+        <field name="name"/>
+        <field name="national_id"/>
+        <field name="work_entity"/>
+        <field name="bank_code"/>
+        <field name="bank_branch"/>
+        <field name="bank_account_number"/>
+        <field name="amount"/>
+        <field name="notes"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="action_hr_payroll_external_salary" model="ir.actions.act_window">
+    <field name="name">مرتب العاملين بالخارج</field>
+    <field name="res_model">demo_gov.hr.payroll.external.salary</field>
+    <field name="view_mode">tree</field>
+  </record>
+
+</odoo>

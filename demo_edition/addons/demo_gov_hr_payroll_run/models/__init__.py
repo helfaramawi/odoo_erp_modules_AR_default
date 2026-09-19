@@ -3,3 +3,7 @@ from . import hr_employee_salary
 from . import hr_payroll_reward
 from . import hr_payroll_disbursement
 from . import hr_payroll_run
+from . import hr_payroll_external_salary
+from . import hr_payroll_non_employee_reward
+from . import hr_payroll_allowance_increment
+from . import hr_payroll_tax_settlement

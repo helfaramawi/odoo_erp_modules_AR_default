@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_hr_payroll_non_employee_reward_form" model="ir.ui.view">
+    <field name="name">demo_gov.hr.payroll.non.employee.reward.form</field>
+    <field name="model">demo_gov.hr.payroll.non.employee.reward</field>
+    <field name="arch" type="xml">
+      <form string="مكافأة غير عامل (أتعاب خبرة)">
+        <header>
+          <button name="action_confirm" string="اعتماد" type="object" class="btn-primary" invisible="state != 'draft'"/>
+          <field name="state" widget="statusbar" statusbar_visible="draft,confirmed"/>
+        </header>
+        <sheet>
+          <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
+          <group>
+            <group>
+              <field name="beneficiary_name"/>
+              <field name="national_id"/>
+              <field name="reward_code"/>
+            </group>
+            <group>
+              <field name="date"/>
+              <field name="amount"/>
+              <field name="tax_deduction" readonly="1"/>
+              <field name="net_amount" readonly="1"/>
+            </group>
+          </group>
+        </sheet>
+        <chatter/>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_hr_payroll_non_employee_reward_list" model="ir.ui.view">
+    <field name="name">demo_gov.hr.payroll.non.employee.reward.list</field>
+    <field name="model">demo_gov.hr.payroll.non.employee.reward</field>
+    <field name="arch" type="xml">
+      <tree string="مكافآت غير العاملين" decoration-success="state=='confirmed'">
+        <field name="name"/>
+        <field name="beneficiary_name"/>
+        <field name="date"/>
+        <field name="amount"/>
+        <field name="net_amount"/>
+        <field name="state" widget="badge"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="action_hr_payroll_non_employee_reward" model="ir.actions.act_window">
+    <field name="name">مكافآت غير العاملين</field>
+    <field name="res_model">demo_gov.hr.payroll.non.employee.reward</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+</odoo>

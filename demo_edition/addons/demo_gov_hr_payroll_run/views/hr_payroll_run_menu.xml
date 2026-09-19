@@ -23,4 +23,28 @@
             parent="demo_gov_hr_payroll_structure.menu_gov_payroll"
             action="action_hr_payroll_disbursement_line"
             sequence="35"/>
+
+  <menuitem id="menu_hr_payroll_allowance_increment"
+            name="حساب العلاوات والحوافز"
+            parent="demo_gov_hr_payroll_structure.menu_gov_payroll"
+            action="action_hr_payroll_allowance_increment"
+            sequence="20"/>
+
+  <menuitem id="menu_hr_payroll_non_employee_reward"
+            name="مكافآت غير العاملين"
+            parent="demo_gov_hr_payroll_structure.menu_gov_payroll"
+            action="action_hr_payroll_non_employee_reward"
+            sequence="31"/>
+
+  <menuitem id="menu_hr_payroll_external_salary"
+            name="مرتب العاملين بالخارج"
+            parent="demo_gov_hr_payroll_structure.menu_gov_payroll"
+            action="action_hr_payroll_external_salary"
+            sequence="16"/>
+
+  <menuitem id="menu_hr_payroll_tax_settlement"
+            name="التسوية الضريبية السنوية"
+            parent="demo_gov_hr_payroll_structure.menu_gov_payroll"
+            action="action_hr_payroll_tax_settlement"
+            sequence="40"/>
 </odoo>
