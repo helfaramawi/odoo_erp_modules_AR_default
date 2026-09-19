@@ -2,38 +2,40 @@
 <odoo>
   <template id="report_ssrs06_transfer_template">
     <t t-call="web.html_container">
-      <div style="direction:rtl; font-family:Amiri,'Noto Naskh Arabic',Arial,sans-serif; padding:20px;">
-        <h2 style="text-align:center;">تقرير المنتدبين والمعارين والمنقولين الحاليين</h2>
-        <h4 style="text-align:center;">SSRS-06</h4>
-        <table style="width:100%; border-collapse:collapse; font-size:9pt; margin-top:16px;">
-          <tr style="background:#eee;">
-            <td style="font-weight:bold; padding:4px; border:1px solid #999;">الموظف</td>
-            <td style="font-weight:bold; padding:4px; border:1px solid #999;">من جهة</td>
-            <td style="font-weight:bold; padding:4px; border:1px solid #999;">إلى جهة</td>
-            <td style="font-weight:bold; padding:4px; border:1px solid #999;">نوع الحركة</td>
-            <td style="font-weight:bold; padding:4px; border:1px solid #999;">تاريخ البداية</td>
-            <td style="font-weight:bold; padding:4px; border:1px solid #999;">تاريخ الانتهاء</td>
-            <td style="font-weight:bold; padding:4px; border:1px solid #999;">الحالة</td>
-          </tr>
-          <t t-foreach="docs" t-as="o">
-            <tr>
-              <td style="padding:4px; border:1px solid #999;"><t t-esc="o.employee_id.name"/></td>
-              <td style="padding:4px; border:1px solid #999;">
-                <t t-esc="dict(o._fields['from_entity'].selection).get(o.from_entity, '')"/>
-              </td>
-              <td style="padding:4px; border:1px solid #999;"><t t-esc="o.to_entity_name"/></td>
-              <td style="padding:4px; border:1px solid #999;">
-                <t t-esc="dict(o._fields['transfer_type'].selection).get(o.transfer_type, '')"/>
-              </td>
-              <td style="padding:4px; border:1px solid #999;"><t t-esc="o.start_date"/></td>
-              <td style="padding:4px; border:1px solid #999;"><t t-esc="o.end_date"/></td>
-              <td style="padding:4px; border:1px solid #999;">
-                <t t-esc="dict(o._fields['state'].selection).get(o.state, '')"/>
-              </td>
+      <t t-call="web.external_layout">
+        <div class="page" style="direction:rtl; font-family:'Amiri','Noto Naskh Arabic',Arial,sans-serif; padding:20px;">
+          <h2 style="text-align:center;">تقرير المنتدبين والمعارين والمنقولين الحاليين</h2>
+          <h4 style="text-align:center;">SSRS-06</h4>
+          <table style="width:100%; border-collapse:collapse; font-size:9pt; margin-top:16px;">
+            <tr style="background:#eee;">
+              <td style="font-weight:bold; padding:4px; border:1px solid #999;">الموظف</td>
+              <td style="font-weight:bold; padding:4px; border:1px solid #999;">من جهة</td>
+              <td style="font-weight:bold; padding:4px; border:1px solid #999;">إلى جهة</td>
+              <td style="font-weight:bold; padding:4px; border:1px solid #999;">نوع الحركة</td>
+              <td style="font-weight:bold; padding:4px; border:1px solid #999;">تاريخ البداية</td>
+              <td style="font-weight:bold; padding:4px; border:1px solid #999;">تاريخ الانتهاء</td>
+              <td style="font-weight:bold; padding:4px; border:1px solid #999;">الحالة</td>
             </tr>
-          </t>
-        </table>
-      </div>
+            <t t-foreach="docs" t-as="o">
+              <tr>
+                <td style="padding:4px; border:1px solid #999;"><t t-esc="o.employee_id.name"/></td>
+                <td style="padding:4px; border:1px solid #999;">
+                  <t t-esc="dict(o._fields['from_entity'].selection).get(o.from_entity, '')"/>
+                </td>
+                <td style="padding:4px; border:1px solid #999;"><t t-esc="o.to_entity_name"/></td>
+                <td style="padding:4px; border:1px solid #999;">
+                  <t t-esc="dict(o._fields['transfer_type'].selection).get(o.transfer_type, '')"/>
+                </td>
+                <td style="padding:4px; border:1px solid #999;"><t t-esc="o.start_date"/></td>
+                <td style="padding:4px; border:1px solid #999;"><t t-esc="o.end_date"/></td>
+                <td style="padding:4px; border:1px solid #999;">
+                  <t t-esc="dict(o._fields['state'].selection).get(o.state, '')"/>
+                </td>
+              </tr>
+            </t>
+          </table>
+        </div>
+      </t>
     </t>
   </template>
 </odoo>

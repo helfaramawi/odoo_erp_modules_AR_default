@@ -2,7 +2,8 @@
 <odoo>
   <template id="report_public_service_template">
     <t t-call="web.html_container">
-      <div style="direction:rtl; font-family:Amiri,'Noto Naskh Arabic',Arial,sans-serif; padding:20px;">
+      <t t-call="web.external_layout">
+      <div class="page" style="direction:rtl; font-family:'Amiri','Noto Naskh Arabic',Arial,sans-serif; padding:20px;">
         <h2 style="text-align:center;">تقرير خريجات الخدمة العامة</h2>
         <table style="width:100%; border-collapse:collapse; font-size:9pt; margin-top:16px;">
           <tr style="background:#eee;">
@@ -25,6 +26,7 @@
           </t>
         </table>
       </div>
+      </t>
     </t>
   </template>
 </odoo>
