@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <template id="report_public_service_template">
+    <t t-call="web.html_container">
+      <div style="direction:rtl; font-family:Amiri,'Noto Naskh Arabic',Arial,sans-serif; padding:20px;">
+        <h2 style="text-align:center;">تقرير خريجات الخدمة العامة</h2>
+        <table style="width:100%; border-collapse:collapse; font-size:9pt; margin-top:16px;">
+          <tr style="background:#eee;">
+            <td style="font-weight:bold; padding:4px; border:1px solid #999;">الاسم</td>
+            <td style="font-weight:bold; padding:4px; border:1px solid #999;">الإدارة</td>
+            <td style="font-weight:bold; padding:4px; border:1px solid #999;">تاريخ البدء</td>
+            <td style="font-weight:bold; padding:4px; border:1px solid #999;">تاريخ الانتهاء</td>
+            <td style="font-weight:bold; padding:4px; border:1px solid #999;">الحالة</td>
+          </tr>
+          <t t-foreach="docs.filtered(lambda e: e.gov_employment_type == 'public_service')" t-as="o">
+            <tr>
+              <td style="padding:4px; border:1px solid #999;"><t t-esc="o.name"/></td>
+              <td style="padding:4px; border:1px solid #999;"><t t-esc="o.department_id.name"/></td>
+              <td style="padding:4px; border:1px solid #999;"><t t-esc="o.public_service_start_date"/></td>
+              <td style="padding:4px; border:1px solid #999;"><t t-esc="o.public_service_end_date"/></td>
+              <td style="padding:4px; border:1px solid #999;">
+                <t t-esc="'منتهية' if o.public_service_ended else 'سارية'"/>
+              </td>
+            </tr>
+          </t>
+        </table>
+      </div>
+    </t>
+  </template>
+</odoo>
