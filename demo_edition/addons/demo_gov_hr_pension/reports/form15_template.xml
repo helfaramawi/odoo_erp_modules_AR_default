@@ -22,7 +22,7 @@
             <tr>
               <td style="font-weight:bold; padding:4px; border:1px solid #999;">نوع إنهاء الخدمة</td>
               <td style="padding:4px; border:1px solid #999;">
-                <t t-esc="dict(o._fields['termination_type'].selection).get(o.termination_type, '')"/>
+                <t t-esc="dict(o.fields_get(['termination_type'])['termination_type']['selection']).get(o.termination_type, '')"/>
               </td>
             </tr>
             <tr>

@@ -8,7 +8,7 @@
           <h2 style="text-align:center;">استمارة 132 ع.ح — كشف مرتب</h2>
           <p style="text-align:center;">
             شهر <t t-esc="o.month"/> / <t t-esc="o.year"/> —
-            <t t-esc="dict(o._fields['disbursement_entity'].selection).get(o.disbursement_entity, '')"/>
+            <t t-esc="dict(o.fields_get(['disbursement_entity'])['disbursement_entity']['selection']).get(o.disbursement_entity, '')"/>
           </p>
 
           <table style="width:100%; border-collapse:collapse; font-size:10pt; margin-bottom:12px;">
