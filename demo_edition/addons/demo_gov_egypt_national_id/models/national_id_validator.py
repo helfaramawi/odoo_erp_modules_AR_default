@@ -93,3 +93,23 @@ def parse_egyptian_national_id(value, field_label=None):
         'governorate_name': GOVERNORATE_CODES[gov_code],
         'is_male': is_male,
     }
+
+
+def check_national_id_gender_match(parsed, gender, field_label=None):
+    """يتأكد إن خانة النوع في الرقم القومي (parsed['is_male']) متطابقة
+    مع نوع الشخص المسجَّل بالنظام (gender = 'male'/'female'/'other'/False).
+    لو نوع الشخص مش مسجَّل أو 'other'، مفيش تحقق (مفيش معيار نقارن بيه)."""
+    if gender not in ('male', 'female'):
+        return
+    expected_is_male = (gender == 'male')
+    if parsed['is_male'] != expected_is_male:
+        label = field_label or 'الرقم القومي'
+        raise ValidationError(_(
+            '%(label)s غير متطابق مع نوع الشخص المسجَّل بالنظام.\n'
+            'خانة النوع في الرقم تشير إلى "%(id_gender)s"، بينما النوع '
+            'المسجَّل هو "%(rec_gender)s".'
+        ) % {
+            'label': label,
+            'id_gender': 'ذكر' if parsed['is_male'] else 'أنثى',
+            'rec_gender': 'ذكر' if gender == 'male' else 'أنثى',
+        })

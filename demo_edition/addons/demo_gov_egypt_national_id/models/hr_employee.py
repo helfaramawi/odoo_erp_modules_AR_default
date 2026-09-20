@@ -8,26 +8,32 @@ hr.employee فيه ثلاثة حقول مختلفة بتتستخدم فعليً�
 """
 from odoo import api, models
 
-from .national_id_validator import parse_egyptian_national_id
+from .national_id_validator import (
+    check_national_id_gender_match,
+    parse_egyptian_national_id,
+)
 
 
 class HrEmployee(models.Model):
     _inherit = 'hr.employee'
 
-    @api.constrains('national_id')
+    @api.constrains('national_id', 'gender')
     def _check_national_id_structure(self):
         for rec in self:
             if rec.national_id:
-                parse_egyptian_national_id(rec.national_id, 'الرقم القومي')
+                parsed = parse_egyptian_national_id(rec.national_id, 'الرقم القومي')
+                check_national_id_gender_match(parsed, rec.gender, 'الرقم القومي')
 
-    @api.constrains('ssnid')
+    @api.constrains('ssnid', 'gender')
     def _check_ssnid_structure(self):
         for rec in self:
             if rec.ssnid:
-                parse_egyptian_national_id(rec.ssnid, 'الرقم القومي (SSN)')
+                parsed = parse_egyptian_national_id(rec.ssnid, 'الرقم القومي (SSN)')
+                check_national_id_gender_match(parsed, rec.gender, 'الرقم القومي (SSN)')
 
-    @api.constrains('identification_id')
+    @api.constrains('identification_id', 'gender')
     def _check_identification_id_structure(self):
         for rec in self:
             if rec.identification_id:
-                parse_egyptian_national_id(rec.identification_id, 'رقم الهوية')
+                parsed = parse_egyptian_national_id(rec.identification_id, 'رقم الهوية')
+                check_national_id_gender_match(parsed, rec.gender, 'رقم الهوية')
