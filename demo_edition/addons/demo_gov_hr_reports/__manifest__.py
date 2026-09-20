@@ -1,7 +1,7 @@
 {
     'name': 'التقارير الحكومية الثمانية — SSRS Wave 3',
-    'summary': 'C-03: remaining 6 of the 8 official government SSRS forms (Form 5 and Form 15 ship in their own modules)',
-    'version': '17.0.1.0.0',
+    'summary': 'C-03: 7 of the 8 official government SSRS forms, labeled SSRS-01..08 (Form 5 / SSRS-04 ships in its own module)',
+    'version': '17.0.2.0.0',
     'category': 'الخدمات الحكومية التجريبية/الموارد البشرية',
     'author': 'Enterprise Solutions Demo',
     'license': 'LGPL-3',
@@ -11,6 +11,7 @@
         'demo_gov_hr_transfer',
         'demo_gov_hr_training',
         'demo_gov_hr_disclosure',
+        'demo_gov_hr_pension',
     ],
     'data': [
         'reports/ssrs01_work_injury_reports.xml',
@@ -19,6 +20,8 @@
         'reports/ssrs02_leave_certificate_template.xml',
         'reports/ssrs03_performance_reports.xml',
         'reports/ssrs03_performance_template.xml',
+        'reports/ssrs05_pension_reports.xml',
+        'reports/ssrs05_pension_template.xml',
         'reports/ssrs06_transfer_reports.xml',
         'reports/ssrs06_transfer_template.xml',
         'reports/ssrs07_training_needs_reports.xml',

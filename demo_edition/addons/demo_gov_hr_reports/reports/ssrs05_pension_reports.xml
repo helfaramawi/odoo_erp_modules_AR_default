@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="action_report_ssrs05_pension" model="ir.actions.report">
+    <field name="name">SSRS-05: استمارة 15 — التأمينات والمعاشات</field>
+    <field name="model">demo_gov.hr.pension.settlement</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">demo_gov_hr_reports.report_ssrs05_pension_template</field>
+    <field name="report_file">demo_gov_hr_reports.report_ssrs05_pension_template</field>
+    <field name="binding_model_id" ref="demo_gov_hr_pension.model_demo_gov_hr_pension_settlement"/>
+    <field name="binding_type">report</field>
+    <field name="attachment_use">False</field>
+  </record>
+</odoo>
