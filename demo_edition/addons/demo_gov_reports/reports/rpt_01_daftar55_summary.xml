@@ -7,12 +7,12 @@
       <tr>
         <td style="width:80px;text-align:center;vertical-align:middle;">
           <div style="width:70px;height:70px;border:2px solid #1F497D;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;color:#1F497D;text-align:center;line-height:1.4;">
-            شعار<br/>المحافظة التجريبية
+            شعار<br/>الجهة الحكومية التجريبية
           </div>
         </td>
         <td style="text-align:center;vertical-align:middle;">
           <div style="font-size:11px;color:#666;">جمهورية مصر العربية</div>
-          <div style="font-size:15px;font-weight:bold;color:#1F497D;">المحافظة التجريبية — الديوان العام</div>
+          <div style="font-size:15px;font-weight:bold;color:#1F497D;">الجهة الحكومية التجريبية — الديوان العام</div>
           <div style="font-size:13px;font-weight:bold;color:#333;margin-top:3px;">
             <t t-esc="report_title"/>
           </div>
@@ -161,7 +161,7 @@
           <t t-set="report_name_ar" t-value="'ملخص دفتر 55 ع.ح — سجل الصرف وأوامر الدفع'"/>
           <t t-call="demo_gov_reports.gov_footer"/>
           <div style="display:none">
-            نظام أوبو إيآر بي — الديوان العام للمحافظة التجريبية — طُبع: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/>
+            نظام أوبو إيآر بي — الديوان العام للجهة الحكومية التجريبية — طُبع: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/>
           </div>
         </div>
       </t>

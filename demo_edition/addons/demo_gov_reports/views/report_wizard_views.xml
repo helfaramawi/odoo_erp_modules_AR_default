@@ -6,11 +6,11 @@
     <field name="name">demo_gov.report.wizard.form</field>
     <field name="model">demo_gov.report.wizard</field>
     <field name="arch" type="xml">
-      <form string="التقارير الحكومية — المحافظة التجريبية">
+      <form string="التقارير الحكومية — الجهة الحكومية التجريبية">
 
         <div style="background:#1F497D;color:white;padding:12px 16px;border-radius:6px;margin-bottom:14px;text-align:center;">
           <span style="font-size:16px;font-weight:bold;">🏛️ التقارير الحكومية الرسمية</span><br/>
-          <span style="font-size:11px;opacity:0.85;">الديوان العام للمحافظة التجريبية — إدارة الشؤون المالية</span>
+          <span style="font-size:11px;opacity:0.85;">الديوان العام للجهة الحكومية التجريبية — إدارة الشؤون المالية</span>
         </div>
 
         <group string="اختيار التقرير">

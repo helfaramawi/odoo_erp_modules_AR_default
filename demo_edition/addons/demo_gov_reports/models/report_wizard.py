@@ -9,7 +9,7 @@ class PortSaidReportWizard(models.TransientModel):
     يوفر واجهة موحدة لإصدار جميع التقارير الحكومية
     """
     _name = 'demo_gov.report.wizard'
-    _description = 'معالج التقارير الحكومية — المحافظة التجريبية'
+    _description = 'معالج التقارير الحكومية — الجهة الحكومية التجريبية'
 
     report_type = fields.Selection([
         # ── تقارير الحسابات ─────────────────────────────────────

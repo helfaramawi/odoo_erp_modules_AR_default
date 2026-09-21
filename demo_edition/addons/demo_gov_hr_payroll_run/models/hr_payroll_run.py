@@ -20,7 +20,7 @@ class HrPayrollRun(models.Model):
     year = fields.Char(string='السنة', required=True,
                         default=lambda s: str(fields.Date.today().year))
     disbursement_entity = fields.Selection([
-        ('diwan', 'الديوان العام للمحافظة التجريبية'),
+        ('diwan', 'الديوان العام للجهة الحكومية التجريبية'),
         ('funds', 'الصناديق'),
     ], string='جهة الصرف', default='diwan', required=True)
 

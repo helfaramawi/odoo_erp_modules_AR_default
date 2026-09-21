@@ -100,7 +100,7 @@
           <!-- ══ الفوتر الرسمي ══ -->
           <t t-set="report_name_ar" t-value="'تقرير تنفيذ الموازنة — المقارنة'"/>
           <t t-call="demo_gov_reports.gov_footer"/>
-          <div style="display:none">نظام أوبو إيآر بي — الديوان العام للمحافظة التجريبية — طُبع: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/></div>
+          <div style="display:none">نظام أوبو إيآر بي — الديوان العام للجهة الحكومية التجريبية — طُبع: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/></div>
         </div>
       </t>
     </t>

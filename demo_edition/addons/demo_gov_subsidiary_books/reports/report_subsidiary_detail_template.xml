@@ -14,7 +14,7 @@
               </h3>
               <div style="font-size:11px;">
                 نموذج رقم <t t-out="folio.book_id.form_number"/>
-                — المحافظة التجريبية
+                — الجهة الحكومية التجريبية
               </div>
             </div>
 

@@ -11,7 +11,7 @@
           <div style="text-align:center; margin-bottom:10px;">
             <h3 style="margin:0;">دفتر حساب الجزاءات</h3>
             <div style="font-size:11px;">
-              استمارة رقم 39 ع.ح — المحافظة التجريبية — الديوان العام
+              استمارة رقم 39 ع.ح — الجهة الحكومية التجريبية — الديوان العام
             </div>
             <div style="font-size:10px;">
               عدد الجزاءات: <t t-out="len(docs)"/>

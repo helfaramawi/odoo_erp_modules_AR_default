@@ -14,7 +14,7 @@
             <div style="font-size:11px;">
               نموذج رقم <t t-out="first.book_id.form_number"/>
               — السنة المالية <t t-out="first.fiscal_year"/>
-              — المحافظة التجريبية
+              — الجهة الحكومية التجريبية
             </div>
           </div>
 

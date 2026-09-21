@@ -40,7 +40,7 @@ class HrEmployeeSalary(models.Model):
     salary_30_6_2015 = fields.Float(string='المرتب في 2015/6/30')
     special_allowances_pre_law = fields.Float(string='العلاوات الخاصة قبل العمل بالقانون')
     disbursement_entity = fields.Selection([
-        ('diwan', 'الديوان العام للمحافظة التجريبية'),
+        ('diwan', 'الديوان العام للجهة الحكومية التجريبية'),
         ('funds', 'الصناديق'),
     ], string='جهة الصرف', default='diwan', required=True, tracking=True)
 

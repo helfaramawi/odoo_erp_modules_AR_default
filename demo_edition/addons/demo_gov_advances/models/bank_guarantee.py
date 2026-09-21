@@ -55,7 +55,7 @@ class BankGuarantee(models.Model):
     bank_ref_no = fields.Char(string='رقم مرجع البنك')
     beneficiary = fields.Char(
         string='الجهة المستفيدة',
-        default='المحافظة التجريبية — الديوان العام',
+        default='الجهة الحكومية التجريبية — الديوان العام',
     )
     vendor_id = fields.Many2one(
         'res.partner', string='المورد / المقاول',

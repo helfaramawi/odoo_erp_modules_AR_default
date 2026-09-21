@@ -1,5 +1,5 @@
 {
-    'name': 'لوحة القيادة التنفيذية — المحافظة التجريبية',
+    'name': 'لوحة القيادة التنفيذية — الجهة الحكومية التجريبية',
     'version': '17.0.3.0.0',
     'category': 'الخدمات الحكومية التجريبية',
     'summary': 'Executive Dashboard for Demo Governorate — Real-time KPIs with Financial, Accounting & HR/Payroll sections',

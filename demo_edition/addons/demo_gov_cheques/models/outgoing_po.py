@@ -10,8 +10,8 @@
   لتحويل الأموال إلى المستفيد
 
 الفارق عن demo_gov.payment_order (من cash_books):
-- تلك واردة (من الخزانة إلى المحافظة)
-- هذه مرسلة (من المحافظة إلى المستفيدين)
+- تلك واردة (من الخزانة إلى الجهة الحكومية)
+- هذه مرسلة (من الجهة الحكومية إلى المستفيدين)
 """
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError
