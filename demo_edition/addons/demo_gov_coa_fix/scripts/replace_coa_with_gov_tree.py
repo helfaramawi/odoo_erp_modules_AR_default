@@ -58,14 +58,32 @@ def run(env):
     for acc in existing:
         if acc.name.startswith('[قديم] '):
             continue
+        vals = {'deprecated': True, 'name': '[قديم] ' + acc.name}
+        # أودو مايسمحش بأكتر من حساب واحد من نوع equity_unaffected لكل
+        # شركة — الحساب الحكومي الجديد المناسب للدور ده (نتيجة العام
+        # الجاري) هياخد النوع ده بدل الحساب القديم.
+        if acc.account_type == 'equity_unaffected':
+            vals['account_type'] = 'equity'
         try:
-            acc.write({'deprecated': True, 'name': '[قديم] ' + acc.name})
+            acc.write(vals)
         except Exception as exc:
             marking_failed.append((acc.code, acc.name, str(exc)))
 
     # 2) تحميل الشجرة الحكومية المعتمدة وبناء سجلات جديدة
     with open(REFERENCE_CSV, encoding='utf-8') as f:
         rows = list(csv.DictReader(f))
+
+    # تصحيح عيب بيانات في الملف المعتمد نفسه: 3 صفوف بس (من 1369) طالعين
+    # بأسماء إنجليزية مبتورة الحرف الأول ومتعلّمين كلهم equity_unaffected —
+    # أودو بيسمح بحساب واحد بس من النوع ده لكل شركة. نسيب الحساب اللي
+    # معناه فعلاً "نتيجة العام الجاري" بالنوع الخاص، والباقي بيتحول
+    # لحقوق ملكية عادية، مع تصحيح الاسم المبتور.
+    NAME_FIXES = {
+        '51000101': 'Surplus_Deficit',
+        '52000101': 'Reserve for Encumbrances',
+        '52000201': 'Miscellaneous Clearing Account',
+    }
+    DOWNGRADE_TO_EQUITY = {'52000101', '52000201'}
 
     codes_seen = set()
     to_create = []
@@ -76,10 +94,14 @@ def run(env):
             skipped_dupes.append(code)
             continue
         codes_seen.add(code)
+        name = NAME_FIXES.get(code, row['name'].strip())
+        account_type = row['account_type'].strip()
+        if code in DOWNGRADE_TO_EQUITY:
+            account_type = 'equity'
         to_create.append({
             'code': code,
-            'name': row['name'].strip(),
-            'account_type': row['account_type'].strip(),
+            'name': name,
+            'account_type': account_type,
             'company_id': company.id,
         })
 
@@ -98,6 +120,12 @@ def run(env):
             print('  [%s] %s — %s' % (code, name, err))
     print('-' * 70)
     print('تم إنشاء %d حساب من الشجرة الحكومية المعتمدة (8 خانات).' % len(created))
+    print('-' * 70)
+    print('تصحيح تلقائي لعيب بيانات في الملف المعتمد (أسماء مبتورة الحرف '
+          'الأول + تعارض 3 حسابات equity_unaffected):')
+    print('  51000101 Surplus_Deficit -> بقي equity_unaffected (نتيجة العام الجاري)')
+    print('  52000101 Reserve for Encumbrances -> equity عادي')
+    print('  52000201 Miscellaneous Clearing Account -> equity عادي')
     if skipped_dupes:
         print('-' * 70)
         print('تحذير — أكواد مكررة في الملف المرجعي اتجُوهل تكرارها: %s'
