@@ -25,9 +25,9 @@
 import csv
 import os
 
-REFERENCE_CSV = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-    'data', 'gov_chart_of_accounts_reference.csv')
+# لازم مسار مطلق ثابت — السكريبت بيتنفَّذ عبر exec(sys.stdin.read(), ...)
+# جوه odoo shell (مش تحميل ملف عادي)، فـ __file__ مش معرَّف في السياق ده.
+REFERENCE_CSV = '/mnt/demo-addons/demo_gov_coa_fix/data/gov_chart_of_accounts_reference.csv'
 
 
 def _normalize(text):
