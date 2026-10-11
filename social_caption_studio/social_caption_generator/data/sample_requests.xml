@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Example requests; post_init_hook fills their captions at install. -->
+    <record id="sample_request_coffee" model="social.caption.request">
+        <field name="name">قائمة القهوة المثلجة الجديدة</field>
+        <field name="tone">playful</field>
+        <field name="language">ar</field>
+        <field name="platform">instagram</field>
+        <field name="business_name">Demo Café</field>
+        <field name="extra_facts">متاحة من الأحد</field>
+    </record>
+    <record id="sample_request_furniture" model="social.caption.request">
+        <field name="name">Handmade oak dining tables</field>
+        <field name="tone">elegant</field>
+        <field name="language">en</field>
+        <field name="platform">facebook</field>
+        <field name="business_name">Demo Furniture Studio</field>
+    </record>
+    <record id="sample_request_clinic" model="social.caption.request">
+        <field name="name">عروض تنظيف الأسنان</field>
+        <field name="tone">bold</field>
+        <field name="language">both</field>
+        <field name="platform">instagram</field>
+        <field name="business_name">Demo Dental</field>
+    </record>
+</odoo>

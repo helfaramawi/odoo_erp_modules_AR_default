@@ -1,0 +1,44 @@
+# Social Caption Generator: one-command Odoo 17 demo.
+#
+#   docker compose up -d
+#   open http://localhost:8069   (login: admin / password: admin)
+#
+# Optional: export ANTHROPIC_API_KEY=sk-ant-... before `up` to have Claude
+# write the captions. Without it, the built-in generator is used.
+# Demo-only credentials; do not expose this stack to the internet.
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+      POSTGRES_DB: postgres
+    volumes:
+      - caption_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  odoo:
+    image: odoo:17.0
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${PORT:-8069}:8069"
+    environment:
+      HOST: db
+      USER: odoo
+      PASSWORD: odoo
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+    volumes:
+      - ./social_caption_generator:/mnt/extra-addons/social_caption_generator:ro
+      - caption_filestore:/var/lib/odoo
+    # Creates the "captions" database on first start and installs the module.
+    command: ["-d", "captions", "-i", "social_caption_generator", "--db-filter=^captions$$", "--without-demo=all"]
+
+volumes:
+  caption_db:
+  caption_filestore:
