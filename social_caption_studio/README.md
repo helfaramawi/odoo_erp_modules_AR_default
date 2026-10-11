@@ -6,6 +6,14 @@ An Odoo app that turns a **topic + tone** into **3 short, ready-to-post social m
 - Writes the captions with **Claude** automatically once an Anthropic API key is added (Settings → Social Captions, or the `ANTHROPIC_API_KEY` environment variable). If Claude can't be reached, it falls back to the built-in generator and says why.
 - Opens with 3 example requests already generated, so the demo is never empty.
 
+## Easiest start: double-click
+
+1. Install and open **Docker Desktop** (https://www.docker.com/products/docker-desktop/).
+2. Windows: double-click **`start-demo.bat`**. macOS / Linux: run `./start-demo.sh`.
+3. The browser opens **http://localhost:8069**. Log in with **admin / admin**.
+
+Stop with `stop-demo.bat` / `./stop-demo.sh`. The first start needs internet to download Odoo (about 1 GB); later starts work offline.
+
 ## Run the demo (one command)
 
 Requirements: Docker Desktop (Windows / macOS) or Docker Engine (Linux).
