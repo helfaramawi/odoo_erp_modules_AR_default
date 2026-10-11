@@ -1,0 +1,475 @@
+<title>TBS Caption Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
+<style>
+/* Layout: one narrow RTL column — brand line, the form card, then three caption cards like a phone feed. */
+:root {
+  --bg: #f6f7f2;          /* flour, faint pistachio bias */
+  --surface: #ffffff;
+  --ink: #23261d;         /* espresso-olive */
+  --muted: #676c5c;
+  --line: #dde1d3;
+  --accent: #4d7a35;      /* pistachio */
+  --accent-ink: #ffffff;
+  --accent-soft: #e8f0df;
+  --warn-bg: #fbf1dc;
+  --warn-ink: #7a5410;
+  --err-bg: #fbe5e2;
+  --err-ink: #8c2a1d;
+  --display: "Reem Kufi", "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+  --body: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, Arial, sans-serif;
+  --radius: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141611; --surface: #1d2018; --ink: #e9ecdf; --muted: #a2a893; --line: #33382b;
+    --accent: #a6cf87; --accent-ink: #15200d; --accent-soft: #263220;
+    --warn-bg: #3a2f17; --warn-ink: #f0d39a; --err-bg: #3d1f1a; --err-ink: #f4b4a8;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141611; --surface: #1d2018; --ink: #e9ecdf; --muted: #a2a893; --line: #33382b;
+  --accent: #a6cf87; --accent-ink: #15200d; --accent-soft: #263220;
+  --warn-bg: #3a2f17; --warn-ink: #f0d39a; --err-bg: #3d1f1a; --err-ink: #f4b4a8;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.6; }
+.wrap { max-width: 760px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 56px; display: grid; gap: 22px; }
+header { display: grid; gap: 6px; }
+.eyebrow { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); direction: ltr; text-align: right; }
+h1 { font-family: var(--display); font-weight: 700; font-size: clamp(30px, 6vw, 44px); line-height: 1.25; margin: 0; text-wrap: balance; }
+.lede { color: var(--muted); margin: 0; max-width: 60ch; }
+.mode { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; padding: 4px 12px; border-radius: 999px; background: var(--accent-soft); color: var(--ink); width: fit-content; }
+.mode::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+.mode.offline::before { background: var(--warn-ink); }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; display: grid; gap: 20px; }
+.field { display: grid; gap: 10px; }
+.label { font-family: var(--display); font-weight: 500; font-size: 17px; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.label small { font-family: var(--body); font-size: 13px; color: var(--muted); font-weight: 400; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font: inherit; font-size: 14px; border: 1px solid var(--line); background: transparent; color: var(--ink); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+.chip:hover { border-color: var(--accent); }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+input[type=text], input[type=password], textarea { font: inherit; width: 100%; border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 10px; padding: 10px 12px; }
+textarea { min-height: 100px; resize: vertical; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.btn { font: inherit; font-weight: 600; border: 0; border-radius: 10px; padding: 12px 20px; cursor: pointer; background: var(--accent); color: var(--accent-ink); }
+.btn:disabled { opacity: .55; cursor: progress; }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); font-weight: 500; padding: 8px 14px; }
+details.key { border-top: 1px dashed var(--line); padding-top: 14px; }
+details.key summary { cursor: pointer; color: var(--muted); font-size: 14px; }
+details.key .inner { display: grid; gap: 8px; margin-top: 10px; }
+.hint { font-size: 13px; color: var(--muted); margin: 0; }
+.notice { border-radius: 10px; padding: 10px 14px; font-size: 14px; }
+.notice.warn { background: var(--warn-bg); color: var(--warn-ink); }
+.notice.err { background: var(--err-bg); color: var(--err-ink); }
+
+.results-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.results-head h2 { font-family: var(--display); font-weight: 500; font-size: 20px; margin: 0; }
+.tag { font-size: 12px; padding: 2px 10px; border-radius: 999px; background: var(--warn-bg); color: var(--warn-ink); }
+.captions { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.cap { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.cap h3 { margin: 0; font-family: var(--display); font-weight: 500; font-size: 15px; color: var(--accent); }
+.cap p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.cap .en { direction: ltr; text-align: left; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 8px; }
+.cap .tags { color: var(--muted); font-size: 13.5px; overflow-wrap: anywhere; }
+.cap .btn.ghost { justify-self: start; font-size: 13px; padding: 6px 12px; }
+.skeleton { height: 150px; border-radius: var(--radius); background: linear-gradient(90deg, var(--surface), var(--accent-soft), var(--surface)); background-size: 200% 100%; animation: shimmer 1.4s linear infinite; border: 1px solid var(--line); }
+@keyframes shimmer { to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .skeleton { animation: none; } }
+footer { font-size: 12.5px; color: var(--muted); }
+</style>
+
+<div class="wrap" dir="rtl" lang="ar">
+  <header>
+    <div class="eyebrow">@tbsegypt · TBS The Bakery Shop</div>
+    <h1>طزاجة في كل رشفة، وكل طبق وكل قضمة.</h1>
+    <p class="lede">اختر موضوعًا وأسلوبًا، واحصل على ٣ كابشنز قصيرة جاهزة لإنستجرام. <span dir="ltr">Pick a topic and a tone, get 3 ready-to-post captions.</span></p>
+    <div id="mode" class="mode offline">جارِ التحقق من الاتصال…</div>
+  </header>
+
+  <form id="form" class="card" novalidate>
+    <div class="field">
+      <div class="label">١. الموضوع <small dir="ltr">Topic</small></div>
+      <div class="chips" id="topics"></div>
+      <input type="text" id="topic" placeholder="…أو اكتب موضوعك" aria-label="Topic">
+    </div>
+
+    <div class="field">
+      <div class="label">٢. الأسلوب <small dir="ltr">Tone</small></div>
+      <div class="chips" id="tones"></div>
+    </div>
+
+    <div class="field">
+      <div class="label">٣. اللغة <small dir="ltr">Language</small></div>
+      <div class="chips" id="langs"></div>
+    </div>
+
+    <div class="field">
+      <label class="label" for="about">٤. عن مخبزك <small>(اختياري · optional)</small></label>
+      <textarea id="about" dir="auto"></textarea>
+      <input type="text" id="extras" dir="auto" placeholder="تفاصيل إضافية: سعر، فرع، تاريخ، عرض… (اختياري)" aria-label="Extras">
+    </div>
+
+    <div class="row">
+      <button class="btn" id="go" type="submit">اقترح ٣ كابشنز</button>
+      <button class="btn ghost" id="stop" type="button" hidden>إيقاف</button>
+    </div>
+
+    <details class="key" id="keyBox" hidden>
+      <summary>مفتاح Claude API (للتشغيل خارج claude.ai) · <span dir="ltr">API key for standalone use</span></summary>
+      <div class="inner">
+        <input type="password" id="apiKey" dir="ltr" placeholder="sk-ant-..." autocomplete="off" aria-label="Anthropic API key">
+        <div class="row">
+          <button class="btn ghost" type="button" id="saveKey">حفظ في هذا المتصفح</button>
+          <button class="btn ghost" type="button" id="clearKey">مسح</button>
+        </div>
+        <p class="hint" dir="ltr" style="text-align:left">The key is stored only in this browser and sent only to api.anthropic.com. Without a key the page shows built-in example captions.</p>
+      </div>
+    </details>
+
+    <div id="notice" class="notice" hidden></div>
+  </form>
+
+  <section class="field" aria-live="polite">
+    <div class="results-head">
+      <h2 id="resTitle">النتيجة</h2>
+      <span class="tag" id="resTag" hidden>مثال جاهز · example</span>
+    </div>
+    <div class="captions" id="out"></div>
+  </section>
+
+  <footer dir="ltr">Captions follow the TBS social-captions skill: 3 angles (sensory · moment · call to action), Egyptian Arabic by default, no invented prices or dates.</footer>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const MODEL = "claude-opus-5-5";
+  const DEFAULT_ABOUT = "TBS The Bakery Shop (@tbsegypt): an everyday bakery-café in Cairo. Coffee and iced drinks, focaccia and sourdough sandwiches, breakfast, donuts and pastries, Egyptian desserts, and seasonal treats.";
+
+  const TOPICS = [
+    { id: "coffee",  ar: "القهوة والمشروبات المثلجة" },
+    { id: "sandw",   ar: "ساندويتشات الفوكاتشيا والساوردو" },
+    { id: "bfast",   ar: "الفطار" },
+    { id: "donuts",  ar: "الدونتس والمخبوزات" },
+    { id: "omali",   ar: "الحلويات المصرية (أم علي)" },
+    { id: "kahk",    ar: "علب كحك الموسم" },
+    { id: "protein", ar: "سناكس البروتين" },
+    { id: "offers",  ar: "هذا الأسبوع في TBS (العروض)" },
+  ];
+  const TONES = [
+    { id: "friendly", ar: "ودود", en: "friendly" },
+    { id: "playful",  ar: "مرح", en: "playful" },
+    { id: "cozy",     ar: "دافي", en: "cozy" },
+    { id: "elegant",  ar: "راقي", en: "elegant" },
+    { id: "bold",     ar: "حماسي", en: "bold / urgent" },
+  ];
+  const LANGS = [
+    { id: "ar",   ar: "عامية مصرية" },
+    { id: "en",   ar: "English" },
+    { id: "both", ar: "الاثنين · Both" },
+  ];
+  const ANGLES = { sensory: "١ · حسّي", moment: "٢ · لحظة", cta: "٣ · دعوة" };
+  const ANGLES_EN = { sensory: "1 · Sensory", moment: "2 · Moment", cta: "3 · Call to action" };
+
+  // Built-in examples so the page works with no connection at all.
+  const T = "#TBSEgypt";
+  const EXAMPLES = {
+    coffee: [
+      ["تلج بيطقطق، إسبريسو غامق، ورغوة حليب نازلة على مهلها… الصوت ده لوحده بيفوّق 🧊☕", [T, "#آيس_كوفي", "#قهوة", "#CairoCoffee"]],
+      ["الساعة ٣ العصر، والحر مش بيهزر، وانت محتاج حاجة تصالحك على اليوم. إحنا عارفين وجهزناها 😌", [T, "#القاهرة", "#مزاج", "#icedlatte"]],
+      ["منشن صاحبك اللي مابيشتغلش غير بالقهوة، وتعالوا TBS على حسابه 😉 الآيس لاتيه مستنيكم في [الفرع].", [T, "#CairoEats", "#قهوة_مثلجة", "#bakerycairo"]],
+    ],
+    sandw: [
+      ["ساوردو مقرمش من برّه، طري من جوّه، وحشوة مالية كل قضمة 🥪", [T, "#ساوردو", "#ساندويتش", "#CairoEats"]],
+      ["بريك الغدا اللي بتستناه من الصبح: فوكاتشيا سخنة ومشروب ساقع. يومك اتظبط.", [T, "#غدا", "#فوكاتشيا", "#CairoLunch"]],
+      ["عدّي علينا في [الفرع]، الفوكاتشيا خارجة من الفرن دلوقتي 🔥", [T, "#القاهرة", "#bakerycairo"]],
+    ],
+    bfast: [
+      ["عيش لسه طالع من الفرن وجبنة سايحة. الريحة لوحدها صباح الخير ☀️", [T, "#فطار", "#صباح_الخير", "#CairoBreakfast"]],
+      ["قبل الزحمة وقبل الإيميلات… خد لك عشر دقايق فطار على مهلك.", [T, "#فطار", "#القاهرة", "#morningroutine"]],
+      ["الفطار عندنا من [الوقت]. منشن اللي هيصحى بدري معاك 😄", [T, "#فطار", "#CairoEats", "#bakerycairo"]],
+    ],
+    donuts: [
+      ["دونتس طرية، جليز لامع، وسكر بيقرمش ✨🍩", [T, "#دونتس", "#مخبوزات", "#donuts"]],
+      ["علبة دونتس في الشغل = أنت بطل المكتب النهارده.", [T, "#دونتس", "#القاهرة", "#officetreat"]],
+      ["الدونتس بتخلص بدري كل يوم. الحق نصيبك قبل [الوقت] 🏃", [T, "#دونتس", "#CairoEats", "#bakerycairo"]],
+    ],
+    omali: [
+      ["رقايق مقرمشة، لبن سخن، ومكسرات محمصة… أم علي زي ما لازم تكون 🤍", [T, "#أم_علي", "#حلويات_مصرية", "#EgyptianDessert"]],
+      ["ليلة شتا، بطانية، وطبق أم علي سخن. محتاجين إيه تاني؟", [T, "#أم_علي", "#شتا", "#CairoEats"]],
+      ["أم علي متاحة النهارده في [الفرع]. تعالى دوقها سخنة 🥄", [T, "#أم_علي", "#القاهرة", "#bakerycairo"]],
+    ],
+    kahk: [
+      ["كحك بيدوب في البق، وسكر بودرة على كل حتة 🤍", [T, "#كحك_العيد", "#كحك", "#EidKahk"]],
+      ["ريحة الكحك في البيت يعني العيد قرّب. كل سنة وانتم طيبين 🌙", [T, "#كحك_العيد", "#العيد", "#Cairo"]],
+      ["احجز علبة كحك العيد من دلوقتي قبل الزحمة. التفاصيل في [الفرع] 📦", [T, "#كحك", "#اطلب_دلوقتي", "#bakerycairo"]],
+    ],
+    protein: [
+      ["مقرمش، مشبع، ومعمول عشان يكمّل معاك اليوم 💪", [T, "#سناكس", "#بروتين", "#proteinsnack"]],
+      ["بعد الجيم أو في نص يوم طويل، سناك يسندك لحد العشا.", [T, "#سناكس_صحية", "#القاهرة", "#gymlife"]],
+      ["سناكس البروتين الجديدة على الرف دلوقتي. جرّبها وقولنا رأيك 👇", [T, "#جديد", "#CairoEats", "#bakerycairo"]],
+    ],
+    offers: [
+      ["قهوتك المفضلة + قطعة من المخبوزات بسعر [السعر] طول الأسبوع ☕🥐", [T, "#عروض", "#قهوة", "#CairoDeals"]],
+      ["الأسبوع ده عندنا حاجة حلوة لكل يوم. تابعوا الستوري كل صباح.", [T, "#عروض_الأسبوع", "#القاهرة", "#bakerycairo"]],
+      ["العرض لحد [التاريخ] بس. منشن صاحبك وتعالوا سوا 🙌", [T, "#عروض", "#CairoEats", "#shoplocal"]],
+    ],
+  };
+
+  const $ = (id) => document.getElementById(id);
+  const state = { topicId: "coffee", tone: "friendly", lang: "ar" };
+  let sample = null;          // claude.ai runtime (no key needed)
+  let onPlatform = false;     // inside claude.ai: direct API calls are blocked there
+  let ctl = null;
+
+  const store = {
+    get(k) { try { return localStorage.getItem(k) || ""; } catch { return ""; } },
+    set(k, v) { try { v ? localStorage.setItem(k, v) : localStorage.removeItem(k); } catch {} },
+  };
+
+  function chips(el, items, key, label) {
+    el.innerHTML = "";
+    for (const it of items) {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "chip"; b.textContent = label(it);
+      b.setAttribute("aria-pressed", String(state[key] === it.id));
+      b.onclick = () => {
+        state[key] = it.id;
+        if (key === "topicId") $("topic").value = "";
+        for (const c of el.children) c.setAttribute("aria-pressed", String(c === b));
+      };
+      el.append(b);
+    }
+  }
+  chips($("topics"), TOPICS, "topicId", (t) => t.ar);
+  chips($("tones"), TONES, "tone", (t) => `${t.ar} · ${t.en}`);
+  chips($("langs"), LANGS, "lang", (t) => t.ar);
+  $("topic").addEventListener("input", () => {
+    if ($("topic").value.trim()) {
+      state.topicId = null;
+      for (const c of $("topics").children) c.setAttribute("aria-pressed", "false");
+    }
+  });
+  $("about").value = DEFAULT_ABOUT;
+  $("apiKey").value = store.get("tbs_api_key");
+
+  function currentTopic() {
+    const typed = $("topic").value.trim();
+    if (typed) return typed;
+    const t = TOPICS.find((x) => x.id === state.topicId);
+    return t ? t.ar : "";
+  }
+
+  function buildPrompt() {
+    const tone = TONES.find((t) => t.id === state.tone);
+    const langLine = {
+      ar: "Write the captions in natural Egyptian Arabic (عامية مصرية).",
+      en: "Write the captions in English.",
+      both: "Write each caption in natural Egyptian Arabic in \"text\", and an English version of the same caption in \"text_en\".",
+    }[state.lang];
+    const about = $("about").value.trim() || DEFAULT_ABOUT;
+    const extras = $("extras").value.trim();
+    return [
+      "You write Instagram captions for a bakery-café. Produce exactly 3 short captions for the topic and tone below.",
+      "",
+      "About the bakery: " + about,
+      "Topic: " + currentTopic(),
+      "Tone: " + tone.en + " (" + tone.ar + ")",
+      extras ? "Facts the user supplied: " + extras : "No extra facts were supplied.",
+      "",
+      "Rules:",
+      "- Caption 1 angle \"sensory\": taste, smell, texture, temperature.",
+      "- Caption 2 angle \"moment\": a real Cairo moment it fits (morning commute, hot afternoon, study session, Friday with family, suhoor).",
+      "- Caption 3 angle \"cta\": a call to action (come in, order, tag a friend, before it runs out).",
+      "- Each caption 1-3 lines, at most about 220 characters before hashtags. 0-3 emojis matched to the tone.",
+      "- Tone guide: playful = wordplay and light Egyptian slang; cozy = warm and slow; elegant = spare, few emojis; bold = short punchy lines with time pressure; friendly = warm and simple.",
+      "- Egyptian Arabic must sound native (يلا، الحق، مزاج). Keep product names as customers say them (لاتيه، آيس كوفي، فوكاتشيا، ساوردو، دونتس، كحك).",
+      "- 3-5 hashtags per caption, always including #TBSEgypt, mixing Arabic and English tags.",
+      "- Use only facts given above. Never invent prices, discounts, dates, branches, ingredients, or health/allergen claims. Use placeholders like [السعر], [الفرع], [التاريخ], [الوقت] for missing details.",
+      "- Mention TBS or @tbsegypt in at most one caption. No clichés.",
+      "- " + langLine,
+      "",
+      "Reply with only this JSON, no other text:",
+      '{"captions":[{"angle":"sensory","text":"...","text_en":"(only when both languages are requested)","hashtags":["#TBSEgypt","..."]},{"angle":"moment",...},{"angle":"cta",...}]}',
+    ].join("\n");
+  }
+
+  function parseLoose(text) {
+    const tries = [text];
+    const fence = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (fence) tries.push(fence[1]);
+    const a = text.indexOf("{"), b = text.lastIndexOf("}");
+    if (a !== -1 && b > a) tries.push(text.slice(a, b + 1));
+    for (const t of tries) { try { return JSON.parse(t); } catch {} }
+    throw { code: "invalid_json" };
+  }
+
+  function normalize(data) {
+    const list = Array.isArray(data) ? data : data && data.captions;
+    if (!Array.isArray(list) || !list.length) throw { code: "invalid_json" };
+    const order = ["sensory", "moment", "cta"];
+    return list.slice(0, 3).map((c, i) => ({
+      angle: order.includes(c.angle) ? c.angle : order[i],
+      text: String(c.text || "").trim(),
+      text_en: c.text_en ? String(c.text_en).trim() : "",
+      hashtags: Array.isArray(c.hashtags) ? c.hashtags.map(String) : [],
+    })).filter((c) => c.text);
+  }
+
+  async function viaClaudeAi(prompt, signal) {
+    return normalize(await sample.json(prompt, { signal, cache: false }));
+  }
+
+  async function viaApi(prompt, key, signal) {
+    let res;
+    try {
+      res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST", signal,
+        headers: {
+          "content-type": "application/json",
+          "x-api-key": key,
+          "anthropic-version": "2023-06-01",
+          "anthropic-beta": "server-side-fallback-2026-07-01",
+          "anthropic-dangerous-direct-browser-access": "true",
+        },
+        body: JSON.stringify({
+          model: MODEL,
+          max_tokens: 4000,
+          fallbacks: "default",
+          output_config: { effort: "low" },
+          messages: [{ role: "user", content: prompt }],
+        }),
+      });
+    } catch (e) {
+      if (e && e.name === "AbortError") throw { code: "cancelled" };
+      throw { code: "network" };
+    }
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) throw { code: "http_" + res.status, message: body.error && body.error.message };
+    if (body.stop_reason === "refusal") throw { code: "refused" };
+    const text = (body.content || []).filter((b) => b.type === "text").map((b) => b.text).join("\n");
+    return normalize(parseLoose(text));
+  }
+
+  function exampleFor() {
+    const id = $("topic").value.trim() ? null : state.topicId;
+    const rows = EXAMPLES[id] || EXAMPLES.coffee;
+    return rows.map(([text, hashtags], i) => ({ angle: ["sensory", "moment", "cta"][i], text, text_en: "", hashtags }));
+  }
+
+  function render(caps, isExample) {
+    const out = $("out");
+    out.innerHTML = "";
+    $("resTag").hidden = !isExample;
+    const en = !isExample && state.lang === "en";
+    $("resTitle").textContent = isExample ? "مثال" : "الكابشنز";
+    for (const c of caps) {
+      const card = document.createElement("article");
+      card.className = "cap";
+      const h = document.createElement("h3");
+      h.textContent = en ? ANGLES_EN[c.angle] : ANGLES[c.angle];
+      const p = document.createElement("p");
+      p.dir = "auto"; p.textContent = c.text;
+      card.append(h, p);
+      if (c.text_en) { const pe = document.createElement("p"); pe.className = "en"; pe.textContent = c.text_en; card.append(pe); }
+      const tags = document.createElement("p");
+      tags.className = "tags"; tags.dir = "auto"; tags.textContent = c.hashtags.join(" ");
+      const copy = document.createElement("button");
+      copy.type = "button"; copy.className = "btn ghost"; copy.textContent = "نسخ · Copy";
+      const full = [c.text, c.text_en, c.hashtags.join(" ")].filter(Boolean).join("\n\n");
+      copy.onclick = async () => {
+        try { await navigator.clipboard.writeText(full); copy.textContent = "تم النسخ ✓"; }
+        catch {
+          const r = document.createRange(); r.selectNodeContents(card);
+          const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+          copy.textContent = "Ctrl+C للنسخ";
+        }
+        setTimeout(() => (copy.textContent = "نسخ · Copy"), 1800);
+      };
+      card.append(tags, copy);
+      out.append(card);
+    }
+  }
+
+  function notice(msg, kind) {
+    const n = $("notice");
+    n.hidden = !msg; n.className = "notice " + (kind || "warn"); n.textContent = msg || "";
+  }
+
+  const ERR = {
+    not_granted: "لم يتم السماح للصفحة باستخدام Claude. اعرض المثال أو اسمح من قائمة الأذونات.",
+    sampling_disabled: "Claude غير متاح لهذا الحساب.",
+    rate_limited: "طلبات كثيرة. انتظر دقيقة وحاول مرة أخرى.",
+    session_expired: "انتهت الجلسة. سجّل الدخول إلى claude.ai مرة أخرى.",
+    refused: "رفض Claude هذا الطلب. غيّر صياغة الموضوع وحاول مرة أخرى.",
+    invalid_json: "الرد جاء بشكل غير متوقع. اضغط مرة أخرى.",
+    network: "تعذّر الاتصال بـ api.anthropic.com. تحقق من الإنترنت.",
+    http_401: "مفتاح API غير صحيح. Invalid API key.",
+    http_403: "المفتاح لا يملك صلاحية لهذا الموديل.",
+    http_429: "تم تجاوز حد الاستخدام. انتظر قليلًا.",
+    http_529: "الخدمة مشغولة حاليًا. حاول بعد قليل.",
+  };
+
+  function setMode() {
+    const m = $("mode");
+    const key = store.get("tbs_api_key");
+    if (sample) { m.textContent = "متصل عبر claude.ai — لا يحتاج إعداد"; m.className = "mode"; $("keyBox").hidden = true; }
+    else if (onPlatform) { m.textContent = "وضع الأمثلة — سجّل الدخول إلى claude.ai للتوليد"; m.className = "mode offline"; $("keyBox").hidden = true; }
+    else if (key) { m.textContent = "متصل بـ Claude API"; m.className = "mode"; $("keyBox").hidden = false; }
+    else { m.textContent = "وضع الأمثلة — أضف مفتاح API للتوليد"; m.className = "mode offline"; $("keyBox").hidden = false; }
+  }
+
+  $("saveKey").onclick = () => { store.set("tbs_api_key", $("apiKey").value.trim()); setMode(); notice("تم الحفظ.", "warn"); };
+  $("clearKey").onclick = () => { $("apiKey").value = ""; store.set("tbs_api_key", ""); setMode(); notice(""); };
+  $("stop").onclick = () => ctl && ctl.abort();
+
+  $("form").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    notice("");
+    if (!currentTopic()) { notice("اختر موضوعًا أو اكتبه.", "err"); return; }
+    const key = $("apiKey").value.trim() || store.get("tbs_api_key");
+    if (!sample && (onPlatform || !key)) {
+      render(exampleFor(), true);
+      notice(onPlatform
+        ? "هذا مثال جاهز. افتح الصفحة وأنت مسجّل في claude.ai لتوليد كابشنز جديدة."
+        : "هذا مثال جاهز. أضف مفتاح Claude API بالأسفل لتوليد كابشنز جديدة لأي موضوع.");
+      if (!onPlatform) $("keyBox").open = true;
+      return;
+    }
+    ctl = new AbortController();
+    $("go").disabled = true; $("stop").hidden = false;
+    $("out").innerHTML = '<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>';
+    $("resTag").hidden = true; $("resTitle").textContent = "بنكتب…";
+    try {
+      const caps = sample ? await viaClaudeAi(buildPrompt(), ctl.signal) : await viaApi(buildPrompt(), key, ctl.signal);
+      if (!caps.length) throw { code: "invalid_json" };
+      render(caps, false);
+    } catch (e) {
+      const code = (e && e.code) || "upstream_error";
+      render(exampleFor(), true);
+      if (code !== "cancelled") notice((ERR[code] || "حصل خطأ غير متوقع. حاول مرة أخرى.") + (e && e.message ? " (" + e.message + ")" : ""), "err");
+      if (code === "not_granted" || code === "sampling_disabled") { sample = null; setMode(); }
+    } finally {
+      $("go").disabled = false; $("stop").hidden = true; ctl = null;
+    }
+  });
+
+  // Start in a realistic state: example captions for the selected topic.
+  render(exampleFor(), true);
+  setMode();
+
+  // Light up the no-setup path when running inside claude.ai.
+  if (window.claude && typeof window.claude.use === "function") {
+    onPlatform = true;
+    setMode();
+    window.claude.use("sample").then((s) => { sample = s; setMode(); }).catch(() => setMode());
+  }
+})();
+</script>
