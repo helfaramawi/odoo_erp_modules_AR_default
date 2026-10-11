@@ -6,13 +6,30 @@ An Odoo app that turns a **topic + tone** into **3 short, ready-to-post social m
 - Writes the captions with **Claude** automatically once an Anthropic API key is added (Settings → Social Captions, or the `ANTHROPIC_API_KEY` environment variable). If Claude can't be reached, it falls back to the built-in generator and says why.
 - Opens with 3 example requests already generated, so the demo is never empty.
 
-## Easiest start: double-click
+## Easiest start (Windows): double-click RUN-DEMO.bat
 
-1. Install and open **Docker Desktop** (https://www.docker.com/products/docker-desktop/).
-2. Windows: double-click **`start-demo.bat`**. macOS / Linux: run `./start-demo.sh`.
-3. The browser opens **http://localhost:8069**. Log in with **admin / admin**.
+1. Right-click `social_caption_studio.zip` → **Properties** → tick **Unblock** (if shown) → OK. Then right-click → **Extract All**.
+2. Open the extracted folder and double-click **`RUN-DEMO.bat`**. If a blue "Windows protected your PC" screen appears: **More info → Run anyway**.
+3. Press **1** (or just wait 10 seconds). The browser opens the demo. Log in with **admin / admin**.
 
-Stop with `stop-demo.bat` / `./stop-demo.sh`. The first start needs internet to download Odoo (about 1 GB); later starts work offline.
+`RUN-DEMO.bat` handles the usual problems by itself:
+
+| Problem | What the file does |
+|---|---|
+| Docker Desktop not installed | Offers to install it (winget), or opens the download page |
+| Docker installed but not running | Starts Docker Desktop and waits up to 3 minutes |
+| Docker won't start | Explains the cause and offers to install / update WSL |
+| Port 8069 already used | Picks the next free port (8070-8099) automatically |
+| Already running | Reuses it and just opens the browser |
+| Odoo slow or stuck | Shows the log and offers wait / reset fresh |
+| Download failed | Explains (internet, disk space) and offers retry |
+| Run from inside the zip | Tells you to extract first |
+
+Its menu also has **2 = Stop**, **3 = Reset (fresh start)**, **4 = Show logs**.
+
+macOS / Linux: run `./start-demo.sh` and `./stop-demo.sh`.
+
+The first start needs internet to download Odoo (about 1 GB); later starts work offline.
 
 ## Run the demo (one command)
 
