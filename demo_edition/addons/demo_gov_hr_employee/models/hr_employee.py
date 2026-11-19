@@ -70,7 +70,7 @@ class HrEmployee(models.Model):
                                     string='مستندات الملف')
     missing_documents = fields.Char(string='المستندات الناقصة', compute='_compute_missing_documents')
     documents_complete = fields.Boolean(string='الملف مكتمل المستندات',
-                                         compute='_compute_missing_documents')
+                                         compute='_compute_missing_documents', store=True)
 
     @api.depends('document_ids.document_type')
     def _compute_missing_documents(self):
