@@ -12,6 +12,12 @@
             action="demo_gov_stock_finance_bridge.action_journal_entries"
             sequence="10"/>
 
+  <menuitem id="menu_sfb_bridge_log"
+            name="سجل القيود المحاسبية"
+            parent="menu_sfb_root"
+            action="demo_gov_stock_finance_bridge.action_bridge_log"
+            sequence="15"/>
+
   <menuitem id="menu_sfb_account_rules"
             name="إعداد الحسابات"
             parent="menu_sfb_root"

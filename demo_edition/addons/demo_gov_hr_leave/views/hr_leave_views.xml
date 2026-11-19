@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_hr_leave_form_gov_inherit" model="ir.ui.view">
+    <field name="name">hr.leave.form.gov.inherit</field>
+    <field name="model">hr.leave</field>
+    <field name="inherit_id" ref="hr_holidays.hr_leave_view_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//sheet" position="inside">
+        <group string="بيانات إصابة العمل" invisible="not is_work_injury">
+          <field name="is_work_injury" invisible="1"/>
+          <field name="injury_date"/>
+          <field name="injury_type"/>
+          <field name="medical_committee_ref"/>
+        </group>
+        <group string="تأكيد قسم الإجازات">
+          <field name="leave_dept_confirmed" readonly="1"/>
+          <field name="leave_dept_confirmed_by" readonly="1" invisible="not leave_dept_confirmed"/>
+          <field name="leave_dept_confirmed_date" readonly="1" invisible="not leave_dept_confirmed"/>
+        </group>
+      </xpath>
+      <xpath expr="//header" position="inside">
+        <button name="action_confirm_by_leave_dept" string="تأكيد قسم الإجازات" type="object"
+                class="btn-primary" invisible="state != 'validate' or leave_dept_confirmed"/>
+      </xpath>
+    </field>
+  </record>
+
+  <record id="view_employee_form_leave_entitlement_inherit" model="ir.ui.view">
+    <field name="name">hr.employee.form.leave.entitlement.inherit</field>
+    <field name="model">hr.employee</field>
+    <field name="inherit_id" ref="demo_gov_hr_employee.view_employee_form_gov_inherit"/>
+    <field name="arch" type="xml">
+      <field name="civil_service_grade" position="after">
+        <field name="years_of_service" readonly="1"/>
+        <field name="annual_leave_entitlement_days" readonly="1"/>
+      </field>
+    </field>
+  </record>
+</odoo>

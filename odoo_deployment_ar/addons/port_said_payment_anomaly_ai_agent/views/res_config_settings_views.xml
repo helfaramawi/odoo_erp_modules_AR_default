@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_payment_anomaly" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.payment.anomaly.agent</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="وكيل شذوذ المدفوعات" string="وكيل شذوذ المدفوعات" name="payment_anomaly_agent">
+                    <block title="إعدادات وكيل كشف الشذوذ في المدفوعات والشيكات">
+                        <setting string="تفعيل الوكيل">
+                            <field name="payment_anomaly_agent_enabled"/>
+                        </setting>
+                        <setting string="حد Z-Score">
+                            <field name="payment_anomaly_zscore_threshold"/>
+                        </setting>
+                        <setting string="أقل تاريخ إحصائي">
+                            <field name="payment_anomaly_min_history"/>
+                        </setting>
+                        <setting string="مدة تكرار نفس المبلغ">
+                            <field name="payment_anomaly_duplicate_days"/>
+                        </setting>
+                        <setting string="حد المورد الجديد بمبلغ كبير">
+                            <field name="payment_anomaly_large_new_vendor_amount"/>
+                        </setting>
+                        <setting string="نافذة نهاية السنة المالية">
+                            <field name="payment_anomaly_fy_end_days"/>
+                        </setting>
+                        <setting string="إيقاف عالي الخطر">
+                            <field name="payment_anomaly_block_high_risk"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>

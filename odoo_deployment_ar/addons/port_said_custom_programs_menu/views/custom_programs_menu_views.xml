@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_custom_programs_root"
+              name="مجموعة البرامج المخصصة"
+              sequence="65"
+              groups="base.group_user"/>
+
+    <record id="action_organize_c_menus_server" model="ir.actions.server">
+        <field name="name">إعادة تجميع برامج c في القائمة</field>
+        <field name="model_id" ref="model_port_said_custom_menu_organizer"/>
+        <field name="state">code</field>
+        <field name="code">action = env['port_said.custom.menu.organizer'].sudo().action_organize_c_menus()</field>
+    </record>
+
+    <menuitem id="menu_custom_programs_reorganize"
+              name="إعادة تجميع البرامج المخصصة"
+              parent="menu_custom_programs_root"
+              action="action_organize_c_menus_server"
+              sequence="999"
+              groups="base.group_system"/>
+</odoo>

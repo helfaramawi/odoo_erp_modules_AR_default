@@ -10,7 +10,7 @@
         2. دفتر حسابات التأمينات النهائية مقابل خطاب ضمان / نقد / شيك (استمارة 78 ع.ح)
 
         المعمارية: تمديد لا تكرار
-        =========================
+
         تمدِّد demo_gov_advances.bank.guarantee القائم لإضافة:
         - أنواع التأمين النقدية والشيكات (ليست خطاب ضمان فقط)
         - إنشاء القيود المحاسبية تلقائياً عند التفعيل والإفراج
@@ -29,7 +29,7 @@
         السنة المالية: 1 يوليو – 30 يونيو
     """,
     'version': '17.0.1.0.0',
-    'category': 'Accounting/Egypt Government',
+    'category': 'الخدمات الحكومية التجريبية/الحسابات',
     'author': 'Enterprise Solutions Demo',
     'website': 'https://example.com',
     'license': 'LGPL-3',
@@ -38,7 +38,6 @@
         'demo_gov_advances',        # النموذج الأساسي bank.guarantee
         'demo_gov_cash_books',      # cheque model للإيداع بشيك
         'demo_gov_subsidiary_books',# تصنيف الحسابات النظامية
-        'demo_gov_menu',
         'general_ledger_ar',
     ],
     'data': [
@@ -63,6 +62,7 @@
             'demo_gov_insurance_subsidiary/static/src/css/insurance_register.css',
         ],
     },
+    'post_init_hook': 'post_init_hook',
     'installable': True,
     'application': False,
 }

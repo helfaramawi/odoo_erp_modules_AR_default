@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="module_category_auction_eg" model="ir.module.category">
-        <field name="name">المزايدات الحكومية — المحافظة التجريبية</field>
+        <field name="name">المزايدات الحكومية — الجهة الحكومية التجريبية</field>
         <field name="sequence">87</field>
     </record>
 

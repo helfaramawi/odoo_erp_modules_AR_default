@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_hr_performance_grievance_form" model="ir.ui.view">
+    <field name="name">demo_gov.hr.performance.grievance.form</field>
+    <field name="model">demo_gov.hr.performance.grievance</field>
+    <field name="arch" type="xml">
+      <form string="تظلم من تقرير كفاءة الأداء">
+        <header>
+          <button name="action_send_to_committee" string="إحالة للجنة التظلمات" type="object" class="btn-primary" invisible="state != 'submitted'"/>
+          <button name="action_send_to_union" string="إحالة للنقابة" type="object" class="btn-primary" invisible="state != 'committee_review'"/>
+          <button name="action_resolve" string="البت النهائي" type="object" class="btn-success" invisible="state != 'union_review'"/>
+          <field name="state" widget="statusbar" statusbar_visible="submitted,committee_review,union_review,resolved"/>
+        </header>
+        <sheet>
+          <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
+          <group>
+            <group>
+              <field name="appraisal_id"/>
+              <field name="employee_id" readonly="1"/>
+            </group>
+          </group>
+          <field name="grievance_text" placeholder="نص التظلم..."/>
+          <group string="متابعة اللجنة والنقابة">
+            <field name="committee_notes"/>
+            <field name="union_notes"/>
+          </group>
+          <field name="decision_text" placeholder="القرار النهائي..." invisible="state != 'union_review' and state != 'resolved'"/>
+        </sheet>
+        <chatter/>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_hr_performance_grievance_list" model="ir.ui.view">
+    <field name="name">demo_gov.hr.performance.grievance.list</field>
+    <field name="model">demo_gov.hr.performance.grievance</field>
+    <field name="arch" type="xml">
+      <tree string="تظلمات الأداء" decoration-success="state=='resolved'">
+        <field name="name"/>
+        <field name="employee_id"/>
+        <field name="appraisal_id"/>
+        <field name="state" widget="badge"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="action_hr_performance_grievance" model="ir.actions.act_window">
+    <field name="name">تظلمات الأداء</field>
+    <field name="res_model">demo_gov.hr.performance.grievance</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+</odoo>

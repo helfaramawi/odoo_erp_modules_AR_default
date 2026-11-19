@@ -11,7 +11,7 @@
           <div style="text-align:center; margin-bottom:8px;">
             <h3 style="margin:0;">دفتر حساب الشيكات</h3>
             <div style="font-size:11px;">
-              استمارة رقم 56 ع.ح — المحافظة التجريبية
+              استمارة رقم 56 ع.ح — الجهة الحكومية التجريبية
             </div>
             <div style="font-size:10px;">
               من <t t-out="docs[0].issue_date if docs else ''"/>

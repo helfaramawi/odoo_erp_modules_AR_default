@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_hr_job_evaluation_form" model="ir.ui.view">
+    <field name="name">demo_gov.hr.job.evaluation.form</field>
+    <field name="model">demo_gov.hr.job.evaluation</field>
+    <field name="arch" type="xml">
+      <form string="تقييم وظيفة">
+        <header>
+          <button name="action_approve" string="اعتماد" type="object" class="btn-primary" invisible="state != 'draft'"/>
+          <field name="state" widget="statusbar" statusbar_visible="draft,approved"/>
+        </header>
+        <sheet>
+          <group>
+            <group>
+              <field name="job_id"/>
+              <field name="department_id" readonly="1"/>
+              <field name="evaluation_date"/>
+            </group>
+            <group>
+              <field name="evaluated_grade"/>
+              <field name="points_score"/>
+              <field name="evaluator_id" readonly="1"/>
+            </group>
+          </group>
+          <field name="notes" placeholder="ملاحظات التقييم..."/>
+        </sheet>
+        <chatter/>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_hr_job_evaluation_list" model="ir.ui.view">
+    <field name="name">demo_gov.hr.job.evaluation.list</field>
+    <field name="model">demo_gov.hr.job.evaluation</field>
+    <field name="arch" type="xml">
+      <tree string="تقييمات الوظائف" decoration-success="state=='approved'">
+        <field name="job_id"/>
+        <field name="department_id"/>
+        <field name="evaluation_date"/>
+        <field name="evaluated_grade"/>
+        <field name="state" widget="badge"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="action_hr_job_evaluation" model="ir.actions.act_window">
+    <field name="name">تقييمات الوظائف</field>
+    <field name="res_model">demo_gov.hr.job.evaluation</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+</odoo>

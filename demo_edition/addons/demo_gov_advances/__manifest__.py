@@ -1,8 +1,8 @@
 {
-    'name': 'السلف والضمانات البنكية — المحافظة التجريبية',
+    'name': 'السلف والضمانات البنكية — الجهة الحكومية التجريبية',
     'summary': 'FR-D-03: سلف مستديمة (62 ع.ح) + دفعات مقدمة + خطابات ضمان بنكية',
     'version': '17.0.2.0.0',
-    'category': 'Accounting/Egypt Government',
+    'category': 'الخدمات الحكومية التجريبية/الحسابات',
     'author': 'Enterprise Solutions Demo',
     'license': 'LGPL-3',
     'depends': [
@@ -10,6 +10,7 @@
         'demo_gov_daftar55',
         'demo_gov_commitment',
         'demo_gov_dossier',
+        'demo_branding',
     ],
     'data': [
         'security/ir.model.access.csv',

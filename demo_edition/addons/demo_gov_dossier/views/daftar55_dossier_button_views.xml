@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <!-- زر إنشاء/فتح الاضبارة على دفتر 55 — يسد فجوة "لا توجد اضبارة مرتبطة"
+       في فحص جاهزية الطباعة (demo_gov_form50_print). -->
+  <record id="view_daftar55_form_dossier_button" model="ir.ui.view">
+    <field name="name">demo_gov.daftar55.form.dossier.button</field>
+    <field name="model">demo_gov.daftar55</field>
+    <field name="inherit_id" ref="demo_gov_daftar55.view_daftar55_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//button[@name='action_archive_dossier']" position="after">
+        <button name="action_open_dossier" string="إنشاء / فتح اضبارة" type="object" class="btn-secondary"/>
+      </xpath>
+    </field>
+  </record>
+</odoo>

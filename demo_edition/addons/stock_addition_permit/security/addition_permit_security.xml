@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="module_category_warehouse_eg" model="ir.module.category">
-        <field name="name">مخازن حكومية — المحافظة التجريبية</field>
+        <field name="name">مخازن حكومية — الجهة الحكومية التجريبية</field>
         <field name="sequence">86</field>
     </record>
 

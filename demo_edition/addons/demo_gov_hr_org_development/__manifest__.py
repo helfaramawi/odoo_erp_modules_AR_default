@@ -1,0 +1,20 @@
+{
+    'name': 'التطوير المؤسسي — بطاقات الوظائف والموازنة',
+    'summary': 'FDD-HR-07: Job description cards, job evaluation & grading, Form 5 position budget (SSRS-04)',
+    'version': '17.0.1.0.0',
+    'category': 'الخدمات الحكومية التجريبية/الموارد البشرية',
+    'author': 'Enterprise Solutions Demo',
+    'license': 'LGPL-3',
+    'depends': ['demo_gov_hr_employee', 'demo_gov_hr_recruitment', 'demo_gov_hr_training'],
+    'data': [
+        'security/ir.model.access.csv',
+        'views/hr_job_evaluation_views.xml',
+        'views/hr_job_views_inherit.xml',
+        'views/hr_position_budget_views.xml',
+        'views/hr_org_development_menu.xml',
+        'reports/form5_reports.xml',
+        'reports/form5_template.xml',
+    ],
+    'installable': True,
+    'application': False,
+}

@@ -62,13 +62,14 @@
           </group>
 
           <group string="المبالغ والاستقطاعات">
+            <field name="is_payroll_entry" invisible="not is_payroll_entry"/>
             <group string="الاستقطاعات الأربعة">
               <field name="amount_gross"/>
-              <field name="deductions_stamp_normal"/>
-              <field name="deductions_stamp_extra"/>
-              <field name="deductions_stamp_proportional"/>
-              <field name="deductions_commercial_tax"/>
-              <field name="total_deductions"/>
+              <field name="deductions_stamp_normal" invisible="is_payroll_entry"/>
+              <field name="deductions_stamp_extra" invisible="is_payroll_entry"/>
+              <field name="deductions_stamp_proportional" invisible="is_payroll_entry"/>
+              <field name="deductions_commercial_tax" invisible="is_payroll_entry"/>
+              <field name="total_deductions" invisible="is_payroll_entry"/>
             </group>
             <group string="الصافي والتفقيط">
               <field name="amount_net" class="oe_subtotal_footer_separator"/>

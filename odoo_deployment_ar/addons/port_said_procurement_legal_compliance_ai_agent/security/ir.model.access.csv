@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_procurement_legal_compliance_user,access.procurement.legal.compliance.user,model_port_said_procurement_legal_compliance,base.group_user,1,0,0,0
+access_procurement_legal_compliance_manager,access.procurement.legal.compliance.manager,model_port_said_procurement_legal_compliance,base.group_system,1,1,1,0
+access_procurement_legal_engine_manager,access.procurement.legal.engine.manager,model_port_said_procurement_legal_engine,base.group_system,1,1,1,0

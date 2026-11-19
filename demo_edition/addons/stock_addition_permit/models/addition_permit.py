@@ -58,7 +58,6 @@ class InspectionReport(models.Model):
     ], string='نتيجة الفحص', required=True, default='pass', tracking=True)
     rejection_reason = fields.Text(
         string='سبب الرفض / الملاحظات',
-        invisible="result == 'pass'",
     )
     # Approved quantities
     approved_qty = fields.Float(

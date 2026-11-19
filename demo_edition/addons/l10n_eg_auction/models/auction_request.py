@@ -33,8 +33,7 @@ class AuctionRequest(models.Model):
         ('movables', 'منقولات - Movables'),
         ('property', 'عقارات - Real Property'),
         ('other', 'أخرى - Other'),
-    ], string='نوع البيع', tracking=True,
-       invisible="auction_type != 'sale'")
+    ], string='نوع البيع', tracking=True)
 
     tender_method = fields.Selection([
         ('public', 'مزايدة عامة - Public Auction'),
@@ -47,11 +46,9 @@ class AuctionRequest(models.Model):
         'product.product',
         string='الصنف / المنقول',
         tracking=True,
-        invisible="sale_type == 'property' or auction_type == 'lease'",
     )
     qty = fields.Float(
         string='الكمية', default=1.0, digits='Product Unit of Measure',
-        invisible="sale_type == 'property' or auction_type == 'lease'",
     )
     uom_id = fields.Many2one(
         'uom.uom', string='الوحدة',
@@ -60,7 +57,6 @@ class AuctionRequest(models.Model):
     asset_description = fields.Char(
         string='وصف الأصل / العقار',
         tracking=True,
-        invisible="sale_type == 'movables'",
     )
     estimated_value = fields.Float(
         string='القيمة التقديرية', digits='Account', tracking=True,

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <!-- إضافية فقط تحت "الموارد البشرية" التي أنشأها demo_gov_hr_training —
+       لا تعدّل أي موديول قائم. -->
+  <menuitem id="menu_hr_recruitment_root"
+            name="التوظيف والتأهيل"
+            parent="demo_gov_hr_training.menu_gov_hr"
+            sequence="20"/>
+
+  <menuitem id="menu_hr_recruitment_project"
+            name="مشاريع التعيين"
+            parent="menu_hr_recruitment_root"
+            action="action_hr_recruitment_project"
+            sequence="10"/>
+</odoo>

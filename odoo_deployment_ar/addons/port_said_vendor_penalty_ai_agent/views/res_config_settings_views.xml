@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_vendor_penalty_agent" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.vendor.penalty.agent</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="وكيل جزاءات الموردين" string="وكيل جزاءات الموردين" name="vendor_penalty_ai_agent">
+                    <block title="إعدادات وكيل كشف جزاءات الموردين">
+                        <setting string="تفعيل وكيل جزاءات الموردين">
+                            <field name="vendor_penalty_agent_enabled"/>
+                        </setting>
+                        <setting string="نسبة المخالفة الأولى">
+                            <field name="vendor_penalty_agent_first_rate"/>
+                        </setting>
+                        <setting string="نسبة المخالفة الثانية">
+                            <field name="vendor_penalty_agent_second_rate"/>
+                        </setting>
+                        <setting string="نسبة المخالفة الثالثة فأكثر">
+                            <field name="vendor_penalty_agent_third_rate"/>
+                        </setting>
+                        <setting string="اعتماد الجزاء تلقائياً إن كان الإجراء متاحاً">
+                            <field name="vendor_penalty_agent_auto_approve"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>

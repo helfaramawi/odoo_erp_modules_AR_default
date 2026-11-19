@@ -104,7 +104,7 @@
               </tr>
             </table>
           </div>
-          <div style="margin-top:10px;font-size:8px;color:#aaa;text-align:center;border-top:1px solid #eee;padding-top:6px;">نظام أوبو إيآر بي — الديوان العام للمحافظة التجريبية — طُبع: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/></div>
+          <div style="margin-top:10px;font-size:8px;color:#aaa;text-align:center;border-top:1px solid #eee;padding-top:6px;">نظام أوبو إيآر بي — الديوان العام للجهة الحكومية التجريبية — طُبع: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/></div>
         </div>
       </t>
     </t>
@@ -195,7 +195,7 @@
               </tr>
             </table>
           </div>
-          <div style="margin-top:10px;font-size:8px;color:#aaa;text-align:center;border-top:1px solid #eee;padding-top:6px;">نظام أوبو إيآر بي — الديوان العام للمحافظة التجريبية — طُبع: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/></div>
+          <div style="margin-top:10px;font-size:8px;color:#aaa;text-align:center;border-top:1px solid #eee;padding-top:6px;">نظام أوبو إيآر بي — الديوان العام للجهة الحكومية التجريبية — طُبع: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/></div>
         </div>
       </t>
     </t>
@@ -291,7 +291,7 @@
               </tr>
             </table>
           </div>
-          <div style="margin-top:10px;font-size:8px;color:#aaa;text-align:center;border-top:1px solid #eee;padding-top:6px;">نظام أوبو إيآر بي — الديوان العام للمحافظة التجريبية — طُبع: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/></div>
+          <div style="margin-top:10px;font-size:8px;color:#aaa;text-align:center;border-top:1px solid #eee;padding-top:6px;">نظام أوبو إيآر بي — الديوان العام للجهة الحكومية التجريبية — طُبع: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/></div>
         </div>
       </t>
     </t>
@@ -415,7 +415,7 @@
               </tr>
             </table>
           </div>
-          <div style="margin-top:10px;font-size:8px;color:#aaa;text-align:center;border-top:1px solid #eee;padding-top:6px;">نظام أوبو إيآر بي — الديوان العام للمحافظة التجريبية — طُبع: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/></div>
+          <div style="margin-top:10px;font-size:8px;color:#aaa;text-align:center;border-top:1px solid #eee;padding-top:6px;">نظام أوبو إيآر بي — الديوان العام للجهة الحكومية التجريبية — طُبع: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/></div>
         </div>
       </t>
     </t>

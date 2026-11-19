@@ -24,7 +24,7 @@
               <div style="font-size:10px;">
                 <t t-out="dict(folio._fields['period_month'].selection).get(folio.period_month)"/>
                 <t t-out="folio.fiscal_year"/>
-                — المحافظة التجريبية
+                — الجهة الحكومية التجريبية
               </div>
             </div>
 

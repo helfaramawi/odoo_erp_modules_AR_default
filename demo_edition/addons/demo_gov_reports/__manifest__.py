@@ -1,8 +1,8 @@
 {
-    'name': 'التقارير الحكومية — المحافظة التجريبية',
+    'name': 'التقارير الحكومية — الجهة الحكومية التجريبية',
     'summary': 'مجموعة التقارير الحكومية الرسمية: مالية، محاسبية، إدارية',
     'version': '17.0.1.0.0',
-    'category': 'Accounting/Egypt Government',
+    'category': 'الخدمات الحكومية التجريبية/التقارير الحكومية',
     'author': 'Enterprise Solutions Demo',
     'license': 'LGPL-3',
     'depends': [
@@ -10,8 +10,7 @@
         'demo_gov_daftar55',
         'demo_gov_daftar224',
         'demo_gov_commitment',
-        'l10n_eg_auction',
-    ],
+        'l10n_eg_auction', 'demo_branding',],
     'data': [
         'security/ir.model.access.csv',
         'views/report_wizard_views.xml',

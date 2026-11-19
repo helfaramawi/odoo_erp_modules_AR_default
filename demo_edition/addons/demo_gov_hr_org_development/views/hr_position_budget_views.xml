@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_hr_position_budget_form" model="ir.ui.view">
+    <field name="name">demo_gov.hr.position.budget.form</field>
+    <field name="model">demo_gov.hr.position.budget</field>
+    <field name="arch" type="xml">
+      <form string="استمارة موازنة وظيفة">
+        <sheet>
+          <div class="oe_title"><h1><field name="job_id"/></h1></div>
+          <group>
+            <group>
+              <field name="department_id" readonly="1"/>
+              <field name="fiscal_year"/>
+              <field name="budgeted_positions"/>
+            </group>
+            <group>
+              <field name="filled_positions" readonly="1"/>
+              <field name="vacant_positions" readonly="1"/>
+              <field name="movements_in" readonly="1"/>
+              <field name="movements_out" readonly="1"/>
+            </group>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_hr_position_budget_list" model="ir.ui.view">
+    <field name="name">demo_gov.hr.position.budget.list</field>
+    <field name="model">demo_gov.hr.position.budget</field>
+    <field name="arch" type="xml">
+      <tree string="استمارة موازنة الوظائف (استمارة 5)">
+        <field name="job_id"/>
+        <field name="department_id"/>
+        <field name="fiscal_year"/>
+        <field name="budgeted_positions"/>
+        <field name="filled_positions"/>
+        <field name="vacant_positions"/>
+        <field name="movements_in"/>
+        <field name="movements_out"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="action_hr_position_budget" model="ir.actions.act_window">
+    <field name="name">استمارة موازنة الوظائف (استمارة 5)</field>
+    <field name="res_model">demo_gov.hr.position.budget</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+</odoo>

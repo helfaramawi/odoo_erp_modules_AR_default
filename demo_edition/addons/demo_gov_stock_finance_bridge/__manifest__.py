@@ -1,8 +1,8 @@
 {
-    'name': 'ربط المخزون بالحسابات — المحافظة التجريبية',
+    'name': 'ربط المخزون بالحسابات — الجهة الحكومية التجريبية',
     'summary': 'قيود محاسبية تلقائية + أبعاد مالية لكل حركة مخزنية',
     'version': '17.0.1.1.0',
-    'category': 'Accounting/Egypt Government',
+    'category': 'الخدمات الحكومية التجريبية/الحسابات',
     'author': 'Enterprise Solutions Demo',
     'license': 'LGPL-3',
     'depends': [
@@ -12,7 +12,7 @@
         # وليس له علاقة مباشرة بمحرك الربط المحاسبي للمخزون
         'c5_financial_dimensions',
         'stock_addition_permit',
-        'general_ledger_ar',
+        'demo_gov_subsidiary_books',
     ],
     'data': [
         'security/ir.model.access.csv',
@@ -20,6 +20,7 @@
         'views/account_rule_views.xml',
         'views/dimension_rule_views.xml',
         'views/journal_entry_views.xml',
+        'views/bridge_log_views.xml',
         'views/stock_permit_extensions.xml',
         'views/menu.xml',
     ],

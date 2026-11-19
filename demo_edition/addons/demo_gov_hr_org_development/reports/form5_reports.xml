@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="action_report_form5" model="ir.actions.report">
+    <field name="name">استمارة 5 — موازنة الوظائف</field>
+    <field name="model">demo_gov.hr.position.budget</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">demo_gov_hr_org_development.report_form5_template</field>
+    <field name="report_file">demo_gov_hr_org_development.report_form5_template</field>
+    <field name="binding_model_id" ref="model_demo_gov_hr_position_budget"/>
+    <field name="binding_type">report</field>
+    <field name="attachment_use">False</field>
+  </record>
+</odoo>

@@ -1,25 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <template id="login_layout_demo_banner" inherit_id="web.login_layout">
-        <xpath expr="//div[hasclass('o_database_list')]/.." position="inside">
-            <t t-set="demo_branding" t-value="request.env['demo.branding'].sudo().get_all()"/>
-            <div t-if="demo_branding.get('environment') == 'demo'" class="o_demo_branding_banner">
-                DEMO ENVIRONMENT — <t t-esc="demo_branding.get('application_name')"/> — Sample data only, not for production use
-            </div>
-        </xpath>
-    </template>
+    <!-- The DEMO ENVIRONMENT banner is injected by demo_banner.js via
+         plain DOM insertion (document.body.prepend), not by inheriting
+         into any Odoo page template. Two earlier attempts at QWeb
+         template inheritance (web.login_layout, then even the bundle
+         templates web.assets_frontend/web.assets_backend themselves)
+         broke because this Odoo build's internal template IDs don't
+         match what older Odoo versions used. ir.asset is the modern,
+         template-independent way to register CSS/JS: `bundle` is a
+         plain string match at render time, not an XML-ID reference, so
+         it can't fail this way. -->
 
-    <template id="assets_frontend_demo_banner" inherit_id="web.assets_frontend">
-        <xpath expr="." position="inside">
-            <link rel="stylesheet" type="text/css" href="/demo_branding/static/src/css/demo_banner.css"/>
-        </xpath>
-    </template>
-
-    <template id="assets_backend_demo_banner" inherit_id="web.assets_backend">
-        <xpath expr="." position="inside">
-            <link rel="stylesheet" type="text/css" href="/demo_branding/static/src/css/demo_banner.css"/>
-        </xpath>
-    </template>
+    <record id="asset_frontend_demo_banner_css" model="ir.asset">
+        <field name="name">demo_branding banner css (frontend)</field>
+        <field name="bundle">web.assets_frontend</field>
+        <field name="path">demo_branding/static/src/css/demo_banner.css</field>
+    </record>
+    <record id="asset_frontend_demo_banner_js" model="ir.asset">
+        <field name="name">demo_branding banner js (frontend)</field>
+        <field name="bundle">web.assets_frontend</field>
+        <field name="path">demo_branding/static/src/js/demo_banner.js</field>
+    </record>
+    <record id="asset_backend_demo_banner_css" model="ir.asset">
+        <field name="name">demo_branding banner css (backend)</field>
+        <field name="bundle">web.assets_backend</field>
+        <field name="path">demo_branding/static/src/css/demo_banner.css</field>
+    </record>
+    <record id="asset_backend_demo_banner_js" model="ir.asset">
+        <field name="name">demo_branding banner js (backend)</field>
+        <field name="bundle">web.assets_backend</field>
+        <field name="path">demo_branding/static/src/js/demo_banner.js</field>
+    </record>
 
 </odoo>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_hr_payroll_allowance_increment_form" model="ir.ui.view">
+    <field name="name">demo_gov.hr.payroll.allowance.increment.form</field>
+    <field name="model">demo_gov.hr.payroll.allowance.increment</field>
+    <field name="arch" type="xml">
+      <form string="حساب علاوة">
+        <header>
+          <button name="action_recompute" string="إعادة الحساب" type="object" class="btn-primary" invisible="state == 'posted'"/>
+          <button name="action_post" string="ترحيل" type="object" class="btn-success" invisible="state != 'computed'"/>
+          <field name="state" widget="statusbar" statusbar_visible="draft,computed,posted"/>
+        </header>
+        <sheet>
+          <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
+          <group>
+            <group>
+              <field name="salary_id"/>
+              <field name="employee_id" readonly="1"/>
+              <field name="allowance_type"/>
+              <field name="percentage"/>
+            </group>
+            <group>
+              <field name="wage_before" readonly="1"/>
+              <field name="computed_amount" readonly="1"/>
+              <field name="wage_after" readonly="1"/>
+            </group>
+          </group>
+        </sheet>
+        <chatter/>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_hr_payroll_allowance_increment_list" model="ir.ui.view">
+    <field name="name">demo_gov.hr.payroll.allowance.increment.list</field>
+    <field name="model">demo_gov.hr.payroll.allowance.increment</field>
+    <field name="arch" type="xml">
+      <tree string="حركات العلاوات والحوافز" decoration-success="state=='posted'">
+        <field name="name"/>
+        <field name="employee_id"/>
+        <field name="allowance_type"/>
+        <field name="percentage"/>
+        <field name="wage_before"/>
+        <field name="wage_after"/>
+        <field name="state" widget="badge"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="action_hr_payroll_allowance_increment" model="ir.actions.act_window">
+    <field name="name">حساب العلاوات والحوافز</field>
+    <field name="res_model">demo_gov.hr.payroll.allowance.increment</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+</odoo>

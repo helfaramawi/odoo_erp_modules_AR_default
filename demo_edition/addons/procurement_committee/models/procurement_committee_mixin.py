@@ -14,7 +14,6 @@ class ProcurementCommitteeMixin(models.AbstractModel):
     committee_id = fields.Many2one(
         'procurement.committee',
         string='اللجنة المعينة',
-        tracking=True,
         copy=False,
     )
     has_committee = fields.Boolean(

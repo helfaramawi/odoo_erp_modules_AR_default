@@ -19,8 +19,8 @@
 
             <!-- Header -->
             <div style="text-align:center; border-bottom:3px double #1F497D; padding-bottom:10px; margin-bottom:14px;">
-              <div style="font-size:11px; color:#666;">جمهورية مصر العربية — المحافظة التجريبية</div>
-              <div style="font-size:17px; font-weight:bold; color:#1F497D;">الديوان العام للمحافظة التجريبية</div>
+              <div style="font-size:11px; color:#666;">جمهورية مصر العربية — الجهة الحكومية التجريبية</div>
+              <div style="font-size:17px; font-weight:bold; color:#1F497D;">الديوان العام للجهة الحكومية التجريبية</div>
               <div style="font-size:14px; font-weight:bold; margin-top:4px;">دليل الحسابات المصرية — شجرة الحسابات</div>
               <div style="font-size:10px; color:#888; margin-top:2px;">
                 حتى تاريخ: <t t-esc="wizard.date_to"/>
@@ -120,7 +120,7 @@
             </table>
 
             <div style="margin-top:14px; font-size:9px; color:#888; text-align:center; border-top:1px solid #ccc; padding-top:6px;">
-              Enterprise Solutions Demo — نظام أوبو ERP — دليل الحسابات المصرية — المحافظة التجريبية
+              Enterprise Solutions Demo — نظام أوبو ERP — دليل الحسابات المصرية — الجهة الحكومية التجريبية
             </div>
 
           </div>

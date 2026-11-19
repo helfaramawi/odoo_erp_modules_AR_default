@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_payroll_component_user,demo_gov.hr.payroll.component user,model_demo_gov_hr_payroll_component,hr.group_hr_user,1,0,0,0
+access_hr_payroll_component_manager,demo_gov.hr.payroll.component manager,model_demo_gov_hr_payroll_component,hr.group_hr_manager,1,1,1,1
+access_hr_payroll_transaction_user,demo_gov.hr.payroll.transaction user,model_demo_gov_hr_payroll_transaction,hr.group_hr_user,1,1,1,0
+access_hr_payroll_transaction_manager,demo_gov.hr.payroll.transaction manager,model_demo_gov_hr_payroll_transaction,hr.group_hr_manager,1,1,1,1

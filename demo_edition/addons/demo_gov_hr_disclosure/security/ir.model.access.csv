@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_disclosure_user,demo_gov.hr.disclosure user,model_demo_gov_hr_disclosure,hr.group_hr_user,1,1,1,0
+access_hr_disclosure_manager,demo_gov.hr.disclosure manager,model_demo_gov_hr_disclosure,hr.group_hr_manager,1,1,1,1

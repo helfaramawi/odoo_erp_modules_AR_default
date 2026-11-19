@@ -3,10 +3,10 @@
     'name': 'دفاتر حركة النقود المرسلة والواردة',
     'summary': 'C-FM-15: Outgoing and Incoming Cash Transfers — Form 39',
     'description': """
-        الوحدة القانونية لدفتري حركة النقود في المحافظة التجريبية:
+        الوحدة القانونية لدفتري حركة النقود في الجهة الحكومية التجريبية:
 
         1. دفتر حساب حركة النقود المرسلة (استمارة 39 ع.ح)
-           — تحويلات النقد من خزينة المحافظة إلى وحدات تابعة أو خارجية
+           — تحويلات النقد من خزينة الجهة الحكومية إلى وحدات تابعة أو خارجية
         2. دفتر حساب حركة النقود الواردة (استمارة 39 ع.ح)
            — استلام النقد من الجهات الممولة أو الوحدات التابعة
 
@@ -23,7 +23,7 @@
         السنة المالية: 1 يوليو – 30 يونيو
     """,
     'version': '17.0.1.0.0',
-    'category': 'Accounting/Egypt Government',
+    'category': 'الخدمات الحكومية التجريبية/الحسابات',
     'author': 'Enterprise Solutions Demo',
     'website': 'https://example.com',
     'license': 'LGPL-3',
@@ -32,7 +32,6 @@
         'hr',                          # for custody holders (employees)
         'demo_gov_cash_books',        # sibling - shares cash.book infrastructure
         'demo_gov_daftar55',          # integration with payment orders
-        'demo_gov_menu',
         'general_ledger_ar',
     ],
     'data': [
@@ -53,6 +52,7 @@
             'demo_gov_cash_transfers/static/src/css/transfer_register.css',
         ],
     },
+    'post_init_hook': 'post_init_hook',
     'installable': True,
     'application': False,
 }

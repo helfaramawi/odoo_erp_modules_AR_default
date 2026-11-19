@@ -20,7 +20,7 @@
               <field name="current_balance" readonly="1"/>
             </group>
           </group>
-          <div class="alert alert-warning" invisible="current_balance >= 0">
+          <div class="alert alert-warning" role="alert" invisible="current_balance >= 0">
             <strong>⚠️ تحذير: الرصيد سالب — يُعد ذلك مخالفة مالية!</strong>
           </div>
           <field name="transaction_ids">
@@ -42,7 +42,7 @@
 
   <menuitem id="menu_ps_special_funds"
             name="الصناديق والحسابات الخاصة"
-            parent="demo_gov_menu.menu_ps_20_accts"
             action="demo_gov_special_funds.action_special_funds"
+            parent="demo_branding.menu_gov_accounts"
             sequence="22"/>
 </odoo>

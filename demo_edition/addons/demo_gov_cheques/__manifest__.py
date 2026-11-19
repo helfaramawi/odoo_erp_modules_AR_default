@@ -11,7 +11,7 @@
            — يُطابَق مع دفتر الشيكات الورقي (كعوب مسبقة الطباعة)
 
         2. دفتر حساب أوامر الدفع المرسلة (استمارة 56 ع.ح)
-           — أوامر الدفع الصادرة من المحافظة إلى المستفيدين
+           — أوامر الدفع الصادرة من الجهة الحكومية إلى المستفيدين
            — تكامل مع دفتر 55 (أذون الصرف)
 
         3. دفتر حساب الشيكات رسم التحصيل (استمارة 78 ع.ح)
@@ -26,7 +26,7 @@
         السنة المالية: 1 يوليو – 30 يونيو.
     """,
     'version': '17.0.1.0.0',
-    'category': 'Accounting/Egypt Government',
+    'category': 'الخدمات الحكومية التجريبية/الحسابات',
     'author': 'Enterprise Solutions Demo',
     'website': 'https://example.com',
     'license': 'LGPL-3',
@@ -35,7 +35,6 @@
         'demo_gov_cash_books',    # يعتمد على نموذج الشيك الأساسي
         'demo_gov_daftar55',      # ربط مع أذون الصرف
         'demo_gov_daftar224',     # ربط مع اليومية العامة
-        'demo_gov_menu',
         'general_ledger_ar',
     ],
     'data': [
@@ -61,6 +60,7 @@
             'demo_gov_cheques/static/src/css/cheques_register.css',
         ],
     },
+    'post_init_hook': 'post_init_hook',
     'installable': True,
     'application': False,
 }

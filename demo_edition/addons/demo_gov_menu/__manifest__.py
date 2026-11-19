@@ -1,5 +1,5 @@
 {
-    'name': 'الديوان العام - المحافظة التجريبية — تنظيم القوائم',
+    'name': 'الديوان العام - الجهة الحكومية التجريبية — تنظيم القوائم',
     'summary': 'Unified single-tab menu structure for Demo Governorate',
     'version': '17.0.6.0.0',
     'author': 'Enterprise Solutions Demo',

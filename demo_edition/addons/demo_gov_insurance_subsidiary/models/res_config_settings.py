@@ -36,7 +36,7 @@ class ResCompany(models.Model):
     # ── حسابات المصادرة (إيرادات) ───────────────────────────────────────────
     insurance_forfeiture_revenue_account_id = fields.Many2one('account.account',
         string='حساب إيرادات المصادرة',
-        help='الحساب الدائن عند مصادرة التأمين (يُصبح إيراداً للمحافظة).')
+        help='الحساب الدائن عند مصادرة التأمين (يُصبح إيراداً للجهة الحكومية).')
 
 
 class ResConfigSettings(models.TransientModel):

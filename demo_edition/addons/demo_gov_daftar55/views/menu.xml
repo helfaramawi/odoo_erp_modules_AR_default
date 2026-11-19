@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <menuitem id="menu_daftar55"
+            name="دفتر 55 - سجل المدفوعات المتسلسل"
+            parent="demo_branding.menu_gov_accounts"
+            action="action_daftar55"
+            sequence="12"/>
+</odoo>

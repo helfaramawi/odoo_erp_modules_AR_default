@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_payment_cycle_delay_tree" model="ir.ui.view">
+        <field name="name">port_said.payment.cycle.delay.tree</field>
+        <field name="model">port_said.payment.cycle.delay</field>
+        <field name="arch" type="xml">
+            <tree string="تنبيهات تأخيرات دورة الصرف"
+                  decoration-danger="risk_level in ('critical','high')"
+                  decoration-warning="risk_level == 'medium'"
+                  decoration-success="state in ('resolved','justified')">
+                <field name="name"/>
+                <field name="stage"/>
+                <field name="delay_days"/>
+                <field name="sla_days"/>
+                <field name="risk_level"/>
+                <field name="document_number"/>
+                <field name="beneficiary_name"/>
+                <field name="department_name"/>
+                <field name="amount"/>
+                <field name="current_state"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_payment_cycle_delay_form" model="ir.ui.view">
+        <field name="name">port_said.payment.cycle.delay.form</field>
+        <field name="model">port_said.payment.cycle.delay</field>
+        <field name="arch" type="xml">
+            <form string="تنبيه تأخير في دورة الصرف">
+                <header>
+                    <button name="action_review" type="object" string="بدء المراجعة" class="btn-secondary" invisible="state != 'new'"/>
+                    <button name="action_required" type="object" string="يتطلب إجراء" class="btn-warning" invisible="state in ('action_required','resolved','justified','cancelled')"/>
+                    <button name="action_resolve" type="object" string="تمت المعالجة" class="btn-success" invisible="state == 'resolved'"/>
+                    <button name="action_justify" type="object" string="مبرر" class="btn-secondary" invisible="state in ('justified','resolved','cancelled')"/>
+                    <button name="action_open_source" type="object" string="فتح السجل المصدر" class="btn-primary"/>
+                    <field name="state" widget="statusbar" statusbar_visible="new,under_review,action_required,resolved,justified"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+
+                    <group>
+                        <group string="السجل والمستفيد">
+                            <field name="source_model"/>
+                            <field name="source_res_id"/>
+                            <field name="source_display_name"/>
+                            <field name="cycle_reference"/>
+                            <field name="document_number"/>
+                            <field name="beneficiary_name"/>
+                            <field name="department_name"/>
+                        </group>
+                        <group string="مرحلة التأخير">
+                            <field name="stage"/>
+                            <field name="current_state"/>
+                            <field name="start_date"/>
+                            <field name="due_date"/>
+                            <field name="sla_days"/>
+                            <field name="delay_days"/>
+                            <field name="risk_level"/>
+                            <field name="amount"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="سبب التأخير">
+                            <field name="delay_reason" nolabel="1" readonly="1"/>
+                        </page>
+                        <page string="التوصية">
+                            <field name="recommendation" nolabel="1" readonly="1"/>
+                        </page>
+                        <page string="ملاحظات المراجعة">
+                            <field name="review_notes" nolabel="1"/>
+                            <group>
+                                <field name="reviewed_by"/>
+                                <field name="reviewed_date"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_payment_cycle_delay_pivot" model="ir.ui.view">
+        <field name="name">port_said.payment.cycle.delay.pivot</field>
+        <field name="model">port_said.payment.cycle.delay</field>
+        <field name="arch" type="xml">
+            <pivot string="تحليل تأخيرات دورة الصرف">
+                <field name="stage" type="row"/>
+                <field name="department_name" type="row"/>
+                <field name="delay_days" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_payment_cycle_delay_graph" model="ir.ui.view">
+        <field name="name">port_said.payment.cycle.delay.graph</field>
+        <field name="model">port_said.payment.cycle.delay</field>
+        <field name="arch" type="xml">
+            <graph string="Dashboard تأخيرات دورة الصرف" type="bar">
+                <field name="stage"/>
+                <field name="delay_days" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_payment_cycle_delay_search" model="ir.ui.view">
+        <field name="name">port_said.payment.cycle.delay.search</field>
+        <field name="model">port_said.payment.cycle.delay</field>
+        <field name="arch" type="xml">
+            <search string="بحث تأخيرات دورة الصرف">
+                <field name="name"/>
+                <field name="document_number"/>
+                <field name="beneficiary_name"/>
+                <field name="department_name"/>
+                <filter string="حرجة/مرتفعة" name="high_risk" domain="[('risk_level','in',('critical','high'))]"/>
+                <filter string="مفتوحة" name="open" domain="[('state','not in',('resolved','justified','cancelled'))]"/>
+                <filter string="تسليم الشيك" name="cheque_delivery" domain="[('stage','=','cheque_delivery')]"/>
+                <filter string="الإضبارة" name="dossier" domain="[('stage','in',('dossier_creation','dossier_completion'))]"/>
+                <filter string="دفتر 55" name="daftar55" domain="[('stage','=','daftar55_approval')]"/>
+                <group expand="0" string="تجميع حسب">
+                    <filter string="المرحلة" name="grp_stage" context="{'group_by':'stage'}"/>
+                    <filter string="الإدارة" name="grp_department" context="{'group_by':'department_name'}"/>
+                    <filter string="مستوى الخطورة" name="grp_risk" context="{'group_by':'risk_level'}"/>
+                    <filter string="الحالة" name="grp_state" context="{'group_by':'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_payment_cycle_delays" model="ir.actions.act_window">
+        <field name="name">تنبيهات تأخيرات دورة الصرف</field>
+        <field name="res_model">port_said.payment.cycle.delay</field>
+        <field name="view_mode">tree,form,pivot,graph</field>
+        <field name="search_view_id" ref="view_payment_cycle_delay_search"/>
+        <field name="context">{'search_default_open': 1}</field>
+    </record>
+
+    <record id="action_payment_cycle_delay_dashboard" model="ir.actions.act_window">
+        <field name="name">Dashboard تأخيرات دورة الصرف</field>
+        <field name="res_model">port_said.payment.cycle.delay</field>
+        <field name="view_mode">graph,pivot,tree</field>
+    </record>
+
+    <record id="action_payment_cycle_run_scan" model="ir.actions.server">
+        <field name="name">تشغيل فحص تأخيرات دورة الصرف الآن</field>
+        <field name="model_id" ref="model_port_said_payment_cycle_engine"/>
+        <field name="state">code</field>
+        <field name="code">action = env['port_said.payment.cycle.engine'].sudo().action_run_full_scan()</field>
+    </record>
+
+    <menuitem id="menu_payment_cycle_root" name="وكيل تأخيرات دورة الصرف" sequence="58" groups="base.group_user"/>
+    <menuitem id="menu_payment_cycle_delay_alerts" name="تنبيهات تأخيرات دورة الصرف" parent="menu_payment_cycle_root" action="action_payment_cycle_delays" sequence="10" groups="base.group_user"/>
+    <menuitem id="menu_payment_cycle_delay_dashboard" name="Dashboard تأخيرات دورة الصرف" parent="menu_payment_cycle_root" action="action_payment_cycle_delay_dashboard" sequence="20" groups="base.group_user"/>
+    <menuitem id="menu_payment_cycle_run_scan" name="تشغيل فحص تأخيرات دورة الصرف الآن" parent="menu_payment_cycle_root" action="action_payment_cycle_run_scan" sequence="30" groups="base.group_system"/>
+</odoo>

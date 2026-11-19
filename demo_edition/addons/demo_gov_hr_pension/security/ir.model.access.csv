@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_pension_plan_user,demo_gov.hr.pension.plan user,model_demo_gov_hr_pension_plan,hr.group_hr_user,1,0,0,0
+access_hr_pension_plan_manager,demo_gov.hr.pension.plan manager,model_demo_gov_hr_pension_plan,hr.group_hr_manager,1,1,1,1
+access_hr_pension_enrollment_user,demo_gov.hr.pension.enrollment user,model_demo_gov_hr_pension_enrollment,hr.group_hr_user,1,1,1,0
+access_hr_pension_enrollment_manager,demo_gov.hr.pension.enrollment manager,model_demo_gov_hr_pension_enrollment,hr.group_hr_manager,1,1,1,1
+access_hr_pension_settlement_user,demo_gov.hr.pension.settlement user,model_demo_gov_hr_pension_settlement,hr.group_hr_user,1,1,1,0
+access_hr_pension_settlement_manager,demo_gov.hr.pension.settlement manager,model_demo_gov_hr_pension_settlement,hr.group_hr_manager,1,1,1,1

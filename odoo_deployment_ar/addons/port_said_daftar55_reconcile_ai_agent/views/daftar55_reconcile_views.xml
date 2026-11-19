@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_daftar55_reconcile_alert_tree" model="ir.ui.view">
+        <field name="name">port_said.daftar55.account.reconcile.alert.tree</field>
+        <field name="model">port_said.daftar55.account.reconcile.alert</field>
+        <field name="arch" type="xml">
+            <tree string="تنبيهات مطابقة دفتر 55" decoration-danger="risk_level in ('critical','high')" decoration-warning="risk_level == 'medium'" decoration-success="state in ('corrected','justified','closed')">
+                <field name="name"/>
+                <field name="daftar55_number"/>
+                <field name="daftar55_date"/>
+                <field name="beneficiary_name"/>
+                <field name="amount_gross"/>
+                <field name="move_count"/>
+                <field name="difference_amount"/>
+                <field name="alert_type"/>
+                <field name="risk_level"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_daftar55_reconcile_alert_form" model="ir.ui.view">
+        <field name="name">port_said.daftar55.account.reconcile.alert.form</field>
+        <field name="model">port_said.daftar55.account.reconcile.alert</field>
+        <field name="arch" type="xml">
+            <form string="تنبيه عدم مطابقة دفتر 55 مع القيود">
+                <header>
+                    <button name="action_review" type="object" string="بدء المراجعة" class="btn-secondary" invisible="state != 'new'"/>
+                    <button name="action_escalate" type="object" string="تصعيد" class="btn-danger" invisible="state in ('escalated','corrected','justified','closed','cancelled')"/>
+                    <button name="action_corrected" type="object" string="تم التصحيح" class="btn-success" invisible="state in ('corrected','closed','cancelled')"/>
+                    <button name="action_justify" type="object" string="مبرر" class="btn-warning" invisible="state in ('justified','closed','cancelled')"/>
+                    <button name="action_close" type="object" string="إغلاق" class="btn-secondary" invisible="state == 'closed'"/>
+                    <button name="action_open_daftar55" type="object" string="فتح دفتر 55" class="btn-primary"/>
+                    <field name="state" widget="statusbar" statusbar_visible="new,under_review,escalated,corrected,justified,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group string="دفتر 55">
+                            <field name="daftar55_id"/>
+                            <field name="daftar55_number"/>
+                            <field name="daftar55_date"/>
+                            <field name="beneficiary_name"/>
+                            <field name="budget_line"/>
+                            <field name="amount_gross"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="عدم المطابقة">
+                            <field name="alert_type"/>
+                            <field name="risk_level"/>
+                            <field name="move_count"/>
+                            <field name="move_total_debit"/>
+                            <field name="move_total_credit"/>
+                            <field name="difference_amount"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="القيود المحاسبية المرتبطة">
+                            <field name="move_ids" readonly="1">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="ref"/>
+                                    <field name="date"/>
+                                    <field name="journal_id"/>
+                                    <field name="amount_total"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="سبب التنبيه"><field name="reason" nolabel="1" readonly="1"/></page>
+                        <page string="التوصية"><field name="recommendation" nolabel="1" readonly="1"/></page>
+                        <page string="ملاحظات المراجعة">
+                            <field name="review_notes" nolabel="1"/>
+                            <group><field name="reviewed_by"/><field name="reviewed_date"/></group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_daftar55_reconcile_alert_search" model="ir.ui.view">
+        <field name="name">port_said.daftar55.account.reconcile.alert.search</field>
+        <field name="model">port_said.daftar55.account.reconcile.alert</field>
+        <field name="arch" type="xml">
+            <search string="بحث تنبيهات مطابقة دفتر 55">
+                <field name="name"/>
+                <field name="daftar55_number"/>
+                <field name="beneficiary_name"/>
+                <field name="budget_line"/>
+                <filter string="حرجة/مرتفعة" name="high_risk" domain="[('risk_level','in',('critical','high'))]"/>
+                <filter string="بدون قيد" name="missing_move" domain="[('alert_type','=','missing_move')]"/>
+                <filter string="فرق قيمة" name="amount_mismatch" domain="[('alert_type','=','amount_mismatch')]"/>
+                <filter string="قيود مكررة" name="duplicate_moves" domain="[('alert_type','=','duplicate_moves')]"/>
+                <filter string="مفتوحة" name="open" domain="[('state','not in',('corrected','justified','closed','cancelled'))]"/>
+                <group expand="0" string="تجميع حسب">
+                    <filter string="نوع عدم المطابقة" name="grp_alert_type" context="{'group_by':'alert_type'}"/>
+                    <filter string="مستوى الخطورة" name="grp_risk" context="{'group_by':'risk_level'}"/>
+                    <filter string="الحالة" name="grp_state" context="{'group_by':'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_daftar55_reconcile_alerts" model="ir.actions.act_window">
+        <field name="name">تنبيهات مطابقة دفتر 55</field>
+        <field name="res_model">port_said.daftar55.account.reconcile.alert</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_daftar55_reconcile_alert_search"/>
+        <field name="context">{'search_default_open': 1}</field>
+    </record>
+
+    <record id="action_daftar55_reconcile_run_scan" model="ir.actions.server">
+        <field name="name">تشغيل مطابقة دفتر 55 الآن</field>
+        <field name="model_id" ref="model_port_said_daftar55_account_reconcile_engine"/>
+        <field name="state">code</field>
+        <field name="code">action = env['port_said.daftar55.account.reconcile.engine'].sudo().action_run_full_scan()</field>
+    </record>
+
+    <menuitem id="menu_daftar55_reconcile_root" name="وكيل مطابقة دفتر 55" sequence="57" groups="base.group_user"/>
+    <menuitem id="menu_daftar55_reconcile_alerts" name="تنبيهات مطابقة دفتر 55" parent="menu_daftar55_reconcile_root" action="action_daftar55_reconcile_alerts" sequence="10" groups="base.group_user"/>
+    <menuitem id="menu_daftar55_reconcile_run_scan" name="تشغيل مطابقة دفتر 55 الآن" parent="menu_daftar55_reconcile_root" action="action_daftar55_reconcile_run_scan" sequence="20" groups="base.group_system"/>
+</odoo>

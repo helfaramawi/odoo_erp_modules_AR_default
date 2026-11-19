@@ -1,8 +1,8 @@
 {
-    'name': 'الموازنة التقديرية وتحليل الانحرافات — المحافظة التجريبية',
+    'name': 'الموازنة التقديرية وتحليل الانحرافات — الجهة الحكومية التجريبية',
     'summary': 'FR-S-01: موازنة تقديرية + تنفيذ فعلي + انحرافات + ربط ببنود الميزانية',
     'version': '17.0.2.0.0',
-    'category': 'Accounting/Egypt Government',
+    'category': 'الخدمات الحكومية التجريبية/الحسابات',
     'author': 'Enterprise Solutions Demo',
     'license': 'LGPL-3',
     'depends': [
@@ -10,7 +10,7 @@
         'demo_gov_daftar55',
         'demo_gov_commitment',
         'c5_financial_dimensions',
-        'general_ledger_ar',
+        'demo_gov_subsidiary_books',
     ],
     'data': [
         'security/ir.model.access.csv',

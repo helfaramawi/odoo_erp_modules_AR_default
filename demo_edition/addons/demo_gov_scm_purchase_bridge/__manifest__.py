@@ -1,5 +1,6 @@
 {
     'name': 'أمر التوريد — الجسر مع استمارة 50',
+    'category': 'الخدمات الحكومية التجريبية/المشتريات',
     'summary': 'C-SCM-02: Purchase Order Bridge — Auto-generate Form 50 (Daftar 55)',
     'version': '17.0.1.0.0',
     'author': 'Enterprise Solutions Demo',

@@ -56,8 +56,11 @@ class SaleOrder(models.Model):
     def _is_demo_environment(self):
         if os.environ.get('APP_ENV') == 'demo':
             return True
-        return self.env['ir.config_parameter'].sudo().get_param(
-            'demo_branding.environment', 'production') == 'demo'
+        try:
+            return self.env['demo.branding'].sudo().is_demo_environment()
+        except KeyError:
+            # demo_branding not installed alongside this module - default safe
+            return False
 
     def _call_credit_api(self, config):
         if self._is_demo_environment():

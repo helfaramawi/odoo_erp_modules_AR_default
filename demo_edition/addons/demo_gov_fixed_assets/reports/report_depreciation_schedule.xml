@@ -17,7 +17,7 @@ footer,.footer,.o_footer{display:none!important;}
               <td style="width:78px;border:none;text-align:center;">&#160;</td>
               <td style="border:none;text-align:center;">
                 <div style="font-size:13pt;font-weight:bold;">جمهورية مصر العربية</div>
-                <div style="font-size:12pt;font-weight:bold;">المحافظة التجريبية</div>
+                <div style="font-size:12pt;font-weight:bold;">الجهة الحكومية التجريبية</div>
                 <div style="font-size:11pt;">الادارة العامة للشؤون المالية والادارية</div>
                 <div style="font-size:11pt;font-weight:bold;">ادارة الاصول الثابتة</div>
               </td>
@@ -125,7 +125,7 @@ footer,.footer,.o_footer{display:none!important;}
           <div style="margin-top:8px;font-size:8pt;color:#555;text-align:center;border-top:1px solid #ccc;padding-top:4px;">
             Enterprise Solutions Demo — طُبع بتاريخ:
             <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%Y %H:%M')"/>
-            — المحافظة التجريبية
+            — الجهة الحكومية التجريبية
           </div>
         </div>
       </t>

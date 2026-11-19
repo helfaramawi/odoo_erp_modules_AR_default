@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_budget_forecast_tree" model="ir.ui.view">
+        <field name="name">port_said.budget.forecast.tree</field>
+        <field name="model">port_said.budget.forecast</field>
+        <field name="arch" type="xml">
+            <tree string="توقعات انحرافات الموازنة" decoration-danger="critical_count &gt; 0" decoration-warning="warning_count &gt; 0">
+                <field name="name"/>
+                <field name="plan_id"/>
+                <field name="fiscal_year"/>
+                <field name="forecast_date"/>
+                <field name="forecast_month"/>
+                <field name="total_approved"/>
+                <field name="total_actual_to_date"/>
+                <field name="total_forecast_annual"/>
+                <field name="total_expected_variance"/>
+                <field name="critical_count"/>
+                <field name="warning_count"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_budget_forecast_form" model="ir.ui.view">
+        <field name="name">port_said.budget.forecast.form</field>
+        <field name="model">port_said.budget.forecast</field>
+        <field name="arch" type="xml">
+            <form string="توقع انحرافات الموازنة">
+                <header>
+                    <button name="action_recompute_forecast" type="object" string="إعادة الحساب" class="btn-primary"/>
+                    <button name="action_print_forecast_report" type="object" string="طباعة PDF" class="btn-secondary"/>
+                    <button name="action_mark_reviewed" type="object" string="تمت المراجعة" invisible="state != 'generated'"/>
+                    <button name="action_approve" type="object" string="اعتماد" invisible="state != 'reviewed'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,generated,reviewed,approved"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="plan_id"/>
+                            <field name="fiscal_year" readonly="1"/>
+                            <field name="forecast_date"/>
+                            <field name="forecast_month"/>
+                            <field name="months_elapsed"/>
+                        </group>
+                        <group>
+                            <field name="total_approved" readonly="1"/>
+                            <field name="total_actual_to_date" readonly="1"/>
+                            <field name="total_forecast_annual" readonly="1"/>
+                            <field name="total_expected_variance" readonly="1"/>
+                            <field name="critical_count" readonly="1"/>
+                            <field name="warning_count" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="بنود التوقع">
+                            <field name="line_ids" readonly="1">
+                                <tree decoration-danger="risk_level == 'critical'" decoration-warning="risk_level == 'warning'" decoration-success="risk_level == 'surplus'">
+                                    <field name="budget_code"/>
+                                    <field name="description"/>
+                                    <field name="amount_approved"/>
+                                    <field name="monthly_target"/>
+                                    <field name="actual_month"/>
+                                    <field name="actual_to_date"/>
+                                    <field name="monthly_deviation_pct"/>
+                                    <field name="forecast_annual"/>
+                                    <field name="expected_variance"/>
+                                    <field name="projected_execution_pct"/>
+                                    <field name="commitments_amount"/>
+                                    <field name="two_months_alert"/>
+                                    <field name="risk_level"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="التقرير العربي الرسمي">
+                            <field name="report_text" readonly="1" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_budget_forecast_search" model="ir.ui.view">
+        <field name="name">port_said.budget.forecast.search</field>
+        <field name="model">port_said.budget.forecast</field>
+        <field name="arch" type="xml">
+            <search string="بحث توقعات الموازنة">
+                <field name="name"/>
+                <field name="plan_id"/>
+                <field name="fiscal_year"/>
+                <filter string="به بنود حرجة" name="critical" domain="[('critical_count','&gt;',0)]"/>
+                <filter string="تم التوليد" name="generated" domain="[('state','=','generated')]"/>
+                <group expand="0" string="تجميع">
+                    <filter string="الموازنة" name="group_plan" context="{'group_by':'plan_id'}"/>
+                    <filter string="السنة المالية" name="group_year" context="{'group_by':'fiscal_year'}"/>
+                    <filter string="الحالة" name="group_state" context="{'group_by':'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_budget_forecast" model="ir.actions.act_window">
+        <field name="name">توقعات الموازنة السنوية</field>
+        <field name="res_model">port_said.budget.forecast</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_budget_forecast_search"/>
+    </record>
+
+    <record id="action_budget_forecast_generate_now" model="ir.actions.server">
+        <field name="name">تشغيل توقع الانحراف الآن</field>
+        <field name="model_id" ref="model_port_said_budget_forecast"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_generate_now()</field>
+    </record>
+</odoo>

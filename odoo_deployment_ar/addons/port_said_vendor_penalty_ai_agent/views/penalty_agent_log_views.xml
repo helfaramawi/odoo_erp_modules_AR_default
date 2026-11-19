@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_vendor_penalty_agent_log_tree" model="ir.ui.view">
+        <field name="name">port_said.vendor.penalty.agent.log.tree</field>
+        <field name="model">port_said.vendor.penalty.agent.log</field>
+        <field name="arch" type="xml">
+            <tree string="سجل وكيل جزاءات الموردين"
+                  decoration-success="decision == 'created'"
+                  decoration-warning="decision in ['duplicate','skipped']"
+                  decoration-danger="decision == 'error'">
+                <field name="name"/>
+                <field name="create_date"/>
+                <field name="decision"/>
+                <field name="inspection_id"/>
+                <field name="purchase_order_id"/>
+                <field name="vendor_id"/>
+                <field name="penalty_id"/>
+                <field name="quantity_rejected"/>
+                <field name="offense_count"/>
+                <field name="penalty_rate"/>
+                <field name="rejected_value"/>
+                <field name="penalty_amount"/>
+                <field name="user_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_vendor_penalty_agent_log_form" model="ir.ui.view">
+        <field name="name">port_said.vendor.penalty.agent.log.form</field>
+        <field name="model">port_said.vendor.penalty.agent.log</field>
+        <field name="arch" type="xml">
+            <form string="سجل وكيل جزاءات الموردين">
+                <header>
+                    <button name="action_open_inspection" type="object" string="فتح محضر الفحص" class="btn-primary" invisible="not inspection_id"/>
+                    <button name="action_open_penalty" type="object" string="فتح الجزاء" class="btn-secondary" invisible="not penalty_id"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="decision" readonly="1"/>
+                            <field name="inspection_id" readonly="1"/>
+                            <field name="purchase_order_id" readonly="1"/>
+                            <field name="vendor_id" readonly="1"/>
+                            <field name="penalty_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="result" readonly="1"/>
+                            <field name="specs_conformity" readonly="1"/>
+                            <field name="quantity_rejected" readonly="1"/>
+                            <field name="offense_count" readonly="1"/>
+                            <field name="penalty_rate" readonly="1"/>
+                            <field name="rejected_value" readonly="1"/>
+                            <field name="penalty_amount" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="سبب القرار">
+                            <field name="decision_reason" readonly="1"/>
+                        </page>
+                        <page string="نص إخطار المورد">
+                            <field name="notification_text" readonly="1"/>
+                        </page>
+                        <page string="تفاصيل تقنية">
+                            <field name="technical_details" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_vendor_penalty_agent_log_search" model="ir.ui.view">
+        <field name="name">port_said.vendor.penalty.agent.log.search</field>
+        <field name="model">port_said.vendor.penalty.agent.log</field>
+        <field name="arch" type="xml">
+            <search string="سجل وكيل جزاءات الموردين">
+                <field name="name"/>
+                <field name="inspection_id"/>
+                <field name="vendor_id"/>
+                <field name="penalty_id"/>
+                <filter name="created" string="تم إنشاء جزاء" domain="[('decision','=','created')]"/>
+                <filter name="skipped" string="لم يتم الإنشاء" domain="[('decision','=','skipped')]"/>
+                <filter name="duplicate" string="مكرر" domain="[('decision','=','duplicate')]"/>
+                <filter name="error" string="أخطاء" domain="[('decision','=','error')]"/>
+                <group expand="0" string="تجميع حسب">
+                    <filter name="group_decision" string="قرار الوكيل" context="{'group_by':'decision'}"/>
+                    <filter name="group_vendor" string="المورد" context="{'group_by':'vendor_id'}"/>
+                    <filter name="group_po" string="أمر التوريد" context="{'group_by':'purchase_order_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_vendor_penalty_agent_logs" model="ir.actions.act_window">
+        <field name="name">سجل وكيل جزاءات الموردين</field>
+        <field name="res_model">port_said.vendor.penalty.agent.log</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_vendor_penalty_agent_log_search"/>
+    </record>
+
+    <menuitem id="menu_vendor_penalty_ai_agent_root"
+              name="وكيل جزاءات الموردين"
+              sequence="96"
+              groups="base.group_user"/>
+
+    <menuitem id="menu_vendor_penalty_agent_logs"
+              name="سجل وكيل الجزاءات"
+              parent="menu_vendor_penalty_ai_agent_root"
+              action="action_vendor_penalty_agent_logs"
+              sequence="10"
+              groups="base.group_user"/>
+</odoo>

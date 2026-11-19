@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_employee_form_gov_public_service_inherit" model="ir.ui.view">
+    <field name="name">hr.employee.form.gov.public_service.inherit</field>
+    <field name="model">hr.employee</field>
+    <field name="inherit_id" ref="demo_gov_hr_employee.view_employee_form_gov_inherit"/>
+    <field name="arch" type="xml">
+      <!-- position="inside" على الصفحة نفسها (مش على أول <group> بداخلها)
+           لتفادي أي التباس مع أي موديول آخر بيضيف على نفس الصفحة. -->
+      <xpath expr="//page[@name='gov_data']" position="inside">
+        <group string="بيانات الخدمة العامة (خريجات - عام بدون راتب)"
+               invisible="gov_employment_type != 'public_service'">
+          <field name="public_service_start_date"/>
+          <field name="public_service_end_date" readonly="1"/>
+          <field name="public_service_ended" readonly="1"/>
+        </group>
+      </xpath>
+    </field>
+  </record>
+
+  <record id="view_employee_list_public_service" model="ir.ui.view">
+    <field name="name">hr.employee.list.public.service</field>
+    <field name="model">hr.employee</field>
+    <field name="arch" type="xml">
+      <tree string="موظفات الخدمة العامة">
+        <field name="name"/>
+        <field name="department_id"/>
+        <field name="public_service_start_date"/>
+        <field name="public_service_end_date"/>
+        <field name="public_service_ended"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="action_hr_public_service" model="ir.actions.act_window">
+    <field name="name">موظفات الخدمة العامة</field>
+    <field name="res_model">hr.employee</field>
+    <field name="view_mode">tree,form</field>
+    <field name="view_id" ref="view_employee_list_public_service"/>
+    <field name="domain">[('gov_employment_type', '=', 'public_service')]</field>
+    <field name="context">{'default_gov_employment_type': 'public_service'}</field>
+  </record>
+
+</odoo>

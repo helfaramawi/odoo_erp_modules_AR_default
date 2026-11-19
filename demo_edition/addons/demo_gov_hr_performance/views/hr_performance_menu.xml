@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <menuitem id="menu_hr_performance_root"
+            name="تقييم الأداء"
+            parent="demo_gov_hr_training.menu_gov_hr"
+            sequence="30"/>
+
+  <menuitem id="menu_hr_performance_appraisal"
+            name="تقييمات الأداء"
+            parent="menu_hr_performance_root"
+            action="action_hr_performance_appraisal"
+            sequence="10"/>
+
+  <menuitem id="menu_hr_performance_grievance"
+            name="التظلمات"
+            parent="menu_hr_performance_root"
+            action="action_hr_performance_grievance"
+            sequence="20"/>
+</odoo>

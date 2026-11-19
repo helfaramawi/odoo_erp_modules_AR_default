@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_hr_pension_settlement_form" model="ir.ui.view">
+    <field name="name">demo_gov.hr.pension.settlement.form</field>
+    <field name="model">demo_gov.hr.pension.settlement</field>
+    <field name="arch" type="xml">
+      <form string="تسوية معاش">
+        <header>
+          <button name="action_compute" string="حساب المعاش" type="object" class="btn-primary" invisible="state != 'draft'"/>
+          <button name="action_approve" string="اعتماد" type="object" class="btn-primary" invisible="state != 'computed'"/>
+          <button name="action_mark_form15_issued" string="تعليم استمارة 15 كصادرة" type="object" class="btn-success" invisible="state != 'approved'"/>
+          <field name="state" widget="statusbar" statusbar_visible="draft,computed,approved,form15_issued"/>
+        </header>
+        <sheet>
+          <div class="oe_title"><h1><field name="employee_id"/></h1></div>
+          <group>
+            <group>
+              <field name="years_of_service" readonly="1"/>
+              <field name="termination_type" readonly="1"/>
+              <field name="settlement_date"/>
+            </group>
+            <group>
+              <field name="final_pensionable_salary"/>
+              <field name="pension_amount" readonly="1"/>
+            </group>
+          </group>
+        </sheet>
+        <chatter/>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_hr_pension_settlement_list" model="ir.ui.view">
+    <field name="name">demo_gov.hr.pension.settlement.list</field>
+    <field name="model">demo_gov.hr.pension.settlement</field>
+    <field name="arch" type="xml">
+      <tree string="تسويات المعاشات" decoration-success="state=='form15_issued'">
+        <field name="employee_id"/>
+        <field name="years_of_service"/>
+        <field name="settlement_date"/>
+        <field name="final_pensionable_salary"/>
+        <field name="pension_amount"/>
+        <field name="state" widget="badge"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="action_hr_pension_settlement" model="ir.actions.act_window">
+    <field name="name">تسويات المعاشات</field>
+    <field name="res_model">demo_gov.hr.pension.settlement</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+</odoo>

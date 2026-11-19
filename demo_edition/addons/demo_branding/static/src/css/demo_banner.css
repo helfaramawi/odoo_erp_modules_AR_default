@@ -1,11 +1,15 @@
 .o_demo_branding_banner {
-    margin-top: 12px;
-    padding: 6px 12px;
-    border-radius: 4px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2000;
+    padding: 3px 12px;
     background-color: #fff3cd;
     color: #664d03;
-    border: 1px solid #ffe69c;
-    font-size: 12px;
+    border-bottom: 1px solid #ffe69c;
+    font-size: 11px;
     text-align: center;
     font-weight: 600;
+    pointer-events: none;
 }

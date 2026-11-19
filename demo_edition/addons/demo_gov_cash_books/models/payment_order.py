@@ -31,7 +31,7 @@ class PaymentOrder(models.Model):
     issuing_entity = fields.Selection([
         ('mof',        'وزارة المالية'),
         ('cau',        'الجهاز المركزي للمحاسبات'),
-        ('governorate','محافظة أخرى'),
+        ('governorate','جهة حكومية أخرى'),
         ('ministry',   'وزارة/جهة حكومية'),
         ('other',      'أخرى'),
     ], string='الجهة المُصدِرة', required=True, default='mof', index=True)

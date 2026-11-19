@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_hr_takaful_payout_form" model="ir.ui.view">
+    <field name="name">demo_gov.hr.takaful.payout.form</field>
+    <field name="model">demo_gov.hr.takaful.payout</field>
+    <field name="arch" type="xml">
+      <form string="طلب صرف من صندوق التكافل">
+        <header>
+          <button name="action_compute_amount" string="حساب المستحق" type="object" class="btn-primary" invisible="state != 'draft'"/>
+          <button name="action_approve" string="اعتماد مسؤول التكافل" type="object" class="btn-primary" invisible="state != 'draft'"/>
+          <button name="action_pay" string="صرف" type="object" class="btn-success" invisible="state != 'approved'"/>
+          <field name="state" widget="statusbar" statusbar_visible="draft,approved,paid"/>
+        </header>
+        <sheet>
+          <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
+          <group>
+            <group>
+              <field name="member_id"/>
+              <field name="payout_reason"/>
+              <field name="request_date"/>
+            </group>
+            <group>
+              <field name="amount" readonly="1"/>
+            </group>
+          </group>
+        </sheet>
+        <chatter/>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_hr_takaful_payout_list" model="ir.ui.view">
+    <field name="name">demo_gov.hr.takaful.payout.list</field>
+    <field name="model">demo_gov.hr.takaful.payout</field>
+    <field name="arch" type="xml">
+      <tree string="طلبات صرف صندوق التكافل" decoration-success="state=='paid'">
+        <field name="name"/>
+        <field name="member_id"/>
+        <field name="payout_reason"/>
+        <field name="request_date"/>
+        <field name="amount"/>
+        <field name="state" widget="badge"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="action_hr_takaful_payout" model="ir.actions.act_window">
+    <field name="name">طلبات صرف صندوق التكافل</field>
+    <field name="res_model">demo_gov.hr.takaful.payout</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+</odoo>

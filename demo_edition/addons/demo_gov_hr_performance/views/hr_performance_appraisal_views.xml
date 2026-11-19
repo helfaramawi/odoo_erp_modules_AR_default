@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_hr_performance_appraisal_form" model="ir.ui.view">
+    <field name="name">demo_gov.hr.performance.appraisal.form</field>
+    <field name="model">demo_gov.hr.performance.appraisal</field>
+    <field name="arch" type="xml">
+      <form string="تقييم أداء سنوي">
+        <header>
+          <button name="action_submit" string="تقديم" type="object" class="btn-primary" invisible="state != 'draft'"/>
+          <button name="action_review" string="مراجعة" type="object" class="btn-primary" invisible="state != 'submitted'"/>
+          <button name="action_finalize" string="اعتماد نهائي" type="object" class="btn-success" invisible="state != 'reviewed'"/>
+          <button name="action_reset_to_draft" string="إرجاع لمسودة" type="object" invisible="state == 'draft'"/>
+          <field name="state" widget="statusbar" statusbar_visible="draft,submitted,reviewed,finalized"/>
+        </header>
+        <sheet>
+          <div class="oe_button_box" name="button_box">
+            <button name="%(action_hr_performance_grievance)d" type="action"
+                    class="oe_stat_button" icon="fa-gavel"
+                    context="{'default_appraisal_id': id, 'search_default_appraisal_id': id}">
+              <field name="grievance_count" widget="statinfo" string="التظلمات"/>
+            </button>
+          </div>
+          <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
+          <group>
+            <group>
+              <field name="employee_id"/>
+              <field name="department_id" readonly="1"/>
+              <field name="fiscal_year"/>
+            </group>
+            <group>
+              <field name="rating"/>
+              <field name="incentive_allowance_pct"/>
+              <field name="reviewer_id"/>
+            </group>
+          </group>
+          <field name="goals_text" placeholder="الأهداف المرتبطة بالوصف الوظيفي..."/>
+        </sheet>
+        <chatter/>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_hr_performance_appraisal_list" model="ir.ui.view">
+    <field name="name">demo_gov.hr.performance.appraisal.list</field>
+    <field name="model">demo_gov.hr.performance.appraisal</field>
+    <field name="arch" type="xml">
+      <tree string="تقييمات الأداء" decoration-success="state=='finalized'">
+        <field name="name"/>
+        <field name="employee_id"/>
+        <field name="department_id"/>
+        <field name="fiscal_year"/>
+        <field name="rating"/>
+        <field name="state" widget="badge"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="action_hr_performance_appraisal" model="ir.actions.act_window">
+    <field name="name">تقييمات الأداء</field>
+    <field name="res_model">demo_gov.hr.performance.appraisal</field>
+    <field name="view_mode">tree,form</field>
+    <field name="context">{'search_default_this_year': 1}</field>
+  </record>
+
+</odoo>

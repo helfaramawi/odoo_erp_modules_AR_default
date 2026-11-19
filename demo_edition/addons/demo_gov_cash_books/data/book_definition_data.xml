@@ -45,7 +45,7 @@
     <field name="show_running_balance" eval="True"/>
     <field name="include_unreconciled" eval="True"/>
     <field name="notes">دفتر الحساب الجاري مع الوحدة الحسابية المركزية (CAU).
-يُستخدم للمعاملات المالية بين المحافظة وبين وزارة المالية / الجهاز المركزي للمحاسبات.</field>
+يُستخدم للمعاملات المالية بين الجهة الحكومية وبين وزارة المالية / الجهاز المركزي للمحاسبات.</field>
   </record>
 
 </odoo>

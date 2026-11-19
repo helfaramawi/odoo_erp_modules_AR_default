@@ -72,8 +72,8 @@ class CashTransfer(models.Model):
 
     # المستلم
     receiver_unit_type = fields.Selection([
-        ('internal_branch',  'فرع داخلي بالمحافظة'),
-        ('other_governorate','محافظة أخرى'),
+        ('internal_branch',  'فرع داخلي بالجهة الحكومية'),
+        ('other_governorate','جهة حكومية أخرى'),
         ('mof_central',      'وزارة المالية المركزية'),
         ('cbe',              'البنك المركزي المصري'),
         ('other_entity',     'جهة حكومية أخرى'),
@@ -81,7 +81,7 @@ class CashTransfer(models.Model):
     receiver_unit_name = fields.Char(string='اسم الجهة المستلمة', required=True)
     receiver_employee_id = fields.Many2one('hr.employee',
         string='المستلم (لو داخلي)',
-        help='للتحويلات داخل المحافظة: الموظف الذي استلم النقد.')
+        help='للتحويلات داخل الجهة الحكومية: الموظف الذي استلم النقد.')
     receiver_external_name = fields.Char(string='اسم المستلم الخارجي',
         help='للجهات الخارجية: اسم ممثل الجهة المستلمة.')
     receiver_id_number = fields.Char(string='رقم قومي للمستلم',

@@ -22,7 +22,7 @@ class WarehouseAdditionPermit(models.Model):
 
     state = fields.Selection([
         ("draft","مسودة"),("confirmed","مُعتمد"),("moved","تم التحريك للمخازن"),
-    ], default="draft", tracking=True)
+    ], default="draft")
     company_id = fields.Many2one("res.company", default=lambda s: s.env.company)
 
     @api.model_create_multi

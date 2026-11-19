@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="action_report_ssrs01_work_injury" model="ir.actions.report">
+    <field name="name">SSRS-01: نموذج القومسيون — إصابة العمل</field>
+    <field name="model">hr.leave</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">demo_gov_hr_reports.report_ssrs01_work_injury_template</field>
+    <field name="report_file">demo_gov_hr_reports.report_ssrs01_work_injury_template</field>
+    <field name="binding_model_id" ref="hr_holidays.model_hr_leave"/>
+    <field name="binding_type">report</field>
+    <field name="attachment_use">False</field>
+  </record>
+</odoo>

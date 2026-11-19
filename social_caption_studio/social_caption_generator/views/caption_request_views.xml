@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="social_caption_request_view_form" model="ir.ui.view">
+        <field name="name">social.caption.request.form</field>
+        <field name="model">social.caption.request</field>
+        <field name="arch" type="xml">
+            <form string="Social Captions">
+                <header>
+                    <button name="action_generate" type="object" class="oe_highlight"
+                            string="Generate 3 captions / اقترح ٣ كابشنز" invisible="state == 'done'"/>
+                    <button name="action_generate" type="object" class="oe_highlight"
+                            string="Regenerate / توليد جديد" invisible="state != 'done'"/>
+                    <button name="action_reset" type="object" string="Clear / مسح" invisible="state != 'done'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Our new iced coffee menu / قائمة القهوة المثلجة الجديدة"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="tone" widget="radio"/>
+                            <field name="language" widget="radio" options="{'horizontal': true}"/>
+                            <field name="platform"/>
+                        </group>
+                        <group>
+                            <field name="business_name"/>
+                            <field name="business_description" placeholder="What you sell, who you serve, where you are."/>
+                            <field name="extra_facts" placeholder="e.g. 20% off until Friday, Maadi branch"/>
+                        </group>
+                    </group>
+                    <div invisible="state != 'done'">
+                        <div class="alert alert-info mb-3" role="status" invisible="not generation_note">
+                            <field name="generation_note" nolabel="1"/>
+                        </div>
+                        <div class="o_social_caption_card">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="o_social_caption_label">1 · Sensory / حسّي</span>
+                                <field name="caption_1" widget="CopyClipboardButton" nolabel="1"/>
+                            </div>
+                            <field name="caption_1" class="o_social_caption_text" nolabel="1"/>
+                        </div>
+                        <div class="o_social_caption_card">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="o_social_caption_label">2 · Moment / لحظة</span>
+                                <field name="caption_2" widget="CopyClipboardButton" nolabel="1"/>
+                            </div>
+                            <field name="caption_2" class="o_social_caption_text" nolabel="1"/>
+                        </div>
+                        <div class="o_social_caption_card">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="o_social_caption_label">3 · Call to action / دعوة</span>
+                                <field name="caption_3" widget="CopyClipboardButton" nolabel="1"/>
+                            </div>
+                            <field name="caption_3" class="o_social_caption_text" nolabel="1"/>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="engine"/>
+                            </group>
+                            <group>
+                                <field name="generated_on"/>
+                            </group>
+                        </group>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="social_caption_request_view_tree" model="ir.ui.view">
+        <field name="name">social.caption.request.tree</field>
+        <field name="model">social.caption.request</field>
+        <field name="arch" type="xml">
+            <tree string="Social Captions">
+                <field name="name"/>
+                <field name="tone"/>
+                <field name="language"/>
+                <field name="platform"/>
+                <field name="engine" optional="show"/>
+                <field name="generated_on" optional="show"/>
+                <field name="state" widget="badge" decoration-success="state == 'done'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="social_caption_request_view_search" model="ir.ui.view">
+        <field name="name">social.caption.request.search</field>
+        <field name="model">social.caption.request</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="business_name"/>
+                <filter name="generated" string="Generated" domain="[('state', '=', 'done')]"/>
+                <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_tone" string="Tone" context="{'group_by': 'tone'}"/>
+                    <filter name="group_platform" string="Platform" context="{'group_by': 'platform'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="social_caption_request_action" model="ir.actions.act_window">
+        <field name="name">Social Captions</field>
+        <field name="res_model">social.caption.request</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Write your first captions</p>
+            <p>Enter a topic, pick a tone, and get 3 ready-to-post captions.</p>
+        </field>
+    </record>
+
+    <record id="social_caption_settings_action" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module': 'social_caption_generator', 'bin_size': False}</field>
+    </record>
+
+    <menuitem id="social_caption_menu_root" name="Social Captions"
+              web_icon="social_caption_generator,static/description/icon.png" sequence="60"/>
+    <menuitem id="social_caption_menu_requests" name="Captions" parent="social_caption_menu_root"
+              action="social_caption_request_action" sequence="10"/>
+    <menuitem id="social_caption_menu_settings" name="Settings" parent="social_caption_menu_root"
+              action="social_caption_settings_action" groups="base.group_system" sequence="90"/>
+</odoo>

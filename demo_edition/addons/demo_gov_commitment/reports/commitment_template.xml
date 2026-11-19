@@ -5,22 +5,22 @@
       <t t-foreach="docs" t-as="rec">
         <t t-call="web.external_layout">
           <div class="page" style="direction:rtl; font-family:'Amiri', 'Noto Naskh Arabic', Arial, sans-serif; font-size:12px;">
-            <!-- ═══ هيدر الديوان العام — شعار المحافظة ═══ -->
+            <!-- ═══ هيدر الديوان العام — شعار الجهة الحكومية ═══ -->
             <div style="direction:rtl; display:table; width:100%; border-bottom:3px double #1F497D; padding-bottom:10px; margin-bottom:14px;">
-              <!-- شعار المحافظة — يسار الصفحة (يمين في RTL) -->
+              <!-- شعار الجهة الحكومية — يسار الصفحة (يمين في RTL) -->
               <div style="display:table-cell; width:80px; vertical-align:middle; text-align:center;">
                 <img t-if="rec.company_id.logo"
                      t-att-src="'data:image/png;base64,' + rec.company_id.logo.decode('utf-8')"
                      style="max-height:70px; max-width:70px; object-fit:contain;"
-                     alt="شعار المحافظة"/>
+                     alt="شعار الجهة الحكومية"/>
                 <div t-else="" style="width:70px; height:70px; border:2px solid #1F497D; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:9px; color:#1F497D; text-align:center; line-height:1.3;">
-                  شعار<br/>المحافظة
+                  شعار<br/>الجهة الحكومية
                 </div>
               </div>
               <!-- النص المركزي -->
               <div style="display:table-cell; vertical-align:middle; text-align:center; padding:0 10px;">
-                <div style="font-size:11px; color:#666; margin-bottom:2px;">جمهورية مصر العربية — المحافظة التجريبية</div>
-                <div style="font-size:17px; font-weight:bold; color:#1F497D; margin-bottom:2px;">الديوان العام للمحافظة التجريبية</div>
+                <div style="font-size:11px; color:#666; margin-bottom:2px;">جمهورية مصر العربية — الجهة الحكومية التجريبية</div>
+                <div style="font-size:17px; font-weight:bold; color:#1F497D; margin-bottom:2px;">الديوان العام للجهة الحكومية التجريبية</div>
                 <div style="font-size:13px; font-weight:bold; color:#333; margin-bottom:4px;">نموذج الارتباط — دفتر الارتباطات والتسميح</div>
                 <div style="font-size:9px; color:#999;">Enterprise Solutions Demo | إدارة المالية</div>
               </div>

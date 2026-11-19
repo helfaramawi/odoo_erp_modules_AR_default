@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_transfer_user,demo_gov.hr.transfer user,model_demo_gov_hr_transfer,hr.group_hr_user,1,1,1,0
+access_hr_transfer_manager,demo_gov.hr.transfer manager,model_demo_gov_hr_transfer,hr.group_hr_manager,1,1,1,1
+access_hr_promotion_user,demo_gov.hr.promotion user,model_demo_gov_hr_promotion,hr.group_hr_user,1,1,1,0
+access_hr_promotion_manager,demo_gov.hr.promotion manager,model_demo_gov_hr_promotion,hr.group_hr_manager,1,1,1,1

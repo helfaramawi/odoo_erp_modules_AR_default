@@ -20,13 +20,13 @@
               <td style="width:78px;text-align:center;vertical-align:top;">&#160;</td>
               <td style="text-align:center;vertical-align:middle;">
                 <div style="font-size:13pt;font-weight:bold;">جمهورية مصر العربية</div>
-                <div style="font-size:12pt;font-weight:bold;">المحافظة التجريبية</div>
+                <div style="font-size:12pt;font-weight:bold;">الجهة الحكومية التجريبية</div>
                 <div style="font-size:11pt;">الإدارة العامة للشؤون المالية والإدارية</div>
                 <div style="font-size:11pt;font-weight:bold;">إدارة الأصول الثابتة والمخازن</div>
               </td>
               <td style="width:78px;text-align:center;vertical-align:middle;">
                 <img t-att-src="'data:image/png;base64,' + (env.company.logo.decode('utf-8') if env.company.logo else '')"
-                     style="width:70px;height:70px;object-fit:contain;" alt="شعار المحافظة"/>
+                     style="width:70px;height:70px;object-fit:contain;" alt="شعار الجهة الحكومية"/>
               </td>
             </tr>
           </table>
@@ -131,7 +131,7 @@
           <div style="margin-top:8px;font-size:8pt;color:#555;text-align:center;border-top:1px solid #ccc;padding-top:4px;">
             نظام أوبو إيآر بي — Enterprise Solutions Demo
             طُبع بتاريخ: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%Y %H:%M')"/>
-            — المحافظة التجريبية
+            — الجهة الحكومية التجريبية
           </div>
         </div>
       </t>
@@ -159,13 +159,13 @@
               <td style="width:78px;text-align:center;vertical-align:top;">&#160;</td>
               <td style="text-align:center;vertical-align:middle;">
                 <div style="font-size:13pt;font-weight:bold;">جمهورية مصر العربية</div>
-                <div style="font-size:12pt;font-weight:bold;">المحافظة التجريبية</div>
+                <div style="font-size:12pt;font-weight:bold;">الجهة الحكومية التجريبية</div>
                 <div style="font-size:11pt;">الإدارة العامة للشؤون المالية والإدارية</div>
                 <div style="font-size:11pt;font-weight:bold;">إدارة الأصول الثابتة</div>
               </td>
               <td style="width:78px;text-align:center;vertical-align:middle;">
                 <img t-att-src="'data:image/png;base64,' + (env.company.logo.decode('utf-8') if env.company.logo else '')"
-                     style="width:70px;height:70px;object-fit:contain;" alt="شعار المحافظة"/>
+                     style="width:70px;height:70px;object-fit:contain;" alt="شعار الجهة الحكومية"/>
               </td>
             </tr>
           </table>
@@ -243,7 +243,7 @@
           <div style="margin-top:8px;font-size:8pt;color:#555;text-align:center;border-top:1px solid #ccc;padding-top:4px;">
             نظام أوبو إيآر بي — Enterprise Solutions Demo
             طُبع بتاريخ: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%Y %H:%M')"/>
-            — المحافظة التجريبية
+            — الجهة الحكومية التجريبية
           </div>
         </div>
       </t>

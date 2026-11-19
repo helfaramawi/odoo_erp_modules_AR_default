@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <menuitem id="menu_hr_employee_salary"
+            name="ملفات مرتبات الموظفين"
+            parent="demo_gov_hr_payroll_structure.menu_gov_payroll"
+            action="action_hr_employee_salary"
+            sequence="15"/>
+
+  <menuitem id="menu_hr_payroll_run"
+            name="دورات الرواتب الشهرية"
+            parent="demo_gov_hr_payroll_structure.menu_gov_payroll"
+            action="action_hr_payroll_run"
+            sequence="25"/>
+
+  <menuitem id="menu_hr_payroll_reward"
+            name="مكافآت الموظفين"
+            parent="demo_gov_hr_payroll_structure.menu_gov_payroll"
+            action="action_hr_payroll_reward"
+            sequence="30"/>
+
+  <menuitem id="menu_hr_payroll_disbursement_line"
+            name="دفتر 129 سايرة"
+            parent="demo_gov_hr_payroll_structure.menu_gov_payroll"
+            action="action_hr_payroll_disbursement_line"
+            sequence="35"/>
+
+  <menuitem id="menu_hr_payroll_allowance_increment"
+            name="حساب العلاوات والحوافز"
+            parent="demo_gov_hr_payroll_structure.menu_gov_payroll"
+            action="action_hr_payroll_allowance_increment"
+            sequence="20"/>
+
+  <menuitem id="menu_hr_payroll_non_employee_reward"
+            name="مكافآت غير العاملين"
+            parent="demo_gov_hr_payroll_structure.menu_gov_payroll"
+            action="action_hr_payroll_non_employee_reward"
+            sequence="31"/>
+
+  <menuitem id="menu_hr_payroll_external_salary"
+            name="مرتب العاملين بالخارج"
+            parent="demo_gov_hr_payroll_structure.menu_gov_payroll"
+            action="action_hr_payroll_external_salary"
+            sequence="16"/>
+
+  <menuitem id="menu_hr_payroll_tax_settlement"
+            name="التسوية الضريبية السنوية"
+            parent="demo_gov_hr_payroll_structure.menu_gov_payroll"
+            action="action_hr_payroll_tax_settlement"
+            sequence="40"/>
+</odoo>

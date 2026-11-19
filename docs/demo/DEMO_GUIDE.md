@@ -20,8 +20,10 @@ before each future presentation instead of repeating the walkthrough.
 ## 2. Walk each scenario once (produces the demo's transactional data)
 
 1. **Login** as `demo.admin` — show the DEMO ENVIRONMENT banner on the
-   login screen and the unified "الديوان العام" menu structure
-   (`demo_gov_menu`).
+   login screen. (The unified "الديوان العام" single-tab menu structure,
+   `demo_gov_menu`, is not part of this walkthrough — see
+   `KNOWN_LIMITATIONS.md`; each module shows under Odoo's normal Apps
+   menu instead.)
 2. **Organization structure** — Settings > Users & Companies: show the
    seven role-based demo accounts and, in Settings > General Settings >
    Demo Branding, the centralized application/organization name config.

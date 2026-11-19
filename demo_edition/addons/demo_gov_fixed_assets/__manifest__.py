@@ -1,8 +1,8 @@
 {
-    'name': 'الأصول الثابتة — المحافظة التجريبية',
+    'name': 'الأصول الثابتة — الجهة الحكومية التجريبية',
     'summary': 'إدارة وإهلاك الأصول الثابتة الحكومية — EAS #10 — متكامل مع العهد والمالية',
     'version': '17.0.1.0.0',
-    'category': 'Accounting/Egypt Government',
+    'category': 'الخدمات الحكومية التجريبية/الحسابات',
     'author': 'Enterprise Solutions Demo',
     'license': 'LGPL-3',
     'depends': [
@@ -10,9 +10,7 @@
         'l10n_eg_custody',
         'demo_gov_daftar55',
         'demo_gov_commitment',
-        'l10n_eg_auction',
-        'general_ledger_ar',
-    ],
+        'l10n_eg_auction', 'demo_branding',],
     'data': [
         'security/ir.model.access.csv',
         'security/fixed_assets_security.xml',

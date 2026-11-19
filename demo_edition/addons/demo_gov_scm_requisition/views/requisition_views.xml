@@ -74,7 +74,7 @@
 
   <menuitem id="menu_ps_requisition"
             name="طلبات الاحتياج"
-            parent="demo_gov_menu.menu_ps_30_purchase"
             action="demo_gov_scm_requisition.action_requisition"
+            parent="demo_branding.menu_gov_purchases"
             sequence="31"/>
 </odoo>

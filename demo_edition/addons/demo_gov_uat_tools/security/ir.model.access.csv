@@ -1,0 +1,13 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_uat_cleanup_log_manager,uat.cleanup.log.manager,model_arabic_government_uat_cleanup_log,base.group_system,1,1,1,1
+access_uat_cleanup_log_user,uat.cleanup.log.user,model_arabic_government_uat_cleanup_log,account.group_account_manager,1,0,0,0
+access_uat_cleanup_log_line_manager,uat.cleanup.log.line.manager,model_arabic_government_uat_cleanup_log_line,base.group_system,1,1,1,1
+access_uat_cleanup_log_line_user,uat.cleanup.log.line.user,model_arabic_government_uat_cleanup_log_line,account.group_account_manager,1,0,0,0
+access_uat_scenario_manager,uat.scenario.manager,model_arabic_government_uat_scenario,base.group_system,1,1,1,1
+access_uat_scenario_user,uat.scenario.user,model_arabic_government_uat_scenario,base.group_user,1,0,0,0
+access_uat_gen_log_manager,uat.gen.log.manager,model_arabic_government_uat_generation_log,base.group_system,1,1,1,1
+access_uat_gen_log_user,uat.gen.log.user,model_arabic_government_uat_generation_log,account.group_account_manager,1,0,0,0
+access_uat_gen_log_line_manager,uat.gen.log.line.manager,model_arabic_government_uat_generation_log_line,base.group_system,1,1,1,1
+access_uat_gen_log_line_user,uat.gen.log.line.user,model_arabic_government_uat_generation_log_line,account.group_account_manager,1,0,0,0
+access_uat_cleanup_wizard,uat.cleanup.wizard,model_arabic_government_uat_cleanup_wizard,base.group_system,1,1,1,1
+access_uat_generate_wizard,uat.generate.wizard,model_arabic_government_uat_generate_wizard,base.group_system,1,1,1,1

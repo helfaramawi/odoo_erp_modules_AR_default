@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  بيانات توضيحية فقط — منقولة حرفياً من المثال الوارد في دليل مستخدم نظام الرواتب
+  (الفئة الأولى: من 0 إلى 600000 جنيه سنوياً، وشريحة داخلية من 1 إلى 40000 بنسبة 0%).
+  هذه ليست الفئات الست الكاملة ولا الشرائح الرسمية المعتمدة لقانون الضرائب المصري —
+  لازم الإدارة المالية تستكمل باقي الفئات والشرائح وتعتمدها قبل أي استخدام فعلي في الصرف.
+-->
+<odoo noupdate="1">
+  <record id="tax_category_1_example" model="demo_gov.hr.payroll.tax.category">
+    <field name="name">الفئة الأولى (مثال توضيحي من دليل النظام — يحتاج اعتماد مالي)</field>
+    <field name="income_from">0</field>
+    <field name="income_to">600000</field>
+  </record>
+  <record id="tax_bracket_1_1_example" model="demo_gov.hr.payroll.tax.bracket">
+    <field name="category_id" ref="tax_category_1_example"/>
+    <field name="income_from">1</field>
+    <field name="income_to">40000</field>
+    <field name="rate">0.0</field>
+  </record>
+
+  <record id="stamp_bracket_example" model="demo_gov.hr.payroll.stamp.bracket">
+    <field name="income_from">50</field>
+    <field name="income_to">250</field>
+    <field name="rate">0.006</field>
+  </record>
+
+  <record id="tax_settings_default" model="demo_gov.hr.payroll.tax.settings">
+    <field name="name">الإعدادات الضريبية العامة</field>
+  </record>
+</odoo>

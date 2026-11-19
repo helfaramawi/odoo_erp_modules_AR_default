@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_commitment_agent" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.commitment.agent</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="وكيل أتمتة الارتباطات" string="وكيل أتمتة الارتباطات" name="commitment_ai_agent">
+                    <block title="إعدادات أتمتة الارتباطات من الطلب للتجنيب">
+                        <setting string="تفعيل أتمتة الارتباطات الصغيرة">
+                            <field name="commitment_agent_enabled"/>
+                        </setting>
+                        <setting string="حد الأتمتة التلقائية">
+                            <field name="commitment_agent_auto_limit"/>
+                            <div class="text-muted">القيمة الافتراضية 50,000 جنيه.</div>
+                        </setting>
+                        <setting string="اشتراط كفاية الرصيد المتاح">
+                            <field name="commitment_agent_require_available_balance"/>
+                        </setting>
+                        <setting string="منع الأتمتة عند وجود جزاءات للمورد">
+                            <field name="commitment_agent_strict_vendor_penalties"/>
+                        </setting>
+                        <setting string="المستخدم المسؤول عن المراجعة البشرية">
+                            <field name="commitment_agent_notify_user_id"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>

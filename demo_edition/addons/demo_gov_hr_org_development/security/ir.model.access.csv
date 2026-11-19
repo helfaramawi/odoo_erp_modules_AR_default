@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_job_evaluation_user,demo_gov.hr.job.evaluation user,model_demo_gov_hr_job_evaluation,hr.group_hr_user,1,1,1,0
+access_hr_job_evaluation_manager,demo_gov.hr.job.evaluation manager,model_demo_gov_hr_job_evaluation,hr.group_hr_manager,1,1,1,1
+access_hr_position_budget_user,demo_gov.hr.position.budget user,model_demo_gov_hr_position_budget,hr.group_hr_user,1,1,1,0
+access_hr_position_budget_manager,demo_gov.hr.position.budget manager,model_demo_gov_hr_position_budget,hr.group_hr_manager,1,1,1,1

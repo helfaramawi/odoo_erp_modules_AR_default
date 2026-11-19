@@ -10,7 +10,7 @@
           <div style="text-align:center; margin-bottom:8px;">
             <h3 style="margin:0;">دفتر حساب الشيكات - رسم التحصيل</h3>
             <div style="font-size:11px;">
-              استمارة رقم 78 ع.ح — المحافظة التجريبية
+              استمارة رقم 78 ع.ح — الجهة الحكومية التجريبية
             </div>
             <div style="font-size:10px;">
               عدد الشيكات: <t t-out="len(docs)"/>

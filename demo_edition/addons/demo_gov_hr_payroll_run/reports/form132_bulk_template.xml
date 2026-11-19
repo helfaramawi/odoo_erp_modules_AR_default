@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <template id="report_form132_bulk_template">
+    <t t-call="web.html_container">
+      <t t-foreach="docs" t-as="run">
+        <t t-call="web.external_layout">
+          <div class="page" style="direction:rtl; font-family:'Amiri','Noto Naskh Arabic',Arial,sans-serif; padding:20px;">
+            <h2 style="text-align:center;">استمارة 132 إجمالي — كشف مرتبات</h2>
+            <p style="text-align:center;">
+              شهر <t t-esc="run.month"/> / <t t-esc="run.year"/> —
+              <t t-esc="dict(run._fields['disbursement_entity'].selection).get(run.disbursement_entity, '')"/>
+            </p>
+
+            <!-- ═══ الوجه الأول: سطر لكل موظف ═══ -->
+            <h4>أولاً: كشف الموظفين</h4>
+            <table style="width:100%; border-collapse:collapse; font-size:8pt;">
+              <tr style="background:#eee;">
+                <td style="font-weight:bold; padding:3px; border:1px solid #999;">م</td>
+                <td style="font-weight:bold; padding:3px; border:1px solid #999;">اسم الموظف</td>
+                <td style="font-weight:bold; padding:3px; border:1px solid #999;">إجمالي الاستحقاقات</td>
+                <td style="font-weight:bold; padding:3px; border:1px solid #999;">التأمينات</td>
+                <td style="font-weight:bold; padding:3px; border:1px solid #999;">ضريبة الدخل</td>
+                <td style="font-weight:bold; padding:3px; border:1px solid #999;">الدمغة</td>
+                <td style="font-weight:bold; padding:3px; border:1px solid #999;">استقطاعات أخرى</td>
+                <td style="font-weight:bold; padding:3px; border:1px solid #999;">صافي المرتب (GP)</td>
+              </tr>
+              <t t-foreach="run.payslip_ids" t-as="p">
+                <tr>
+                  <td style="padding:3px; border:1px solid #999;"><t t-esc="p_index + 1"/></td>
+                  <td style="padding:3px; border:1px solid #999;"><t t-esc="p.employee_id.name"/></td>
+                  <td style="padding:3px; border:1px solid #999;"><t t-esc="'%.2f' % p.gross_earnings"/></td>
+                  <td style="padding:3px; border:1px solid #999;"><t t-esc="'%.2f' % p.employee_insurance_share"/></td>
+                  <td style="padding:3px; border:1px solid #999;"><t t-esc="'%.2f' % p.income_tax_monthly"/></td>
+                  <td style="padding:3px; border:1px solid #999;"><t t-esc="'%.2f' % p.stamp_duty"/></td>
+                  <td style="padding:3px; border:1px solid #999;"><t t-esc="'%.2f' % p.manual_deductions"/></td>
+                  <td style="padding:3px; border:1px solid #999; font-weight:bold;"><t t-esc="'%.2f' % p.net_salary"/></td>
+                </tr>
+              </t>
+            </table>
+
+            <!-- ═══ الوجه الآخر: شباك الإجماليات (للقيد المحاسبي) ═══ -->
+            <div style="page-break-before:always;"/>
+            <h4>ثانياً: شباك الإجماليات (لترحيلها بالقيد)</h4>
+            <table style="width:60%; border-collapse:collapse; font-size:10pt; margin-top:16px;">
+              <tr>
+                <td style="font-weight:bold; padding:5px; border:1px solid #333;">إجمالي الاستحقاقات</td>
+                <td style="padding:5px; border:1px solid #333;"><t t-esc="'%.2f' % run.total_gross"/></td>
+              </tr>
+              <tr>
+                <td style="font-weight:bold; padding:5px; border:1px solid #333;">إجمالي التأثيرات الاستثنائية</td>
+                <td style="padding:5px; border:1px solid #333;"><t t-esc="'%.2f' % run.total_transaction_adjustment"/></td>
+              </tr>
+              <tr>
+                <td style="font-weight:bold; padding:5px; border:1px solid #333;">إجمالي حصة الموظفين - تأمينات</td>
+                <td style="padding:5px; border:1px solid #333;">-<t t-esc="'%.2f' % run.total_employee_insurance"/></td>
+              </tr>
+              <tr>
+                <td style="font-weight:bold; padding:5px; border:1px solid #333;">إجمالي ضريبة الدخل</td>
+                <td style="padding:5px; border:1px solid #333;">-<t t-esc="'%.2f' % run.total_income_tax"/></td>
+              </tr>
+              <tr>
+                <td style="font-weight:bold; padding:5px; border:1px solid #333;">إجمالي ضريبة الدمغة النسبية</td>
+                <td style="padding:5px; border:1px solid #333;">-<t t-esc="'%.2f' % run.total_stamp_duty"/></td>
+              </tr>
+              <tr>
+                <td style="font-weight:bold; padding:5px; border:1px solid #333;">إجمالي الاستقطاعات اليدوية</td>
+                <td style="padding:5px; border:1px solid #333;">-<t t-esc="'%.2f' % run.total_manual_deductions"/></td>
+              </tr>
+              <tr style="background:#f5f5f5; font-weight:bold; font-size:12pt;">
+                <td style="padding:5px; border:1px solid #333;">إجمالي الصافي المطلوب صرفه (GP)</td>
+                <td style="padding:5px; border:1px solid #333;"><t t-esc="'%.2f' % run.total_net"/></td>
+              </tr>
+              <tr>
+                <td style="font-weight:bold; padding:5px; border:1px solid #333;">عدد الموظفين</td>
+                <td style="padding:5px; border:1px solid #333;"><t t-esc="run.payslip_count"/></td>
+              </tr>
+            </table>
+
+            <div style="margin-top:60px;">
+              <table style="width:100%; border-collapse:collapse; font-size:10pt;">
+                <tr>
+                  <td style="width:33%; text-align:center; padding-top:40px; border-top:1px solid #333;">إعداد قسم الاستحقاقات</td>
+                  <td style="width:33%; text-align:center; padding-top:40px; border-top:1px solid #333;">مراجعة الإدارة المالية</td>
+                  <td style="width:33%; text-align:center; padding-top:40px; border-top:1px solid #333;">اعتماد</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </t>
+      </t>
+    </t>
+  </template>
+</odoo>

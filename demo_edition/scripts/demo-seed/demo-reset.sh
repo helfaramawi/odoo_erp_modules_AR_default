@@ -42,7 +42,7 @@ dropdb --if-exists "$DB"
 log "Creating fresh demo database ..."
 createdb "$DB"
 
-MODULES="demo_branding,demo_gov_seed_data,demo_gov_menu,l10n_eg_custody,l10n_eg_auction,procurement_committee,procurement_adjudication,stock_addition_permit,stock_stocktaking_eg"
+MODULES="demo_branding,demo_gov_seed_data,l10n_eg_custody,l10n_eg_auction,procurement_committee,procurement_adjudication,stock_addition_permit,stock_stocktaking_eg"
 
 log "Installing Demo Edition modules: $MODULES ..."
 $ODOO_BIN -c "$CONF" -d "$DB" --addons-path="$ADDONS_PATH" -i "$MODULES" --stop-after-init

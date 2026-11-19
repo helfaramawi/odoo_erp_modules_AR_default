@@ -15,7 +15,7 @@
                 <t t-if="folio.book_classification == 'final'">دفتر حسابات التأمينات النهائية</t>
               </h3>
               <div style="font-size:11px;">
-                استمارة 78 ع.ح — المحافظة التجريبية
+                استمارة 78 ع.ح — الجهة الحكومية التجريبية
               </div>
               <div style="font-size:10px;">
                 فولية رقم <t t-out="folio.folio_number"/>

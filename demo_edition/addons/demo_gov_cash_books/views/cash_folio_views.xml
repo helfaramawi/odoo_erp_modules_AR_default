@@ -79,7 +79,7 @@
                    readonly="state not in ['draft', 'reconciled']"/>
             <field name="reconciliation_variance" readonly="1"
                    decoration-danger="reconciliation_variance > 0.01 or reconciliation_variance &lt; -0.01"/>
-            <div colspan="1" class="alert alert-warning"
+            <div colspan="1" class="alert alert-warning" role="alert"
                  invisible="(reconciliation_variance &gt; -0.01 and reconciliation_variance &lt; 0.01) or state in ['audited','archived']">
               فرق مطابقة غير صفري — لا يمكن الإقفال
             </div>

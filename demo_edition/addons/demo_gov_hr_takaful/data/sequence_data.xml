@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="seq_hr_takaful_contribution" model="ir.sequence">
+    <field name="name">اشتراك تكافل - رقم متسلسل</field>
+    <field name="code">demo_gov.hr.takaful.contribution</field>
+    <field name="prefix">TKC/%(year)s/</field>
+    <field name="padding">4</field>
+    <field name="use_date_range">True</field>
+    <field name="company_id" eval="False"/>
+  </record>
+
+  <record id="seq_hr_takaful_payout" model="ir.sequence">
+    <field name="name">طلب صرف تكافل - رقم متسلسل</field>
+    <field name="code">demo_gov.hr.takaful.payout</field>
+    <field name="prefix">TKP/%(year)s/</field>
+    <field name="padding">4</field>
+    <field name="use_date_range">True</field>
+    <field name="company_id" eval="False"/>
+  </record>
+</odoo>

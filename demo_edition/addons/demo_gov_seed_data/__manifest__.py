@@ -4,9 +4,10 @@
     'description': """
         Populates the Demo Edition with realistic-looking, entirely synthetic
         master data so dashboards, lists and reports are not empty:
-          - Demo employees, one per demo.* user (see l10n_eg_custody/data/demo_users.xml)
-          - Demo vendors and customers
-          - Demo inventory items
+
+        - Demo employees, one per demo.* user (see l10n_eg_custody/data/demo_users.xml)
+        - Demo vendors and customers
+        - Demo inventory items
 
         None of this data references any real person, company, or
         government entity. See docs/demo/DEMO_DATA.md for the full

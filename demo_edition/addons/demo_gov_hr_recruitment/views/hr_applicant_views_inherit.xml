@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_hr_applicant_form_gov_inherit" model="ir.ui.view">
+    <field name="name">hr.applicant.form.gov.inherit</field>
+    <field name="model">hr.applicant</field>
+    <field name="inherit_id" ref="hr_recruitment.hr_applicant_view_form"/>
+    <field name="arch" type="xml">
+      <field name="job_id" position="after">
+        <field name="recruitment_project_id"/>
+      </field>
+    </field>
+  </record>
+
+</odoo>

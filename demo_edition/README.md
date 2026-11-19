@@ -28,15 +28,21 @@ and [`docs/demo/INTEGRATIONS.md`](../docs/demo/INTEGRATIONS.md).
 cd demo_edition
 cp .env.example .env
 # edit .env: set DEMO_DB_PASSWORD and DEMO_USERS_PASSWORD to your own values
-docker compose -f docker/docker-compose.demo.yml up -d --build
 
-# first run only: create the demo database and install the modules
-docker compose -f docker/docker-compose.demo.yml exec odoo \
-  odoo -d "$DEMO_DB_NAME" \
-  -i demo_branding,demo_gov_seed_data,demo_gov_menu,l10n_eg_custody,l10n_eg_auction,procurement_committee,procurement_adjudication,stock_addition_permit,stock_stocktaking_eg \
-  --stop-after-init
+# --env-file is explicit on purpose: with -f pointing into docker/, Compose
+# can otherwise resolve its project directory there and miss ./.env
+docker compose --env-file .env -f docker/docker-compose.demo.yml up -d --build
 
-docker compose -f docker/docker-compose.demo.yml restart odoo
+# first run only: create the demo database and install the modules.
+# Note: /entrypoint.sh (not plain `odoo`) so HOST/PORT/USER/PASSWORD get
+# translated into a real DB connection; --no-http because the main odoo
+# process (started by `up` above) already holds port 8069 in this container.
+docker compose --env-file .env -f docker/docker-compose.demo.yml exec odoo \
+  /entrypoint.sh odoo -d "$DEMO_DB_NAME" \
+  -i demo_branding,demo_gov_seed_data,l10n_eg_custody,l10n_eg_auction,procurement_committee,procurement_adjudication,stock_addition_permit,stock_stocktaking_eg \
+  --stop-after-init --no-http
+
+docker compose --env-file .env -f docker/docker-compose.demo.yml restart odoo
 ```
 
 Then open `http://localhost:8069` (or your configured `DEMO_HTTP_PORT`).
@@ -56,7 +62,7 @@ export ADDONS_PATH="/opt/odoo/addons,$(pwd)/addons"
 createdb demo_gov_erp
 APP_ENV=demo DEMO_USERS_PASSWORD='choose-a-strong-demo-password' \
   python3 /opt/odoo/odoo-bin -d demo_gov_erp --addons-path="$ADDONS_PATH" \
-  -i demo_branding,demo_gov_seed_data,demo_gov_menu,l10n_eg_custody,l10n_eg_auction,procurement_committee,procurement_adjudication,stock_addition_permit,stock_stocktaking_eg \
+  -i demo_branding,demo_gov_seed_data,l10n_eg_custody,l10n_eg_auction,procurement_committee,procurement_adjudication,stock_addition_permit,stock_stocktaking_eg \
   --stop-after-init
 
 python3 /opt/odoo/odoo-bin -d demo_gov_erp --addons-path="$ADDONS_PATH"
@@ -94,7 +100,27 @@ Before demonstrating, walk the sequence in
 - **Module fails to install / "depends on unknown module"**: install
   order matters — install `demo_branding` first, then
   `demo_gov_seed_data`, then the application modules (see the command
-  above; `demo_gov_menu` pulls in most of the rest via `depends`).
+  above).
+- **Don't add `demo_gov_menu` to the install list**: it's an incomplete
+  module (manifest references view files that don't exist anywhere in
+  the repo, pre-existing in production too) and installing modules that
+  depend on it transitively hits `Recursion error in modules
+  dependencies!` through `general_ledger_ar`. See
+  [`docs/demo/KNOWN_LIMITATIONS.md`](../docs/demo/KNOWN_LIMITATIONS.md).
+  Each module shows under Odoo's normal Apps menu without it.
+- **`docker compose exec odoo odoo ...` fails with a Postgres socket
+  error**: `exec` bypasses the official image's entrypoint script, which
+  is what translates `HOST`/`PORT`/`USER`/`PASSWORD` into a real DB
+  connection. Call `/entrypoint.sh odoo ...` instead of `odoo ...`.
+- **That same command then fails with `Address already in use`**: the
+  main Odoo process from `docker compose up -d` is already listening on
+  8069 inside the container; add `--no-http` to the one-off install
+  command (it doesn't need to serve HTTP, only install and exit).
+- **`docker compose up` errors that a required `.env` variable is
+  missing even though it's set in the file**: pass `--env-file .env`
+  explicitly — with `-f docker/docker-compose.demo.yml`, Compose can
+  otherwise resolve its project directory to `docker/` and look for
+  `.env` there instead of in `demo_edition/`.
 - **Arabic PDF reports show boxes instead of text**: the `Amiri`/`Noto`
   fonts are installed in the provided Dockerfile; on a bare install,
   install `fonts-hosny-amiri` (or equivalent) on the Odoo host.

@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_payment_cycle_delay_user,access.payment.cycle.delay.user,model_port_said_payment_cycle_delay,base.group_user,1,0,0,0
+access_payment_cycle_delay_manager,access.payment.cycle.delay.manager,model_port_said_payment_cycle_delay,base.group_system,1,1,1,0
+access_payment_cycle_engine_manager,access.payment.cycle.engine.manager,model_port_said_payment_cycle_engine,base.group_system,1,1,1,0

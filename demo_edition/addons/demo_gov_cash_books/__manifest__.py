@@ -21,6 +21,7 @@
            — تسجيل كفالات النقدية والعهد
 
         التصميم المعماري:
+
         - الدفاتر 1-3: طبقة تقرير (reporting layer) فوق
           account.bank.statement.line — نفس نمط محرك الدفاتر المساعدة.
         - الدفتر 4: نموذج مستقل (demo_gov.payment_order) بدورة حياة كاملة
@@ -33,7 +34,7 @@
         السنة المالية: 1 يوليو – 30 يونيو.
     """,
     'version': '17.0.1.0.0',
-    'category': 'Accounting/Egypt Government',
+    'category': 'الخدمات الحكومية التجريبية/الحسابات',
     'author': 'Enterprise Solutions Demo',
     'website': 'https://example.com',
     'license': 'LGPL-3',
@@ -42,7 +43,6 @@
         'demo_gov_daftar55',
         'demo_gov_daftar224',
         'demo_gov_subsidiary_books',
-        'demo_gov_menu',
         'general_ledger_ar',
     ],
     'data': [
@@ -68,6 +68,7 @@
             'demo_gov_cash_books/static/src/css/cash_register.css',
         ],
     },
+    'post_init_hook': 'post_init_hook',
     'installable': True,
     'application': False,
 }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <menuitem id="menu_dossier"
+            name="الاضابير - نظام الأرشفة"
+            parent="demo_branding.menu_gov_accounts"
+            action="action_dossier"
+            sequence="23"/>
+</odoo>

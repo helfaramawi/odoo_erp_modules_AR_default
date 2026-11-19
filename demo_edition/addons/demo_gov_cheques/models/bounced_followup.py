@@ -40,7 +40,7 @@ class BouncedFollowup(models.Model):
         currency_field='currency_id')
     returned_charges = fields.Monetary(string='رسوم الإرجاع من البنك',
         currency_field='currency_id',
-        help='الرسوم التي يحمِّلها البنك على المحافظة لارتداد الشيك.')
+        help='الرسوم التي يحمِّلها البنك على الجهة الحكومية لارتداد الشيك.')
     total_claim = fields.Monetary(string='إجمالي المطالبة',
         compute='_compute_total_claim', store=True,
         currency_field='currency_id',

@@ -2,13 +2,17 @@
 <odoo>
   <record id="group_subsidiary_user" model="res.groups">
     <field name="name">دفاتر مساعدة — مستخدم</field>
-    <field name="category_id" ref="base.module_category_accounting_accounting"/>
-    <field name="implied_ids" eval="[(4, ref('account.group_account_user'))]"/>
+    <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
   </record>
 
   <record id="group_subsidiary_manager" model="res.groups">
     <field name="name">دفاتر مساعدة — مدير</field>
-    <field name="category_id" ref="base.module_category_accounting_accounting"/>
     <field name="implied_ids" eval="[(4, ref('group_subsidiary_user')), (4, ref('account.group_account_manager'))]"/>
   </record>
+
+  <!-- Granting the demo Administrator this group happens in
+       __init__.py's post_init_hook, not here: an XML <record
+       id="base.user_admin"> data record silently fails to persist this
+       specific kind of write - see the hook's docstring and
+       docs/demo/KNOWN_LIMITATIONS.md for the full investigation. -->
 </odoo>

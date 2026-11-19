@@ -8,7 +8,7 @@
     <field name="arch" type="xml">
       <!-- Add Demo Governorate fields after the notes field (exists in all Odoo versions) -->
       <xpath expr="//field[@name='notes']" position="after">
-        <group string="تكامل الديوان العام — المحافظة التجريبية" name="ps_integration">
+        <group string="تكامل الديوان العام — الجهة الحكومية التجريبية" name="ps_integration">
           <group>
             <field name="requisition_ps_id" readonly="1"/>
             <field name="commitment_id"/>

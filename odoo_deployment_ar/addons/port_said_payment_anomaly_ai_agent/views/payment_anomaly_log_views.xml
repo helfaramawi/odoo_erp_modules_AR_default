@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_payment_anomaly_log_tree" model="ir.ui.view">
+        <field name="name">port_said.payment.anomaly.log.tree</field>
+        <field name="model">port_said.payment.anomaly.log</field>
+        <field name="arch" type="xml">
+            <tree string="سجل شذوذ المدفوعات" decoration-danger="risk_level == 'critical'" decoration-warning="risk_level == 'high'" decoration-info="risk_level == 'medium'">
+                <field name="name"/>
+                <field name="transaction_date"/>
+                <field name="transaction_type"/>
+                <field name="transaction_display_name"/>
+                <field name="partner_name"/>
+                <field name="amount"/>
+                <field name="is_flagged"/>
+                <field name="risk_level"/>
+                <field name="risk_score"/>
+                <field name="z_score"/>
+                <field name="anomaly_codes"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_payment_anomaly_log_form" model="ir.ui.view">
+        <field name="name">port_said.payment.anomaly.log.form</field>
+        <field name="model">port_said.payment.anomaly.log</field>
+        <field name="arch" type="xml">
+            <form string="تحليل شذوذ مدفوعات">
+                <header>
+                    <button name="action_open_transaction" type="object" string="فتح المعاملة" class="btn-primary"/>
+                    <button name="action_mark_reviewed" type="object" string="تعليم كمراجع" class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="المعاملة">
+                            <field name="transaction_type" readonly="1"/>
+                            <field name="transaction_display_name" readonly="1"/>
+                            <field name="transaction_model" readonly="1"/>
+                            <field name="transaction_res_id" readonly="1"/>
+                            <field name="transaction_date" readonly="1"/>
+                            <field name="state" readonly="1"/>
+                        </group>
+                        <group string="الطرف والمبلغ">
+                            <field name="partner_id" readonly="1"/>
+                            <field name="partner_name" readonly="1"/>
+                            <field name="amount" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="نتيجة الوكيل">
+                            <field name="is_flagged" readonly="1"/>
+                            <field name="risk_level" readonly="1"/>
+                            <field name="risk_score" readonly="1"/>
+                            <field name="anomaly_codes" readonly="1"/>
+                        </group>
+                        <group string="التحليل الإحصائي">
+                            <field name="z_score" readonly="1"/>
+                            <field name="historical_count" readonly="1"/>
+                            <field name="historical_mean" readonly="1"/>
+                            <field name="historical_stdev" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="تفسير الوكيل">
+                            <field name="explanation_ar" readonly="1" nolabel="1"/>
+                        </page>
+                        <page string="الإجراء المقترح">
+                            <field name="recommended_action_ar" readonly="1" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_payment_anomaly_log_search" model="ir.ui.view">
+        <field name="name">port_said.payment.anomaly.log.search</field>
+        <field name="model">port_said.payment.anomaly.log</field>
+        <field name="arch" type="xml">
+            <search string="بحث سجل الشذوذ">
+                <field name="name"/>
+                <field name="partner_name"/>
+                <field name="transaction_display_name"/>
+                <filter string="يوجد شذوذ" name="flagged" domain="[('is_flagged','=',True)]"/>
+                <filter string="خطر مرتفع/حرج" name="high" domain="[('risk_level','in',['high','critical'])]"/>
+                <filter string="شيكات" name="cheques" domain="[('transaction_type','=','cheque')]"/>
+                <filter string="أوامر دفع" name="payment_orders" domain="[('transaction_type','in',['payment_order','outgoing_po'])]"/>
+                <filter string="سلف" name="advances" domain="[('transaction_type','=','advance')]"/>
+                <group expand="0" string="تجميع">
+                    <filter string="نوع المعاملة" name="group_type" context="{'group_by':'transaction_type'}"/>
+                    <filter string="مستوى الخطر" name="group_risk" context="{'group_by':'risk_level'}"/>
+                    <filter string="التاريخ" name="group_date" context="{'group_by':'transaction_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_payment_anomaly_log" model="ir.actions.act_window">
+        <field name="name">سجل شذوذ المدفوعات</field>
+        <field name="res_model">port_said.payment.anomaly.log</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_payment_anomaly_log_search"/>
+        <field name="context">{'search_default_flagged': 1}</field>
+    </record>
+
+    <record id="action_payment_anomaly_full_scan" model="ir.actions.server">
+        <field name="name">تشغيل فحص شامل لشذوذ المدفوعات</field>
+        <field name="model_id" ref="model_port_said_payment_anomaly_log"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_run_full_scan()</field>
+    </record>
+
+    <menuitem id="menu_payment_anomaly_root"
+              name="وكيل شذوذ المدفوعات"
+              sequence="48"
+              groups="base.group_user"/>
+
+    <menuitem id="menu_payment_anomaly_logs"
+              name="سجل تحليلات الشذوذ"
+              parent="menu_payment_anomaly_root"
+              action="action_payment_anomaly_log"
+              sequence="1"
+              groups="base.group_user"/>
+
+    <menuitem id="menu_payment_anomaly_full_scan"
+              name="تشغيل فحص شامل الآن"
+              parent="menu_payment_anomaly_root"
+              action="action_payment_anomaly_full_scan"
+              sequence="2"
+              groups="base.group_user"/>
+</odoo>

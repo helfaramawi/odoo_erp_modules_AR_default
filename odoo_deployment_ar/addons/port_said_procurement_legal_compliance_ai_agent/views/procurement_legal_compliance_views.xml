@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_procurement_legal_compliance_tree" model="ir.ui.view">
+        <field name="name">port_said.procurement.legal.compliance.tree</field>
+        <field name="model">port_said.procurement.legal.compliance</field>
+        <field name="arch" type="xml">
+            <tree string="مراجعات الالتزام القانوني للمشتريات"
+                  decoration-danger="legal_status == 'blocked'"
+                  decoration-warning="legal_status in ('incomplete','needs_review')"
+                  decoration-success="legal_status == 'complete'">
+                <field name="name"/>
+                <field name="source_display_name"/>
+                <field name="procurement_method"/>
+                <field name="stage"/>
+                <field name="compliance_score"/>
+                <field name="legal_status"/>
+                <field name="state"/>
+                <field name="create_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_procurement_legal_compliance_form" model="ir.ui.view">
+        <field name="name">port_said.procurement.legal.compliance.form</field>
+        <field name="model">port_said.procurement.legal.compliance</field>
+        <field name="arch" type="xml">
+            <form string="مراجعة الالتزام القانوني للمشتريات">
+                <header>
+                    <button name="action_recheck" type="object" string="إعادة فحص" class="btn-primary"/>
+                    <button name="action_to_review" type="object" string="إرسال للمراجعة" class="btn-secondary" invisible="state != 'draft'"/>
+                    <button name="action_approve" type="object" string="اعتماد قانوني" class="btn-success" invisible="state in ('approved','rejected','blocked','cancelled')"/>
+                    <button name="action_reject" type="object" string="رفض" class="btn-danger" invisible="state in ('approved','rejected','cancelled')"/>
+                    <button name="action_block" type="object" string="إيقاف" class="btn-warning" invisible="state in ('blocked','approved','cancelled')"/>
+                    <button name="action_open_source" type="object" string="فتح السجل المصدر" class="btn-secondary"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,to_review,approved,rejected,blocked"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group string="السجل">
+                            <field name="source_model"/>
+                            <field name="source_res_id"/>
+                            <field name="source_display_name"/>
+                            <field name="procurement_method"/>
+                            <field name="stage"/>
+                        </group>
+                        <group string="نتيجة المراجعة">
+                            <field name="compliance_score"/>
+                            <field name="legal_status"/>
+                            <field name="reviewed_by"/>
+                            <field name="reviewed_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="المستندات الموجودة"><field name="existing_docs" nolabel="1" readonly="1"/></page>
+                        <page string="المستندات الناقصة"><field name="missing_docs" nolabel="1" readonly="1"/></page>
+                        <page string="نواقص جوهرية"><field name="critical_missing_docs" nolabel="1" readonly="1"/></page>
+                        <page string="مرفقات غير مصنفة"><field name="unknown_docs" nolabel="1" readonly="1"/></page>
+                        <page string="المرفقات">
+                            <field name="attachment_ids" readonly="1">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="mimetype"/>
+                                    <field name="res_model"/>
+                                    <field name="res_id"/>
+                                    <field name="create_date"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="التوصية"><field name="recommendation" nolabel="1" readonly="1"/></page>
+                        <page string="المذكرة القانونية"><field name="official_note" nolabel="1" readonly="1"/></page>
+                        <page string="ملاحظات المراجعة"><field name="review_notes" nolabel="1"/></page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_procurement_legal_compliance_search" model="ir.ui.view">
+        <field name="name">port_said.procurement.legal.compliance.search</field>
+        <field name="model">port_said.procurement.legal.compliance</field>
+        <field name="arch" type="xml">
+            <search string="بحث الالتزام القانوني للمشتريات">
+                <field name="name"/>
+                <field name="source_display_name"/>
+                <filter string="نقص جوهري" name="blocked" domain="[('legal_status','=','blocked')]"/>
+                <filter string="ناقص" name="incomplete" domain="[('legal_status','=','incomplete')]"/>
+                <filter string="مكتمل" name="complete" domain="[('legal_status','=','complete')]"/>
+                <group expand="0" string="تجميع حسب">
+                    <filter string="نوع العملية" name="grp_method" context="{'group_by':'procurement_method'}"/>
+                    <filter string="مرحلة المراجعة" name="grp_stage" context="{'group_by':'stage'}"/>
+                    <filter string="الحالة القانونية" name="grp_status" context="{'group_by':'legal_status'}"/>
+                    <filter string="حالة المراجعة" name="grp_state" context="{'group_by':'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_procurement_legal_compliance" model="ir.actions.act_window">
+        <field name="name">مراجعة الالتزام القانوني للمشتريات</field>
+        <field name="res_model">port_said.procurement.legal.compliance</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_procurement_legal_compliance_search"/>
+        <field name="context">{'search_default_blocked': 1}</field>
+    </record>
+
+    <record id="action_procurement_legal_run_scan" model="ir.actions.server">
+        <field name="name">تشغيل فحص الالتزام القانوني الآن</field>
+        <field name="model_id" ref="model_port_said_procurement_legal_engine"/>
+        <field name="state">code</field>
+        <field name="code">action = env['port_said.procurement.legal.engine'].sudo().action_run_full_scan()</field>
+    </record>
+
+    <menuitem id="menu_procurement_legal_root" name="وكيل الالتزام القانوني للمشتريات" sequence="61" groups="base.group_user"/>
+    <menuitem id="menu_procurement_legal_compliance" name="مراجعة الالتزام القانوني للمشتريات" parent="menu_procurement_legal_root" action="action_procurement_legal_compliance" sequence="10" groups="base.group_user"/>
+    <menuitem id="menu_procurement_legal_run_scan" name="تشغيل فحص الالتزام القانوني الآن" parent="menu_procurement_legal_root" action="action_procurement_legal_run_scan" sequence="20" groups="base.group_system"/>
+</odoo>

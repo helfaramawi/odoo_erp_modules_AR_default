@@ -227,8 +227,8 @@ action = {
 
   <menuitem id="menu_ps_custody_main"
             name="إدارة العهد"
-            parent="demo_gov_menu.menu_ps_40_inventory"
             action="l10n_eg_custody.action_custody_assignment_main"
+            parent="demo_branding.menu_gov_warehouses"
             sequence="44"/>
 
   <menuitem id="menu_ps_custody_records" name="سجلات العهد"
@@ -246,4 +246,7 @@ action = {
   <menuitem id="menu_ps_custody_overdue" name="⚠ العهد المتأخرة"
             parent="menu_ps_custody_main"
             action="l10n_eg_custody.action_custody_overdue" sequence="5"/>
+  <menuitem id="menu_ps_custody_gafi_audit" name="تقرير GAFI - أرباب العهد"
+            parent="menu_ps_custody_main"
+            action="l10n_eg_custody.action_gafi_custody_audit" sequence="6"/>
 </odoo>

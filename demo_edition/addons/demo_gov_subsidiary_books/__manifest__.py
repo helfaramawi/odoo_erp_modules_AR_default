@@ -21,7 +21,7 @@
         — السنة المالية تبدأ 1 يوليو حسب التقويم المالي الحكومي المصري
     """,
     'version': '17.0.1.0.0',
-    'category': 'Accounting/Egypt Government',
+    'category': 'الخدمات الحكومية التجريبية/الحسابات',
     'author': 'Enterprise Solutions Demo',
     'website': 'https://example.com',
     'license': 'LGPL-3',
@@ -29,7 +29,7 @@
         'base', 'mail', 'account',
         'demo_gov_daftar55',     # مرجعية لدفتر 55
         'demo_gov_daftar224',    # مرجعية ليومية 224
-        'demo_gov_menu',         # القائمة الموحدة
+        'demo_branding',
     ],
     'data': [
         'security/security_groups.xml',
@@ -54,6 +54,7 @@
             'demo_gov_subsidiary_books/static/src/css/arabic_register.css',
         ],
     },
+    'post_init_hook': 'post_init_hook',
     'installable': True,
     'application': False,
 }

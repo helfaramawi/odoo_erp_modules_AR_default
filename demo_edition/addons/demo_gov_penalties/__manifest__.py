@@ -21,12 +21,12 @@
 
         دورة الحياة:
         draft → recorded → approved → executed → (appealed → resolved)
-                                              → (cancelled if void)
+        → (cancelled if void)
 
         السنة المالية: 1 يوليو – 30 يونيو
     """,
     'version': '17.0.1.0.0',
-    'category': 'Accounting/Egypt Government',
+    'category': 'الخدمات الحكومية التجريبية/الحسابات',
     'author': 'Enterprise Solutions Demo',
     'website': 'https://example.com',
     'license': 'LGPL-3',
@@ -35,7 +35,6 @@
         'hr',                            # for employee subject
         'demo_gov_daftar55',           # integration with payment orders
         'demo_gov_subsidiary_books',   # memo classifications
-        'demo_gov_menu',
         'general_ledger_ar',
     ],
     'data': [

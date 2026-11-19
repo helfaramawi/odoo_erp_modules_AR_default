@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="action_report_ssrs07_training_needs" model="ir.actions.report">
+    <field name="name">SSRS-07: حصر الاحتياجات التدريبية (نموذج 4)</field>
+    <field name="model">demo_gov.hr.training.need</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">demo_gov_hr_reports.report_ssrs07_training_needs_template</field>
+    <field name="report_file">demo_gov_hr_reports.report_ssrs07_training_needs_template</field>
+    <field name="binding_model_id" ref="demo_gov_hr_training.model_demo_gov_hr_training_need"/>
+    <field name="binding_type">report</field>
+    <field name="attachment_use">False</field>
+  </record>
+</odoo>
