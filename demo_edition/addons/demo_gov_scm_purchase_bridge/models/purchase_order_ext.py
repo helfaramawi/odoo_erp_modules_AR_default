@@ -85,6 +85,15 @@ class PurchaseOrderPS(models.Model):
                 "view_mode":"list,form","domain":[("purchase_order_id","=",self.id)]}
 
 
+class Daftar55PurchaseBridge(models.Model):
+    """Back-references from demo_gov.daftar55 to its originating commitment/PO,
+    used by PurchaseOrderPS._create_form50_draft() and action_view_form50()."""
+    _inherit = "demo_gov.daftar55"
+
+    commitment_id = fields.Many2one("demo_gov.commitment", string="الارتباط", readonly=True, copy=False)
+    purchase_order_id = fields.Many2one("purchase.order", string="أمر التوريد", readonly=True, copy=False)
+
+
 class Daftar55PSExtension(models.Model):
     """Add purchase_order_id to daftar55 only when purchase bridge is installed."""
     _inherit = 'demo_gov.daftar55'
