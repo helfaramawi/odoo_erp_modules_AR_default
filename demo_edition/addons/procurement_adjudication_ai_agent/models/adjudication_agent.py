@@ -394,7 +394,7 @@ class ProcurementAdjudicationAgent(models.Model):
         <div dir="rtl" style="text-align:right;font-family:Arial,Tahoma;">
             <h3>مسودة محضر البت الفني</h3>
             <p>بناءً على فتح المظاريف الفنية، قام وكيل التحليل بإعداد مقارنة استرشادية للعروض الفنية تمهيداً لعرضها على اللجنة المختصة.</p>
-            <table border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse;width:100%;">
+            <table border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse;width:100%%;">
                 <tr>
                     <th>المورد</th>
                     <th>نسبة المطابقة</th>
@@ -414,7 +414,7 @@ class ProcurementAdjudicationAgent(models.Model):
         <div dir="rtl" style="text-align:right;font-family:Arial,Tahoma;">
             <h3>مسودة مقارنة العروض المالية</h3>
             <p>بناءً على فتح المظاريف المالية، تم ترتيب الموردين المستوفين فنياً تصاعدياً حسب قيمة العرض المالي.</p>
-            <table border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse;width:100%;">
+            <table border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse;width:100%%;">
                 <tr>
                     <th>الترتيب</th>
                     <th>المورد</th>
