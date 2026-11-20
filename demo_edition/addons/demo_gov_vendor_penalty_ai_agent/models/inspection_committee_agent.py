@@ -226,6 +226,7 @@ class DemoGovInspectionCommitteePenaltyAgent(models.Model):
         put('subject_type', 'vendor')
         put('vendor_id', vendor.id)
         put('amount', amount)
+        put('incident_description', description)
         put('penalty_description', description)
         put('reason', description)
         put('description', description)
@@ -266,6 +267,8 @@ class DemoGovInspectionCommitteePenaltyAgent(models.Model):
         for fname in ['name', 'description']:
             if fname in Model._fields:
                 vals[fname] = 'مخالفة توريد - رفض أو مطابقة جزئية'
+        if 'code' in Model._fields:
+            vals['code'] = 'VIO-SUPPLY-REJECT'
         if 'subject_type' in Model._fields:
             vals['subject_type'] = 'vendor'
         if 'max_fine_percent' in Model._fields:
