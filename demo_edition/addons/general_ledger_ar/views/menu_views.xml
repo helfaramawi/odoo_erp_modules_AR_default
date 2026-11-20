@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- account.action_move_line_select's stored context references 'active_id',
+         which is only defined when the action is opened as a drill-down from a
+         specific account (e.g. a smart button). Opened directly from a top-level
+         menu there is no active_id, so that action raises an EvalError. This
+         action mirrors it without the active_id-dependent default filter. -->
+    <record id="action_general_ledger_standalone" model="ir.actions.act_window">
+        <field name="name">دفتر الأستاذ العام</field>
+        <field name="res_model">account.move.line</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_posted': 1}</field>
+    </record>
+
     <menuitem
         id="menu_helper_notebooks_general_ledger"
         name="دفتر الأستاذ العام"
         parent="demo_gov_subsidiary_books.menu_subsidiary_root"
-        action="account.action_move_line_select"
+        action="action_general_ledger_standalone"
         sequence="10"
     />
 
