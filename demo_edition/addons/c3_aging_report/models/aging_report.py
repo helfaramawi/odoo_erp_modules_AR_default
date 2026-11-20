@@ -14,17 +14,36 @@ class AgingReportWizard(models.TransientModel):
     partner_ids = fields.Many2many("res.partner", string="Partners / الشركاء")
 
     def action_print_report(self):
+        # The report is printed with an explicit `data` payload (not relying on
+        # `docids`): Odoo's own getReportUrl() only puts a report action's
+        # `active_ids` into the download URL when `action.data` is EMPTY, so a
+        # report invoked this way always receives an empty docids on the
+        # server side. Every value `_get_aging_data()` needs must therefore be
+        # serialized into `data` itself, not read back off `self` via docids.
+        # NOTE: don't name any of these keys `company_id` -- `_get_rendering_
+        # context()` merges this dict in flat (not nested), and web.external_
+        # layout's own template unconditionally does
+        # `<t t-if="company_id"><t t-set="company" t-value="company_id"/></t>`
+        # expecting an actual res.company record there, not a bare int id.
         return self.env.ref("c3_aging_report.action_report_aging").report_action(
-            self, data={"report_type": self.report_type, "as_of_date": str(self.as_of_date)})
+            self, data={
+                "report_type": self.report_type,
+                "as_of_date": str(self.as_of_date),
+                "aging_company_id": self.company_id.id,
+                "partner_ids": self.partner_ids.ids,
+            })
 
-    def _get_aging_data(self):
-        account_type = "asset_receivable" if self.report_type == "receivable" else "liability_payable"
+    @api.model
+    def _get_aging_data(self, data):
+        report_type = data.get("report_type")
+        account_type = "asset_receivable" if report_type == "receivable" else "liability_payable"
         domain = [("account_id.account_type","=",account_type),("reconciled","=",False),
-                  ("move_id.state","=","posted"),("company_id","=",self.company_id.id)]
-        if self.partner_ids:
-            domain.append(("partner_id","in",self.partner_ids.ids))
+                  ("move_id.state","=","posted"),("company_id","=",data.get("aging_company_id"))]
+        partner_ids = data.get("partner_ids")
+        if partner_ids:
+            domain.append(("partner_id","in",partner_ids))
         lines = self.env["account.move.line"].search(domain)
-        as_of = self.as_of_date or date.today()
+        as_of = fields.Date.to_date(data.get("as_of_date")) or date.today()
         result = {}
         for line in lines:
             pid = line.partner_id.id
@@ -36,3 +55,24 @@ class AgingReportWizard(models.TransientModel):
             result[pid][bucket] += amt
             result[pid]["total"] += amt
         return sorted(result.values(), key=lambda x: x["partner"])
+
+
+class AgingReportDocument(models.AbstractModel):
+    # Without this, Odoo's generic _get_rendering_context() fallback (used
+    # whenever no report.<report_name> model is defined) never exposes the
+    # wizard's `data` dict to the template at all -- the template's own
+    # `data['report_type']` then reads `data` as an undefined QWeb variable,
+    # which evaluates to None, raising "TypeError: 'NoneType' object is not
+    # subscriptable" the moment the report is printed.
+    _name = "report.c3_aging_report.report_aging_template"
+    _description = "AR/AP Aging Report Document"
+
+    @api.model
+    def _get_report_values(self, docids, data=None):
+        data = data or {}
+        return {
+            "doc_ids": docids,
+            "doc_model": "aging.report.wizard",
+            "data": data,
+            "lines": self.env["aging.report.wizard"]._get_aging_data(data),
+        }
