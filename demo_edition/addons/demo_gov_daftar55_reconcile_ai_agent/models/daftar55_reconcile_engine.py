@@ -22,11 +22,14 @@ class DemoGovDaftar55AccountReconcileEngine(models.TransientModel):
             return int(default)
 
     def action_run_full_scan(self):
-        count = self.sudo().cron_daily_daftar55_reconcile_scan()
+        count, failures = self.sudo().cron_daily_daftar55_reconcile_scan()
+        message = _('تم إنشاء/تحديث %s تنبيه عدم مطابقة.') % count
+        if failures:
+            message += ' ' + _('تعذّر فحص %s سجل (راجع المحادثة الخاصة بكل سجل للتفاصيل).') % failures
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
-            'params': {'title': _('تم تشغيل مطابقة دفتر 55'), 'message': _('تم إنشاء/تحديث %s تنبيه عدم مطابقة.') % count, 'type': 'success', 'sticky': False}
+            'params': {'title': _('تم تشغيل مطابقة دفتر 55'), 'message': message, 'type': 'success' if not failures else 'warning', 'sticky': False}
         }
 
     @api.model
@@ -40,9 +43,16 @@ class DemoGovDaftar55AccountReconcileEngine(models.TransientModel):
             domain.append((date_field, '>=', fields.Date.today() - timedelta(days=self._param_int('demo_gov_daftar55_reconcile.scan_days', 60))))
         records = Model.search(domain)
         count = 0
+        failures = 0
         for rec in records:
-            count += self.check_daftar55_record(rec)
-        return count
+            try:
+                with self.env.cr.savepoint():
+                    count += self.check_daftar55_record(rec)
+            except Exception as exc:
+                failures += 1
+                if hasattr(rec, 'message_post'):
+                    rec.message_post(body=_('فشل فحص مطابقة دفتر 55 مع القيود: %s') % exc)
+        return count, failures
 
     @api.model
     def check_daftar55_record(self, record):
