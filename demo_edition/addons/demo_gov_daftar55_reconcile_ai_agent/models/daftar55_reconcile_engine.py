@@ -148,10 +148,10 @@ class DemoGovDaftar55AccountReconcileEngine(models.TransientModel):
         for move in moves:
             combined = ' '.join([
                 move.ref or '', move.name or '',
-                ' '.join(move.line_ids.mapped('name')),
-                ' '.join(move.line_ids.mapped('ref')),
-                ' '.join(move.line_ids.mapped('account_id.code')),
-                ' '.join(move.line_ids.mapped('account_id.name')),
+                ' '.join(x for x in move.line_ids.mapped('name') if x),
+                ' '.join(x for x in move.line_ids.mapped('ref') if x),
+                ' '.join(x for x in move.line_ids.mapped('account_id.code') if x),
+                ' '.join(x for x in move.line_ids.mapped('account_id.name') if x),
             ])
             if text and text in combined:
                 return False
