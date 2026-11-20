@@ -28,6 +28,34 @@ class StockIssueBridge(models.Model):
         for rec in self:
             rec.journal_entry_count = len(rec.journal_entry_ids)
 
+    def action_create_journal_entry(self):
+        """
+        يستبدل الـ placeholder في demo_gov_scm_issue الذي يرفع دائماً
+        UserError('وحدة ربط المخزون بالحسابات غير مثبتة') — لأن bridge_engine.py
+        (الذي كان من المفترض أن يوفر التنفيذ الفعلي) غير مستورَد في
+        models/__init__.py فعلياً، فيبقى الـ placeholder هو المنفَّذ الوحيد.
+        """
+        self.ensure_one()
+        if self.state != "posted":
+            raise UserError(_("يجب ترحيل إذن الصرف أولاً"))
+        if self.finance_status == "posted":
+            raise UserError(_("تم إنشاء القيد المحاسبي مسبقاً"))
+        return {
+            "type": "ir.actions.act_window",
+            "name": "إنشاء قيد محاسبي",
+            "res_model": "stock.finance.journal.entry",
+            "view_mode": "form",
+            "target": "new",
+            "context": {
+                "default_issue_permit_id": self.id,
+                "default_move_type": "issue",
+                "default_date": self.issue_date,
+                "default_warehouse_id": self.warehouse_id.id,
+                "default_amount": self.total_value,
+                "default_ref": f"إذن صرف {self.name}",
+            },
+        }
+
     def action_view_journal_entries(self):
         self.ensure_one()
         return {
